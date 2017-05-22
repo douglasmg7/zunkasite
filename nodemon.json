@@ -1,0 +1,23 @@
+{
+	  "verbose": true,
+	  "ignore": [
+      "*/*.log",
+      "*/*.txt",
+      "*/*.jpeg",
+      "bower.json",
+      "test/*",
+      "src/*",
+  		"views/*",
+  		"node_modules/*",
+  		"bower_components/*",
+      "dist/*",
+      "src/*",
+  		"public/js/allnations.js",
+  		"public/*.html",
+  		"public/css/*",
+  		"*/*.log",
+      "bin/updateDbWithAllNationsProducts.js",
+      "bin/getAllNationsProducts.js",
+      "bin/downloadFile.js"
+	  ]
+}

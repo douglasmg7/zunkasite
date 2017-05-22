@@ -1,0 +1,31 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true,
+    "jquery": true
+  },
+	"globals": {
+		"Backbone": true
+	},
+  "extends": ["eslint:recommended", "vue"],
+  "plugins": ["vue"],
+  "rules": {
+    "indent": ["error", 2],
+    "linebreak-style": [2, "unix"],
+    "quotes": ["error", "single", "avoid-escape"],
+    "semi": ["error", "always"],
+    "no-console": "off",
+    "no-unused-vars": "warn",
+    "space-before-function-paren": "off",
+    "object-curly-spacing": "off",
+    "arrow-spacing": "off",
+    "keyword-spacing": "off",
+    "space-before-blocks": "off",
+    "space-infix-ops": "off"
+  },
+  "parserOptions": {
+      "sourceType": "module"
+  }
+}

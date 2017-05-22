@@ -1,0 +1,12 @@
+/*******************************
+    User Variable Overrides
+*******************************/
+
+/*--------------
+   Price
+---------------*/
+.ui.cards > .card > .content > .price,
+.ui.card > .content > .price {
+  clear: both;
+  color: @descriptionColor;
+}
