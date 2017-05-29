@@ -18,6 +18,8 @@
   		"*/*.log",
       "bin/updateDbWithAllNationsProducts.js",
       "bin/getAllNationsProducts.js",
-      "bin/downloadFile.js"
+      "bin/downloadFile.js",
+      "bin/insertProductMakers.js",
+      "bin/insertProductCategories.js"
 	  ]
 }

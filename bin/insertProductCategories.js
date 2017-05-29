@@ -5,7 +5,7 @@ const mongo = require('mongodb').MongoClient;
 // personal modules
 const log = require('./log');
 const dbConfig = require('./dbConfig');
-log.info('inserido categoria dos produtos na base de dados, para uso em dropdowns');
+log.info('Inserindo lista de categoria dos produtos na base de dados, para uso em dropdowns.');
 // Connect to mongo.
 mongo.connect(dbConfig.url, (err, db)=>{
   expect(err).to.equal(null);
@@ -20,7 +20,7 @@ mongo.connect(dbConfig.url, (err, db)=>{
         expect(err).to.equal(null);
         expect(result.insertedCount).to.equal(categories.length);
         db.close();
-        log.info('categoria dos produtos inseridos com sucesso');
+        log.info('Lista de categoria dos produtos inseridos com sucesso.');
       });
     });
   });

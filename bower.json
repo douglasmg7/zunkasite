@@ -1,12 +1,12 @@
 {
   "name": "server",
-  "description": "Hardplus server",
+  "description": "Zunka server",
   "main": "app.js",
   "authors": [
     "Douglas Gomes <douglasmg7@gmail.com>"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/douglasmg7/hardplus",
+  "homepage": "https://github.com/douglasmg7/zunka",
   "ignore": [
     "**/.*",
     "node_modules",

@@ -9,7 +9,7 @@
             //- detalhes
             h3.ui.dividing.header Detalhes
             .field
-              label Hard Plus Id
+              label Zunka Id
               input(v-model='product.storeProductId')
             .field
               label Título

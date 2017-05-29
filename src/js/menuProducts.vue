@@ -1,6 +1,6 @@
 <template lang='pug'>
   .ui.menu
-    a.item(href='store' v-bind:class='{"active": active === "store"}') Hard Plus
+    a.item(href='store' v-bind:class='{"active": active === "store"}') Zunka
     a.item(href='allnations' v-bind:class='{"active": active === "allNations"}') All Nations
     a.item(href='lojasamericanas' v-bind:class='{"active": active === "lojasAmericanas"}') Lojas Americanas
     .right.menu

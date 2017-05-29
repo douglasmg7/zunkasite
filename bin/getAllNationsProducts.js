@@ -106,6 +106,7 @@ function reqWS() {
   // let urlLog = `http://wspub.allnations.com.br/wsIntEstoqueClientes/ServicoReservasPedidosExt.asmx/RetornarListaProdutos?CodigoCliente=${WS_USER_FAKE}&Senha=${WS_PASSWORD_FAKE}&Data=${lastQuery.toISOString()}`;
   let url = `http://wspub.allnations.com.br/wsIntEstoqueClientesV2/ServicoReservasPedidosExt.asmx/RetornarListaProdutosEstoque?CodigoCliente=${WS_USER}&Senha=${WS_PASSWORD}&Data=${lastQuery.toISOString()}`;
   let urlLog = `http://wspub.allnations.com.br/wsIntEstoqueClientesV2/ServicoReservasPedidosExt.asmx/RetornarListaProdutosEstoque?CodigoCliente=${WS_USER_FAKE}&Senha=${WS_PASSWORD_FAKE}&Data=${lastQuery.toISOString()}`;
+  urlLog = url;
 
   // Make the query.
   log.info('Making web service request', {last_req_time: lastQuery.toISOString(), now_time: now.toISOString(), elapsed_time_min: elapsedTimeMin, url: urlLog});

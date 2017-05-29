@@ -5,7 +5,7 @@
       thead
         tr
           // th.text-capitalize id
-          th.clickable(@click="selectColOrder('code-store')") Hardplus id
+          th.clickable(@click="selectColOrder('code-store')") Zunka id
           th.clickable(@click="selectColOrder('dealerCode')") Titulo
           th.clickable(@click="selectColOrder('dealer')") Fornecedor
           th.clickable(@click="selectColOrder('dealerCode')") Forn. Id

@@ -1,9 +1,9 @@
 'use strict';
 
 // Database name.
-const DB_NAME = 'hardPlus';
+const DB_NAME = 'zunka';
 // Database name for test.
-const DB_NAME_TEST = DB_NAME + 'Test';
+const DB_NAME_TEST = DB_NAME + 'zunkaTest';
 
 const dbConfig = {
   // Database name.
