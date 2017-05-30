@@ -106,7 +106,7 @@ function reqWS() {
   // let urlLog = `http://wspub.allnations.com.br/wsIntEstoqueClientes/ServicoReservasPedidosExt.asmx/RetornarListaProdutos?CodigoCliente=${WS_USER_FAKE}&Senha=${WS_PASSWORD_FAKE}&Data=${lastQuery.toISOString()}`;
   let url = `http://wspub.allnations.com.br/wsIntEstoqueClientesV2/ServicoReservasPedidosExt.asmx/RetornarListaProdutosEstoque?CodigoCliente=${WS_USER}&Senha=${WS_PASSWORD}&Data=${lastQuery.toISOString()}`;
   let urlLog = `http://wspub.allnations.com.br/wsIntEstoqueClientesV2/ServicoReservasPedidosExt.asmx/RetornarListaProdutosEstoque?CodigoCliente=${WS_USER_FAKE}&Senha=${WS_PASSWORD_FAKE}&Data=${lastQuery.toISOString()}`;
-  urlLog = url;
+  urlLog = url; // Must be commented.
 
   // Make the query.
   log.info('Making web service request', {last_req_time: lastQuery.toISOString(), now_time: now.toISOString(), elapsed_time_min: elapsedTimeMin, url: urlLog});
@@ -152,6 +152,12 @@ function dbInsert(xmlData) {
     let $ = cheerio.load(xmlData, {xmlMode: true});
     let bulk = db.collection(dbConfig.collAllNationProducts).initializeUnorderedBulkOp();
     log.info('Products received.', {products_count: $('Produtos').length});
+    // No products.
+    if ($('Produtos').length === 0) {
+      log.info('No products.', {received_xml: xmlData});
+      return;
+    }
+    // There is products.
     $('Produtos').each(function(i, el) {
       bulk
         .find({
