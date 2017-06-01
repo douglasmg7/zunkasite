@@ -11,7 +11,8 @@ const dbConfig = {
   // Database name for test.
   dbNameTest: DB_NAME_TEST,
   // Mongodb connection.
-  url: `mongodb://localhost:27017/${DB_NAME}`,
+  // url: `mongodb://localhost:27017/${DB_NAME}`,
+  url: `mongodb://mammoth:mammuthus@ds159371.mlab.com:59371/mammoth`,
   // Mongodb connections for test.
   urlTest: `mongodb://localhost:27017/${DB_NAME_TEST}`,
   // All Nations products collections.
