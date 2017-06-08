@@ -24,8 +24,7 @@ const entry = DEVELOPMENT
 const plugins = DEVELOPMENT
   ? [
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
-
+    new webpack.NoEmitOnErrorsPlugin()
   ]
   : [
     new webpack.DefinePlugin({ 'process.env': { NODE_ENV: '"production"'}})
