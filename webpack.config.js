@@ -20,18 +20,26 @@ const entry = DEVELOPMENT
     bundleLogin: './src/js/login.js',
     bundleSignUp: './src/js/signUp.js'
   };
+// Plugins.
 const plugins = DEVELOPMENT
   ? [
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin()
+    new webpack.NoEmitOnErrorsPlugin(),
+
   ]
-  : [];
+  : [
+    new webpack.DefinePlugin({ 'process.env': { NODE_ENV: '"production"'}})
+  ];
+// Devtool.
+const devtool = DEVELOPMENT
+  ? '#eval-source-map'
+  : 'source-map';
 module.exports = {
   // cache: true,
   // devtool: 'source-map',   // for production
   // devtool: '#eval-source-map',
   // devtool: 'eval',   // fast build
-  devtool: '#eval-source-map',
+  devtool: devtool,
   entry: entry,
   // entry: {
   //   bundleProductsAllNations: './public/js/productsAllNations.js',

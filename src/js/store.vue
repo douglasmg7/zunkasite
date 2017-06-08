@@ -1,5 +1,6 @@
 <template lang='pug'>
   div
+    h1 ### vue-test ###
     //- .ui.black.inverted.attached.stackable.menu
     .ui.black.inverted.borderless.attached.stackable.menu
       .ui.container

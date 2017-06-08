@@ -3,11 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start-old": "livereload ./views -d -e pug & cross-env NODE_ENV=development node ./bin/www",
-    "start-dev": "cross-env NODE_ENV=development nodemon ./bin/www",
+    "start": "cross-env NODE_ENV=production nodemon ./bin/www",
+    "dev": "npm run livereload & cross-env NODE_ENV=development nodemon ./bin/www",
     "livereload": "livereload ./views -d -e pug",
-    "start": "npm run livereload & npm run start-dev",
-    "start-nodemon": "nodemon ./bin/www",
     "test": "mocha test -u bdd -R spec -t 2000",
     "testCompile": "mocha test -u bdd --compilers js:babel-core/register",
     "insertMakers": "bin/insertProductMakers.js",
