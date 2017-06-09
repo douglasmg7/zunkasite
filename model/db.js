@@ -4,16 +4,16 @@ const mongo = require('mongodb').MongoClient;
 const dbConfig = require('../bin/dbConfig');
 const log = require('../bin/log');
 
-let state = {
+const state = {
   db: null,
   config: dbConfig
 };
 
 // Define which db to use.
-let dbUrl = null;
-process.env.NODE_ENV === 'test' ? dbUrl = dbConfig.urlTest : dbUrl = dbConfig.url;
+let url = null;
+process.env.NODE_ENV === 'unitTest' ? url = dbConfig.urlUnitTest : url = dbConfig.url;
 
-mongo.connect(dbUrl, (err, database)=>{
+mongo.connect(url, (err, database)=>{
   if(err){
     log.error('MongoDb connection error.', {err: err});
     process.exit(1);

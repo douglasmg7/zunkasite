@@ -63,7 +63,7 @@ app.set('view engine', 'pug');
 // So you configure session attributes (e.g. life of your session) via express
 // define which db to use.
 let dbUrl = null;
-app.get('env') === 'test' ? dbUrl = dbConfig.urlTest : dbUrl = dbConfig.url;
+app.get('env') === 'test' ? dbUrl = dbConfig.urlUnitTest : dbUrl = dbConfig.url;
 var sessionOpts = {
   secret: app.get('secret'),
   resave: true, // saved new sessions

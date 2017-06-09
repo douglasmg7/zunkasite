@@ -1,20 +1,39 @@
 'use strict';
 
-// Database name.
-const DB_NAME = 'zunka';
-// Database name for test.
-const DB_NAME_TEST = DB_NAME + 'zunkaTest';
+// Local development.
+// `mongodb://localhost:27017/zunkaTest`,
+let host = 'localhost';
+let port = '27017';
+let name = 'zunka';
+let user = '';
+let password = '';
 
+// mLab.
+if (process.env.DB === 'mlab') {
+  // 'mongodb://mammoth:mammuthus@ds159371.mlab.com:59371/mammoth',
+  host = 'ds159371.mlab.com';
+  port = '59371';
+  name = 'mammoth';
+  user = 'mammoth';
+  password = 'mammuthus';
+// Production.
+} else if (process.env.DB === 'production') {
+  throw new Error('Production database not defined.');
+}
+
+// Connection string url - 'mongodb://username:password@host:port/Database'.
+let url = `mongodb://${host}:${port}/${name}`;
+// Have a user.
+if (user) {
+  url = `mongodb://${user}:${password}@${host}:${port}/${name}`;
+}
+console.log('URL');
+console.log(url);
 const dbConfig = {
-  // Database name.
-  dbName: DB_NAME,
-  // Database name for test.
-  dbNameTest: DB_NAME_TEST,
-  // Mongodb connection.
-  // url: `mongodb://localhost:27017/${DB_NAME}`,
-  url: `mongodb://mammoth:mammuthus@ds159371.mlab.com:59371/mammoth`,
-  // Mongodb connections for test.
-  urlTest: `mongodb://localhost:27017/${DB_NAME_TEST}`,
+  // Uri.
+  url: url,
+  // For unit test.
+  urlUnitTest: 'mongodb://localhost:27017/zunkaTest',
   // All Nations products collections.
   collAllNationProducts: 'allNationsProducts',
   // Store products collections.
