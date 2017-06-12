@@ -4,11 +4,26 @@
     .ui.black.inverted.borderless.attached.stackable.menu
       .ui.container
         a.ui.link.item(href='/')
-          i.big.home.icon Zunka
+          i.big.home.icon
+          | Zunka
         .ui.right.item
           .ui.small.icon.input
             input(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
             i.search.link.icon(v-on:click='getProducts()')
+        .ui.dropdown.item
+          i.big.user.icon
+          | Minha conta
+          //- i.dropdown.icon
+          .menu
+            a.item(href='users/login')
+              i.icon.sign.in
+              | Entrar
+            a.item(href='users/signup')
+              i.icon.add.user
+              | Criar conta
+            .item
+              i.icon.sign.out
+              | Sair
         a.item
           i.big.cart.icon
     //- .ui.center.aligned.container
@@ -38,6 +53,12 @@
   'use strict';
   import wsPath from '../../bin/wsPath';
   import accounting from 'accounting';
+  // Initialize.
+  $(document).ready(function(){
+    // Initialize dropdown.
+    $('.ui.dropdown')
+      .dropdown({duration: 0});
+  });
   // components
   // import menuProducts from './menuProducts.vue';
   // import productsStoreDetail from './productsStoreDetail.vue';
