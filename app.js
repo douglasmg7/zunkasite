@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 // db
 const dbConfig = require('./bin/dbConfig');
 const mongo = require('./model/db');
+const ObjectId = require('mongodb').ObjectId;
 // authentication
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
@@ -86,23 +87,31 @@ app.use(session(sessionOpts));
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(function (username, password, done) {
+  log.info('LocalStrategy');
+  // log.info(`username: ${username}`);
+  // log.info(`password: ${password}`);
   mongo.db.collection(dbConfig.collSession).findOne({username: username}, (err, user)=>{
-    console.log(`passport.LocalStrategy.findOne.user: ${JSON.stringify(user)}`);
-    if (err) { console.log('passport-use-err'); return done(err); }
-    if (!user) { console.log('passport-use-no-user'); return done(null, false); }
-    if (user.username !== username) { console.log('passport-use-different-user'); return done(null, false); }
+    // console.log(`user from db: ${JSON.stringify(user)}`);
+    if (err) { console.log('passport error.'); return done(err); }
+    if (!user) { console.log('not found user.'); return done(null, false, {message: 'Incorrect username.'}); }
+    if (user.password !== password) { console.log('Incorrect password.'); return done(null, false, {message: 'Incorrect password.'}); }
     return done(null, user);
   });
 }));
+// Serialize _id to session, write _id to session.passport.user.
 passport.serializeUser(function(user, done) {
-  console.log(`passport.serialize.user: ${JSON.stringify(user)}`);
-  console.log(`passport.serialize.id: ${JSON.stringify(user.id)}`);
-  done(null, user.id);
+  log.info('passport.serialize');
+  // log.info(`user: ${JSON.stringify(user)}`);
+  // log.info(`_id: ${JSON.stringify(user._id)}`);
+  done(null, user._id);
 });
+// Deserialize from the session, use session.passport.user to find user into db.
 passport.deserializeUser(function(id, done) {
-  console.log(`passport.deserialize.id: ${id}`);
-  mongo.db.collection(dbConfig.collSession).findOne({id: id}, (err, user)=>{
-    console.log(`passport.deserialize.user: ${JSON.stringify(user)}`);
+  log.info('passport.deserialize');
+  // log.info(`id: ${id}`);
+  const _id = new ObjectId(id);
+  mongo.db.collection(dbConfig.collSession).findOne({_id: _id}, (err, user)=>{
+    // console.log(`user from db: ${JSON.stringify(user)}`);
     return done(err, user);
   });
 });

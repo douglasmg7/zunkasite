@@ -43,22 +43,22 @@
     },
     methods: {
       // retrive products page
-      login(email, password){
-        this.$http.post(`login`, {email: email, password: password})
-          .then(res=>{
-            console.log(res.body);
-            // if (res.body.success) {
-            //   sessionStorage.token = res.body.token
-            //   this.user = res.body.user;
-            // } else {
-            //   delete sessionStorage.token;
-            //   this.user = 'no user';
-            // }
-          })
-          .catch(err=>{
-            console.log(`Error - login, err: ${JSON.stringify(err)}`);
-          });
-      },
+      // login(email, password){
+      //   this.$http.post(`login`, {email: email, password: password})
+      //     .then(res=>{
+      //       console.log(res.body);
+      //       // if (res.body.success) {
+      //       //   sessionStorage.token = res.body.token
+      //       //   this.user = res.body.user;
+      //       // } else {
+      //       //   delete sessionStorage.token;
+      //       //   this.user = 'no user';
+      //       // }
+      //     })
+      //     .catch(err=>{
+      //       console.log(`Error - login, err: ${JSON.stringify(err)}`);
+      //     });
+      // },
       signUp(username, password){
         this.$http.post(`sign-up`, {username: username, password: password})
           .then((res)=>{

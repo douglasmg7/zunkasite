@@ -6,7 +6,11 @@ const ObjectId = require('mongodb').ObjectId;
 // index
 router.get('/', function(req, res, next) {
   req.query.search = req.query.search || '';
-  console.log(`search: ${req.query.search}`);
+  // console.log(`search: ${req.query.search}`);
+  // console.log(`cookies: ${JSON.stringify(req.cookies)}`);
+  console.log(`req.isAuthenticated: ${req.isAuthenticated()}`);
+  // console.log(`req.session: ${JSON.stringify(req.session)}`);
+  console.log(`req.user: ${JSON.stringify(req.user)}`);
   // res.render('store', {initSearch: req.query.search});
   res.render('store', {title: 'Produtos da loja', initSearch: req.query.search});
 });
