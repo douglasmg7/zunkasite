@@ -51,7 +51,7 @@ router.post('/logout', (req, res, next)=>{
   console.log(`req.isAuthenticated: ${req.isAuthenticated()}`);
   // console.log(`req.session: ${JSON.stringify(req.session)}`);
   // console.log(`req.signedCookies: ${JSON.stringify(req.signedCookies)}`);
-  console.log(`req.user: ${JSON.stringify(req.user)}`);  
+  console.log(`req.user: ${JSON.stringify(req.user)}`);
   req.logout();
   console.log('logout');
   res.json({ success: true, message: 'Logout.' });

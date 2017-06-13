@@ -77,6 +77,10 @@ if (app.get('env') === 'production') {
   sessionOpts.cookie.secure = true; // serve secure cookies
 }
 
+// webpack HMR
+app.use(webpackDevMiddleware);
+app.use(webpackHotMiddleware);
+
 // body
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -124,9 +128,9 @@ passport.deserializeUser(function(id, done) {
 //   };
 // }
 
-// webpack HMR
-app.use(webpackDevMiddleware);
-app.use(webpackHotMiddleware);
+// // webpack HMR
+// app.use(webpackDevMiddleware);
+// app.use(webpackHotMiddleware);
 
 // routes
 app.use('/', store);

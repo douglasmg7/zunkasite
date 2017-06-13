@@ -12,17 +12,18 @@
             i.search.link.icon(v-on:click='getProducts()')
         .ui.dropdown.item
           i.big.user.icon
-          | Minha conta
+          | {{this.user ? this.user.username : 'Minha conta'}}
+          //- | asdf
           //- i.dropdown.icon
           .menu
-            a.item(href='users/login')
+            a.item(href='users/login' v-if="!this.user")
               i.icon.sign.in
               | Entrar
-            a.item(href='users/signup')
+            a.item(href='users/signup' v-if="!this.user")
               i.icon.add.user
               | Criar conta
-            .item
-              i.icon.sign.out
+            .item(v-on:click='logout()' v-if="this.user")
+              i.sign.out.icon
               | Sair
         a.item
           i.big.cart.icon
@@ -83,8 +84,8 @@
         search: ''
       }
     },
-    // text for search products
-    props:['initSearch'],
+    // Text for search products and user logged.
+    props:['initSearch', 'user'],
     created() {
       // search from a product item page, not from this store page
       this.search = this.initSearch;
@@ -102,6 +103,18 @@
           .catch((err)=>{
             console.log(`Error - getProducts(), err: ${err}`);
           });
+      },
+      logout(){
+        this.$http.post('/users/logout')
+          .then((res)=>{
+            console.log(res.body);
+          })
+          .catch((err)=>{
+            console.log(`Error - logout(), err: ${err}`);
+          });
+      },
+      log(){
+        console.log(this.user.username);
       }
     },
     filters: {
