@@ -7,33 +7,16 @@ const bcrypt = require('bcrypt');
 // Personal modules.
 const log = require('../bin/log');
 
-// login page
-router.get('/login', (req, res, next)=>{
-  // console.log(`cookies: ${JSON.stringify(req.cookies)}`);
-  console.log(`req.isAuthenticated: ${req.isAuthenticated()}`);
-  // console.log(`req.session: ${JSON.stringify(req.session)}`);
-  // console.log(`req.signedCookies: ${JSON.stringify(req.signedCookies)}`);
-  console.log(`req.user: ${JSON.stringify(req.user)}`);
-  res.render('login');
-});
-// login
-router.post('/login', passport.authenticate('local', {successRedirect: '/', failureRedirect: 'login'}));
-
 // Signup page.
 router.get('/signup', (req, res, next)=>{
-  // console.log(`cookies: ${JSON.stringify(req.cookies)}`);
-  console.log(`req.isAuthenticated: ${req.isAuthenticated()}`);
-  // console.log(`req.session: ${JSON.stringify(req.session)}`);
-  // console.log(`req.signedCookies: ${JSON.stringify(req.signedCookies)}`);
-  console.log(`req.user: ${JSON.stringify(req.user)}`);
   res.render('signUp');
 });
-// Sign up.
+// Sign up request.
 router.post('/signup', (req, res, next)=>{
   // log.debug(`req.body: ${JSON.stringify(req.body)}`);
   if (req.body.username && req.body.password) {
     // Crypt password.
-    bcrypt.hash(req.body.password, 5, (err, hash)=>{
+    bcrypt.hash(req.body.password, 6, (err, hash)=>{
       // Error.
       if (err) {
         log.error(`router.post - bycrpt.hash: ${err}`);
@@ -60,30 +43,44 @@ router.post('/signup', (req, res, next)=>{
   }
 });
 
+// Login page.
+router.get('/login', (req, res, next)=>{
+  // Message from authentication, who set a flash message with erros.
+  res.render('login', { message: req.flash('error') });
+});
+// Login request.
+router.post('/login',
+  passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: 'login',
+    badRequestMessage: 'Falta credenciais.',
+    failureFlash: true}));
+
 // logout
-router.post('/logout', (req, res, next)=>{
-  // console.log(`cookies: ${JSON.stringify(req.cookies)}`);
-  console.log(`req.isAuthenticated: ${req.isAuthenticated()}`);
-  // console.log(`req.session: ${JSON.stringify(req.session)}`);
-  // console.log(`req.signedCookies: ${JSON.stringify(req.signedCookies)}`);
+router.get('/logout', (req, res, next)=>{
   console.log(`req.user: ${JSON.stringify(req.user)}`);
-  req.logout();
-  console.log('logout');
-  res.json({ success: true, message: 'Logout.' });
+  if (req.isAuthenticated()) {
+    log.verbose(`User ${req.user.username} has Logout.`);
+    req.logout();
+    res.redirect('/users/login');
+  } else {
+    log.verbose('No user logged to make logout.');
+    res.redirect('/users/login');
+  }
 });
 
-router.get('/test', (req, res, next)=>{
-  console.log(`cookies: ${JSON.stringify(req.cookies)}`);
-  console.log(`session: ${JSON.stringify(req.session)}`);
-  console.log(`signed cookies: ${JSON.stringify(req.signedCookies)}`);
-  let user = 'no user';
-  if (req.user) { user = req.user.username; }
-  res.render('test', {user: user});
-});
-
-// user logged
-router.get('/user', (req, res, next)=>{
-  res.render('user');
-});
+// router.get('/test', (req, res, next)=>{
+//   console.log(`cookies: ${JSON.stringify(req.cookies)}`);
+//   console.log(`session: ${JSON.stringify(req.session)}`);
+//   console.log(`signed cookies: ${JSON.stringify(req.signedCookies)}`);
+//   let user = 'no user';
+//   if (req.user) { user = req.user.username; }
+//   res.render('test', {user: user});
+// });
+//
+// // user logged
+// router.get('/user', (req, res, next)=>{
+//   res.render('user');
+// });
 
 module.exports = router;

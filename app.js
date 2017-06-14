@@ -13,6 +13,7 @@ const ObjectId = require('mongodb').ObjectId;
 // Authentication.
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const flash = require('connect-flash');
 const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
@@ -89,28 +90,26 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // authentication
 app.use(cookieParser(app.get('secret')));
 app.use(session(sessionOpts));
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(function (username, password, done) {
-  log.info('LocalStrategy');
-  // log.info(`username: ${username}`);
-  // log.info(`password: ${password}`);
   mongo.db.collection(dbConfig.collSession).findOne({username: username}, (err, user)=>{
     // console.log(`user from db: ${JSON.stringify(user)}`);
     if (err) { log.error(`Database error: ${err}`); return done(err); }
     // User not found.
-    if (!user) { log.warn(`User ${username} not found on database.`); return done(null, false, {message: 'Incorrect username.'}); }
+    if (!user) { log.warn(`User ${username} not found on database.`); return done(null, false, {message: 'Usuario nao cadastrado.'}); }
     // Verify password.
     log.info('Before bcrypt compare.');
     bcrypt.compare(password, user.password, (err, res)=>{
       if (err) { log.error(`bcrypt error: ${err}`); }
       // Correct password.
       if (res) {
-        return done(null, user);
+        return done(null, user, {message: `Bem vindo ${user.username}`});
       // Wrong password.
       } else {
         log.warn(`Incorrect password for user ${username}`);
-        return done(null, false, {message: 'Incorrect password.'});
+        return done(null, false, {message: 'Senha incorreta.'});
       }
     });
   });

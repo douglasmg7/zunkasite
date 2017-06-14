@@ -22,7 +22,8 @@
             a.item(href='users/signup' v-if="!this.user")
               i.icon.add.user
               | Criar conta
-            .item(v-on:click='logout()' v-if="this.user")
+            //- .item(v-on:click='logout()' v-if="this.user")
+            a.item(href='users/logout' v-if="this.user")
               i.sign.out.icon
               | Sair
         a.item
@@ -105,7 +106,7 @@
           });
       },
       logout(){
-        this.$http.post('/users/logout')
+        this.$http.get('/users/logout')
           .then((res)=>{
             console.log(res.body);
           })
