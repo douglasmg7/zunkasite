@@ -9,7 +9,7 @@ const winston = require('winston');
 const fs = require('fs');
 
 // file to log.
-let parsePath = path.parse(module.parent.filename);
+const parsePath = path.parse(module.parent.filename);
 const logDir = path.join(parsePath.dir, 'log');
 const logFilename = path.join(logDir, (parsePath.name + '.log'));
 // console.log(logDir);
@@ -25,7 +25,7 @@ try {
 }
 
 // Log configuration.
-let log = new (winston.Logger)({
+const log = new (winston.Logger)({
   transports: [
     new (winston.transports.File)({
       level: 'silly',
@@ -46,7 +46,7 @@ let log = new (winston.Logger)({
 if(process.env.NODE_ENV !== 'test'){
   log.add(winston.transports.Console,
     {
-      level: 'info',
+      level: 'silly',
       prettyPrint: true,
       colorize: true,
       silent: false,
@@ -55,4 +55,5 @@ if(process.env.NODE_ENV !== 'test'){
   );
 }
 
-module.exports = module = log;
+// module.exports = module = log;
+module.exports = log;

@@ -2,21 +2,22 @@
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
-// log transaction
+// Log transaction.
 const morgan = require('morgan');
-// body
+// Body.
 const bodyParser = require('body-parser');
-// db
+// Database.
 const dbConfig = require('./bin/dbConfig');
 const mongo = require('./model/db');
 const ObjectId = require('mongodb').ObjectId;
-// authentication
+// Authentication.
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-// webpack HMR - hot module reload
+const bcrypt = require('bcrypt');
+// Webpack HMR - hot module reload.
 const webpack = require('webpack');
 const webpackConfig = require('./webpack.config');
 const compiler = webpack(webpackConfig);
@@ -24,7 +25,7 @@ const webpackDevMiddleware = require('webpack-dev-middleware')(compiler, {
   noInfo: false, publicPath: webpackConfig.output.publicPath, stats: {colors: true}
 });
 const webpackHotMiddleware = require('webpack-hot-middleware')(compiler);
-// personal modules
+// Personal modules.
 const log = require('./bin/log');
 // app must be before routes
 const app = express();
@@ -96,10 +97,22 @@ passport.use(new LocalStrategy(function (username, password, done) {
   // log.info(`password: ${password}`);
   mongo.db.collection(dbConfig.collSession).findOne({username: username}, (err, user)=>{
     // console.log(`user from db: ${JSON.stringify(user)}`);
-    if (err) { console.log('passport error.'); return done(err); }
-    if (!user) { console.log('not found user.'); return done(null, false, {message: 'Incorrect username.'}); }
-    if (user.password !== password) { console.log('Incorrect password.'); return done(null, false, {message: 'Incorrect password.'}); }
-    return done(null, user);
+    if (err) { log.error(`Database error: ${err}`); return done(err); }
+    // User not found.
+    if (!user) { log.warn(`User ${username} not found on database.`); return done(null, false, {message: 'Incorrect username.'}); }
+    // Verify password.
+    log.info('Before bcrypt compare.');
+    bcrypt.compare(password, user.password, (err, res)=>{
+      if (err) { log.error(`bcrypt error: ${err}`); }
+      // Correct password.
+      if (res) {
+        return done(null, user);
+      // Wrong password.
+      } else {
+        log.warn(`Incorrect password for user ${username}`);
+        return done(null, false, {message: 'Incorrect password.'});
+      }
+    });
   });
 }));
 // Serialize _id to session, write _id to session.passport.user.
