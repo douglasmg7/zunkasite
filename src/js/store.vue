@@ -4,8 +4,7 @@
     .ui.black.inverted.borderless.attached.stackable.menu
       .ui.container
         a.ui.link.item(href='/')
-          i.big.home.icon
-          | Zunka
+          h2 Zunka
         .ui.right.item
           .ui.small.icon.input
             input(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')

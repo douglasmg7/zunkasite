@@ -12,13 +12,26 @@ import productsStore from './productsStore.vue';
 // event hub
 window.eventHub = new Vue({
 });
-// app
-window.appVue = new Vue({
-  el: '#app',
+
+// Using template render.
+const app = new Vue({
+  render: createEle=>createEle(productsStore),
   data: {
     msg: 'Products Store'
   },
   components: {
     productsStore
   }
-});
+}).$mount('#app');
+window.appVue = app;
+
+// // app
+// window.appVue = new Vue({
+//   el: '#app',
+//   data: {
+//     msg: 'Products Store'
+//   },
+//   components: {
+//     productsStore
+//   }
+// });

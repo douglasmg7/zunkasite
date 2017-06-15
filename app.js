@@ -37,6 +37,9 @@ const routeWsAllNations = require('./routes/wsAllNations');
 const routeWsStore = require('./routes/wsStore');
 const routeProducts = require('./routes/products');
 
+// Node env.
+log.info(`NODE_ENV: ${process.env.NODE_ENV}`);
+
 // transaction log - no log in test mode.
 if (app.get('env') !== 'test') {
   app.use(morgan('dev'));

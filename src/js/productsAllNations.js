@@ -7,12 +7,25 @@ Vue.use(vueResource);
 // components
 import productsAllnations from './productsAllNations.vue';
 
-window.AppVue = new Vue({
-  el: '#app',
+// Using template render.
+const app = new Vue({
+  render: createEle=>createEle(productsAllnations),
   data: {
     msg: 'Products All Nations'
   },
   components: {
     productsAllnations
   }
-});
+}).$mount('#app');
+window.appVue = app;
+
+// // app
+// window.AppVue = new Vue({
+//   el: '#app',
+//   data: {
+//     msg: 'Products All Nations'
+//   },
+//   components: {
+//     productsAllnations
+//   }
+// });

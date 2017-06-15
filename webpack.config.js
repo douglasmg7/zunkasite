@@ -1,8 +1,12 @@
 'use strict';
 const path = require('path');
 const webpack = require('webpack');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const DEVELOPMENT = process.env.NODE_ENV === 'development';
-// const PRODUCTION = process.env.NODE_ENV === 'production';
+
+// Trace call for modules deprecated.
+process.traceDeprecation = true;
+
 const entry = DEVELOPMENT
   ? {
     bundleProductsAllNations: ['./src/js/productsAllNations.js', 'webpack-hot-middleware/client?reload=true'],
@@ -27,7 +31,8 @@ const plugins = DEVELOPMENT
     new webpack.NoEmitOnErrorsPlugin()
   ]
   : [
-    new webpack.DefinePlugin({ 'process.env': { NODE_ENV: '"production"'}})
+    new webpack.DefinePlugin({ 'process.env': { NODE_ENV: '"production"'}}),
+    new UglifyJSPlugin()
   ];
 // Devtool.
 const devtool = DEVELOPMENT
@@ -40,11 +45,6 @@ module.exports = {
   // devtool: 'eval',   // fast build
   devtool: devtool,
   entry: entry,
-  // entry: {
-  //   bundleProductsAllNations: './public/js/productsAllNations.js',
-  //   bundleProductsStore: './public/js/productsStore.js',
-  //   bundleTt: './public/js/tt.js'
-  // },
   output: {
     path: path.resolve(__dirname, 'dist/'),
     publicPath: '',
@@ -56,11 +56,20 @@ module.exports = {
   // single componente can use template with run-time
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.common.js'
+      // 'vue$': 'vue/dist/vue.common.js'
+      // 'vue$': 'vue/dist/vue.runtime.common.js'
+      // 'vue$': 'vue/dist/vue.esm.js'
+      // 'vue$': 'vue/dist/vue.runtime.esm.js'
+      // 'vue$': 'vue/dist/vue.min.js'
+      // 'vue$': 'vue/dist/vue.runtime.min.js'
     }
   },
   module: {
     rules: [
+      // {
+      //   test: /\.html$/,
+      //   loader: 'vue-template-loader'
+      // },
       {
         test: /\.vue$/,
         loader: 'vue-loader',
