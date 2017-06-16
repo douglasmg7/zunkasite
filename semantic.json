@@ -1,5 +1,5 @@
 {
-  "base": "semantic/",
+  "base": "semantic",
   "paths": {
     "source": {
       "config": "src/theme.config",
@@ -42,7 +42,7 @@
     "checkbox",
     "dropdown",
     "modal",
-    "popup",
+    "transition",
     "form"
   ],
   "admin": false
