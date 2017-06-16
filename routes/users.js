@@ -69,18 +69,4 @@ router.get('/logout', (req, res, next)=>{
   }
 });
 
-// router.get('/test', (req, res, next)=>{
-//   console.log(`cookies: ${JSON.stringify(req.cookies)}`);
-//   console.log(`session: ${JSON.stringify(req.session)}`);
-//   console.log(`signed cookies: ${JSON.stringify(req.signedCookies)}`);
-//   let user = 'no user';
-//   if (req.user) { user = req.user.username; }
-//   res.render('test', {user: user});
-// });
-//
-// // user logged
-// router.get('/user', (req, res, next)=>{
-//   res.render('user');
-// });
-
 module.exports = router;

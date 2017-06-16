@@ -3,7 +3,8 @@ const router = express.Router();
 const mongo = require('../model/db');
 const dbConfig = mongo.config;
 const ObjectId = require('mongodb').ObjectId;
-// index
+
+// Index.
 router.get('/', function(req, res, next) {
   req.query.search = req.query.search || '';
   // console.log(`search: ${req.query.search}`);
@@ -17,7 +18,8 @@ router.get('/', function(req, res, next) {
     initSearch: req.query.search,
     user: req.isAuthenticated() ? req.user : null});
 });
-// get a specific product
+
+// Get a specific product.
 router.get('/product/:_id', function(req, res, next) {
   // mongodb formated _id product
   let _id;
@@ -46,4 +48,10 @@ router.get('/product/:_id', function(req, res, next) {
     res.status(404).send('Produto não encontrado.');
   });
 });
+
+// Just for tests.
+router.get('/test', (req, res, next)=>{
+  res.render('test');
+});
+
 module.exports = router;
