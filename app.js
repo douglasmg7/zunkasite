@@ -31,11 +31,11 @@ const log = require('./bin/log');
 // app must be before routes
 const app = express();
 // routes
-const users = require('./routes/users');
-const store = require('./routes/store');
-const routeWsAllNations = require('./routes/wsAllNations');
-const routeWsStore = require('./routes/wsStore');
-const routeProducts = require('./routes/products');
+const routeUsers = require('./routes/routeUsers');
+const routeStore = require('./routes/routeStore');
+const routeWsAllNations = require('./routes/routeWsAllNations');
+const routeWsStore = require('./routes/routeWsStore');
+const routeProducts = require('./routes/routeProducts');
 
 // Node env.
 log.info(`NODE_ENV: ${process.env.NODE_ENV}`);
@@ -148,8 +148,8 @@ passport.deserializeUser(function(id, done) {
 // app.use(webpackHotMiddleware);
 
 // routes
-app.use('/', store);
-app.use('/users', users);
+app.use('/', routeStore);
+app.use('/users', routeUsers);
 // web service
 app.use('/ws/allnations', routeWsAllNations);
 app.use('/ws/store', routeWsStore);

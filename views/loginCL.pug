@@ -1,0 +1,26 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Login Without ccs framework.
+    link(rel="stylesheet" href="/css/loginC.css" charset="utf-8")
+  body
+    header
+      a(href='/') 
+        h3 Zunka
+    content
+      h1 Identificacao
+      //- .alert.alert-danger(role='alert') 
+        p.text-center Usuario nao existe.
+      form(action='/users/login' method='post')
+        //- label Usuario
+        input(type='text' name='username' placeholder='usuario')
+        //- label Senha
+        input(type='password' name='password' placeholder='senha')
+        p
+          a(href='/') Esqueceu a senha?
+      input(type='submit' value='Entrar')
+      hr/
+      p Nao tem cadastro?
+      input(type='submit' value='Cadastrar')

@@ -49,9 +49,4 @@ router.get('/product/:_id', function(req, res, next) {
   });
 });
 
-// Just for tests.
-router.get('/test', (req, res, next)=>{
-  res.render('test');
-});
-
 module.exports = router;
