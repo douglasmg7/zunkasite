@@ -4,30 +4,22 @@ import Vue from 'vue';
 import vueResource from 'vue-resource';
 Vue.use(vueResource);
 // components
-import store from './store.vue';
+import Store from './store.vue';
 // event hub
 window.eventHub = new Vue({
 });
 
 // Using template render.
-const app = new Vue({
-  render: createEle=>createEle(store),
-  data: {
-    msg: 'Store'
+window.appVue = new Vue({
+  el: '#app',
+  render(h) {
+    return h(Store, {props: {username: window.renderData.username, initSearch: window.renderData.initSearch}});
   },
-  components: {
-    store
+  data() {
+    return {
+      msg: {username: 'Catarine'}
+    };
+  },
+  created() {
   }
-}).$mount('#app');
-window.appVue = app;
-
-// // app
-// window.appVue = new Vue({
-//   el: '#app',
-//   data: {
-//     msg: 'Store'
-//   },
-//   components: {
-//     store
-//   }
-// });
+});

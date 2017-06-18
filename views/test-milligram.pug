@@ -1,0 +1,31 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Logins
+    link(rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic")
+    link(rel="stylesheet" href="/bower_components/normalize.css/normalize.css" charset="utf-8")
+    link(rel="stylesheet" href="/bower_components/milligram/dist/milligram.min.css" charset="utf-8")
+  body
+    header
+      ul
+        li
+          a
+        li
+          a(href="#") Tour 
+        li
+          a(href="#") Sign Up           
+    content.container
+      .row
+        .column
+        .column
+          form(action='/users/login' method='post')
+            fieldset
+              legend Login
+                label Usuario
+                input(type='text' name='username' placeholder='usuario')
+                label Senha
+                input(type='password' name='password' placeholder='senha')
+                input(type='submit' value='Log In')
+        .column

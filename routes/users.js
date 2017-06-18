@@ -48,6 +48,11 @@ router.get('/login', (req, res, next)=>{
   // Message from authentication, who set a flash message with erros.
   res.render('login', { message: req.flash('error') });
 });
+// Login-bootstrap page.
+router.get('/loginb', (req, res, next)=>{
+  // Message from authentication, who set a flash message with erros.
+  res.render('loginb', { message: req.flash('error') });
+});
 // Login request.
 router.post('/login',
   passport.authenticate('local', {

@@ -2,11 +2,26 @@ doctype html
 html(lang="en")
   head
     meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
     title #{title}
-    link(rel="stylesheet" href="/semantic/dist/semantic.min.css" charset="utf-8")
+    link(rel="stylesheet" href="/semantic/dist/semantic.min.css" charset="utf-8")      
   body
+    //- P=kaf
+    //- P= kaf
+    //- P #{kaf}
+    //- img(alt=kaf)
     #app
-      store(:user=user init-search=initSearch )
     script(src="/bower_components/jquery/dist/jquery.min.js")
     script(src="/semantic/dist/semantic.min.js")
+    //- Make pug data disponible to vue instance.
+    script.
+      /*console.log('Pug data: #{kaf}')*/
+      /*console.log('Pug data: #{locals.kaf}')*/
+      /*console.log('Pug data: #{locals.filename}')*/
+      /*console.log('Pug data JSON: ' + '#{Object.keys(locals)}')*/
+      /*console.log('Pug data JSON: ' + '#{JSON.stringify(locals)}')*/
+      /*console.log('pug script')*/
+      window.renderData = {}
+      window.renderData.username = '#{username}'
+      window.renderData.initSearch = '#{initSearch}'
     script(src='/bundleStore.js')

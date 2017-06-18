@@ -17,6 +17,7 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "jquery": "^3.1.0",
-    "accounting.js": "accountingjs#^0.4.1"
+    "accounting.js": "accountingjs#^0.4.1",
+    "pure": "^1.0.0"
   }
 }

@@ -11,18 +11,18 @@
             i.search.link.icon(v-on:click='getProducts()')
         .ui.dropdown.item
           i.big.user.icon
-          | {{this.user ? this.user.username : 'Minha conta'}}
+          | {{this.username ? this.username : 'Minha conta'}}
           //- | asdf
           //- i.dropdown.icon
           .menu
-            a.item(href='users/login' v-if="!this.user")
+            a.item(href='users/login' v-if="!this.username")
               i.icon.sign.in
               | Entrar
-            a.item(href='users/signup' v-if="!this.user")
+            a.item(href='users/signup' v-if="!this.username")
               i.icon.add.user
               | Criar conta
             //- .item(v-on:click='logout()' v-if="this.user")
-            a.item(href='users/logout' v-if="this.user")
+            a.item(href='users/logout' v-if="this.username")
               i.sign.out.icon
               | Sair
         a.item
@@ -65,6 +65,7 @@
   // import productsStoreDetail from './productsStoreDetail.vue';
   // let veeValidate = require('vee-validate');
   export default {
+    name: 'store',
     components: {
       // menuProducts,
       // productsStoreDetail
@@ -82,14 +83,16 @@
         pageCount: 1,
         // text for search products
         search: ''
+        // pulga: 'asdfasdfasdf'
       }
     },
     // Text for search products and user logged.
-    props:['initSearch', 'user'],
+    props:['initSearch', 'username'],
     created() {
       // search from a product item page, not from this store page
       this.search = this.initSearch;
       this.getProducts();
+      // console.log(`Props-user: ${this.username}`);
     },
     methods: {
       // retrive products page

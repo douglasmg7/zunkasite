@@ -3,20 +3,20 @@ const router = express.Router();
 const mongo = require('../model/db');
 const dbConfig = mongo.config;
 const ObjectId = require('mongodb').ObjectId;
+const log = require('../bin/log');
 
 // Index.
 router.get('/', function(req, res, next) {
   req.query.search = req.query.search || '';
   // console.log(`search: ${req.query.search}`);
   // console.log(`cookies: ${JSON.stringify(req.cookies)}`);
-  // console.log(`req.isAuthenticated: ${req.isAuthenticated()}`);
-  // console.log(`req.session: ${JSON.stringify(req.session)}`);
-  console.log(`req.user: ${JSON.stringify(req.user)}`);
+  log.verbose(`get / - req.user: ${JSON.stringify(req.user)}`);
+  log.verbose(`get / - req.isAuthenticated(): ${req.isAuthenticated()}`);
   // res.render('store', {initSearch: req.query.search});
   res.render('store', {
     title: 'Produtos da loja',
     initSearch: req.query.search,
-    user: req.isAuthenticated() ? req.user : null});
+    username: req.isAuthenticated() ? req.user.username : null});
 });
 
 // Get a specific product.
