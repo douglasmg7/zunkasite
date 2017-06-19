@@ -43,16 +43,16 @@ router.post('/signup', (req, res, next)=>{
   }
 });
 
-// Login page.
+// Login bootstrap page.
 router.get('/login', (req, res, next)=>{
-  // Message from authentication, who set a flash message with erros.
+  // req.flash - message from authentication, which set a flash message with erros.
   res.render('login', { message: req.flash('error') });
 });
 
-// Login bootstrap page.
-router.get('/loginb', (req, res, next)=>{
+// Login semantic-ui page.
+router.get('/logins', (req, res, next)=>{
   // Message from authentication, who set a flash message with erros.
-  res.render('loginB', { message: req.flash('error') });
+  res.render('loginS', { message: req.flash('error') });
 });
 
 // Login clean page.

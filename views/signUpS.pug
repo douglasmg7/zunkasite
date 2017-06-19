@@ -1,0 +1,26 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title #{title}
+    link(rel="stylesheet" href="/semantic/dist/semantic.min.css" charset="utf-8")
+  body
+    .ui.black.inverted.borderless.attached.stackable.menu
+      .ui.container
+        a.ui.link.item(href='/')
+          h2 Zunka
+    .ui.grid
+      .row
+      .row
+        .five.wide.column
+        .six.wide.column
+          .ui.segment
+            if message != ''
+              .ui.warning.message #{message}
+            #app
+              sign-up
+        .five.wide.column   
+    script(src="/bower_components/jquery/dist/jquery.min.js")
+    script(src="/semantic/dist/semantic.min.js")
+    script(src='/bundleSignUp.js')

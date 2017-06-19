@@ -15,19 +15,23 @@
           //- | asdf
           //- i.dropdown.icon
           .menu
+            // Login.
             a.item(href='users/login' v-if="!this.username")
               i.icon.sign.in
               | Entrar
-            a.item(href='users/loginb' v-if="!this.username")
+            // Login - Semantic-ui framework.
+            //- a.item(href='users/logins' v-if="!this.username")
               i.icon.sign.in
-              | Entrar Bootstrap
-            a.item(href='users/loginc' v-if="!this.username")
+              | Entrar Semantic
+            // Login - No framework with inline css.
+            //- a.item(href='users/loginc' v-if="!this.username")
               i.icon.sign.in
               | Entrar Clean
-            a.item(href='users/logincl' v-if="!this.username")
+            // Login - No framework with link to css.
+            //- a.item(href='users/logincl' v-if="!this.username")
               i.icon.sign.in
               | Entrar Clean Link
-            a.item(href='users/signup' v-if="!this.username")
+            //- a.item(href='users/signup' v-if="!this.username")
               i.icon.add.user
               | Criar conta
             //- .item(v-on:click='logout()' v-if="this.user")

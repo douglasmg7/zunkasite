@@ -3,25 +3,36 @@ html(lang="en")
   head
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Login Using Semantic-ui.
-    link(rel="stylesheet" href="/semantic/dist/semantic.min.css" charset="utf-8")
-      
+    title Login Using bootstrap.
+    link(rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css" charset="utf-8")
   body
-    .ui.black.inverted.borderless.attached.stackable.menu
-      .ui.container
-        a.ui.link.item(href='/') 
-          h2 Zunka
-    .ui.grid
+    nav.navbar.navbar-inverse
+      //- .container-fluid
+      .container
+        .navbar-header
+          a.navbar-brand(href='/') ZUNKA
+    .container
       .row
-      .row
-        .five.wide.column
-        .six.wide.column
-          .ui.segment
-            if message != ''
-              .ui.warning.message #{message}
-            #app
-              login
-        .five.wide.column              
+        .col-md-4
+        .col-md-4
+          .panel.panel-default
+            .panel-body
+              h1.text-left Identificacao
+              //- .alert.alert-danger(role='alert') 
+                p.text-center Usuario nao existe.
+              form(action='/users/login' method='post')
+                .form-group
+                  //- label Usuario
+                  input.form-control(type='text' name='username' placeholder='usuario')
+                .form-group
+                  //- label Senha
+                  input.form-control(type='password' name='password' placeholder='senha')
+                  p.help-block 
+                    a(href='/') Esqueceu a senha?
+                input.btn.btn-primary.btn-block(type='submit' value='Entrar')
+                hr/
+                p.help-block Nao tem cadastro?
+                a.btn.btn-info.btn-block(href='/users/signup') Cadastrar
+        .col-md-4
     script(src="/bower_components/jquery/dist/jquery.min.js")
-    script(src="/semantic/dist/semantic.min.js")
-    script(src='/bundleLogin.js')
+    script(src="/bower_components/bootstrap/dist/js/bootstrap.min.js")
