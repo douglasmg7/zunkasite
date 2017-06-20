@@ -33,7 +33,8 @@ router.post('/signup', (req, res, next)=>{
       // Insert user on database.
       mongo.db.collection(dbConfig.collSession).insertOne(user)
       .then(result=>{
-        res.json({ success: true, message: 'Sign up successfully accomplished' });
+        res.redirect('/users/login');
+        // res.json({ success: true, message: 'Sign up successfully accomplished' });
       })
       .catch(err=>{
         res.json({ success: false, message: 'Sign up failed' });

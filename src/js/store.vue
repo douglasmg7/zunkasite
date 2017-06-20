@@ -9,37 +9,14 @@
           .ui.small.icon.input
             input(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
             i.search.link.icon(v-on:click='getProducts()')
-        .ui.dropdown.item
-          i.big.user.icon
-          | {{this.username ? this.username : 'Minha conta'}}
-          //- | asdf
-          //- i.dropdown.icon
-          .menu
-            // Login.
-            a.item(href='users/login' v-if="!this.username")
-              i.icon.sign.in
-              | Entrar
-            // Login - Semantic-ui framework.
-            //- a.item(href='users/logins' v-if="!this.username")
-              i.icon.sign.in
-              | Entrar Semantic
-            // Login - No framework with inline css.
-            //- a.item(href='users/loginc' v-if="!this.username")
-              i.icon.sign.in
-              | Entrar Clean
-            // Login - No framework with link to css.
-            //- a.item(href='users/logincl' v-if="!this.username")
-              i.icon.sign.in
-              | Entrar Clean Link
-            //- a.item(href='users/signup' v-if="!this.username")
-              i.icon.add.user
-              | Criar conta
-            //- .item(v-on:click='logout()' v-if="this.user")
-            a.item(href='users/logout' v-if="this.username")
-              i.sign.out.icon
-              | Sair
-        a.item
-          i.big.cart.icon
+          a.item(href='users/login' v-if="!this.username")
+            i.big.icon.sign.in
+            | Entrar
+          a.item(href='users/logout' v-if="this.username")
+            i.big.sign.out.icon
+            | Sair    
+          a.item
+            i.big.cart.icon
     //- .ui.center.aligned.container
     .ui.left.aligned.container
       //- .ui.top.attached.segment
