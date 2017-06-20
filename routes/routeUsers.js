@@ -27,7 +27,7 @@ router.post('/signup', (req, res, next)=>{
       const user = {
         username: req.body.username,
         password: hash,
-        admin: false,
+        group: 'client',
         status: 'active'
       };
       // Insert user on database.

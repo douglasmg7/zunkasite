@@ -1,11 +1,18 @@
 'use strict';
 const express = require('express');
 const router = express.Router();
-// store products
+
+// Store products.
 router.get('/store', (req, res)=>{
-  res.render('productsStore', { title: 'Hey', message: 'Hello there!'});
+  res.render('productsStore');
 });
-// all nations products
+
+// Manual products.
+router.get('/manual', (req, res)=>{
+  res.render('productsManual');
+});
+
+// All nations products.
 router.get('/allnations', (req, res)=>{
   res.render('productsAllNations');
 });

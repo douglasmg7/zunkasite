@@ -40,6 +40,7 @@
     "card",
     "item",
     "checkbox",
+    "dimmer",
     "dropdown",
     "modal",
     "transition",

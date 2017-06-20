@@ -142,7 +142,7 @@
         loadedImages: ['void']};
     },
     created() {
-      //  modal opened
+      //  Modal opened.
       var self = this;
       window.eventHub.$on('modal-onShow', function(){
         self.updateImagesList(self.product);

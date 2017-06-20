@@ -9,16 +9,18 @@ process.traceDeprecation = true;
 
 const entry = DEVELOPMENT
   ? {
-    bundleProductsAllNations: ['./src/js/productsAllNations.js', 'webpack-hot-middleware/client?reload=true'],
     bundleProductsStore: ['./src/js/productsStore.js', 'webpack-hot-middleware/client?reload=true'],
+    bundleProductsManual: ['./src/js/productsManual.js', 'webpack-hot-middleware/client?reload=true'],
+    bundleProductsAllNations: ['./src/js/productsAllNations.js', 'webpack-hot-middleware/client?reload=true'],
     bundleStore: ['./src/js/store.js', 'webpack-hot-middleware/client?reload=true'],
     bundleStoreItem: ['./src/js/storeItem.js', 'webpack-hot-middleware/client?reload=true'],
     bundleLogin: ['./src/js/login.js', 'webpack-hot-middleware/client?reload=true'],
     bundleSignUp: ['./src/js/signUp.js', 'webpack-hot-middleware/client?reload=true']
   }
   : {
-    bundleProductsAllNations: './src/js/productsAllNations.js',
     bundleProductsStore: './src/js/productsStore.js',
+    bundleProductsManual: './src/js/productsManual.js',
+    bundleProductsAllNations: './src/js/productsAllNations.js',
     bundleStore: './src/js/store.js',
     bundleStoreItem: './src/js/storeItem.js',
     bundleLogin: './src/js/login.js',

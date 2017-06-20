@@ -33,6 +33,7 @@ const app = express();
 // routes
 const routeUsers = require('./routes/routeUsers');
 const routeStore = require('./routes/routeStore');
+const routeWsManual = require('./routes/routeWsManual');
 const routeWsAllNations = require('./routes/routeWsAllNations');
 const routeWsStore = require('./routes/routeWsStore');
 const routeProducts = require('./routes/routeProducts');
@@ -151,6 +152,7 @@ passport.deserializeUser(function(id, done) {
 app.use('/', routeStore);
 app.use('/users', routeUsers);
 // web service
+app.use('/ws/manual', routeWsAllNations);
 app.use('/ws/allnations', routeWsAllNations);
 app.use('/ws/store', routeWsStore);
 // html

@@ -1,8 +1,10 @@
 'use strict';
 const wsPath = {
-  // store web service
+  // Store web service.
   store: '/ws/store',
-  // all nations web service
-  allNations: '/ws/allnations'
+  // All nations web service.
+  allNations: '/ws/allnations',
+  // Manual insert products.
+  manualInsert: '/ws/manual'
 };
 module.exports = wsPath;

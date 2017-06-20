@@ -18,8 +18,9 @@ html(lang="en")
           .panel.panel-default
             .panel-body
               h1.text-left Identificacao
-              //- .alert.alert-danger(role='alert') 
-                p.text-center Usuario nao existe.
+              if message != ''
+                .alert.alert-danger(v-if='' role='alert') 
+                  p.text-center Usuario ou senha incorretos.
               form(action='/users/login' method='post')
                 .form-group
                   //- label Usuario

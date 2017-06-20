@@ -1,6 +1,6 @@
 <template lang='pug'>
   div
-    menu-products(active='store' v-on:input='search=arguments[0]' v-on:search='getProducts()')
+    menu-products(active='store' v-on:input='search=arguments[0]' v-on:search='getProducts()' v-on:newProduct='newProduct()')
     table.ui.compact.table
       thead
         tr
@@ -31,7 +31,12 @@
         div(v-for='n in pageCount')
           a.item(@click='getProducts(n)' v-bind:class='{"active": n==page}') {{n}}
     .ui.hidden.divider
-    products-store-detail(:product='selectedProduct', :productMakers='productMakers', :productCategories='productCategories' @save='updateProduct')
+    products-store-detail(
+      :product='selectedProduct', 
+      :productMakers='productMakers', 
+      :productCategories='productCategories' 
+      @save='updateProduct',
+      @new='saveNewProduct()')
 </template>
 <script>
   /* globals accounting */
@@ -67,6 +72,10 @@
       this.getDropdown();
     },
     methods: {
+      newProduct(){
+        console.log('newProduct');
+
+      },
       // retrive products page
       getProducts(page=1){
         this.$http.get(`${wsPath.store}?page=${page}&search=${this.search}`)
@@ -80,16 +89,16 @@
           });
       },
       showProduct(product){
-        // deep clone
+        // Deep clone.
         this.selectedProduct = JSON.parse(JSON.stringify(product));
-        // open modal
+        // Open modal.
         $('.ui.small.modal')
           // init and update dropdown
           .modal({
               onShow: function (){
                 setTimeout(function () {
                   $('.ui.dropdown').dropdown({duration: 0});
-                  // modal opened event for product detail
+                  // Modal opened event for product detail.
                   this.eventHub.$emit('modal-onShow');
                 }, 100);}
               // onApprove: function (){
@@ -106,6 +115,37 @@
           // open modal
           .modal('show');
       },
+      // Open modal with new default product.
+      newProduct(){
+        // Deep clone.
+        this.selectedProduct = {
+          storeProductId: 'asdfasdfa',
+          storeProductTitle: 'Novo produto'
+        };
+        // Open modal.
+        $('.ui.small.modal')
+          // init and update dropdown
+          .modal({
+              onShow: function (){
+                setTimeout(function () {
+                  $('.ui.dropdown').dropdown({duration: 0});
+                  // Modal opened event for product detail.
+                  this.eventHub.$emit('modal-onShow');
+                }, 100);}
+              // onApprove: function (){
+              //   console.log('onApprove');
+              //   return false;
+              // },
+              // onDeny: function () {
+              //   console.log('onDeny');
+              //   return false;
+              // }
+          })
+          // fast open
+          .modal('setting', 'duration', 0)
+          // open modal
+          .modal('show');
+      },      
       updateProduct(){
         this.products.forEach((element, index)=>{
           if (element._id === this.selectedProduct._id) {
@@ -113,6 +153,15 @@
             return
           }
         });
+      },
+      saveNewProduct(){
+        // this.products.forEach((element, index)=>{
+        //   if (element._id === this.selectedProduct._id) {
+        //     this.$set(this.products, index, this.selectedProduct);
+        //     return
+        //   }
+        // });
+        console.log('saveNewProduct');
       },
       getDropdown(){
         this.$http.get(`${wsPath.store}/dropdown`)

@@ -40,6 +40,8 @@ const dbConfig = {
   urlUnitTest: 'mongodb://localhost:27017/zunkaTest',
   // All Nations products collections.
   collAllNationProducts: 'allNationsProducts',
+  // Manual inserted products.
+  collManualProducts: 'manualProducts',
   // Store products collections.
   collStoreProducts: 'storeProducts',
   // makers list, use in dropdown

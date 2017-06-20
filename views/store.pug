@@ -22,6 +22,7 @@ html(lang="en")
       /*console.log('Pug data JSON: ' + '#{JSON.stringify(locals)}')*/
       /*console.log('pug script')*/
       window.renderData = {}
-      window.renderData.username = '#{username}'
       window.renderData.initSearch = '#{initSearch}'
+      window.renderData.username = '#{username}'
+      window.renderData.group = '#{group}'
     script(src='/bundleStore.js')

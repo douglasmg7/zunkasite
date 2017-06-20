@@ -13,7 +13,13 @@ window.eventHub = new Vue({
 window.appVue = new Vue({
   el: '#app',
   render(h) {
-    return h(Store, {props: {username: window.renderData.username, initSearch: window.renderData.initSearch}});
+    return h(Store, {props: 
+      {
+        username: window.renderData.username, 
+        initSearch: window.renderData.initSearch,
+        group: window.renderData.group
+      }
+    });
   },
   data() {
     return {
