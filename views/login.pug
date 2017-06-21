@@ -20,7 +20,8 @@ html(lang="en")
               h1.text-left Identificacao
               if message != ''
                 .alert.alert-danger(v-if='' role='alert') 
-                  p.text-center Usuario ou senha incorretos.
+                  p.text-center #{message}
+                  //- p.text-center Usuario ou senha incorretos.
               form(action='/users/login' method='post')
                 .form-group
                   //- label Usuario

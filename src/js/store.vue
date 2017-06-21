@@ -2,33 +2,34 @@
   div
     //- .ui.black.inverted.attached.stackable.menu
     .ui.black.inverted.borderless.attached.stackable.menu
-      .ui.container
-        // Home.
-        a.ui.link.item(href='/')
-          h2 Zunka
-        .ui.right.item
-          // Search.
+      //- .ui.container
+      // Home.
+      a.ui.link.item(href='/')
+        h2 Zunka
+      .ui.right.inverted.borderless.stackable.menu
+        // Search.
+        .ui.item
           .ui.small.icon.input
             input(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
             i.search.link.icon(v-on:click='getProducts()')
-          // User name.
-          .ui.item
-            i.large.user.icon(v-if="this.username") 
-            | {{this.username}}
-          // Sign-in.
-          a.ui.item(href='users/login' v-if="!this.username")
-            i.large.icon.sign.in
-            | Entrar
-          // Cart.
-          a.ui.item
-            i.large.cart.icon
-          // Config.
-          a.ui.item(href='/products/store' v-if="this.group == 'admin'")
-            i.large.configure.icon
-          // Exit.
-          a.ui.item(href='users/logout' v-if="this.username")
-            i.large.sign.out.icon
-            | Sair    
+        // User name.
+        .ui.item
+          i.large.user.icon(v-if="this.username") 
+          | {{this.username}}
+        // Sign-in.
+        a.ui.item(href='users/login' v-if="!this.username")
+          i.large.icon.sign.in
+          | Entrar
+        // Cart.
+        a.ui.item
+          i.large.cart.icon
+        // Config.
+        a.ui.item(href='/products/store' v-if="this.group == 'admin'")
+          i.large.configure.icon
+        // Exit.
+        a.ui.item(href='users/logout' v-if="this.username")
+          i.large.sign.out.icon
+          | Sair    
     //- .ui.center.aligned.container
     .ui.left.aligned.container
       //- .ui.top.attached.segment

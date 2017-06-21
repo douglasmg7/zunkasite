@@ -11,43 +11,70 @@ const log = require('../bin/log');
 router.get('/signup', (req, res, next)=>{
   res.render('signUp', { message: req.flash('error') });
 });
+
 // Sign up request.
 router.post('/signup', (req, res, next)=>{
   // log.debug(`req.body: ${JSON.stringify(req.body)}`);
   if (req.body.username && req.body.password) {
-    // Crypt password.
-    bcrypt.hash(req.body.password, 6, (err, hash)=>{
-      // Error.
-      if (err) {
-        log.error(`router.post - bycrpt.hash: ${err}`);
-        res.json({ success: false, message: 'Sign up failed' });
-        return;
-      }
-      // Create user.
-      const user = {
-        username: req.body.username,
-        password: hash,
-        group: 'client',
-        status: 'active'
-      };
-      // Insert user on database.
-      mongo.db.collection(dbConfig.collSession).insertOne(user)
-      .then(result=>{
-        res.redirect('/users/login');
-        // res.json({ success: true, message: 'Sign up successfully accomplished' });
-      })
-      .catch(err=>{
-        res.json({ success: false, message: 'Sign up failed' });
-        console.log(`sign-up-error: ${err}`);
-      });
+    // Create user.
+    const user = {
+      username: req.body.username,
+      password: req.body.password,
+      group: 'client',
+      status: 'active'
+    };
+    // Insert user on database.
+    mongo.db.collection(dbConfig.collSession).insertOne(user)
+    .then(result=>{
+      log.info(`Usuario cadastrado com sucesso: ${JSON.stringify(user)}`)
+      res.redirect('/users/login');
+    })
+    .catch(err=>{
+      res.json({ success: false, message: 'Sign up failed' });
+      console.log(`sign-up-error: ${err}`);
     });
-  }
+  };
 });
+
+// // Sign up request.
+// router.post('/signup', (req, res, next)=>{
+//   // log.debug(`req.body: ${JSON.stringify(req.body)}`);
+//   if (req.body.username && req.body.password) {
+//     // Crypt password.
+//     bcrypt.hash(req.body.password, 6, (err, hash)=>{
+//       // Error.
+//       if (err) {
+//         log.error(`router.post - bycrpt.hash: ${err}`);
+//         res.json({ success: false, message: 'Sign up failed' });
+//         return;
+//       }
+//       // Create user.
+//       const user = {
+//         username: req.body.username,
+//         password: hash,
+//         group: 'client',
+//         status: 'active'
+//       };
+//       // Insert user on database.
+//       mongo.db.collection(dbConfig.collSession).insertOne(user)
+//       .then(result=>{
+//         res.redirect('/users/login');
+//         // res.json({ success: true, message: 'Sign up successfully accomplished' });
+//       })
+//       .catch(err=>{
+//         res.json({ success: false, message: 'Sign up failed' });
+//         console.log(`sign-up-error: ${err}`);
+//       });
+//     });
+//   }
+// });
 
 // Login bootstrap page.
 router.get('/login', (req, res, next)=>{
   // req.flash - message from authentication, which set a flash message with erros.
-  res.render('login', { message: req.flash('error') });
+  const error = req.flash('error');
+  log.debug(`Login flash error: ${error}`);
+  res.render('login', { message: error });
 });
 
 // Login semantic-ui page.
@@ -74,7 +101,9 @@ router.post('/login',
     successRedirect: '/',
     failureRedirect: 'login',
     badRequestMessage: 'Falta credenciais.',
-    failureFlash: true}));
+    failureFlash: true
+  })
+);
 
 // logout
 router.get('/logout', (req, res, next)=>{

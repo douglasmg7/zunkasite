@@ -78,10 +78,10 @@ var sessionOpts = {
   cookie: { maxAge: 2419200000 }, // configure when sessions expires,
   store: new MongoStore({ url: dbUrl })
 };
-if (app.get('env') === 'production') {
-  app.set('trust proxy', 1); // trust first proxy
-  sessionOpts.cookie.secure = true; // serve secure cookies
-}
+// if (app.get('env') === 'production') {
+//   app.set('trust proxy', 1); // trust first proxy
+//   sessionOpts.cookie.secure = true; // serve secure cookies
+// }
 
 // webpack HMR
 app.use(webpackDevMiddleware);
@@ -100,35 +100,57 @@ app.use(passport.session());
 passport.use(new LocalStrategy(function (username, password, done) {
   mongo.db.collection(dbConfig.collSession).findOne({username: username}, (err, user)=>{
     // console.log(`user from db: ${JSON.stringify(user)}`);
-    if (err) { log.error(`Database error: ${err}`); return done(err); }
+    if (err) { 
+      log.error(`Passport.use - local strategy - Database error: ${err}`); 
+      return done(err, false, {message: 'Internal error.'}); 
+    }
     // User not found.
-    if (!user) { log.warn(`User ${username} not found on database.`); return done(null, false, {message: 'Usuario nao cadastrado.'}); }
-    // Verify password.
-    log.info('Before bcrypt compare.');
-    bcrypt.compare(password, user.password, (err, res)=>{
-      if (err) { log.error(`bcrypt error: ${err}`); }
-      // Correct password.
-      if (res) {
-        return done(null, user, {message: `Bem vindo ${user.username}`});
-      // Wrong password.
-      } else {
-        log.warn(`Incorrect password for user ${username}`);
-        return done(null, false, {message: 'Senha incorreta.'});
-      }
-    });
+    if (!user) { 
+      log.warn(`User ${username} not found on database.`); 
+      return done(null, false, { message: 'Usuario nao cadastrado.'} ); 
+    }
+    // Password match.
+    if (password === user.password){
+      return done(null, user); 
+
+    // Wrong password.
+    } else {
+      log.warn(`Incorrect password for user ${username}`);
+      return done(null, false, { message: 'Senha incorreta.'} ); 
+    }
   });
 }));
+
+// passport.use(new LocalStrategy(function (username, password, done) {
+//   mongo.db.collection(dbConfig.collSession).findOne({username: username}, (err, user)=>{
+//     // console.log(`user from db: ${JSON.stringify(user)}`);
+//     if (err) { log.error(`Database error: ${err}`); return done(err); }
+//     // User not found.
+//     if (!user) { log.warn(`User ${username} not found on database.`); return done(null, false, {message: 'Usuario nao cadastrado.'}); }
+//     // Verify password.
+//     log.info('Before bcrypt compare.');
+//     bcrypt.compare(password, user.password, (err, res)=>{
+//       if (err) { log.error(`bcrypt error: ${err}`); }
+//       // Correct password.
+//       if (res) {
+//         return done(null, user, {message: `Bem vindo ${user.username}`});
+//       // Wrong password.
+//       } else {
+//         log.warn(`Incorrect password for user ${username}`);
+//         return done(null, false, {message: 'Senha incorreta.'});
+//       }
+//     });
+//   });
+// }));
+
 // Serialize _id to session, write _id to session.passport.user.
 passport.serializeUser(function(user, done) {
   log.info('passport.serialize');
-  // log.info(`user: ${JSON.stringify(user)}`);
-  // log.info(`_id: ${JSON.stringify(user._id)}`);
   done(null, user._id);
 });
 // Deserialize from the session, use session.passport.user to find user into db.
 passport.deserializeUser(function(id, done) {
   log.info('passport.deserialize');
-  // log.info(`id: ${id}`);
   const _id = new ObjectId(id);
   mongo.db.collection(dbConfig.collSession).findOne({_id: _id}, (err, user)=>{
     // console.log(`user from db: ${JSON.stringify(user)}`);
