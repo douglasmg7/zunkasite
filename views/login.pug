@@ -4,7 +4,7 @@ html(lang="en")
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
     title Login Using bootstrap.
-    link(rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css" charset="utf-8")
+    include bootstrap.css.pug
   body
     nav.navbar.navbar-inverse
       //- .container-fluid
@@ -36,5 +36,5 @@ html(lang="en")
                 p.help-block Nao tem cadastro?
                 a.btn.btn-info.btn-block(href='/users/signup') Cadastrar
         .col-md-4
-    script(src="/bower_components/jquery/dist/jquery.min.js")
-    script(src="/bower_components/bootstrap/dist/js/bootstrap.min.js")
+    include jquery.js.pug
+    include bootstrap.js.pug

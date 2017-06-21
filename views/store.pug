@@ -4,15 +4,17 @@ html(lang="en")
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
     title #{title}
-    link(rel="stylesheet" href="/semantic/dist/semantic.min.css" charset="utf-8")      
+    include semantic.css.pug
+    //- link(rel="stylesheet" href="/semantic/dist/semantic.min.css" charset="utf-8")      
   body
     //- P=kaf
     //- P= kaf
     //- P #{kaf}
     //- img(alt=kaf)
     #app
-    script(src="/bower_components/jquery/dist/jquery.min.js")
-    script(src="/semantic/dist/semantic.min.js")
+    include jquery.js.pug
+    include semantic.js.pug
+    //- script(src="/semantic/dist/semantic.min.js")
     //- Make pug data disponible to vue instance.
     script.
       /*console.log('Pug data: #{kaf}')*/
