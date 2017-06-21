@@ -9,7 +9,7 @@ const log = require('../bin/log');
 
 // Signup page.
 router.get('/signup', (req, res, next)=>{
-  res.render('signUp', { message: req.flash('error') });
+  res.render('signup', { message: req.flash('error') });
 });
 
 // Sign up request.

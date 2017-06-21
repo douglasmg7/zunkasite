@@ -3,8 +3,8 @@ html(lang="en")
   head
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
-    title #{title}
-    link(rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css" charset="utf-8")
+    title Cadastro de usuario.
+    include bootstrap.css.pug
   body
     nav.navbar.navbar-inverse
       //- .container-fluid
@@ -29,5 +29,5 @@ html(lang="en")
                   input.form-control(type='password' name='password' placeholder='senha')
                 input.btn.btn-primary.btn-block(type='submit' value='Cadastrar')
         .col-md-4
-    script(src="/bower_components/jquery/dist/jquery.min.js")
-    script(src="/bower_components/bootstrap/dist/js/bootstrap.min.js")
+    include jquery.js.pug
+    include bootstrap.js.pug

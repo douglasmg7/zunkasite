@@ -57,6 +57,7 @@
   'use strict';
   import wsPath from '../../bin/wsPath';
   import accounting from 'accounting';
+
   // Initialize.
   $(document).ready(function(){
     // Initialize dropdown.
@@ -90,7 +91,7 @@
       }
     },
     // Text for search products and user logged.
-    props:['initSearch', 'username', 'group'],
+    props:['$http', 'initSearch', 'username', 'group'],
     created() {
       // search from a product item page, not from this store page
       this.search = this.initSearch;

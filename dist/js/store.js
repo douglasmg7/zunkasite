@@ -1,10 +1,9 @@
 /* eslint no-unused-vars: off */
 'use strict';
-import Vue from 'vue';
-import vueResource from 'vue-resource';
-Vue.use(vueResource);
-// components
-import Store from './store.vue';
+
+// Vue component.
+import Store from '../../src/js/store.vue';
+
 // event hub
 window.eventHub = new Vue({
 });
@@ -15,6 +14,7 @@ window.appVue = new Vue({
   render(h) {
     return h(Store, {props: 
       {
+        $http: this.$http,
         username: window.renderData.username, 
         initSearch: window.renderData.initSearch,
         group: window.renderData.group
@@ -27,5 +27,8 @@ window.appVue = new Vue({
     };
   },
   created() {
+    // this.$http.get('http://httpbin.org/ip').then(function ({data}) {
+    //   console.log(data)
+    // });    
   }
 });
