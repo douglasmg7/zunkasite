@@ -2,11 +2,14 @@ doctype html
 html(lang="en")
   head
     meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
     title Zunka - Produtos
-    link(rel="stylesheet" href="/semantic/dist/semantic.min.css" charset="utf-8")
+    include components/semantic.css.pug    
   body
     #app
-      products-store
-    script(src="/bower_components/jquery/dist/jquery.min.js")
-    script(src="/semantic/dist/semantic.min.js")
+      //- products-store
+    include components/jquery.js.pug
+    include components/semantic.js.pug
+    include components/vue.js.pug
+    include components/vue-resource.js.pug
     script(src='/bundleProductsStore.js')

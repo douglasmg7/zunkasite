@@ -122,7 +122,7 @@
 <script>
   'use strict';
   import accounting from 'accounting';
-  import wsPath from '../../bin/wsPath';
+  import wsPath from '../bin/wsPath';
   let self = this;
   // initialize
   $(document).ready(function(){

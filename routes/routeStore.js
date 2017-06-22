@@ -14,7 +14,6 @@ router.get('/', function(req, res, next) {
   // log.verbose(`get / - req.isAuthenticated(): ${req.isAuthenticated()}`);
   // res.render('store', {initSearch: req.query.search});
   res.render('store', {
-    title: 'Produtos da loja',
     initSearch: req.query.search,
     username: req.isAuthenticated() ? req.user.username : null,
     group: req.isAuthenticated() ? req.user.group : null});

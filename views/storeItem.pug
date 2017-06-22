@@ -2,13 +2,14 @@ doctype html
 html(lang="en")
   head
     meta(charset='utf-8')
-    title #{title}
-    link(rel="stylesheet" href="/semantic/dist/semantic.min.css" charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Equipamentos de informatica.
+    include components/semantic.css.pug
   body
     #app
-      store-item(:product= product)
-    script(src="/bower_components/jquery/dist/jquery.min.js")
-    script(src="/semantic/dist/semantic.min.js")
+      //- store-item(:product= product)
+    include components/jquery.js.pug
+    include components/semantic.js.pug
+    include components/vue.js.pug
+    include components/vue-resource.js.pug
     script(src='/bundleStoreItem.js')
-    //- store-item(product= product)
-    //- store-item(:product='{_id: "asdf"}')

@@ -2,11 +2,14 @@ doctype html
 html(lang="en")
   head
     meta(charset='utf-8')
-    title All Nations - Produtos
-    link(rel="stylesheet" href="/semantic/dist/semantic.min.css" charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title All Nations - Produtos.
+    include components/semantic.css.pug
   body
     #app
-      products-allnations
-    script(src="/bower_components/jquery/dist/jquery.min.js")
-    script(src="/semantic/dist/semantic.min.js")
+      //- products-allnations
+    include components/jquery.js.pug
+    include components/semantic.js.pug
+    include components/vue.js.pug
+    include components/vue-resource.js.pug
     script(src='/bundleProductsAllNations.js')

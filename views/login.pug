@@ -4,7 +4,7 @@ html(lang="en")
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
     title Login Using bootstrap.
-    include bootstrap.css.pug
+    include components/bootstrap.css.pug
   body
     nav.navbar.navbar-inverse
       //- .container-fluid
@@ -36,5 +36,5 @@ html(lang="en")
                 p.help-block Nao tem cadastro?
                 a.btn.btn-info.btn-block(href='/users/signup') Cadastrar
         .col-md-4
-    include jquery.js.pug
-    include bootstrap.js.pug
+    include components/jquery.js.pug
+    include components/bootstrap.js.pug

@@ -55,7 +55,7 @@
 <script>
   /* globals accounting */
   'use strict';
-  import wsPath from '../../bin/wsPath';
+  import wsPath from '../bin/wsPath';
   import accounting from 'accounting';
 
   // Initialize.

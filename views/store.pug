@@ -3,8 +3,8 @@ html(lang="en")
   head
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
-    title #{title}
-    include semantic.css.pug
+    title Equipamentos de informatica.
+    include components/semantic.css.pug
   body
     #app
     //- Make pug data disponible to vue instance.
@@ -13,8 +13,8 @@ html(lang="en")
       window.renderData.initSearch = '#{initSearch}'
       window.renderData.username = '#{username}'
       window.renderData.group = '#{group}'
-    include jquery.js.pug
-    include semantic.js.pug
-    include vue.js.pug
-    include vue-resource.js.pug
+    include components/jquery.js.pug
+    include components/semantic.js.pug
+    include components/vue.js.pug
+    include components/vue-resource.js.pug
     script(src='/bundleStore.js')

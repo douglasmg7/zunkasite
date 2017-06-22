@@ -2,7 +2,7 @@
 'use strict';
 
 // Vue component.
-import Store from '../../src/js/store.vue';
+import Store from './store.vue';
 
 // event hub
 window.eventHub = new Vue({
@@ -20,11 +20,6 @@ window.appVue = new Vue({
         group: window.renderData.group
       }
     });
-  },
-  data() {
-    return {
-      msg: {username: 'Catarine'}
-    };
   },
   created() {
     // this.$http.get('http://httpbin.org/ip').then(function ({data}) {

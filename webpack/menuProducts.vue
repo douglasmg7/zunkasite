@@ -2,7 +2,6 @@
   .ui.menu
     a.item(href='store' v-bind:class='{"active": active === "store"}') Zunka
     a.item(href='allnations' v-bind:class='{"active": active === "allNations"}') All Nations
-    a.item(href='manual' v-bind:class='{"active": active === "manual"}') Manual
     .right.menu
       .item(v-if='active == "store"')
         button.ui.button(v-on:click='$emit("newProduct")') Criar Produto

@@ -7,7 +7,7 @@
         table.ui.very.compact.striped.table
           tbody
             tr
-              td Id Manual Insert
+              td Id All Nations
               td {{product.code}}
             tr
               td Id Loja
@@ -92,12 +92,12 @@
 </template>
 <script>
   'use strict';
-  import wsPath from '../../bin/wsPath';
+  import wsPath from '../bin/wsPath';
   import accounting from 'accounting';
   export default {
     data: function(){
       return {
-        msg: 'Products Detail Manual Insert'
+        msg: 'Products Detail All Nations'
       }
     },
     props:[
@@ -123,7 +123,7 @@
       setCommercialize(product, commercialize){
         commercialize = commercialize === true ? true : false;
         console.log(`setCommercialize -> _id: ${product._id}, commercialize: ${commercialize}`);
-        this.$http.put(`${wsPath.manualInsert}/set-commercialize/${product._id}`, {commercialize: commercialize})
+        this.$http.put(`${wsPath.allNations}/set-commercialize/${product._id}`, {commercialize: commercialize})
           .then((res)=>{
             this.product.commercialize = commercialize;
             this.$emit('save');
