@@ -1,6 +1,6 @@
 <template lang='pug'>
   div
-    menu-products(active='store' v-on:input='search=arguments[0]' v-on:search='getProducts()' v-on:newProduct='newProduct()')
+    menu-products(active='store' v-on:input='search=arguments[0]' v-on:search='getProducts()' v-on:newProduct='showNewProduct()')
     table.ui.compact.table
       thead
         tr
@@ -32,9 +32,11 @@
           a.item(@click='getProducts(n)' v-bind:class='{"active": n==page}') {{n}}
     .ui.hidden.divider
     products-store-detail(
+      :$http='this.$http',
       :product='selectedProduct', 
       :productMakers='productMakers', 
-      :productCategories='productCategories' 
+      :productCategories='productCategories',
+      :isNewProduct='isNewProduct',
       @save='updateProduct',
       @new='saveNewProduct()')
 </template>
@@ -59,6 +61,7 @@
         selectedProduct: {},
         productMakers: ['void'],
         productCategories: ['void'],
+        isNewProduct: false,
         // curret page for pagination
         page:1,
         // number of pages for pagination
@@ -67,15 +70,12 @@
         search: ''
       }
     },
+    props: ['$http'],
     created() {
       this.getProducts();
       this.getDropdown();
     },
     methods: {
-      newProduct(){
-        console.log('newProduct');
-
-      },
       // retrive products page
       getProducts(page=1){
         this.$http.get(`${wsPath.store}?page=${page}&search=${this.search}`)
@@ -89,6 +89,8 @@
           });
       },
       showProduct(product){
+        // Edit a product.
+        this.isNewProduct = false;
         // Deep clone.
         this.selectedProduct = JSON.parse(JSON.stringify(product));
         // Open modal.
@@ -116,11 +118,13 @@
           .modal('show');
       },
       // Open modal with new default product.
-      newProduct(){
+      showNewProduct(){
+        // Create a new product.
+        this.isNewProduct = true;
         // Deep clone.
         this.selectedProduct = {
-          storeProductId: 'asdfasdfa',
-          storeProductTitle: 'Novo produto'
+          storeProductId: '000000000',
+          storeProductTitle: ''
         };
         // Open modal.
         $('.ui.small.modal')

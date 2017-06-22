@@ -138,7 +138,6 @@
   export default {
     data: function(){
       return {
-        msg: 'Products Detail Store',
         loadedImages: ['void']};
     },
     created() {
@@ -148,7 +147,7 @@
         self.updateImagesList(self.product);
       });
     },
-    props:['product', 'productMakers', 'productCategories'],
+    props:['$http', 'product', 'productMakers', 'productCategories', 'isNewProduct'],
     filters: { currencyBr(value){ return accounting.formatMoney(value, "R$ ", 2, ".", ","); }},
     methods: {
       saveProduct(product){
