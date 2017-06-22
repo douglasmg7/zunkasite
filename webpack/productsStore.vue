@@ -32,13 +32,12 @@
           a.item(@click='getProducts(n)' v-bind:class='{"active": n==page}') {{n}}
     .ui.hidden.divider
     products-store-detail(
+      ref='productStoreDetail'
       :$http='this.$http',
       :product='selectedProduct', 
       :productMakers='productMakers', 
       :productCategories='productCategories',
-      :isNewProduct='isNewProduct',
-      @save='updateProduct',
-      @new='saveNewProduct()')
+      @save='updateProduct')
 </template>
 <script>
   /* globals accounting */
@@ -50,6 +49,7 @@
   import productsStoreDetail from './productsStoreDetail.vue';
   // let veeValidate = require('vee-validate');
   export default {
+    ref: 'productStore',
     components: {
       menuProducts,
       productsStoreDetail
@@ -57,16 +57,15 @@
     data: function(){
       return {
         products: ['void'],
-        // deep clone of selected product
+        // Deep clone of selected product.
         selectedProduct: {},
         productMakers: ['void'],
         productCategories: ['void'],
-        isNewProduct: false,
-        // curret page for pagination
+        // Curret page for pagination.
         page:1,
-        // number of pages for pagination
+        // Number of pages for pagination.
         pageCount: 1,
-        // text for search products
+        // Text for search products.
         search: ''
       }
     },
@@ -76,7 +75,7 @@
       this.getDropdown();
     },
     methods: {
-      // retrive products page
+      // Get products page.
       getProducts(page=1){
         this.$http.get(`${wsPath.store}?page=${page}&search=${this.search}`)
           .then((res)=>{
@@ -88,43 +87,58 @@
             console.log(`Error - getProducts(), err: ${err}`);
           });
       },
+      // Open modal with products detail.
       showProduct(product){
-        // Edit a product.
-        this.isNewProduct = false;
         // Deep clone.
         this.selectedProduct = JSON.parse(JSON.stringify(product));
+        this.selectedProduct.isNew = false;
         // Open modal.
-        $('.ui.small.modal')
-          // init and update dropdown
-          .modal({
-              onShow: function (){
-                setTimeout(function () {
-                  $('.ui.dropdown').dropdown({duration: 0});
-                  // Modal opened event for product detail.
-                  this.eventHub.$emit('modal-onShow');
-                }, 100);}
-              // onApprove: function (){
-              //   console.log('onApprove');
-              //   return false;
-              // },
-              // onDeny: function () {
-              //   console.log('onDeny');
-              //   return false;
-              // }
-          })
-          // fast open
-          .modal('setting', 'duration', 0)
-          // open modal
-          .modal('show');
+        console.log('------------ init show product --------------');
+        $('.ui.small.modal').modal('show');
+        console.log('------------ end show product --------------');
       },
-      // Open modal with new default product.
+      // // Open modal with products detail.
+      // showProduct(product){
+      //   // Deep clone.
+      //   this.selectedProduct = JSON.parse(JSON.stringify(product));
+      //   this.selectedProduct.isNew = false;
+      //   // Open modal.
+      //   console.log('------------ init show product --------------');
+      //   $('.ui.small.modal')
+      //     // init and update dropdown
+      //     .modal({
+      //         onShow: function (){
+      //           setTimeout(function () {
+      //             $('.ui.dropdown').dropdown({duration: 0});
+      //             // Modal opened event for product detail.
+      //             this.eventHub.$emit('modal-onShow');
+      //           }, 100);},
+      //         // onHidden: function() {
+      //         //   console.log('--------------- modal close ------------');
+      //         // }
+      //         // onApprove: function (){
+      //         //   console.log('onApprove');
+      //         //   return false;
+      //         // },
+      //         // onDeny: function () {
+      //         //   console.log('onDeny');
+      //         //   return false;
+      //         // }
+      //     })
+      //     // fast open
+      //     .modal('setting', 'duration', 0)
+      //     // open modal
+      //     .modal('show');
+      //     console.log('------------ end show product --------------');
+      // },      
+      // Open modal with new product.
       showNewProduct(){
         // Create a new product.
-        this.isNewProduct = true;
-        // Deep clone.
         this.selectedProduct = {
+          dealer: 'zunka',
           storeProductId: '000000000',
-          storeProductTitle: ''
+          storeProductTitle: '',
+          isNew: true
         };
         // Open modal.
         $('.ui.small.modal')
@@ -150,7 +164,10 @@
           // open modal
           .modal('show');
       },      
+
+      // Update product save by the modal.
       updateProduct(){
+        console.log('productStore.updateProduct()');
         this.products.forEach((element, index)=>{
           if (element._id === this.selectedProduct._id) {
             this.$set(this.products, index, this.selectedProduct);
@@ -158,15 +175,18 @@
           }
         });
       },
-      saveNewProduct(){
-        // this.products.forEach((element, index)=>{
-        //   if (element._id === this.selectedProduct._id) {
-        //     this.$set(this.products, index, this.selectedProduct);
-        //     return
-        //   }
-        // });
-        console.log('saveNewProduct');
-      },
+
+      // saveNewProduct(){
+      //   console.log('productStore.saveNewProduct()');
+      //   // this.products.forEach((element, index)=>{
+      //   //   if (element._id === this.selectedProduct._id) {
+      //   //     this.$set(this.products, index, this.selectedProduct);
+      //   //     return
+      //   //   }
+      //   // });
+      // },
+
+      // Get dropdown options.
       getDropdown(){
         this.$http.get(`${wsPath.store}/dropdown`)
           .then((res)=>{
@@ -178,6 +198,7 @@
           });
       }
     },
+
     filters: {
       currencyBr(value){
         return accounting.formatMoney(value, 'R$ ', 2, '.', ',');

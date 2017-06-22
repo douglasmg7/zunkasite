@@ -5,7 +5,9 @@ const mongo = require('../model/db');
 const dbConfig = mongo.config;
 const ObjectId = require('mongodb').ObjectId;
 const path = require('path');
-const fs = require('fs');
+// const fs = require('fs');
+const fse = require('fs-extra');
+const log = require('../bin/log');
 // file upload
 const formidable = require('formidable');
 // page size for admin pagination
@@ -57,56 +59,60 @@ router.put('/:id', function(req, res) {
     res.json('status: fail');
   });
 });
-// upload product pictures
-router.put('/upload-product-images/:id', (req, res)=>{
+
+// Upload product pictures.
+router.put('/upload-product-images/:dealer/:id', (req, res)=>{
+  // console.log(`req.params: ${JSON.stringify(req.params)}`);
   const form = formidable.IncomingForm();
-  const DIR_IMG_PRODUCT = path.join(__dirname, '..', 'dist/img/allnations/products', req.params.id);
+  const DIR_IMG_PRODUCT = path.join(__dirname, '..', 'dist/img/' + req.params.dealer.replace(/\s/g, '') + '/products', req.params.id);
   const MAX_FILE_SIZE_UPLOAD = 10 * 1024 * 1024;
   form.uploadDir = DIR_IMG_PRODUCT;
   form.keepExtensions = true;
   form.multiples = true;
-  // verifiy file size
+  // Verifiy file size.
   form.on('fileBegin', function(name, file){
     if (form.bytesExpected > MAX_FILE_SIZE_UPLOAD) {
       this.emit('error', `"${file.name}" too big (${(form.bytesExpected / (1024 * 1024)).toFixed(1)}mb)`);
     }
   });
-  // name / file pair has been received
+  // Received name and file.
   form.on('file', function(name, file) {
     // fs.rename(file.path, path.join(form.uploadDir, file.name));
-    console.log(`"${file.name}" uploaded to "${file.path}"`);
+    log.info(`"${file.name}" uploaded to "${file.path}"`);
   });
-  // err
+  // Err.
   form.on('error', function(err) {
-    console.log(`error uploading file: ${err}`);
+    log.error(`error uploading file: ${err}`);
     res.writeHead(413, {'connection': 'close', 'content-type': 'text/plain'});
     res.end(err);
     req.connection.destroy();
   });
-  // all files have been uploaded
+  // All files have been uploaded.
   form.on('end', function() {
     res.json('status: success');
   });
-  // create folder and start upload
-  fs.mkdir(DIR_IMG_PRODUCT, err=>{
-    // other erro than file alredy exist
+  // Create folder if not exist and start upload.
+  fse.ensureDir(DIR_IMG_PRODUCT, err=>{
+    // Other erro than file alredy exist.
     if (err && err.code !== 'EEXIST') {
-      console.log(`error creating path upload images - err: ${err}`);
+      log.error(`Error creating path for uploaded images - err: ${err}`);
     } else {
       form.parse(req);
     }
   });
 });
-// get list of product images url
-router.get('/get-product-images-url/:id', function(req, res) {
-  const DIR_IMG_PRODUCT = path.join(__dirname, '..', 'dist/img/allnations/products', req.params.id);
+
+// Get list of product images url.
+router.get('/get-product-images-url/:dealer/:id', function(req, res) {
+  const DIR_IMG_PRODUCT = path.join(__dirname, '..', 'dist/img/' + req.params.dealer.replace(/\s/g, '') + '/products', req.params.id);
+  // console.log(`get image url dir: ${DIR_IMG_PRODUCT}`);
   // get list of files
-  fs.readdir(DIR_IMG_PRODUCT, (err, files)=>{
+  fse.readdir(DIR_IMG_PRODUCT, (err, files)=>{
     if (err) {
-      console.log(`error load list of files: ${err}`);
+      log.error(`error load list of files: ${err}`);
       res.json([]);
     } else {
-      console.log(JSON.stringify(files));
+      log.info(JSON.stringify(files));
       res.json(files);
       // res.json({a: 'asdf'});
     }

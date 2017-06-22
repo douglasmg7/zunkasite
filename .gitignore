@@ -6,7 +6,7 @@ node_modules/
 bower_components/
 public/js/bundle*
 bin/xml/
-dist/img/allnations/
+dist/img/
 
 semantic/*.*
 semantic/tasks/

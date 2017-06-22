@@ -11,6 +11,6 @@ window.eventHub = new Vue({
 window.appVue = new Vue({
 	el: '#app',
  	render (h) {
- 		return h(productsStore, {props: {$http: this.$http}});
+ 		return h(productsStore, {props: {$http: this.$http}, ref: 'productsStore'});
 	}
 });

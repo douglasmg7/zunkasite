@@ -20,13 +20,13 @@
             .field
               label Imagens
               .ui.tiny.images
-                img(v-for='image in loadedImages', :src='"/img/allnations/products/" + product.dealerProductId + "/" + image')
+                img(v-if='loadedImages.length > 0' v-for='image in loadedImages', :src='imageSrc(image)')
               .ui.left.aligned.container
                 label.ui.labeled.icon.button(for='file-upload')
                   i.large.upload.icon
                   | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) local
-                input(type='file' id='file-upload' accept='image/*' style='display:none' multiple @change='uploadProductPictures(product)')
-                label.ui.labeled.icon.button(@click='loadDealerImages(product)')
+                input(type='file' id='file-upload' accept='image/*' style='display:none' multiple @change='uploadProductPictures()')
+                label.ui.labeled.icon.button(@click='downloadDealerImages(product)')
                   i.large.upload.icon
                   | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) do fornecedor
             .field
@@ -123,31 +123,49 @@
   'use strict';
   import accounting from 'accounting';
   import wsPath from '../bin/wsPath';
-  let self = this;
-  // initialize
-  $(document).ready(function(){
-    // // initialize dropdown
-    // $('.ui.dropdown')
-    //   .dropdown({duration: 0});
-    $('.ui.form').form({
-      onSuccess: function (event, fields) {
-        event.preventDefault();
-      }
-    })
-  });
+  const self = this;
+
   export default {
     data: function(){
       return {
-        loadedImages: ['void']};
+        loadedImages: []};
+    },
+    mounted(){
+      // //  Modal opened.
+      // var self = this;
+      // window.eventHub.$on('modal-onShow', function(){
+      //   self.updateImagesList(self.product);
+      // });
+      // // initialize dropdown
+      // $('.ui.dropdown')
+      //   .dropdown({duration: 0});
+      $('.ui.form').form({
+        onSuccess: function (event, fields) {
+          event.preventDefault();
+        }
+      });
+      // Open modal.
+      $('.ui.small.modal').modal({
+        onShow: function (){
+          setTimeout(function () {
+            $('.ui.dropdown').dropdown({duration: 0});
+              // Update images urls.
+              const vueSelf = appVue.$refs.productsStore.$refs.productStoreDetail;
+              vueSelf.updateImagesList(vueSelf.product)
+              // console.log(appVue.$refs.productsStore.$refs.productStoreDetail);
+              // console.log(self.default.methods);
+          }, 100);},
+        onHidden: function() {
+          // Clean images urls for the next time that modal open.
+          appVue.$refs.productsStore.$refs.productStoreDetail.loadedImages = [];
+        }
+      })
+      .modal('setting', 'duration', 0);
     },
     created() {
-      //  Modal opened.
-      var self = this;
-      window.eventHub.$on('modal-onShow', function(){
-        self.updateImagesList(self.product);
-      });
+    
     },
-    props:['$http', 'product', 'productMakers', 'productCategories', 'isNewProduct'],
+    props:['$http', 'product', 'productMakers', 'productCategories'],
     filters: { currencyBr(value){ return accounting.formatMoney(value, "R$ ", 2, ".", ","); }},
     methods: {
       saveProduct(product){
@@ -160,7 +178,8 @@
             console.log(`err: ${JSON.stringify(err)}`);
           });
       },
-      loadDealerImages(product){
+      // Download dealer images from dealer server.
+      downloadDealerImages(product){
         let self = this;
         this.$http.put(`${wsPath.allNations}/download-dealer-images/${product._id}`)
           .then(()=>{
@@ -171,7 +190,8 @@
             console.log(`err: ${JSON.stringify(err)}`);
           })
       },
-      uploadProductPictures(product){
+      // Save picture chosen by the user on the server.
+      uploadProductPictures(){
         let files = $('input:file')[0].files;
         // no files
         if (files.length === 0) {
@@ -188,7 +208,7 @@
             // formData.append('photos[]', files[i], files[i].name);
           }
           let self = this;
-          this.$http.put(`${wsPath.store}/upload-product-images/${product.dealerProductId}`, formData)
+          this.$http.put(`${wsPath.store}/upload-product-images/${this.product.dealer}/${this.product.dealerProductId}`, formData)
             .then(()=>{
               this.updateImagesList(this.product);
             })
@@ -198,17 +218,22 @@
             })
         }
       },
+      // Get list of image names to use with the img tag, to show images.
       updateImagesList(product){
         // get list of images url
-        this.$http.get(`${wsPath.store}/get-product-images-url/${product.dealerProductId}`)
+        this.$http.get(`${wsPath.store}/get-product-images-url/${product.dealer}/${product.dealerProductId}`)
           .then(result=>{
-            // console.log(`${JSON.stringify(result.body)}`);
+            console.log(`${JSON.stringify(result.body)}`);
             this.loadedImages = result.body;
           })
           .catch(err=>{
             this.loadedImages = ['void'];
             console.log(`error: ${err}`);
           })
+      },
+      // Path to image src tag.
+      imageSrc(image) {
+        return '/img/' + this.product.dealer.replace(/\s/g, '') + '/products/' + this.product.dealerProductId + '/' + image;
       }
     },
     computed: {
@@ -230,7 +255,7 @@
         }
         this.product.storeProductPrice = result;
         return accounting.formatMoney(result, '', 2, '.', ',');
-      },
+      }
     }
   }
 </script>
