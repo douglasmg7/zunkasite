@@ -44,9 +44,24 @@ router.get('/dropdown', function(req, res) {
     console.log(`Error dropdwon: ${err}`);
   });
 });
-// update a store product
-router.put('/:id', function(req, res) {
+// Insert a product.
+router.put('/', function(req, res) {
   // error if try to update document id
+  delete req.body._id;
+  mongo.db.collection(dbConfig.collStoreProducts).insert(req.body)
+  .then(result=>{
+    console.log(JSON.stringify(result.ops[0]));
+    // Send product inserted (client need the _id).
+    res.json(result.ops[0]);
+  }).catch(err=>{
+    console.log(`Insert product - err: ${err}`);
+    res.json('status: fail');
+  });
+});
+
+// Update a product.
+router.post('/:id', function(req, res) {
+  // Error if try to update document id.
   delete req.body._id;
   mongo.db.collection(dbConfig.collStoreProducts).updateOne(
     {_id: new ObjectId(req.params.id)},
@@ -61,10 +76,10 @@ router.put('/:id', function(req, res) {
 });
 
 // Upload product pictures.
-router.put('/upload-product-images/:dealer/:id', (req, res)=>{
+router.put('/upload-product-images/:dealer/:_id', (req, res)=>{
   // console.log(`req.params: ${JSON.stringify(req.params)}`);
   const form = formidable.IncomingForm();
-  const DIR_IMG_PRODUCT = path.join(__dirname, '..', 'dist/img/' + req.params.dealer.replace(/\s/g, '') + '/products', req.params.id);
+  const DIR_IMG_PRODUCT = path.join(__dirname, '..', 'dist/img/' + req.params.dealer.replace(/\s/g, '') + '/products', req.params._id);
   const MAX_FILE_SIZE_UPLOAD = 10 * 1024 * 1024;
   form.uploadDir = DIR_IMG_PRODUCT;
   form.keepExtensions = true;
@@ -103,8 +118,8 @@ router.put('/upload-product-images/:dealer/:id', (req, res)=>{
 });
 
 // Get list of product images url.
-router.get('/get-product-images-url/:dealer/:id', function(req, res) {
-  const DIR_IMG_PRODUCT = path.join(__dirname, '..', 'dist/img/' + req.params.dealer.replace(/\s/g, '') + '/products', req.params.id);
+router.get('/get-product-images-url/:dealer/:_id', function(req, res) {
+  const DIR_IMG_PRODUCT = path.join(__dirname, '..', 'dist/img/' + req.params.dealer.replace(/\s/g, '') + '/products', req.params._id);
   // console.log(`get image url dir: ${DIR_IMG_PRODUCT}`);
   // get list of files
   fse.readdir(DIR_IMG_PRODUCT, (err, files)=>{

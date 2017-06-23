@@ -93,9 +93,7 @@
         this.selectedProduct = JSON.parse(JSON.stringify(product));
         this.selectedProduct.isNew = false;
         // Open modal.
-        console.log('------------ init show product --------------');
         $('.ui.small.modal').modal('show');
-        console.log('------------ end show product --------------');
       },
       // // Open modal with products detail.
       // showProduct(product){
@@ -136,9 +134,9 @@
         // Create a new product.
         this.selectedProduct = {
           dealer: 'zunka',
-          storeProductId: '000000000',
+          storeProductId: '',
           storeProductTitle: '',
-          isNew: true
+          dealerProductCommercialize: true
         };
         // Open modal.
         $('.ui.small.modal')
@@ -164,28 +162,23 @@
           // open modal
           .modal('show');
       },      
-
-      // Update product save by the modal.
+      // Update or insert product save by modal.
       updateProduct(){
-        console.log('productStore.updateProduct()');
+        let productFound = false;
+        // Look for product to update.
         this.products.forEach((element, index)=>{
           if (element._id === this.selectedProduct._id) {
+            // Update product into list.
             this.$set(this.products, index, this.selectedProduct);
-            return
+            productFound = true;
+            // console.log('find product to save');
           }
         });
+        // Not found in products, so is a new one.
+        if (!productFound) {
+          this.products.push(this.selectedProduct);
+        }
       },
-
-      // saveNewProduct(){
-      //   console.log('productStore.saveNewProduct()');
-      //   // this.products.forEach((element, index)=>{
-      //   //   if (element._id === this.selectedProduct._id) {
-      //   //     this.$set(this.products, index, this.selectedProduct);
-      //   //     return
-      //   //   }
-      //   // });
-      // },
-
       // Get dropdown options.
       getDropdown(){
         this.$http.get(`${wsPath.store}/dropdown`)

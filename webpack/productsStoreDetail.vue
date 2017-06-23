@@ -168,16 +168,47 @@
     props:['$http', 'product', 'productMakers', 'productCategories'],
     filters: { currencyBr(value){ return accounting.formatMoney(value, "R$ ", 2, ".", ","); }},
     methods: {
+      // Save product.
       saveProduct(product){
-        this.$http.put(`${wsPath.store}/${product._id}`, product)
-          .then((res)=>{
-            this.$emit('save');
-          })
-          .catch((err)=>{
-            alert(`error: ${JSON.stringify(err)}`);
-            console.log(`err: ${JSON.stringify(err)}`);
+        // Update product.
+        if (product._id) {
+          this.$http.post(`${wsPath.store}/${product._id}`, product)
+            .then((res)=>{
+              // console.log(JSON.stringify(res));
+              this.$emit('save');
+            })
+            .catch((err)=>{
+              alert(`error: ${JSON.stringify(err)}`);
+              console.log(`err: ${JSON.stringify(err)}`);
+            });
+        }
+        // New product.
+        else {
+          this.$http.put(`${wsPath.store}/`, product)
+            .then((res)=>{
+              // Include _id received from db.
+              product._id = res.body._id;
+              // Event to update products list.
+              this.$emit('save');
+              // console.log(JSON.stringify(res.body));
+            })
+            .catch((err)=>{
+              alert(`error: ${JSON.stringify(err)}`);
+              console.log(`err: ${JSON.stringify(err)}`);
           });
+        }
       },
+      // saveProduct(product){
+      //   this.$http.put(`${wsPath.store}/${product._id}`, product)
+      //     .then((res)=>{
+      //       // this.$emit('save');
+      //       console.log(JSON.stringify(res));
+      //     })
+      //     .catch((err)=>{
+      //       alert(`error: ${JSON.stringify(err)}`);
+      //       console.log(`err: ${JSON.stringify(err)}`);
+      //     });
+      // },
       // Download dealer images from dealer server.
       downloadDealerImages(product){
         let self = this;
@@ -208,7 +239,7 @@
             // formData.append('photos[]', files[i], files[i].name);
           }
           let self = this;
-          this.$http.put(`${wsPath.store}/upload-product-images/${this.product.dealer}/${this.product.dealerProductId}`, formData)
+          this.$http.put(`${wsPath.store}/upload-product-images/${this.product.dealer}/${this.product._id}`, formData)
             .then(()=>{
               this.updateImagesList(this.product);
             })
@@ -221,9 +252,9 @@
       // Get list of image names to use with the img tag, to show images.
       updateImagesList(product){
         // get list of images url
-        this.$http.get(`${wsPath.store}/get-product-images-url/${product.dealer}/${product.dealerProductId}`)
+        this.$http.get(`${wsPath.store}/get-product-images-url/${product.dealer}/${product._id}`)
           .then(result=>{
-            console.log(`${JSON.stringify(result.body)}`);
+            // console.log(`${JSON.stringify(result.body)}`);
             this.loadedImages = result.body;
           })
           .catch(err=>{
@@ -233,7 +264,7 @@
       },
       // Path to image src tag.
       imageSrc(image) {
-        return '/img/' + this.product.dealer.replace(/\s/g, '') + '/products/' + this.product.dealerProductId + '/' + image;
+        return '/img/' + this.product.dealer.replace(/\s/g, '') + '/products/' + this.product._id + '/' + image;
       }
     },
     computed: {
