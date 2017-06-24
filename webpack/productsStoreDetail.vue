@@ -117,7 +117,11 @@
                     p {{product.dealerProductActive == true ? 'Produto ativo' : 'Produto inativo'}}
       .actions
         button.ui.positive.button(@click='saveProduct(product)') Salvar
-        button.ui.black.deny.button Fechar
+        button.ui.red.deny.button(v-if='!product.isNewProduct') Apagar
+        button.ui.red.deny.button(v-if='product.isNewProduct') Descartar
+        //- button.ui.red.deny.button(v-if='!product.isNewProduct' @click='deleteProduct(product)') Delete
+        //- button.ui.red.deny.button(v-if='product.isNewProduct' @click='deleteProduct(product)') Descartar
+        button.ui.black.deny.button(v-if='!product.isNewProduct') Fechar
 </template>
 <script>
   'use strict';
@@ -130,21 +134,15 @@
       return {
         loadedImages: []};
     },
+    props:['$http', 'product', 'productMakers', 'productCategories'],
     mounted(){
-      // //  Modal opened.
-      // var self = this;
-      // window.eventHub.$on('modal-onShow', function(){
-      //   self.updateImagesList(self.product);
-      // });
-      // // initialize dropdown
-      // $('.ui.dropdown')
-      //   .dropdown({duration: 0});
+      // Form event.
       $('.ui.form').form({
         onSuccess: function (event, fields) {
           event.preventDefault();
         }
       });
-      // Open modal.
+      // Modal events.
       $('.ui.small.modal').modal({
         onShow: function (){
           setTimeout(function () {
@@ -152,63 +150,63 @@
               // Update images urls.
               const vueSelf = appVue.$refs.productsStore.$refs.productStoreDetail;
               vueSelf.updateImagesList(vueSelf.product)
-              // console.log(appVue.$refs.productsStore.$refs.productStoreDetail);
-              // console.log(self.default.methods);
           }, 100);},
         onHidden: function() {
           // Clean images urls for the next time that modal open.
           appVue.$refs.productsStore.$refs.productStoreDetail.loadedImages = [];
-        }
+          // User not saved new product.
+          if (appVue.$refs.productsStore.$refs.productStoreDetail.isNewProduct) {
+            // Delete from db.
+            this.$http.delete(`${wsPath.store}/${product._id}`, product)
+              .then((res)=>{})
+              .catch((err)=>{ console.error(err); });
+          }
+        },
+        onDeny() {
+          if (confirm("Remover produto?")) { 
+            // Delete product.
+            const vueSelf = appVue.$refs.productsStore.$refs.productStoreDetail;
+            vueSelf.deleteProduct(vueSelf.product);
+            return true;
+          }
+          else{
+            return false;
+          }
+        }     
       })
       .modal('setting', 'duration', 0);
-    },
-    created() {
-    
-    },
-    props:['$http', 'product', 'productMakers', 'productCategories'],
-    filters: { currencyBr(value){ return accounting.formatMoney(value, "R$ ", 2, ".", ","); }},
+    },    
     methods: {
       // Save product.
       saveProduct(product){
-        // Update product.
-        if (product._id) {
-          this.$http.post(`${wsPath.store}/${product._id}`, product)
-            .then((res)=>{
-              // console.log(JSON.stringify(res));
-              this.$emit('save');
-            })
-            .catch((err)=>{
-              alert(`error: ${JSON.stringify(err)}`);
-              console.log(`err: ${JSON.stringify(err)}`);
-            });
-        }
-        // New product.
-        else {
-          this.$http.put(`${wsPath.store}/`, product)
-            .then((res)=>{
-              // Include _id received from db.
-              product._id = res.body._id;
-              // Event to update products list.
-              this.$emit('save');
-              // console.log(JSON.stringify(res.body));
-            })
-            .catch((err)=>{
-              alert(`error: ${JSON.stringify(err)}`);
-              console.log(`err: ${JSON.stringify(err)}`);
-          });
+        const isNewProduct = product.isNewProduct;
+        // Remove this propertie to keep product on db, when the windows close.
+        delete product.isNewProduct;
+        // Update product on db.
+        this.$http.put(`${wsPath.store}/${product._id}`, product)
+          .then((res)=>{
+            // Product list must be updated.
+            if (isNewProduct) {
+              this.$emit('productIncluded');
+            } else {
+              this.$emit('productSaved');
+            }
+          })
+          .catch((err)=>{ console.error(err); });
+      },
+      deleteProduct(product){
+        // if (!confirm('Remover?')) {return;}
+        // Delete from db.
+        this.$http.delete(`${wsPath.store}/${product._id}`, product)
+          .then((res)=>{
+          })
+          .catch((err)=>{ console.error(err); });  
+        // If prodcut in not new, must be deleted from products list.
+        if (!product.isNewProduct) {
+          // Event to remove product from list.
+          this.$emit('productDeleted');
         }
       },
-      // saveProduct(product){
-      //   this.$http.put(`${wsPath.store}/${product._id}`, product)
-      //     .then((res)=>{
-      //       // this.$emit('save');
-      //       console.log(JSON.stringify(res));
-      //     })
-      //     .catch((err)=>{
-      //       alert(`error: ${JSON.stringify(err)}`);
-      //       console.log(`err: ${JSON.stringify(err)}`);
-      //     });
-      // },
       // Download dealer images from dealer server.
       downloadDealerImages(product){
         let self = this;
@@ -216,10 +214,7 @@
           .then(()=>{
             self.updateImagesList(self.product);
           })
-          .catch(err=>{
-            alert(`error: ${JSON.stringify(err)}`);
-            console.log(`err: ${JSON.stringify(err)}`);
-          })
+          .catch((err)=>{ console.error(err); });
       },
       // Save picture chosen by the user on the server.
       uploadProductPictures(){
@@ -243,10 +238,7 @@
             .then(()=>{
               this.updateImagesList(this.product);
             })
-            .catch(err=>{
-              alert(`error: ${JSON.stringify(err)}`);
-              console.log(`err: ${JSON.stringify(err)}`);
-            })
+            .catch((err)=>{ console.error(err); });
         }
       },
       // Get list of image names to use with the img tag, to show images.
@@ -254,12 +246,11 @@
         // get list of images url
         this.$http.get(`${wsPath.store}/get-product-images-url/${product.dealer}/${product._id}`)
           .then(result=>{
-            // console.log(`${JSON.stringify(result.body)}`);
             this.loadedImages = result.body;
           })
           .catch(err=>{
             this.loadedImages = ['void'];
-            console.log(`error: ${err}`);
+            console.error(err);
           })
       },
       // Path to image src tag.
@@ -287,7 +278,8 @@
         this.product.storeProductPrice = result;
         return accounting.formatMoney(result, '', 2, '.', ',');
       }
-    }
+    },
+    filters: { currencyBr(value){ return accounting.formatMoney(value, "R$ ", 2, ".", ","); }}
   }
 </script>
 <style lang='stylus'>

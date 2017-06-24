@@ -5,16 +5,15 @@ const mongo = require('../model/db');
 const dbConfig = mongo.config;
 const ObjectId = require('mongodb').ObjectId;
 const path = require('path');
-// const fs = require('fs');
 const fse = require('fs-extra');
 const log = require('../bin/log');
-// file upload
+// File upload.
 const formidable = require('formidable');
-// page size for admin pagination
+// Page size for admin pagination.
 const PAGE_SIZE_ADMIN = 50;
-// page size for site pagination
+// Page size for site pagination.
 const PAGE_SIZE_STORE = 10;
-// get products
+// Get products.
 router.get('/', function (req, res) {
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
   const skip = (page - 1) * PAGE_SIZE_ADMIN;
@@ -45,9 +44,7 @@ router.get('/dropdown', function(req, res) {
   });
 });
 // Insert a product.
-router.put('/', function(req, res) {
-  // error if try to update document id
-  delete req.body._id;
+router.post('/', function(req, res) {
   mongo.db.collection(dbConfig.collStoreProducts).insert(req.body)
   .then(result=>{
     console.log(JSON.stringify(result.ops[0]));
@@ -58,9 +55,8 @@ router.put('/', function(req, res) {
     res.json('status: fail');
   });
 });
-
 // Update a product.
-router.post('/:id', function(req, res) {
+router.put('/:id', function(req, res) {
   // Error if try to update document id.
   delete req.body._id;
   mongo.db.collection(dbConfig.collStoreProducts).updateOne(
@@ -74,10 +70,22 @@ router.post('/:id', function(req, res) {
     res.json('status: fail');
   });
 });
-
+// Update a product.
+router.delete('/:id', function(req, res) {
+  // Error if try to update document id.
+  delete req.body._id;
+  mongo.db.collection(dbConfig.collStoreProducts).deleteOne(
+    {_id: new ObjectId(req.params.id)}
+  )
+  .then(result=>{
+    res.json('status: success');
+  }).catch(err=>{
+    console.log(`saving store products detail - err: ${err}`);
+    res.json('status: fail');
+  });
+});
 // Upload product pictures.
 router.put('/upload-product-images/:dealer/:_id', (req, res)=>{
-  // console.log(`req.params: ${JSON.stringify(req.params)}`);
   const form = formidable.IncomingForm();
   const DIR_IMG_PRODUCT = path.join(__dirname, '..', 'dist/img/' + req.params.dealer.replace(/\s/g, '') + '/products', req.params._id);
   const MAX_FILE_SIZE_UPLOAD = 10 * 1024 * 1024;
@@ -92,7 +100,6 @@ router.put('/upload-product-images/:dealer/:_id', (req, res)=>{
   });
   // Received name and file.
   form.on('file', function(name, file) {
-    // fs.rename(file.path, path.join(form.uploadDir, file.name));
     log.info(`"${file.name}" uploaded to "${file.path}"`);
   });
   // Err.
@@ -116,41 +123,36 @@ router.put('/upload-product-images/:dealer/:_id', (req, res)=>{
     }
   });
 });
-
 // Get list of product images url.
 router.get('/get-product-images-url/:dealer/:_id', function(req, res) {
   const DIR_IMG_PRODUCT = path.join(__dirname, '..', 'dist/img/' + req.params.dealer.replace(/\s/g, '') + '/products', req.params._id);
-  // console.log(`get image url dir: ${DIR_IMG_PRODUCT}`);
-  // get list of files
+  // Get list of files.
   fse.readdir(DIR_IMG_PRODUCT, (err, files)=>{
     if (err) {
-      log.error(`error load list of files: ${err}`);
+      // Err, because dir is created when the first image is uploaded.
       res.json([]);
     } else {
       log.info(JSON.stringify(files));
       res.json(files);
-      // res.json({a: 'asdf'});
     }
   });
 });
-// get products to commercialize
+// Get products to commercialize.
 router.get('/products-commercialize', function (req, res) {
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
   const skip = (page - 1) * PAGE_SIZE_STORE;
   const search = req.query.search
     ? {'storeProductCommercialize': true, 'storeProductTitle': {$regex: req.query.search, $options: 'i'}}
     : {'storeProductCommercialize': true};
-    // : {'dealerProductCommercialize': {$exists: true, $eq: true}};
-  // console.log(`page: ${page}, search: ${JSON.stringify(search)}, skip: ${skip}`);
   const cursor = mongo.db.collection(dbConfig.collStoreProducts).find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PAGE_SIZE_STORE);
   Promise.all([
     cursor.toArray(),
     cursor.count()
   ]).then(([products, count])=>{
     res.json({products, page, pageCount: Math.ceil(count / PAGE_SIZE_STORE)});
-    // console.log(`products: ${JSON.stringify(products)}, page: ${page}`);
   }).catch(err=>{
     console.log(`Error getting data, err: ${err}`);
   });
 });
+
 module.exports = router;

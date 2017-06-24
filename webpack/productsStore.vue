@@ -33,18 +33,20 @@
     .ui.hidden.divider
     products-store-detail(
       ref='productStoreDetail'
-      :$http='this.$http',
+      :$http='$http',
       :product='selectedProduct', 
       :productMakers='productMakers', 
       :productCategories='productCategories',
-      @save='updateProduct')
+      @productSaved='updateProduct()',
+      @productIncluded='includeProduct()'
+      @productDeleted='removeProduct()')
 </template>
 <script>
   /* globals accounting */
   'use strict';
   import wsPath from '../bin/wsPath';
   import accounting from 'accounting';
-  // components
+  // Components.
   import menuProducts from './menuProducts.vue';
   import productsStoreDetail from './productsStoreDetail.vue';
   // let veeValidate = require('vee-validate');
@@ -83,102 +85,66 @@
             this.page = res.body.page;
             this.pageCount = res.body.pageCount;
           })
-          .catch((err)=>{
-            console.log(`Error - getProducts(), err: ${err}`);
-          });
+          .catch((err)=>{ console.error(err); });
       },
       // Open modal with products detail.
       showProduct(product){
         // Deep clone.
         this.selectedProduct = JSON.parse(JSON.stringify(product));
-        this.selectedProduct.isNew = false;
         // Open modal.
         $('.ui.small.modal').modal('show');
       },
-      // // Open modal with products detail.
-      // showProduct(product){
-      //   // Deep clone.
-      //   this.selectedProduct = JSON.parse(JSON.stringify(product));
-      //   this.selectedProduct.isNew = false;
-      //   // Open modal.
-      //   console.log('------------ init show product --------------');
-      //   $('.ui.small.modal')
-      //     // init and update dropdown
-      //     .modal({
-      //         onShow: function (){
-      //           setTimeout(function () {
-      //             $('.ui.dropdown').dropdown({duration: 0});
-      //             // Modal opened event for product detail.
-      //             this.eventHub.$emit('modal-onShow');
-      //           }, 100);},
-      //         // onHidden: function() {
-      //         //   console.log('--------------- modal close ------------');
-      //         // }
-      //         // onApprove: function (){
-      //         //   console.log('onApprove');
-      //         //   return false;
-      //         // },
-      //         // onDeny: function () {
-      //         //   console.log('onDeny');
-      //         //   return false;
-      //         // }
-      //     })
-      //     // fast open
-      //     .modal('setting', 'duration', 0)
-      //     // open modal
-      //     .modal('show');
-      //     console.log('------------ end show product --------------');
-      // },      
-      // Open modal with new product.
       showNewProduct(){
         // Create a new product.
         this.selectedProduct = {
           dealer: 'zunka',
           storeProductId: '',
           storeProductTitle: '',
-          dealerProductCommercialize: true
+          dealerProductCommercialize: true,
+          // Modal must delete this product if user not save it.
+          // To modal know which button to show.
+          isNewProduct: true
         };
-        // Open modal.
-        $('.ui.small.modal')
-          // init and update dropdown
-          .modal({
-              onShow: function (){
-                setTimeout(function () {
-                  $('.ui.dropdown').dropdown({duration: 0});
-                  // Modal opened event for product detail.
-                  this.eventHub.$emit('modal-onShow');
-                }, 100);}
-              // onApprove: function (){
-              //   console.log('onApprove');
-              //   return false;
-              // },
-              // onDeny: function () {
-              //   console.log('onDeny');
-              //   return false;
-              // }
+        // Insert product on db.
+        this.$http.post(`${wsPath.store}/`, this.selectedProduct)
+          .then((res)=>{
+            // Include _id received from db.
+            this.selectedProduct._id = res.body._id;
           })
-          // fast open
-          .modal('setting', 'duration', 0)
-          // open modal
-          .modal('show');
+          .catch((err)=>{ console.error(err); });
+        // Open modal.
+        $('.ui.small.modal').modal('show');
       },      
-      // Update or insert product save by modal.
+      // Update product saved by modal.
       updateProduct(){
-        let productFound = false;
+        try {
+          // Look for product to be updated.
+          this.products.forEach((element, index)=>{
+            if (element._id === this.selectedProduct._id) {
+              this.$set(this.products, index, this.selectedProduct);  
+            }
+          });
+        } 
+        catch (err){ console.error(err); }
+      },
+      // Update product saved by modal.
+      includeProduct(){
+        try {
+          // Look for product to be updated.
+          this.products.push(this.selectedProduct);
+        } 
+        catch (err){ console.error(err); }
+      },      
+      // Remove product deleted by modal.
+      removeProduct(){
         // Look for product to update.
         this.products.forEach((element, index)=>{
           if (element._id === this.selectedProduct._id) {
-            // Update product into list.
-            this.$set(this.products, index, this.selectedProduct);
-            productFound = true;
-            // console.log('find product to save');
+            // Remove product from the list.
+            this.$delete(this.products, index);
           }
         });
-        // Not found in products, so is a new one.
-        if (!productFound) {
-          this.products.push(this.selectedProduct);
-        }
-      },
+      },      
       // Get dropdown options.
       getDropdown(){
         this.$http.get(`${wsPath.store}/dropdown`)
@@ -186,12 +152,9 @@
             this.productMakers = res.body.productMakers;
             this.productCategories = res.body.productCategories;
           })
-          .catch((err)=>{
-            console.log(`Error - getDropdown(), err: ${JSON.stringify(err)}`);
-          });
+          .catch((err)=>{ console.error(err); });
       }
     },
-
     filters: {
       currencyBr(value){
         return accounting.formatMoney(value, 'R$ ', 2, '.', ',');

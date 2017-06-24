@@ -33,14 +33,13 @@ const plugins = DEVELOPMENT
     new UglifyJSPlugin()
   ];
 // Devtool.
+// eval-source-map - origina filename with line number error - wrong line.
+// cheap-module-inline-source-map - bundle with line number error - correct line.
+// cheap-module-source-map - bundle with line number error - correct line.
 const devtool = DEVELOPMENT
-  ? '#eval-source-map'
+  ? 'cheap-module-source-map'
   : 'source-map';
 module.exports = {
-  // cache: true,
-  // devtool: 'source-map',   // for production
-  // devtool: '#eval-source-map',
-  // devtool: 'eval',   // fast build
   devtool: devtool,
   entry: entry,
   output: {
@@ -84,13 +83,15 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        loader: 'babel-loader',
-        exclude: /node_modules/
+        loader: 'babel-loader?retainLines=true',
+        // exclude: /node_modules/
+        exclude: /(node_modules|bower_components)/,
       },
       {
         test: /\.css$/,
         loader: ['style-loader', 'css-loader'],
-        exclude: /node_modules/
+        // exclude: /node_modules/
+        exclude: /(node_modules|bower_components)/,
       },
       {
         test: /\.(eot|png|svg|[ot]tf|woff2?)(\?v=\d+\.\d+\.\d+)?$/,
