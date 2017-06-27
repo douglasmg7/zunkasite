@@ -36,10 +36,9 @@
       //- .ui.vertical.very.padded.segment
       .ui.basic.padded.segment
         .ui.five.doubling.cards
-          a.ui.card(v-for='product in products', :href='"product/" + product._id')
+          a.ui.card(v-for='(product, index) in products', :href='"product/" + product._id')
             .image
-              img(:src='"/img/allnations/products/" + product.dealerProductId + "/dealer-img-01.jpeg"')
-            .content
+              img(:src='imgUrl(index)')
               .description {{product.storeProductTitle}}
               .price
                 sup R$
@@ -76,11 +75,7 @@
     },
     data: function(){
       return {
-        products: ['void'],
-        // deep clone of selected product
-        // selectedProduct: {},
-        // productMakers: ['void'],
-        // productCategories: ['void'],
+        products: [],
         // curret page for pagination
         page:1,
         // number of pages for pagination
@@ -122,6 +117,9 @@
       },
       log(){
         console.log(this.user.username);
+      },
+      imgUrl(index){
+        return `/img/${this.products[index].dealer.replace(/\s/g, '')}/products/${this.products[index].dealerProductId}/dealer-img-01.jpeg`;
       }
     },
     filters: {

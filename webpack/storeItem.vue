@@ -1,20 +1,40 @@
 <template lang='pug'>
   div
     .ui.black.inverted.borderless.attached.stackable.menu
-      .ui.container
-        a.ui.link.item(href='/')
-          i.big.home.icon Zunka
-        .ui.right.item
+      //- .ui.container
+      // Home.
+      a.ui.link.item(href='/')
+        h2 Zunka
+      .ui.right.inverted.borderless.stackable.menu
+        // Search.
+        .ui.item
           .ui.small.icon.input
             input(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
             i.search.link.icon(v-on:click='getProducts()')
-        a.item
-          i.big.cart.icon
+        // User name.
+        .ui.item
+          i.large.user.icon(v-if="this.username") 
+          | {{this.username}}
+        // Sign-in.
+        a.ui.item(href='users/login' v-if="!this.username")
+          i.large.icon.sign.in
+          | Entrar
+        // Cart.
+        a.ui.item
+          i.large.cart.icon
+        // Config.
+        a.ui.item(href='/configProducts/store' v-if="this.group == 'admin'")
+          i.large.configure.icon
+        // Exit.
+        a.ui.item(href='users/logout' v-if="this.username")
+          i.large.sign.out.icon
+          | Sair   
     .ui.center.aligned.container
       .ui.basic.padded.segment
         .ui.item
           .image
-            img(:src='"/img/allnations/products/" + product.dealerProductId + "/dealer-img-01.jpeg"')
+            //- img(:src=`/img/${product.dealer.replace(/\s/g, '')}/products/${product.dealerProductId}/dealer-img-01.jpeg`)
+            img(:src='imgUrl()')
           .content
             .header {{product.storeProductTitle}}
             .description {{product.storeProductDescPrimary}}
@@ -47,7 +67,10 @@
       // Retrive products page.
       getProducts(page=1){
         window.location.href = `/?page=1&search=${this.search}`;
-      }
+      },
+      imgUrl(){
+        return `/img/${this.product.dealer.replace(/\s/g, '')}/products/${this.product.dealerProductId}/dealer-img-01.jpeg`;
+      }      
     },
     filters: {
       currencyBr(value){
