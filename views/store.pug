@@ -9,10 +9,8 @@ html(lang="en")
     #app
     //- Make pug data disponible to vue instance.
     script.
-      window.renderData = {}
-      window.renderData.initSearch = '#{initSearch}'
-      window.renderData.username = '#{username}'
-      window.renderData.group = '#{group}'
+      let vueUser = !{JSON.stringify(user)}
+      let vueInitSearch = '#{initSearch}'
     include components/jquery.js.pug
     include components/semantic.js.pug
     include components/vue.js.pug

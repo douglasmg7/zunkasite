@@ -1,7 +1,6 @@
 <template lang='pug'>
   div
     .ui.black.inverted.borderless.attached.stackable.menu
-      //- .ui.container
       // Home.
       a.ui.link.item(href='/')
         h2 Zunka
@@ -13,27 +12,26 @@
             i.search.link.icon(v-on:click='getProducts()')
         // User name.
         .ui.item
-          i.large.user.icon(v-if="this.username") 
-          | {{this.username}}
+          i.large.user.icon(v-if="this.user.username") 
+          | {{this.user.username}}
         // Sign-in.
-        a.ui.item(href='users/login' v-if="!this.username")
+        a.ui.item(href='users/login' v-if="!this.user.username")
           i.large.icon.sign.in
           | Entrar
         // Cart.
         a.ui.item
           i.large.cart.icon
         // Config.
-        a.ui.item(href='/configProducts/store' v-if="this.group == 'admin'")
+        a.ui.item(href='/configProducts/store' v-if="this.user.group == 'admin'")
           i.large.configure.icon
         // Exit.
-        a.ui.item(href='users/logout' v-if="this.username")
+        a.ui.item(href='users/logout' v-if="this.user.username")
           i.large.sign.out.icon
           | Sair   
     .ui.center.aligned.container
       .ui.basic.padded.segment
         .ui.item
           .image
-            //- img(:src=`/img/${product.dealer.replace(/\s/g, '')}/products/${product.dealerProductId}/dealer-img-01.jpeg`)
             img(:src='imgUrl()')
           .content
             .header {{product.storeProductTitle}}
@@ -56,7 +54,7 @@
         search: ''
       }
     },
-    props:['product'],
+    props:['user', 'product'],
     mounted(){
       // console.log('init');
       // console.log(this.product.dealer);

@@ -15,9 +15,9 @@ router.get('/', function(req, res, next) {
   // log.verbose(`get / - req.isAuthenticated(): ${req.isAuthenticated()}`);
   // res.render('store', {initSearch: req.query.search});
   res.render('store', {
-    initSearch: req.query.search,
-    username: req.isAuthenticated() ? req.user.username : null,
-    group: req.isAuthenticated() ? req.user.group : null});
+    user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
+    initSearch: req.query.search
+  });
 });
 
 // Get a specific product.
@@ -37,9 +37,11 @@ router.get('/product/:_id', function(req, res, next) {
     // Product exist.
     if (result._id) {
       console.log(JSON.stringify(result));
-      // res.render('storeItem', {stringify: stringify, product: result});
-      res.render('storeItem', {product: result});
-    // not exist product
+      res.render('storeItem', {
+        user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
+        product: result
+      });
+    // Not exist the product.
     } else {
       console.log(`product ${req.params._id} not found`);
       res.status(404).send('Produto não encontrado.');

@@ -15,9 +15,8 @@ window.appVue = new Vue({
     return h(Store, {props: 
       {
         $http: this.$http,
-        username: window.renderData.username, 
-        initSearch: window.renderData.initSearch,
-        group: window.renderData.group
+        user: vueUser,
+        initSearch: vueInitSearch
       }
     });
   },

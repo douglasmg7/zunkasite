@@ -1,8 +1,6 @@
 <template lang='pug'>
   div
-    //- .ui.black.inverted.attached.stackable.menu
     .ui.black.inverted.borderless.attached.stackable.menu
-      //- .ui.container
       // Home.
       a.ui.link.item(href='/')
         h2 Zunka
@@ -14,26 +12,23 @@
             i.search.link.icon(v-on:click='getProducts()')
         // User name.
         .ui.item
-          i.large.user.icon(v-if="this.username") 
-          | {{this.username}}
+          i.large.user.icon(v-if="this.user.username") 
+          | {{this.user.username}}
         // Sign-in.
-        a.ui.item(href='users/login' v-if="!this.username")
+        a.ui.item(href='users/login' v-if="!this.user.username")
           i.large.icon.sign.in
           | Entrar
         // Cart.
         a.ui.item
           i.large.cart.icon
         // Config.
-        a.ui.item(href='/configProducts/store' v-if="this.group == 'admin'")
+        a.ui.item(href='/configProducts/store' v-if="this.user.group == 'admin'")
           i.large.configure.icon
         // Exit.
-        a.ui.item(href='users/logout' v-if="this.username")
+        a.ui.item(href='users/logout' v-if="this.user.username")
           i.large.sign.out.icon
           | Sair    
-    //- .ui.center.aligned.container
     .ui.left.aligned.container
-      //- .ui.top.attached.segment
-      //- .ui.vertical.very.padded.segment
       .ui.basic.padded.segment
         .ui.five.doubling.cards
           a.ui.card(v-for='(product, index) in products', :href='"product/" + product._id')
@@ -69,10 +64,6 @@
   // let veeValidate = require('vee-validate');
   export default {
     name: 'store',
-    components: {
-      // menuProducts,
-      // productsStoreDetail
-    },
     data: function(){
       return {
         products: [],
@@ -86,12 +77,11 @@
       }
     },
     // Text for search products and user logged.
-    props:['$http', 'initSearch', 'username', 'group'],
+    // props:['$http', 'initSearch', 'username', 'group'],
+    props:['$http', 'user', 'initSearch'],
     created() {
       // search from a product item page, not from this store page
-      this.search = this.initSearch;
       this.getProducts();
-      // console.log(`Props-user: ${this.username}`);
     },
     methods: {
       // retrive products page
@@ -114,9 +104,6 @@
           .catch((err)=>{
             console.log(`Error - logout(), err: ${err}`);
           });
-      },
-      log(){
-        console.log(this.user.username);
       },
       imgUrl(index){
         return `/img/${this.products[index].dealer.replace(/\s/g, '')}/products/${this.products[index].dealerProductId}/dealer-img-01.jpeg`;

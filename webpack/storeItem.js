@@ -14,6 +14,7 @@ window.appVue = new Vue({
     return h(StoreItem, {props: 
       {
         $http: this.$http,
+        user: vueUser,
         product: vueProduct
       }
     });
