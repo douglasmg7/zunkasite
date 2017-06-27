@@ -6,17 +6,10 @@ html(lang="en")
     title Equipamentos de informatica.
     include components/semantic.css.pug
   body
-    h1 '#{product.dealer}'
     #app
     //- Make pug data disponible to vue instance.
     script.
-      //- let vueProduct = '#{JSON.stringify(product)}'
-      let vueProduct = '#{stringify(product)}'
-      //- window.renderData = {}
-      //- window.renderData.initSearch = '#{initSearch}'
-      //- window.renderData.username = '#{username}'
-      //- window.renderData.group = '#{group}'   
-      //- console.log(`locals: ${product}`);   
+      let vueProduct = !{JSON.stringify(product)}
     include components/jquery.js.pug
     include components/semantic.js.pug
     include components/vue.js.pug

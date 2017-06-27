@@ -4,7 +4,7 @@ const mongo = require('../model/db');
 const dbConfig = mongo.config;
 const ObjectId = require('mongodb').ObjectId;
 const log = require('../bin/log');
-const stringify = require('js-stringify')
+// const stringify = require('js-stringify')
 
 // Index.
 router.get('/', function(req, res, next) {
@@ -37,7 +37,8 @@ router.get('/product/:_id', function(req, res, next) {
     // Product exist.
     if (result._id) {
       console.log(JSON.stringify(result));
-      res.render('storeItem', {stringify: stringify, product: result});
+      // res.render('storeItem', {stringify: stringify, product: result});
+      res.render('storeItem', {product: result});
     // not exist product
     } else {
       console.log(`product ${req.params._id} not found`);

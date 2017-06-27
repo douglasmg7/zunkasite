@@ -1,9 +1,5 @@
 <template lang='pug'>
   div
-    //- p {{product}}
-    //- p {{typeof(product)}}
-    //- p {{product}}
-    //- p {{this.getProductObj()}}
     .ui.black.inverted.borderless.attached.stackable.menu
       .ui.container
         a.ui.link.item(href='/')
@@ -16,7 +12,7 @@
           i.big.cart.icon
     .ui.center.aligned.container
       .ui.basic.padded.segment
-        //- .ui.item
+        .ui.item
           .image
             img(:src='"/img/allnations/products/" + product.dealerProductId + "/dealer-img-01.jpeg"')
           .content
@@ -32,54 +28,25 @@
   'use strict';
   import wsPath from '../bin/wsPath';
   import accounting from 'accounting';
-  // components
-  // import menuProducts from './menuProducts.vue';
-  // import productsStoreDetail from './productsStoreDetail.vue';
-  // let veeValidate = require('vee-validate');
+
   export default {
-    components: {
-      // menuProducts,
-      // productsStoreDetail
-    },
     data: function(){
       return {
-        // products: ['void'],
-        // // deep clone of selected product
-        // selectedProduct: {},
-        // productMakers: ['void'],
-        // productCategories: ['void'],
-        // // curret page for pagination
-        page:1,
-        // number of pages for pagination
-        pageCount: 1,
         // text for search products
-        search: '',
-        test: {a:1, b:2}
+        search: ''
       }
     },
     props:['product'],
-    created() {
-      // console.log(this.test);
-      // let j = JSON.stringify(this.test);
-      // console.log(j);
-      // let p = JSON.parse(j);
-      // console.log(p.a);
-      
-      console.log(vueProduct);
-
-
-      // let j = JSON.parse(vueProduct);
-      // console.log(j);
-
+    mounted(){
+      // console.log('init');
+      // console.log(this.product.dealer);
+      // // console.log(vueProduct.dealer);
+      // console.log('end');
     },
     methods: {
-      // retrive products page
+      // Retrive products page.
       getProducts(page=1){
         window.location.href = `/?page=1&search=${this.search}`;
-      },
-      getProductObj(){
-        return JSON.parse('true');
-        // return JSON.parse(this.product);
       }
     },
     filters: {

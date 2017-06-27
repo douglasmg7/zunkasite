@@ -15,7 +15,6 @@ window.appVue = new Vue({
       {
         $http: this.$http,
         product: vueProduct
-        // product: locals
       }
     });
   }
