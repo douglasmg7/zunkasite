@@ -18,6 +18,8 @@ const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
+// Paypal
+const paypal = require('paypal-rest-sdk');
 // Webpack HMR - hot module reload.
 const webpack = require('webpack');
 const webpackConfig = require('./webpack.config');
@@ -32,11 +34,11 @@ const log = require('./bin/log');
 const app = express();
 // routes
 const routeUsers = require('./routes/routeUsers');
-const routeStore = require('./routes/routeStore');
+const routeSite = require('./routes/routeSite');
 const routeWsManual = require('./routes/routeWsManual');
 const routeWsAllNations = require('./routes/routeWsAllNations');
 const routeWsStore = require('./routes/routeWsStore');
-const routeProducts = require('./routes/routeProducts');
+const routeConfigProducts = require('./routes/routeConfigProducts');
 
 // Node env.
 log.info(`NODE_ENV: ${process.env.NODE_ENV}`);
@@ -171,14 +173,16 @@ passport.deserializeUser(function(id, done) {
 // app.use(webpackHotMiddleware);
 
 // routes
-app.use('/', routeStore);
+// Site.
+app.use('/', routeSite);
+// Users.
 app.use('/users', routeUsers);
-// web service
+// Web service.
 app.use('/ws/manual', routeWsAllNations);
 app.use('/ws/allnations', routeWsAllNations);
 app.use('/ws/store', routeWsStore);
-// html
-app.use('/products', routeProducts);
+// Products configuration.
+app.use('/configProducts', routeConfigProducts);
 
 app.use(function(err, req, res, next) {
   res.status(500).send({error: 'Internal server error.'});

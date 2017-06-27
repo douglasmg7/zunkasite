@@ -2,7 +2,7 @@
 'use strict';
 
 // Vue components
-import storeItem from './storeItem.vue';
+import StoreItem from './storeItem.vue';
 
 // event hub
 window.eventHub = new Vue({
@@ -14,7 +14,8 @@ window.appVue = new Vue({
     return h(StoreItem, {props: 
       {
         $http: this.$http,
-        product: product
+        product: vueProduct
+        // product: locals
       }
     });
   }

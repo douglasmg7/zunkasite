@@ -24,7 +24,7 @@
         a.ui.item
           i.large.cart.icon
         // Config.
-        a.ui.item(href='/products/store' v-if="this.group == 'admin'")
+        a.ui.item(href='/configProducts/store' v-if="this.group == 'admin'")
           i.large.configure.icon
         // Exit.
         a.ui.item(href='users/logout' v-if="this.username")

@@ -4,13 +4,14 @@ const mongo = require('../model/db');
 const dbConfig = mongo.config;
 const ObjectId = require('mongodb').ObjectId;
 const log = require('../bin/log');
+const stringify = require('js-stringify')
 
 // Index.
 router.get('/', function(req, res, next) {
   req.query.search = req.query.search || '';
   // console.log(`search: ${req.query.search}`);
   // console.log(`cookies: ${JSON.stringify(req.cookies)}`);
-  log.verbose(`get / - req.user: ${JSON.stringify(req.user)}`);
+  // log.verbose(`get / - req.user: ${JSON.stringify(req.user)}`);
   // log.verbose(`get / - req.isAuthenticated(): ${req.isAuthenticated()}`);
   // res.render('store', {initSearch: req.query.search});
   res.render('store', {
@@ -21,7 +22,7 @@ router.get('/', function(req, res, next) {
 
 // Get a specific product.
 router.get('/product/:_id', function(req, res, next) {
-  // mongodb formated _id product
+  // Mongodb formated _id product.
   let _id;
   try {
     _id = new ObjectId(req.params._id);
@@ -30,13 +31,13 @@ router.get('/product/:_id', function(req, res, next) {
     console.log(`error creating mongo ObjectId, error: ${e}`);
     return;
   }
-  // get product from db
+  // Get product from db.
   mongo.db.collection(dbConfig.collStoreProducts).findOne({_id: _id})
   .then(result=>{
-    // product exist
+    // Product exist.
     if (result._id) {
-      // console.log(JSON.stringify(result));
-      res.render('storeItem', {product: result});
+      console.log(JSON.stringify(result));
+      res.render('storeItem', {stringify: stringify, product: result});
     // not exist product
     } else {
       console.log(`product ${req.params._id} not found`);

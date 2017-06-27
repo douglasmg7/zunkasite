@@ -1,5 +1,9 @@
 <template lang='pug'>
   div
+    //- p {{product}}
+    //- p {{typeof(product)}}
+    //- p {{product}}
+    //- p {{this.getProductObj()}}
     .ui.black.inverted.borderless.attached.stackable.menu
       .ui.container
         a.ui.link.item(href='/')
@@ -12,7 +16,7 @@
           i.big.cart.icon
     .ui.center.aligned.container
       .ui.basic.padded.segment
-        .ui.item
+        //- .ui.item
           .image
             img(:src='"/img/allnations/products/" + product.dealerProductId + "/dealer-img-01.jpeg"')
           .content
@@ -49,16 +53,33 @@
         // number of pages for pagination
         pageCount: 1,
         // text for search products
-        search: ''
+        search: '',
+        test: {a:1, b:2}
       }
     },
     props:['product'],
     created() {
+      // console.log(this.test);
+      // let j = JSON.stringify(this.test);
+      // console.log(j);
+      // let p = JSON.parse(j);
+      // console.log(p.a);
+      
+      console.log(vueProduct);
+
+
+      // let j = JSON.parse(vueProduct);
+      // console.log(j);
+
     },
     methods: {
       // retrive products page
       getProducts(page=1){
         window.location.href = `/?page=1&search=${this.search}`;
+      },
+      getProductObj(){
+        return JSON.parse('true');
+        // return JSON.parse(this.product);
       }
     },
     filters: {
