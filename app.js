@@ -25,7 +25,9 @@ const webpack = require('webpack');
 const webpackConfig = require('./webpack.config');
 const compiler = webpack(webpackConfig);
 const webpackDevMiddleware = require('webpack-dev-middleware')(compiler, {
-  noInfo: false, publicPath: webpackConfig.output.publicPath, stats: {colors: true}
+  noInfo: false, 
+  publicPath: webpackConfig.output.publicPath, 
+  stats: {colors: true, chunks: false}
 });
 const webpackHotMiddleware = require('webpack-hot-middleware')(compiler);
 // Personal modules.
