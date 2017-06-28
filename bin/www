@@ -1,17 +1,13 @@
 #!/usr/bin/env node
-
-/**
- * Module dependencies.
- */
-
-var app = require('../app');
-var debug = require('debug')('server:server');
-var http = require('http');
-var https = require('https');
+const app = require('../app');
+const debug = require('debug')('server:server');
+const http = require('http');
+const https = require('https');
+const express = require('express');
 const fs = require('fs');
 const log = require('./log');
 
-// Get ssh key and cert.
+// Get ssh key and certificate.
 let sshOptions = {
   key: fs.readFileSync('./key.pem'),
   cert: fs.readFileSync('./cert.pem'),
@@ -20,17 +16,20 @@ let sshOptions = {
   // rejectUnauthorized: false
 };
 
-// Get port from environment and store in Express (port 80 on production).
+// Get port from environment and store in Express (change 3080 port to 80 on production).
 var port = normalizePort(process.env.PORT || '3080');
-app.set('port', port);
-// Create server.
-var server = http.createServer(app);
+// app.set('port', port);
+// Create server to redirect http to https.
+let httpToHttps = express().get('*', function(req, res) {
+  res.redirect(`https://${req.headers.host.split(':')[0]}:${portSsl}${req.path}`);
+});
+var server = http.createServer(httpToHttps);
 // Listen on provided port, on all network interfaces.
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
-// Https (port 443 on production).
+// Create https server (change 3088 port to 443 on production).
 var portSsl = normalizePort(process.env.PORT_SSL || '3088');
 app.set('portSsl', portSsl);
 var serverSsl = https.createServer(sshOptions, app);
@@ -41,17 +40,14 @@ serverSsl.on('listening', onListeningSsl);
 // Normalize a port into a number, string, or false.
 function normalizePort(val) {
   var port = parseInt(val, 10);
-
   if (isNaN(port)) {
     // named pipe
     return val;
   }
-
   if (port >= 0) {
     // port number
     return port;
   }
-
   return false;
 }
 
@@ -60,11 +56,9 @@ function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
-
   var bind = typeof port === 'string'
     ? 'Pipe ' + port
     : 'Port ' + port;
-
   // Handle specific listen errors with friendly messages.
   switch (error.code) {
     case 'EACCES':
@@ -79,16 +73,13 @@ function onError(error) {
       throw error;
   }
 }
-
 function onErrorSsl(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
-
   var bind = typeof port === 'string'
     ? 'Pipe ' + portSsl
     : 'Port ' + portSsl;
-
   // Handle specific listen errors with friendly messages.
   switch (error.code) {
     case 'EACCES':
@@ -112,7 +103,6 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
-
 function onListeningSsl() {
   var addr = serverSsl.address();
   var bind = typeof addr === 'string'

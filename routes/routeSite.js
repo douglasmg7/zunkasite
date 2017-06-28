@@ -36,7 +36,7 @@ router.get('/product/:_id', function(req, res, next) {
   .then(result=>{
     // Product exist.
     if (result._id) {
-      console.log(JSON.stringify(result));
+      // console.log(JSON.stringify(result));
       res.render('storeItem', {
         user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
         product: result
