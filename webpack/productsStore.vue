@@ -1,6 +1,6 @@
 <template lang='pug'>
   div
-    menu-products(active='store' v-on:input='search=arguments[0]' v-on:search='getProducts()' v-on:newProduct='showNewProduct()')
+    menu-products(active='store' v-bind:user='user' v-on:input='search=arguments[0]' v-on:search='getProducts()' v-on:newProduct='showNewProduct()')
     table.ui.compact.table
       thead
         tr
@@ -71,7 +71,7 @@
         search: ''
       }
     },
-    props: ['$http'],
+    props: ['$http', 'user'],
     created() {
       this.getProducts();
       this.getDropdown();

@@ -15,7 +15,7 @@
           i.large.user.icon(v-if="this.user.username") 
           | {{this.user.username}}
         // Sign-in.
-        a.ui.item(href='users/login' v-if="!this.user.username")
+        a.ui.item(href='/users/login' v-if="!this.user.username")
           i.large.icon.sign.in
           | Entrar
         // Cart.
@@ -25,7 +25,7 @@
         a.ui.item(href='/configProducts/store' v-if="this.user.group == 'admin'")
           i.large.configure.icon
         // Exit.
-        a.ui.item(href='users/logout' v-if="this.user.username")
+        a.ui.item(href='/users/logout' v-if="this.user.username")
           i.large.sign.out.icon
           | Sair   
     .ui.center.aligned.container

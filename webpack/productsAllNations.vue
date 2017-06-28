@@ -1,6 +1,6 @@
 <template lang='pug'>
   div
-    menu-products(active='allNations' v-on:input='search=arguments[0]' v-on:search='getProducts()')
+    menu-products(active='allNations' v-bind:user='user' v-on:input='search=arguments[0]' v-on:search='getProducts()')
     table.ui.compact.table
       thead
         tr
@@ -59,6 +59,7 @@
         search: ''
       }
     },
+    props: ['$http', 'user'],
     created() {
       this.getProducts();
     },

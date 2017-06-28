@@ -101,12 +101,12 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  debug('Http  Listening on ' + bind);
 }
 function onListeningSsl() {
   var addr = serverSsl.address();
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  debug('Https Listening on ' + bind);
 }

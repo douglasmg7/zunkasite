@@ -4,16 +4,16 @@ const router = express.Router();
 
 // Store products.
 router.get('/store', (req, res)=>{
-  res.render('productsStore');
+  res.render('productsStore', { user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined } });
 });
 
 // Manual products.
 router.get('/manual', (req, res)=>{
-  res.render('productsManual');
+  res.render('productsManual', { user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined } });
 });
 
 // All nations products.
 router.get('/allnations', (req, res)=>{
-  res.render('productsAllNations');
+  res.render('productsAllNations', { user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined } });
 });
 module.exports = router;

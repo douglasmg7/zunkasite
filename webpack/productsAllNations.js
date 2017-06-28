@@ -8,6 +8,8 @@ import productsAllnations from './productsAllNations.vue';
 window.appVue = new Vue({
   el: '#app',
   render(h) {
-    return h(productsAllnations);
+    return h(productsAllnations, {
+      props: {$http: this.$http, user: vueUser}, 
+    });
   }
 });

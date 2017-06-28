@@ -7,7 +7,9 @@ html(lang="en")
     include components/semantic.css.pug
   body
     #app
-      //- products-allnations
+    //- Make pug data disponible to vue instance.
+    script.
+      let vueUser = !{JSON.stringify(user)}        
     include components/jquery.js.pug
     include components/semantic.js.pug
     include components/vue.js.pug
