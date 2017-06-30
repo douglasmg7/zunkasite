@@ -23,8 +23,8 @@
               // Cart.
               a Carrinho
             li
-              // Config.
-              a(href='/configProducts/store' v-if="this.user.group == 'admin'") Config
+              // Admin.
+              a(href='/configProducts/store' v-if="this.user.group == 'admin'") Admin
             li
               // Exit.
               a(href='/users/logout' v-if="this.user.username") Sair
@@ -32,56 +32,73 @@
             input.form-control(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
     .container
       .row
-        .col-md-2
-        .col-md-8
-          .image
-            img(:src='imgUrl()')
-          .content
-            // Title.
-            h3 Raspberry PI 3 Model B A1.2GHz 64-bit quad-core ARMv8 CPU, 1GB RAM
-            // Price
-            h2.product-price
-              sup R$
-              | {{product.storeProductPrice | currencyInt}}
-              sup {{product.storeProductPrice | currencyCents}}
-            // List of caracteristics.
-            .product-detail
-              ul
-                li 1.2GHz 64-bit quad-core ARMv8 CPU, 1 GB RAM
-                li 802.11n Wireless LAN, 10/100Mbps Lan Speed 
-                li Bluetooth 4.1, Bluetooth Low Energy 
-                li 4 USB ports, 40 GPIO pins, Full HDMI port, Combined 3.5mm audio jack and composite video 
-                li Camera interface (CSI),Display interface (DSI), Micro SD card slot (now push-pull rather than push-push), VideoCore IV 3D graphics core
-            // Complete description.
-            .product-description
-              h3 Descricao do produto
-              p Built on the latest Broadcom 2837 ARMv8 64 bit processor the Raspberry Pi 3 Model B is faster and more powerful than its predecessors. It has improved power management to support more powerful external USB devices and now comes with built-in wireless and Bluetooth connectivity. To take full advantage of the improved power management on the Raspberry Pi 3 and provide support for even more powerful devices on the USB ports, a 2.5A adapter is required. Technical Specifications: - Broadcom BCM2837 64bit ARMv8 QUAD Core 64bit Processor powered Single Board Computer running at 1.2GHz - 1GB RAM - BCM43143 WiFi on board - Bluetooth Low Energy (BLE) on board - 40pin extended GPIO - 4 x USB2 ports - 4 pole Stereo output and Composite video port - Full size HDMI - CSI camera port for connecting the Raspberry Pi camera - DSI display port for connecting the Raspberry Pi touch screen display - MicroSD port for loading your operating system and storing data - Upgraded switched Micro USB power source (now supports up to 2.5 Amps) This product is made under license in both China and the U.K. Please see the product packaging.
-            // Table of information.
-            .product-information
-              h3 Informacao do produto
-              .techincal
-                h4 Detalhe tecnico
-                .table-responsive
-                  table.table.table-striped
-                    tbody
-                      tr
-                        td Screen Size 
-                        td 60 inches 
-                      tr
-                        td Processor 
-                        td 1.2 GHz 
-              .additional
-                h4 Informacoes adicionais
-                .table-responsive
-                  table.table.table-striped
-                    tbody
-                      tr
-                        td Brand Name 
-                        td Raspberry Pi 
-                      tr
-                        td Series 
-                        td RASPBERRYPI3-MODB-1GB
-        .col-md-2
+        .col-md-4.col-md-offset-1
+          .row
+            .col-md-12
+              img.img-responsive.center-block(:src='imgUrl()')
+            .col-md-2
+              img.img-responsive.center-block(:src='imgUrl()')
+            .col-md-2
+              img.img-responsive.center-block(:src='imgUrl()')
+            .col-md-2
+              img.img-responsive.center-block(:src='imgUrl()')
+            .col-md-2
+              img.img-responsive.center-block(:src='imgUrl()')
+            .col-md-2
+              img.img-responsive.center-block(:src='imgUrl()')
+            .col-md-2
+              img.img-responsive.center-block(:src='imgUrl()')
+        .col-md-6
+          // Title.
+          h3.product-name Raspberry PI 3 Model B A1.2GHz 64-bit quad-core ARMv8 CPU, 1GB RAM
+          // Price
+          h3.product-price {{product.storeProductPrice | currencyBr}}
+          // Detail.
+          ul.product-detail
+            li 1.2GHz 64-bit quad-core ARMv8 CPU, 1 GB RAM
+            li 802.11n Wireless LAN, 10/100Mbps Lan Speed 
+            li Bluetooth 4.1, Bluetooth Low Energy 
+            li 4 USB ports, 40 GPIO pins, Full HDMI port, Combined 3.5mm audio jack and composite video 
+            li Camera interface (CSI),Display interface (DSI), Micro SD card slot (now push-pull rather than push-push), VideoCore IV 3D graphics core
+      .row
+        .col-md-10.col-md-offset-1
+          //- Description.
+          hr
+          h5.title Descricao do produto
+          p Built on the latest Broadcom 2837 ARMv8 64 bit processor the Raspberry Pi 3 Model B is faster and more powerful than its predecessors. It has improved power management to support more powerful external USB devices and now comes with built-in wireless and Bluetooth connectivity. To take full advantage of the improved power management on the Raspberry Pi 3 and provide support for even more powerful devices on the USB ports, a 2.5A adapter is required. Technical Specifications: - Broadcom BCM2837 64bit ARMv8 QUAD Core 64bit Processor powered Single Board Computer running at 1.2GHz - 1GB RAM - BCM43143 WiFi on board - Bluetooth Low Energy (BLE) on board - 40pin extended GPIO - 4 x USB2 ports - 4 pole Stereo output and Composite video port - Full size HDMI - CSI camera port for connecting the Raspberry Pi camera - DSI display port for connecting the Raspberry Pi touch screen display - MicroSD port for loading your operating system and storing data - Upgraded switched Micro USB power source (now supports up to 2.5 Amps) This product is made under license in both China and the U.K. Please see the product packaging.
+      .row
+        .col-md-10.col-md-offset-1
+          //- Informations.
+          hr
+          h5.title Informacao do produto
+          .row
+            //- Technical information.
+            .col-md-6
+              h5 Detalhe tecnico
+              .table-responsive
+                table.table
+                  tbody
+                    tr
+                      td Screen Size 
+                      td 60 inches 
+                    tr
+                      td Processor 
+                      td 1.2 GHz
+            //- Additional information.
+            .col-md-6
+              h5 Informacoes adicionais
+              .table-responsive
+                table.table
+                  tbody
+                    tr
+                      td Brand Name 
+                      td Raspberry Pi 
+                    tr
+                      td Series 
+                      td RASPBERRYPI3-MODB-1GB
+      .row
+        .col-md-10.col-md-offset-1
+          footer
 </template>
 <script>
   /* globals accounting */
@@ -126,14 +143,19 @@
   }
 </script>
 <style lang='stylus'>
-  .ui.item > .content > .price
-    clear: both
-    color: rgb(0, 0, 0)
-    margin-top: 0.6em
-    font-size: 1.8em
-  .ui.item > .content > .price > sup
-    font-size: 0.5em
-    top: -0.6em
-    padding-right: 0.3em
-    padding-left: 0.1em
+  .title
+    color: green
+    font-weight: bold
+  .product-name
+  .product-price
+    color: black
+  .product-detail
+    padding-top: 1em
+    padding-left: 1em
+  img
+    padding-top: 2em
+  td:nth-child(1)
+    background-color: #F3F3F3
+  footer
+    height: 50px
 </style>
