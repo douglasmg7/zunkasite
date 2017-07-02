@@ -110,10 +110,14 @@
     data: function(){
       return {
         // text for search products
-        search: ''
+        search: '',
+        imageUrls: []
       }
     },
-    props:['user', 'product'],
+    props:['$http', 'user', 'product'],
+    created(){
+      this.getImagesUrl(this.product);
+    },
     mounted(){
       // console.log('init');
       // console.log(this.product.dealer);
@@ -124,6 +128,20 @@
       // Retrive products page.
       getProducts(page=1){
         window.location.href = `/?page=1&search=${this.search}`;
+      },
+            // Get list of image names to use with the img tag, to show images.
+      getImagesUrl(product){
+        // get list of images url.
+        this.$http.get(`${wsPath.store}/get-product-images-url/${product.dealer}/${product._id}`)
+          .then(result=>{
+            this.imageUrls = result.body;
+            console.log(JSON.stringify(this.product));
+            console.log(JSON.stringify(this.imageUrls));
+          })
+          .catch(err=>{
+            this.imageUrls = [];
+            console.error(err);
+          })
       },
       imgUrl(){
         return `/img/${this.product.dealer.replace(/\s/g, '')}/products/${this.product.dealerProductId}/dealer-img-01.jpeg`;

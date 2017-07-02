@@ -106,7 +106,7 @@
           });
       },
       imgUrl(index){
-        return `/img/${this.products[index].dealer.replace(/\s/g, '')}/products/${this.products[index].dealerProductId}/dealer-img-01.jpeg`;
+        return `/img/${this.products[index].dealer.replace(/\s/g, '')}/products/${this.products[index]._id}/dealer-img-01.jpeg`;
       }
     },
     filters: {

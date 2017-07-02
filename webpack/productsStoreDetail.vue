@@ -25,8 +25,8 @@
                 label.ui.labeled.icon.button(for='file-upload')
                   i.large.upload.icon
                   | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) local
-                input(type='file' id='file-upload' accept='image/*' style='display:none' multiple @change='uploadProductPictures()')
-                label.ui.labeled.icon.button(@click='downloadDealerImages(product)')
+                //- input(type='file' id='file-upload' accept='image/*' style='display:none' multiple @change='uploadProductPictures()')
+                //- label.ui.labeled.icon.button(@click='downloadDealerImages(product)')
                   i.large.upload.icon
                   | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) do fornecedor
             .field

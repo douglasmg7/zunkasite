@@ -130,6 +130,7 @@ router.get('/get-product-images-url/:dealer/:_id', function(req, res) {
   fse.readdir(DIR_IMG_PRODUCT, (err, files)=>{
     if (err) {
       // Err, because dir is created when the first image is uploaded.
+      log.error(new Error().stack, err.stack);
       res.json([]);
     } else {
       log.info(JSON.stringify(files));
