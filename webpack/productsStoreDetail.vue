@@ -19,13 +19,15 @@
               input.ui.disabled.input(v-model='product.dealerProductTitle')
             .field
               label Imagens
-              .ui.tiny.images
-                img(v-if='loadedImages.length > 0' v-for='image in loadedImages', :src='imageSrc(image)')
+              .img-selection(v-if='loadedImages.length > 0' v-for='(image, index) in loadedImages')
+                img.ui.tiny.image(:class='{selected: isImagedSelected(index)}', :src='imageSrc(image)' @click='selectImage(index)')
+                .right-arrow(@click='moveImage("right", index)')
+                .left-arrow(@click='moveImage("left", index)')
               .ui.left.aligned.container
                 label.ui.labeled.icon.button(for='file-upload')
                   i.large.upload.icon
                   | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) local
-                //- input(type='file' id='file-upload' accept='image/*' style='display:none' multiple @change='uploadProductPictures()')
+                input(type='file' id='file-upload' accept='image/*' style='display:none' multiple @change='uploadProductPictures()')
                 //- label.ui.labeled.icon.button(@click='downloadDealerImages(product)')
                   i.large.upload.icon
                   | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) do fornecedor
@@ -119,8 +121,6 @@
         button.ui.positive.button(@click='saveProduct(product)') Salvar
         button.ui.red.deny.button(v-if='!product.isNewProduct') Apagar
         button.ui.red.deny.button(v-if='product.isNewProduct') Descartar
-        //- button.ui.red.deny.button(v-if='!product.isNewProduct' @click='deleteProduct(product)') Delete
-        //- button.ui.red.deny.button(v-if='product.isNewProduct' @click='deleteProduct(product)') Descartar
         button.ui.black.deny.button(v-if='!product.isNewProduct') Fechar
 </template>
 <script>
@@ -256,6 +256,17 @@
       // Path to image src tag.
       imageSrc(image) {
         return '/img/' + this.product.dealer.replace(/\s/g, '') + '/products/' + this.product._id + '/' + image;
+      },
+      moveImage(direction, index){
+        // alert('Arrow-' + direction + '-' + index);
+        alert(`Arrow - ${direction} - ${index}`);
+      },
+      selectImage(index){
+
+        alert(`Image selected: ${index}`);
+      },
+      isImagedSelected(index){
+        return true;
       }
     },
     computed: {
@@ -283,4 +294,34 @@
   }
 </script>
 <style lang='stylus'>
+  .img-selection
+    position: relative
+    display: inline-block
+    margin: .15em
+    border: .15em solid green
+  .img-selection:hover 
+    .left-arrow{display: block}
+    .right-arrow{display: block}
+  .left-arrow
+    position: absolute
+    bottom: 20px
+    left: 0
+    width: 0
+    height: 0
+    border-right: 15px solid green
+    border-top: 15px solid transparent
+    border-bottom: 15px solid transparent
+    opacity: .5
+    display: none 
+  .right-arrow
+    position: absolute
+    bottom: 20px
+    right: 0
+    width: 0
+    height: 0
+    border-left: 15px solid green
+    border-top: 15px solid transparent
+    border-bottom: 15px solid transparent
+    opacity: .5
+    display: none
 </style>
