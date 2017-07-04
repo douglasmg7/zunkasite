@@ -101,6 +101,7 @@
           storeProductId: '',
           storeProductTitle: '',
           dealerProductCommercialize: true,
+          urlImages: [],
           // Modal must delete this product if user not save it.
           // To modal know which button to show.
           isNewProduct: true

@@ -19,8 +19,8 @@
               input.ui.disabled.input(v-model='product.dealerProductTitle')
             .field
               label Imagens
-              .img-selection(v-if='loadedImages.length > 0' v-for='(image, index) in loadedImages')
-                img.ui.tiny.image(:class='{selected: isImagedSelected(index)}', :src='imageSrc(image)' @click='selectImage(index)')
+              .wrapper-image(v-if='urlImages.length > 0' v-for='(image, index) in urlImages', :class='{selected: image.selected}')
+                img.ui.tiny.image.product-image(:src='imageSrc(image)' @click='selectImage(index)')
                 .right-arrow(@click='moveImage("right", index)')
                 .left-arrow(@click='moveImage("left", index)')
               .ui.left.aligned.container
@@ -132,7 +132,7 @@
   export default {
     data: function(){
       return {
-        loadedImages: []};
+        urlImages: []};
     },
     props:['$http', 'product', 'productMakers', 'productCategories'],
     mounted(){
@@ -149,11 +149,11 @@
             $('.ui.dropdown').dropdown({duration: 0});
               // Update images urls.
               const vueSelf = appVue.$refs.productsStore.$refs.productStoreDetail;
-              vueSelf.updateImagesList(vueSelf.product)
+              vueSelf.getUrlUploadedImages(vueSelf.product)
           }, 100);},
         onHidden: function() {
           // Clean images urls for the next time that modal open.
-          appVue.$refs.productsStore.$refs.productStoreDetail.loadedImages = [];
+          appVue.$refs.productsStore.$refs.productStoreDetail.urlImages = [];
           // User not saved new product.
           if (appVue.$refs.productsStore.$refs.productStoreDetail.isNewProduct) {
             // Delete from db.
@@ -212,7 +212,7 @@
         let self = this;
         this.$http.put(`${wsPath.allNations}/download-dealer-images/${product._id}`)
           .then(()=>{
-            self.updateImagesList(self.product);
+            self.getUrlUploadedImages(self.product);
           })
           .catch((err)=>{ console.error(err); });
       },
@@ -236,22 +236,44 @@
           let self = this;
           this.$http.put(`${wsPath.store}/upload-product-images/${this.product.dealer}/${this.product._id}`, formData)
             .then(()=>{
-              this.updateImagesList(this.product);
+              this.getUrlUploadedImages(this.product);
             })
             .catch((err)=>{ console.error(err); });
         }
       },
-      // Get list of image names to use with the img tag, to show images.
-      updateImagesList(product){
+      // Get list of url of uploaded images.
+      getUrlUploadedImages(product){
         // get list of images url
         this.$http.get(`${wsPath.store}/get-product-images-url/${product.dealer}/${product._id}`)
           .then(result=>{
-            this.loadedImages = result.body;
+            // Updated url images.
+            this.updateImagesUrl(product, result.body);
           })
           .catch(err=>{
-            this.loadedImages = ['void'];
             console.error(err);
           })
+      },
+      // Update image urls, order and selection.
+      updateImagesUrl(product, urlUploadedImages){
+        // Mount first the selected images to use, after the rest of loaded url images from server, that not was selected to use.
+        // Get selected images.
+        let self = this;
+        this.urlImages = product.urlImages.slice(0);
+        // Not selected images.
+        let foundUlrImage;
+        // Add url images that not exist on selected images.
+        urlUploadedImages.forEach(function(urlUploadedImage){
+          foundUlrImage = false;
+          for (let i = 0; i < self.urlImages.length; i++) {
+            if (urlUploadedImage === self.urlImages[i]) {
+              foundUlrImage = true;
+              break;
+            }
+          }
+          if(!foundUlrImage){
+            self.urlImages.push(urlUploadedImage);
+          }
+        });
       },
       // Path to image src tag.
       imageSrc(image) {
@@ -262,8 +284,14 @@
         alert(`Arrow - ${direction} - ${index}`);
       },
       selectImage(index){
-
+        // Troggle selection.
         alert(`Image selected: ${index}`);
+        let elem = $('.wrapper-image')[index];
+        if (elem.hasClass){
+          elem.removeClass('selected');
+        } else {
+          elem.addClass('selected');
+        }
       },
       isImagedSelected(index){
         return true;
@@ -294,12 +322,13 @@
   }
 </script>
 <style lang='stylus'>
-  .img-selection
+  .wrapper-image
     position: relative
     display: inline-block
     margin: .15em
+  .wrapper-image.selected
     border: .15em solid green
-  .img-selection:hover 
+  .product-images:hover 
     .left-arrow{display: block}
     .right-arrow{display: block}
   .left-arrow
@@ -308,7 +337,7 @@
     left: 0
     width: 0
     height: 0
-    border-right: 15px solid green
+    border-right: 15px solid orange
     border-top: 15px solid transparent
     border-bottom: 15px solid transparent
     opacity: .5
@@ -319,7 +348,7 @@
     right: 0
     width: 0
     height: 0
-    border-left: 15px solid green
+    border-left: 15px solid orange
     border-top: 15px solid transparent
     border-bottom: 15px solid transparent
     opacity: .5
