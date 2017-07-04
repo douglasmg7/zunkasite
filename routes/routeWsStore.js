@@ -70,7 +70,7 @@ router.put('/:id', function(req, res) {
     res.json('status: fail');
   });
 });
-// Update a product.
+// Delete a product.
 router.delete('/:id', function(req, res) {
   // Error if try to update document id.
   delete req.body._id;
@@ -123,6 +123,24 @@ router.put('/upload-product-images/:dealer/:_id', (req, res)=>{
     }
   });
 });
+// Delete a product image.
+router.put('/remove-product-images/:dealer/:_id/:urlImage', (req, res)=>{
+  // Some security, just permit remove .jpeg extension file.'
+  if (path.extname(req.params.urlImage) === '.jpeg') {
+    const IMAGE_PATH = path.join(__dirname, '..', '/dist/img', req.params.dealer, '/products', req.params._id, req.params.urlImage);
+    // Remove file.
+    fse.remove(IMAGE_PATH, err=>{
+      if (err) { 
+        log.error(new Error().stack, err);
+        res.json({'status': 'success'});
+      }
+      else {
+        log.info(`${IMAGE_PATH} was removed.`)
+        res.json({'status': 'fail'});
+      }
+    });    
+  }
+});
 // Get list of product images url.
 router.get('/get-product-images-url/:dealer/:_id', function(req, res) {
   const DIR_IMG_PRODUCT = path.join(__dirname, '..', 'dist/img/' + req.params.dealer.replace(/\s/g, '') + '/products', req.params._id);
@@ -130,7 +148,7 @@ router.get('/get-product-images-url/:dealer/:_id', function(req, res) {
   fse.readdir(DIR_IMG_PRODUCT, (err, files)=>{
     if (err) {
       // Err, because dir is created when the first image is uploaded.
-      log.error(new Error().stack, err.stack);
+      log.error(new Error().stack, err);
       res.json([]);
     } else {
       log.info(JSON.stringify(files));

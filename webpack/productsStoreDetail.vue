@@ -23,6 +23,7 @@
                 img.ui.tiny.image.product-image(:src='imageSrc(image)' @click='selectImage(index)')
                 .right-arrow(@click='moveImage("right", index)')
                 .left-arrow(@click='moveImage("left", index)')
+                p.delete-image(@click='deleteImage(index)') x
               .ui.left.aligned.container
                 label.ui.labeled.icon.button(for='file-upload')
                   i.large.upload.icon
@@ -182,6 +183,15 @@
         const isNewProduct = product.isNewProduct;
         // Remove this propertie to keep product on db, when the windows close.
         delete product.isNewProduct;
+        // Save urlImage configuration on product object.
+        product.urlImages = [];
+        let jqElem = $('.wrapper-image');
+        // For each selected url image, include on product url images.
+        this.urlImages.forEach(function(urlImage, index) {
+          if (jqElem.eq(index).hasClass('selected')){
+            product.urlImages.push(urlImage);
+          }
+        });
         // Update product on db.
         this.$http.put(`${wsPath.store}/${product._id}`, product)
           .then((res)=>{
@@ -247,18 +257,18 @@
         this.$http.get(`${wsPath.store}/get-product-images-url/${product.dealer}/${product._id}`)
           .then(result=>{
             // Updated url images.
-            this.updateImagesUrl(product, result.body);
+            this.updateImagesUrl(result.body);
           })
           .catch(err=>{
             console.error(err);
           })
       },
       // Update image urls, order and selection.
-      updateImagesUrl(product, urlUploadedImages){
+      updateImagesUrl(urlUploadedImages){
         // Mount first the selected images to use, after the rest of loaded url images from server, that not was selected to use.
         // Get selected images.
         let self = this;
-        this.urlImages = product.urlImages.slice(0);
+        this.urlImages = this.product.urlImages.slice(0);
         // Not selected images.
         let foundUlrImage;
         // Add url images that not exist on selected images.
@@ -280,21 +290,77 @@
         return '/img/' + this.product.dealer.replace(/\s/g, '') + '/products/' + this.product._id + '/' + image;
       },
       moveImage(direction, index){
-        // alert('Arrow-' + direction + '-' + index);
-        alert(`Arrow - ${direction} - ${index}`);
+        // Position to move.
+        let toIndex;
+        // To right.
+        if (direction === 'right') {
+          // Last element.
+          if ((index + 1) === this.urlImages.length) {
+            toIndex = 0;
+          // Not the last element.
+          } else  {
+            toIndex = index + 1;
+          }
+        // To left. 
+        } else {
+          // First element.
+          if (index === 0) {
+            toIndex = this.urlImages.length - 1;
+          // Not the last element.
+          } else  {
+            toIndex = index - 1;
+          } 
+        }
+        // Get all wrapper images.
+        let jqElem = $('.wrapper-image');
+        // Save toIndex class.
+        let selectedToIndex = jqElem.eq(toIndex).hasClass('selected');
+        // Change toIndex class.
+        if (jqElem.eq(index).hasClass('selected')) {
+          jqElem.eq(toIndex).addClass('selected');
+        } else{ 
+          jqElem.eq(toIndex).removeClass('selected');
+        }
+        // Change index class.
+        if (selectedToIndex) {
+          jqElem.eq(index).addClass('selected');
+        } else{ 
+          jqElem.eq(index).removeClass('selected');
+        }
+        // Change elements.
+        let toIndexElement = this.urlImages[toIndex];
+        this.$set(this.urlImages, toIndex, this.urlImages[index]);
+        this.$set(this.urlImages, index, toIndexElement);
       },
+      // Select a image from server to be used.
+      // Make the selection persistent just when the product be saved.
       selectImage(index){
         // Troggle selection.
-        alert(`Image selected: ${index}`);
-        let elem = $('.wrapper-image')[index];
-        if (elem.hasClass){
+        let elem = $('.wrapper-image').eq(index);
+        // Remove selection.
+        if (elem.hasClass('selected')){
+          // console.info('removeClass');
           elem.removeClass('selected');
+          // delete this.urlImages[index].selected;
+        // Add selection.
         } else {
+          // console.info('addClass');
           elem.addClass('selected');
+          // this.urlImages[index].selected = true;
         }
       },
-      isImagedSelected(index){
-        return true;
+      // Delete image from server.
+      deleteImage(index){
+        // Delete image from server.
+        this.$http.put(`${wsPath.store}/remove-product-images/${this.product.dealer.replace(/\s/g, '')}/${this.product._id}/${this.urlImages[index]}`)
+          .then(result=>{
+            // get uploaded images urls.
+            this.getUrlUploadedImages(this.product);
+          })
+          .catch(err=>{
+            console.error(err);
+            this.getUrlUploadedImages(this.product);
+          })
       }
     },
     computed: {
@@ -326,31 +392,45 @@
     position: relative
     display: inline-block
     margin: .15em
+    border: .15em solid transparent
   .wrapper-image.selected
     border: .15em solid green
-  .product-images:hover 
+  .wrapper-image:hover 
     .left-arrow{display: block}
     .right-arrow{display: block}
+    p.delete-image{display: block}
   .left-arrow
     position: absolute
-    bottom: 20px
+    bottom: 5px
     left: 0
     width: 0
     height: 0
     border-right: 15px solid orange
     border-top: 15px solid transparent
     border-bottom: 15px solid transparent
-    opacity: .5
+    opacity: 1
+    cursor: pointer
     display: none 
   .right-arrow
     position: absolute
-    bottom: 20px
+    bottom: 5px
     right: 0
     width: 0
     height: 0
     border-left: 15px solid orange
     border-top: 15px solid transparent
     border-bottom: 15px solid transparent
-    opacity: .5
+    opacity: 1
+    cursor: pointer
+    display: none
+  p.delete-image
+    position: absolute
+    bottom: 60px
+    right: 0
+    opacity: 1
+    color: orange
+    font-size: 1.5em
+    font-weight: bold
+    cursor: pointer
     display: none
 </style>
