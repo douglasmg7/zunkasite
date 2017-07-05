@@ -189,7 +189,12 @@
         // Remove this propertie to keep product on db, when the windows close.
         product.isNewProduct = false;
         // Save urlImage configuration on product object.
-        product.images = this.images;
+        prodcut.images = [];
+        this.images.forEach(function(image) {
+          if (image.selected) {
+            product.images.push(image);
+          }
+        });
         // Update product on db.
         this.$http.put(`${wsPath.store}/${product._id}`, product)
           .then((res)=>{
@@ -338,6 +343,8 @@
             console.error(err);
             this.getUploadedImageNames(this.product);
           })
+        // Delete from modeal, if product be saved, product.images is updated with this.images.
+        this.$delete(this.images, index);
       }
     },
     computed: {

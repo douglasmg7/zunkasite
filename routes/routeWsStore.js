@@ -74,11 +74,17 @@ router.put('/:id', function(req, res) {
 router.delete('/:id', function(req, res) {
   // Error if try to update document id.
   delete req.body._id;
-  mongo.db.collection(dbConfig.collStoreProducts).deleteOne(
+  mongo.db.collection(dbConfig.collStoreProducts).deleteMany(
     {_id: new ObjectId(req.params.id)}
   )
   .then(result=>{
-    res.json('status: success');
+    // // Delete images dir.
+    // DIR_TO_REMOVE = path.join(__dirname, '..', 'dist/img/' + req.params.dealer.replace(/\s/g, '') + '/products', req.params._id)
+    // fse.remove(DIR_TO_REMOVE, err=>{
+    //   if (err) { log.error(ERROR().stack, err); }
+    //   res.json('status: success');
+    // });
+    console.info('Delete result: ', JSON.stringify(result));
   }).catch(err=>{
     console.log(`saving store products detail - err: ${err}`);
     res.json('status: fail');
