@@ -19,8 +19,8 @@
               input.ui.disabled.input(v-model='product.dealerProductTitle')
             .field
               label Imagens
-              .wrapper-image(v-if='urlImages.length > 0' v-for='(image, index) in urlImages', :class='{selected: image.selected}')
-                img.ui.tiny.image.product-image(:src='imageSrc(image)' @click='selectImage(index)')
+              .wrapper-image(v-if='images.length > 0' v-for='(image, index) in images', :class='{selected: image.selected}')
+                img.ui.tiny.image.product-image(:src='imageSrc(image.name)' @click='selectImage(index)')
                 .right-arrow(@click='moveImage("right", index)')
                 .left-arrow(@click='moveImage("left", index)')
                 p.delete-image(@click='deleteImage(index)') x
@@ -120,9 +120,9 @@
                     p {{product.dealerProductActive == true ? 'Produto ativo' : 'Produto inativo'}}
       .actions
         button.ui.positive.button(@click='saveProduct(product)') Salvar
-        button.ui.red.deny.button(v-if='!product.isNewProduct') Apagar
+        button.ui.red.deny.button(v-if='!product.isNewProduct') Remover
         button.ui.red.deny.button(v-if='product.isNewProduct') Descartar
-        button.ui.black.deny.button(v-if='!product.isNewProduct') Fechar
+        button.ui.black.deny.no-prompt.button(v-if='!product.isNewProduct') Fechar
 </template>
 <script>
   'use strict';
@@ -133,7 +133,7 @@
   export default {
     data: function(){
       return {
-        urlImages: []};
+        images: []};
     },
     props:['$http', 'product', 'productMakers', 'productCategories'],
     mounted(){
@@ -150,11 +150,11 @@
             $('.ui.dropdown').dropdown({duration: 0});
               // Update images urls.
               const vueSelf = appVue.$refs.productsStore.$refs.productStoreDetail;
-              vueSelf.getUrlUploadedImages(vueSelf.product)
+              vueSelf.getUploadedImageNames(vueSelf.product)
           }, 100);},
         onHidden: function() {
           // Clean images urls for the next time that modal open.
-          appVue.$refs.productsStore.$refs.productStoreDetail.urlImages = [];
+          appVue.$refs.productsStore.$refs.productStoreDetail.images = [];
           // User not saved new product.
           if (appVue.$refs.productsStore.$refs.productStoreDetail.isNewProduct) {
             // Delete from db.
@@ -163,7 +163,12 @@
               .catch((err)=>{ console.error(err); });
           }
         },
-        onDeny() {
+        onDeny(e) {
+          // No prompt, just close the modal.
+          if (e.hasClass('no-prompt')) {
+            return true;
+          }
+          // Prompt.
           if (confirm("Remover produto?")) { 
             // Delete product.
             const vueSelf = appVue.$refs.productsStore.$refs.productStoreDetail;
@@ -180,23 +185,16 @@
     methods: {
       // Save product.
       saveProduct(product){
-        const isNewProduct = product.isNewProduct;
+        const wasNewProduct = product.isNewProduct;
         // Remove this propertie to keep product on db, when the windows close.
-        delete product.isNewProduct;
+        product.isNewProduct = false;
         // Save urlImage configuration on product object.
-        product.urlImages = [];
-        let jqElem = $('.wrapper-image');
-        // For each selected url image, include on product url images.
-        this.urlImages.forEach(function(urlImage, index) {
-          if (jqElem.eq(index).hasClass('selected')){
-            product.urlImages.push(urlImage);
-          }
-        });
+        product.images = this.images;
         // Update product on db.
         this.$http.put(`${wsPath.store}/${product._id}`, product)
           .then((res)=>{
             // Product list must be updated.
-            if (isNewProduct) {
+            if (wasNewProduct) {
               this.$emit('productIncluded');
             } else {
               this.$emit('productSaved');
@@ -222,7 +220,7 @@
         let self = this;
         this.$http.put(`${wsPath.allNations}/download-dealer-images/${product._id}`)
           .then(()=>{
-            self.getUrlUploadedImages(self.product);
+            self.getUploadedImageNames(self.product);
           })
           .catch((err)=>{ console.error(err); });
       },
@@ -233,8 +231,8 @@
         if (files.length === 0) {
           alert('Nenhuma imagem para upload foi selecionada.');
         // too many files
-        } else if (files.length > 4) {
-          alert('Selecione no máximo 4 imagens por vez.')
+        } else if (files.length > 8) {
+          alert('Selecione no máximo 8 imagens por vez.')
         }
         // it's ok
         else {
@@ -246,13 +244,13 @@
           let self = this;
           this.$http.put(`${wsPath.store}/upload-product-images/${this.product.dealer}/${this.product._id}`, formData)
             .then(()=>{
-              this.getUrlUploadedImages(this.product);
+              this.getUploadedImageNames(this.product);
             })
             .catch((err)=>{ console.error(err); });
         }
       },
       // Get list of url of uploaded images.
-      getUrlUploadedImages(product){
+      getUploadedImageNames(product){
         // get list of images url
         this.$http.get(`${wsPath.store}/get-product-images-url/${product.dealer}/${product._id}`)
           .then(result=>{
@@ -264,30 +262,30 @@
           })
       },
       // Update image urls, order and selection.
-      updateImagesUrl(urlUploadedImages){
+      updateImagesUrl(uploadedImageNames){
         // Mount first the selected images to use, after the rest of loaded url images from server, that not was selected to use.
         // Get selected images.
         let self = this;
-        this.urlImages = this.product.urlImages.slice(0);
+        this.images = this.product.images.slice(0);
         // Not selected images.
         let foundUlrImage;
         // Add url images that not exist on selected images.
-        urlUploadedImages.forEach(function(urlUploadedImage){
+        uploadedImageNames.forEach(function(uploadedImageName){
           foundUlrImage = false;
-          for (let i = 0; i < self.urlImages.length; i++) {
-            if (urlUploadedImage === self.urlImages[i]) {
+          for (let i = 0; i < self.images.length; i++) {
+            if (uploadedImageName === self.images[i].name) {
               foundUlrImage = true;
               break;
             }
           }
           if(!foundUlrImage){
-            self.urlImages.push(urlUploadedImage);
+            self.images.push({name: uploadedImageName, selected: false});
           }
         });
       },
       // Path to image src tag.
-      imageSrc(image) {
-        return '/img/' + this.product.dealer.replace(/\s/g, '') + '/products/' + this.product._id + '/' + image;
+      imageSrc(imageName) {
+        return '/img/' + this.product.dealer.replace(/\s/g, '') + '/products/' + this.product._id + '/' + imageName;
       },
       moveImage(direction, index){
         // Position to move.
@@ -295,7 +293,7 @@
         // To right.
         if (direction === 'right') {
           // Last element.
-          if ((index + 1) === this.urlImages.length) {
+          if ((index + 1) === this.images.length) {
             toIndex = 0;
           // Not the last element.
           } else  {
@@ -305,61 +303,40 @@
         } else {
           // First element.
           if (index === 0) {
-            toIndex = this.urlImages.length - 1;
+            toIndex = this.images.length - 1;
           // Not the last element.
           } else  {
             toIndex = index - 1;
           } 
         }
-        // Get all wrapper images.
-        let jqElem = $('.wrapper-image');
-        // Save toIndex class.
-        let selectedToIndex = jqElem.eq(toIndex).hasClass('selected');
-        // Change toIndex class.
-        if (jqElem.eq(index).hasClass('selected')) {
-          jqElem.eq(toIndex).addClass('selected');
-        } else{ 
-          jqElem.eq(toIndex).removeClass('selected');
-        }
-        // Change index class.
-        if (selectedToIndex) {
-          jqElem.eq(index).addClass('selected');
-        } else{ 
-          jqElem.eq(index).removeClass('selected');
-        }
         // Change elements.
-        let toIndexElement = this.urlImages[toIndex];
-        this.$set(this.urlImages, toIndex, this.urlImages[index]);
-        this.$set(this.urlImages, index, toIndexElement);
+        let toIndexElement = this.images[toIndex];
+        this.$set(this.images, toIndex, this.images[index]);
+        this.$set(this.images, index, toIndexElement);
       },
       // Select a image from server to be used.
       // Make the selection persistent just when the product be saved.
       selectImage(index){
         // Troggle selection.
-        let elem = $('.wrapper-image').eq(index);
         // Remove selection.
-        if (elem.hasClass('selected')){
-          // console.info('removeClass');
-          elem.removeClass('selected');
-          // delete this.urlImages[index].selected;
+        if (this.images[index].selected){
+          this.images[index].selected = false;
         // Add selection.
         } else {
-          // console.info('addClass');
-          elem.addClass('selected');
-          // this.urlImages[index].selected = true;
+          this.images[index].selected = true;
         }
       },
       // Delete image from server.
       deleteImage(index){
         // Delete image from server.
-        this.$http.put(`${wsPath.store}/remove-product-images/${this.product.dealer.replace(/\s/g, '')}/${this.product._id}/${this.urlImages[index]}`)
+        this.$http.put(`${wsPath.store}/remove-product-images/${this.product.dealer.replace(/\s/g, '')}/${this.product._id}/${this.images[index]}`)
           .then(result=>{
             // get uploaded images urls.
-            this.getUrlUploadedImages(this.product);
+            this.getUploadedImageNames(this.product);
           })
           .catch(err=>{
             console.error(err);
-            this.getUrlUploadedImages(this.product);
+            this.getUploadedImageNames(this.product);
           })
       }
     },
