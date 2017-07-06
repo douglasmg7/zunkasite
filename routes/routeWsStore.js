@@ -43,57 +43,89 @@ router.get('/dropdown', function(req, res) {
     console.log(`Error dropdwon: ${err}`);
   });
 });
+
 // Insert a product.
 router.post('/', function(req, res) {
   mongo.db.collection(dbConfig.collStoreProducts).insert(req.body)
   .then(result=>{
-    console.log(JSON.stringify(result.ops[0]));
+    // Create folder.
+    fse.ensureDir(path.join(__dirname, '../dist/img', result.ops[0]._id.toString()), err=>{
+      if (err) { log.error(new Error().stack, err); }
+    });
     // Send product inserted (client need the _id).
     res.json(result.ops[0]);
   }).catch(err=>{
-    console.log(`Insert product - err: ${err}`);
+    log.error(err + '\n', new Error().stack)
     res.json('status: fail');
   });
 });
+
 // Update a product.
 router.put('/:id', function(req, res) {
   // Error if try to update document id.
+  const product_id = req.body._id;
+  const images = req.body.images;
   delete req.body._id;
   mongo.db.collection(dbConfig.collStoreProducts).updateOne(
     {_id: new ObjectId(req.params.id)},
     {$set: req.body}
   )
   .then(result=>{
-    res.json('status: success');
+    // Sync upladed images with product.images.
+    // Get list of uploaded images.
+    fse.readdir(path.join(__dirname, '..', 'dist/img/', product_id), (err, files)=>{
+      if (err) {
+        log.error(err + '\n', new Error().stack);
+      } 
+      else {
+        // Remove uploaded images not in product images.
+        let exist;
+        files.forEach(function(file) {
+          exist = false;
+          images.forEach(function(image) {
+            if (file === image.name) {
+              exist = true;
+            }  
+          });
+          // Uploaded image not in product images.
+          if (!exist) {
+            // Remove uploaded image.
+            let fileToRemove = file;
+            fse.remove(path.join(__dirname, '..', 'dist/img/', product_id, fileToRemove), err=>{
+              if (err) { log.error(ERROR().stack, err); }
+            });
+          }
+        });
+        res.json('status: success');
+      }
+    });  
   }).catch(err=>{
     console.log(`saving store products detail - err: ${err}`);
     res.json('status: fail');
   });
 });
+
 // Delete a product.
-router.delete('/:id', function(req, res) {
+router.delete('/:_id', function(req, res) {
   // Error if try to update document id.
   delete req.body._id;
-  mongo.db.collection(dbConfig.collStoreProducts).deleteMany(
-    {_id: new ObjectId(req.params.id)}
-  )
-  .then(result=>{
-    // // Delete images dir.
-    // DIR_TO_REMOVE = path.join(__dirname, '..', 'dist/img/' + req.params.dealer.replace(/\s/g, '') + '/products', req.params._id)
-    // fse.remove(DIR_TO_REMOVE, err=>{
-    //   if (err) { log.error(ERROR().stack, err); }
-    //   res.json('status: success');
-    // });
-    console.info('Delete result: ', JSON.stringify(result));
-  }).catch(err=>{
-    console.log(`saving store products detail - err: ${err}`);
-    res.json('status: fail');
-  });
+  mongo.db.collection(dbConfig.collStoreProducts).deleteOne( {_id: new ObjectId(req.params._id)} )
+    .then(result=>{
+      // Delete images dir.
+      fse.remove(path.join(__dirname, '..', 'dist/img/', req.params._id), err=>{
+        if (err) { log.error(ERROR().stack, err); }
+        res.json('status: success');
+      });
+    })
+    .catch(err=>{
+      log.error(new Error().stack, err);
+      res.json('status: fail');
+    });
 });
 // Upload product pictures.
-router.put('/upload-product-images/:dealer/:_id', (req, res)=>{
+router.put('/upload-product-images/:_id', (req, res)=>{
   const form = formidable.IncomingForm();
-  const DIR_IMG_PRODUCT = path.join(__dirname, '..', 'dist/img/' + req.params.dealer.replace(/\s/g, '') + '/products', req.params._id);
+  const DIR_IMG_PRODUCT = path.join(__dirname, '..', 'dist/img/', req.params._id);
   const MAX_FILE_SIZE_UPLOAD = 10 * 1024 * 1024;
   form.uploadDir = DIR_IMG_PRODUCT;
   form.keepExtensions = true;
@@ -129,11 +161,12 @@ router.put('/upload-product-images/:dealer/:_id', (req, res)=>{
     }
   });
 });
+
 // Delete a product image.
-router.put('/remove-product-images/:dealer/:_id/:urlImage', (req, res)=>{
+router.put('/remove-product-image/:_id/:urlImage', (req, res)=>{
   // Some security, just permit remove .jpeg extension file.'
   if (path.extname(req.params.urlImage) === '.jpeg') {
-    const IMAGE_PATH = path.join(__dirname, '..', '/dist/img', req.params.dealer, '/products', req.params._id, req.params.urlImage);
+    const IMAGE_PATH = path.join(__dirname, '..', '/dist/img', req.params._id, req.params.urlImage);
     // Remove file.
     fse.remove(IMAGE_PATH, err=>{
       if (err) { 
@@ -147,21 +180,61 @@ router.put('/remove-product-images/:dealer/:_id/:urlImage', (req, res)=>{
     });    
   }
 });
+
+// Delete a product image.
+router.put('/remove-uploaded-image/:_id', (req, res)=>{
+  mongo.db.collection(dbConfig.collStoreProducts).findOne({_id: new ObjectId(req.params._id)})
+  .then(result=>{
+    // Get list uploaded images.
+    fse.readdir(path.join(__dirname, '..', 'dist/img/', req.params._id), (err, files)=>{
+      if (err) {
+        log.error(err + '\n', new Error().stack);
+      } 
+      else {
+        // Remove uploaded images not in product images.
+        const images = result.images;
+        let exist;
+        files.forEach(function(file) {
+          exist = false;
+          images.forEach(function(image) {
+            if (file === image.name) {
+              exist = true;
+            }  
+          });
+          // Uploaded image not in product images.
+          if (!exist) {
+            // Remove uploaded image.
+            let fileToRemove = file;
+            fse.remove(path.join(__dirname, '..', 'dist/img/', req.params._id, fileToRemove), err=>{
+              if (err) { log.error(ERROR().stack, err); }
+            });
+          }
+        });
+        res.json('status: success');
+      }
+    });
+  }).catch(err=>{
+    log.error(err + '\n', new Error().stack);
+    res.json('status: fail');
+  });
+});
+
 // Get list of product images url.
-router.get('/get-product-images-url/:dealer/:_id', function(req, res) {
-  const DIR_IMG_PRODUCT = path.join(__dirname, '..', 'dist/img/' + req.params.dealer.replace(/\s/g, '') + '/products', req.params._id);
+router.get('/uploaded-image-names/:_id', function(req, res) {
+  const DIR_IMG_PRODUCT = path.join(__dirname, '..', 'dist/img/', req.params._id);
   // Get list of files.
   fse.readdir(DIR_IMG_PRODUCT, (err, files)=>{
     if (err) {
       // Err, because dir is created when the first image is uploaded.
-      log.error(new Error().stack, err);
+      log.error(err + '\n', new Error().stack);
       res.json([]);
     } else {
-      log.info(JSON.stringify(files));
+      // log.info(JSON.stringify(files));
       res.json(files);
     }
   });
 });
+
 // Get products to commercialize.
 router.get('/products-commercialize', function (req, res) {
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;

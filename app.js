@@ -149,12 +149,12 @@ passport.use(new LocalStrategy(function (username, password, done) {
 
 // Serialize _id to session, write _id to session.passport.user.
 passport.serializeUser(function(user, done) {
-  log.info('passport.serialize');
+  // log.info('passport.serialize');
   done(null, user._id);
 });
 // Deserialize from the session, use session.passport.user to find user into db.
 passport.deserializeUser(function(id, done) {
-  log.info('passport.deserialize');
+  // log.info('passport.deserialize');
   const _id = new ObjectId(id);
   mongo.db.collection(dbConfig.collSession).findOne({_id: _id}, (err, user)=>{
     // console.log(`user from db: ${JSON.stringify(user)}`);
