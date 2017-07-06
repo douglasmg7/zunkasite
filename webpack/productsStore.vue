@@ -100,7 +100,9 @@
           dealer: 'zunka',
           storeProductId: '',
           storeProductTitle: '',
-          dealerProductCommercialize: true,
+          dealerProductQtd: 0,
+          dealerProductActive: true,
+          dealerProductCommercialize: false,
           images: [],
           // Modal must delete this product if user not save it.
           // To modal know which button to show.

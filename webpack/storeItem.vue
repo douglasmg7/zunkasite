@@ -21,7 +21,7 @@
               a(href='/users/login' v-if="!this.user.username") Entrar
             li
               // Cart.
-              a Carrinho
+              a(href='#') Carrinho
             li
               // Admin.
               a(href='/configProducts/store' v-if="this.user.group == 'admin'") Admin
@@ -35,37 +35,34 @@
         .col-md-4.col-md-offset-1
           .row
             .col-md-12
-              img.img-responsive.center-block(:src='imgUrl()')
+              img.img-responsive.center-block(:src='getImgUrl(0)' v-if='imagesSelected.length > 0')
+          .row
             .col-md-2
-              img.img-responsive.center-block(:src='imgUrl()')
+              img.img-responsive.center-block(:src='getImgUrl(0)' v-if='imagesSelected.length > 0')
             .col-md-2
-              img.img-responsive.center-block(:src='imgUrl()')
+              img.img-responsive.center-block(:src='getImgUrl(1)' v-if='imagesSelected.length > 1')
             .col-md-2
-              img.img-responsive.center-block(:src='imgUrl()')
+              img.img-responsive.center-block(:src='getImgUrl(2)' v-if='imagesSelected.length > 2') 
             .col-md-2
-              img.img-responsive.center-block(:src='imgUrl()')
+              img.img-responsive.center-block(:src='getImgUrl(3)' v-if='imagesSelected.length > 3')
             .col-md-2
-              img.img-responsive.center-block(:src='imgUrl()')
+              img.img-responsive.center-block(:src='getImgUrl(4)' v-if='imagesSelected.length > 4')
             .col-md-2
-              img.img-responsive.center-block(:src='imgUrl()')
+              img.img-responsive.center-block(:src='getImgUrl(5)' v-if='imagesSelected.length > 5')
         .col-md-6
           // Title.
-          h3.product-name Raspberry PI 3 Model B A1.2GHz 64-bit quad-core ARMv8 CPU, 1GB RAM
+          h3.product-name {{product.storeProductTitle}}
           // Price
           h3.product-price {{product.storeProductPrice | currencyBr}}
           // Detail.
           ul.product-detail
-            li 1.2GHz 64-bit quad-core ARMv8 CPU, 1 GB RAM
-            li 802.11n Wireless LAN, 10/100Mbps Lan Speed 
-            li Bluetooth 4.1, Bluetooth Low Energy 
-            li 4 USB ports, 40 GPIO pins, Full HDMI port, Combined 3.5mm audio jack and composite video 
-            li Camera interface (CSI),Display interface (DSI), Micro SD card slot (now push-pull rather than push-push), VideoCore IV 3D graphics core
+            li(v-for='detail in productDetail') {{detail}}
       .row
         .col-md-10.col-md-offset-1
           //- Description.
           hr
           h5.title Descricao do produto
-          p Built on the latest Broadcom 2837 ARMv8 64 bit processor the Raspberry Pi 3 Model B is faster and more powerful than its predecessors. It has improved power management to support more powerful external USB devices and now comes with built-in wireless and Bluetooth connectivity. To take full advantage of the improved power management on the Raspberry Pi 3 and provide support for even more powerful devices on the USB ports, a 2.5A adapter is required. Technical Specifications: - Broadcom BCM2837 64bit ARMv8 QUAD Core 64bit Processor powered Single Board Computer running at 1.2GHz - 1GB RAM - BCM43143 WiFi on board - Bluetooth Low Energy (BLE) on board - 40pin extended GPIO - 4 x USB2 ports - 4 pole Stereo output and Composite video port - Full size HDMI - CSI camera port for connecting the Raspberry Pi camera - DSI display port for connecting the Raspberry Pi touch screen display - MicroSD port for loading your operating system and storing data - Upgraded switched Micro USB power source (now supports up to 2.5 Amps) This product is made under license in both China and the U.K. Please see the product packaging.
+          p {{product.storeProductDescription}}
       .row
         .col-md-10.col-md-offset-1
           //- Informations.
@@ -78,24 +75,18 @@
               .table-responsive
                 table.table
                   tbody
-                    tr
-                      td Screen Size 
-                      td 60 inches 
-                    tr
-                      td Processor 
-                      td 1.2 GHz
+                    tr(v-for='infoTech in productInformationTechnical')
+                      td {{infoTech[0]}}
+                      td {{infoTech[1]}}
             //- Additional information.
             .col-md-6
               h5 Informacoes adicionais
               .table-responsive
                 table.table
                   tbody
-                    tr
-                      td Brand Name 
-                      td Raspberry Pi 
-                    tr
-                      td Series 
-                      td RASPBERRYPI3-MODB-1GB
+                    tr(v-for='infoAdd in productInformationAdditional')
+                      td {{infoAdd[0]}}
+                      td {{infoAdd[1]}}
       .row
         .col-md-10.col-md-offset-1
           footer
@@ -116,7 +107,7 @@
     },
     props:['$http', 'user', 'product'],
     created(){
-      this.getImagesUrl(this.product);
+      // this.getImagesUrl(this.product);
     },
     mounted(){
       // console.log('init');
@@ -129,22 +120,9 @@
       getProducts(page=1){
         window.location.href = `/?page=1&search=${this.search}`;
       },
-            // Get list of image names to use with the img tag, to show images.
-      getImagesUrl(product){
-        // get list of images url.
-        this.$http.get(`${wsPath.store}/get-product-images-url/${product.dealer}/${product._id}`)
-          .then(result=>{
-            this.imageUrls = result.body;
-            console.log(JSON.stringify(this.product));
-            console.log(JSON.stringify(this.imageUrls));
-          })
-          .catch(err=>{
-            this.imageUrls = [];
-            console.error(err);
-          })
-      },
-      imgUrl(){
-        return `/img/${this.product.dealer.replace(/\s/g, '')}/products/${this.product.dealerProductId}/dealer-img-01.jpeg`;
+      // Get image url.
+      getImgUrl(index){
+        return `/img/${this.product._id}/${this.imagesSelected[index].name}`;
       }      
     },
     filters: {
@@ -157,7 +135,39 @@
       currencyCents(value){
         return accounting.formatMoney(value, '', 2, '.', ',').split(',')[1];
       }
-    }
+    },
+    computed:{
+      // Return array with only images marked as selected.
+      imagesSelected(){
+        let imgSel = [];
+        this.product.images.forEach(function(image) {
+          if (image.selected) {
+            imgSel.push(image);
+          }
+        });
+        return imgSel;
+      },
+      // Each line of product detail become one array item.
+      productDetail(){
+        return this.product.storeProductDetail.split('\n');
+      },
+      // Each line of technical information become a array item, each item in line separeted by ; become array item.
+      productInformationTechnical(){
+        let infoTech = [];
+        this.product.storeProductTechnicalInformation.split('\n').forEach(function(info) {
+          infoTech.push(info.split(';'));
+        });
+        return infoTech;
+      },
+      // Each line of additional information become a array item, each item in line separeted by ; become array item.
+      productInformationAdditional(){
+        let infoAdd = [];
+        this.product.storeProductAdditionalInformation.split('\n').forEach(function(info) {
+          infoAdd.push(info.split(';'));
+        });
+        return infoAdd;
+      }
+    }    
   }
 </script>
 <style lang='stylus'>

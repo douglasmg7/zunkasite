@@ -9,14 +9,14 @@
             //- detalhes
             h3.ui.dividing.header Detalhes
             .field
-              label Zunka Id
+              label Codigo
               input(v-model='product.storeProductId')
             .field
               label Título
               input(v-model='product.storeProductTitle')
             .field
-              label Título fornecedor
-              input.ui.disabled.input(v-model='product.dealerProductTitle')
+              label Fornecedor
+              input.ui.input(v-model='product.dealerProductTitle')
             .field
               label Imagens
               .wrapper-image(v-if='product.images.length > 0' v-for='(image, index) in product.images', :class='{selected: image.selected}')
@@ -33,11 +33,17 @@
                   i.large.upload.icon
                   | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) do fornecedor
             .field
-              label Descrição primária
-              textarea(v-model='product.storeProductDescPrimary' rows='15')
+              label Detalhes
+              textarea(v-model='product.storeProductDetail' rows='8')
             .field
-              label Descrição completa
-              textarea(v-model='product.storeProductDescComplete' rows='15')
+              label Descrição
+              textarea(v-model='product.storeProductDescription' rows='8')
+            .field
+              label Informacoes tecnicas
+              textarea(v-model='product.storeProductTechnicalInformation' rows='8')
+            .field
+              label Informacoes adicionais
+              textarea(v-model='product.storeProductAdditionalInformation' rows='8')
             .two.fields
               //- maker
               .field
@@ -56,7 +62,8 @@
             .fields
               .four.wide.field
                 label Fornecedor
-                .ui.right.labeled.disabled.input
+                //- .ui.right.labeled.disabled.input
+                .ui.right.labeled.input
                   input(v-model='product.dealerProductWarrantyDays')
                   .ui.label.basic Dias
               .four.wide.field
@@ -77,7 +84,8 @@
             .fields
               .four.wide.field
                 label Fornecedor
-                .ui.labeled.disabled.input
+                //- .ui.labeled.disabled.input
+                .ui.labeled.input
                   .ui.label.basic R$
                   input(v-model='product.dealerProductPrice')
               .four.wide.field
@@ -105,19 +113,25 @@
               .ui.checkbox
                 input(type='checkbox' v-model='product.storeProductCommercialize')
                 Label Comercializar produto
-            .fields
-              .one.wide.field
-              .six.wide.field
+            .field
+              .four.wide.field
                 label Estoque
-                .ui.small.visible.aligned.center.message(v-bind:class='{"warning": product.dealerProductQtd < 5}')
-                  .ui.center.aligned.container
-                    p {{product.dealerProductQtd}} {{product.dealerProductQtd > 1 ? 'unidades': 'unidade'}}
-              .two.wide.field
-              .six.wide.field
-                label Status fornecedor
-                .ui.small.visible.message(v-bind:class='{"warning": !product.dealerProductActive}')
-                  .ui.center.aligned.container
-                    p {{product.dealerProductActive == true ? 'Produto ativo' : 'Produto inativo'}}
+                .ui.right.labeled.input
+                  input(v-model='product.dealerProductQtd')
+                  .ui.label.basic {{product.dealerProductQtd > 1 ? 'Unidades': 'Unidade'}}           
+              .twelve.wide.field
+              //- .one.wide.field
+              //- .six.wide.field
+              //-   label Estoque
+              //-   .ui.small.visible.aligned.center.message(v-bind:class='{"warning": product.dealerProductQtd < 5}')
+              //-     .ui.center.aligned.container
+              //-       p {{product.dealerProductQtd}} {{product.dealerProductQtd > 1 ? 'unidades': 'unidade'}}
+              //- .two.wide.field
+              //- .six.wide.field
+              //-   label Status fornecedor
+              //-   .ui.small.visible.message(v-bind:class='{"warning": !product.dealerProductActive}')
+              //-     .ui.center.aligned.container
+              //-       p {{product.dealerProductActive == true ? 'Produto ativo' : 'Produto inativo'}}                    
       .actions
         button.ui.positive.button(@click='saveProduct()') Salvar
         button.ui.red.deny.button(v-if='!product.isNewProduct') Remover
