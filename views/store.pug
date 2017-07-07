@@ -4,7 +4,7 @@ html(lang="en")
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
     title Equipamentos de informatica.
-    include components/semantic.css.pug
+    include components/bootstrap.css.pug
   body
     #app
     //- Make pug data disponible to vue instance.
@@ -12,7 +12,7 @@ html(lang="en")
       let vueUser = !{JSON.stringify(user)}
       let vueInitSearch = '#{initSearch}'
     include components/jquery.js.pug
-    include components/semantic.js.pug
+    include components/bootstrap.js.pug      
     include components/vue.js.pug
     include components/vue-resource.js.pug
     script(src='/bundleStore.js')

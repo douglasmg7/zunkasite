@@ -1,50 +1,49 @@
 <template lang='pug'>
   div
-    .ui.black.inverted.borderless.attached.stackable.menu
-      // Home.
-      a.ui.link.item(href='/')
-        h2 Zunka
-      .ui.right.inverted.borderless.stackable.menu
-        // Search.
-        .ui.item
-          .ui.small.icon.input
-            input(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
-            i.search.link.icon(v-on:click='getProducts()')
-        // User name.
-        .ui.item
-          i.large.user.icon(v-if="this.user.username") 
-          | {{this.user.username}}
-        // Sign-in.
-        a.ui.item(href='users/login' v-if="!this.user.username")
-          i.large.icon.sign.in
-          | Entrar
-        // Cart.
-        a.ui.item
-          i.large.cart.icon
-        // Config.
-        a.ui.item(href='/configProducts/store' v-if="this.user.group == 'admin'")
-          i.large.configure.icon
-        // Exit.
-        a.ui.item(href='users/logout' v-if="this.user.username")
-          i.large.sign.out.icon
-          | Sair    
-    .ui.left.aligned.container
-      .ui.basic.padded.segment
-        .ui.five.doubling.cards
-          a.ui.card(v-for='(product, index) in products', :href='"product/" + product._id')
-            .image
+    nav.navbar.navbar-inverse.navbar-static-top
+      //- .container-fluid
+      .container
+        .navbar-header
+          button.navbar-toggle.collapsed(type='button' data-toggle='collapse' data-target='#navbar' aria-expanded='false' aria-controls='navbar')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar     
+          // Home.
+          a.navbar-brand(href='/') ZUNKA
+        #navbar.navbar-collapse.collapse
+          ul.nav.navbar-nav.navbar-right
+            li
+              // Username.
+              a(v-if="this.user.username") {{this.user.username}}
+            li
+              // Sign-in.
+              a(href='/users/login' v-if="!this.user.username") Entrar
+            li
+              // Cart.
+              a(href='#') Carrinho
+            li
+              // Admin.
+              a(href='/configProducts/store' v-if="this.user.group == 'admin'") Admin
+            li
+              // Exit.
+              a(href='/users/logout' v-if="this.user.username") Sair
+          form.navbar-form.navbar-right
+            input.form-control(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
+    .container
+      .row
+        .col-md-3(v-for='(product, index) in products')
+          .thumbnail
+            a.product(:href='"product/" + product._id')
               img(:src='getImgUrl(product)')
-              .description {{product.storeProductTitle}}
-              .price
+              h4.description {{product.storeProductTitle}}
+              h3.price
                 sup R$
                 | {{product.storeProductPrice | currencyInt}}
                 sup {{product.storeProductPrice | currencyCents}}
-    //- .ui.hidden.divider
-    //- .ui.center.aligned.container
-    //-   .ui.pagination.menu
-    //-     div(v-for='n in pageCount')
-    //-       a.item(@click='getProducts(n)' v-bind:class='{"active": n==page}') {{n}}
-    //- .ui.hidden.divider
+      .row
+        .col-md-10.col-md-offset-1
+          footer
 </template>
 <script>
   /* globals accounting */
@@ -132,16 +131,16 @@
   }
 </script>
 <style lang='stylus'>
-  .ui.cards > .card > .content > .price,
-  .ui.card > .content > .price
+  a.product
+    text-decoration: none;
+  .price
     clear: both
-    color: rgb(0, 0, 0)
     margin-top: 0.6em
-    font-size: 1.8em
-  .ui.cards > .card > .content > .price > sup,
-  .ui.card > .content > .price > sup
+    // font-size: 1.8em
+  .price > sup,
+  .price > sup
     font-size: 0.5em
     top: -0.6em
     padding-right: 0.3em
-    padding-left: 0.1em
+    padding-left: 0.2em
 </style>

@@ -9,7 +9,7 @@
             //- detalhes
             h3.ui.dividing.header Detalhes
             .field
-              label Codigo
+              label Código
               input(v-model='product.storeProductId')
             .field
               label Título
@@ -39,10 +39,10 @@
               label Descrição
               textarea(v-model='product.storeProductDescription' rows='8')
             .field
-              label Informacoes tecnicas
+              label Informações técnicas
               textarea(v-model='product.storeProductTechnicalInformation' rows='8')
             .field
-              label Informacoes adicionais
+              label Informações adicionais
               textarea(v-model='product.storeProductAdditionalInformation' rows='8')
             .two.fields
               //- maker

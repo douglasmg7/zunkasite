@@ -61,17 +61,17 @@
         .col-md-10.col-md-offset-1
           //- Description.
           hr
-          h5.title Descricao do produto
+          h5.title Descrição do produto
           p {{product.storeProductDescription}}
       .row
         .col-md-10.col-md-offset-1
           //- Informations.
           hr
-          h5.title Informacao do produto
+          h5.title Informação do produto
           .row
             //- Technical information.
             .col-md-6
-              h5 Detalhe tecnico
+              h5 Detalhe técnico
               .table-responsive
                 table.table
                   tbody
@@ -80,7 +80,7 @@
                       td {{infoTech[1]}}
             //- Additional information.
             .col-md-6
-              h5 Informacoes adicionais
+              h5 Informações adicionais
               .table-responsive
                 table.table
                   tbody

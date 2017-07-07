@@ -5,10 +5,10 @@
       thead
         tr
           // th.text-capitalize id
-          th.clickable(@click="selectColOrder('code-store')") Zunka id
-          th.clickable(@click="selectColOrder('dealerCode')") Titulo
+          th.clickable(@click="selectColOrder('code-store')") Código
+          th.clickable(@click="selectColOrder('dealerCode')") Título
           th.clickable(@click="selectColOrder('dealer')") Fornecedor
-          th.clickable(@click="selectColOrder('dealerCode')") Forn. Id
+          //- th.clickable(@click="selectColOrder('dealerCode')") Forn. Id
           th.clickable(@click="selectColOrder('stockLocation')") Local
           th.clickable(@click="selectColOrder('stockQtd')") Estoque
           th.clickable(@click="selectColOrder('priceNum')") Preço
@@ -21,7 +21,7 @@
           td.clickable(@click="showProduct(product)" v-bind:data-code="product.code" v-bind:title='product.dealerProductTitle') {{product.storeProductId}}
           td.clickable(@click="showProduct(product)") {{product.storeProductTitle}}
           td.clickable(@click="showProduct(product)") {{product.dealer}}
-          td.clickable(@click="showProduct(product)") {{product.dealerProductId}}
+          //- td.clickable(@click="showProduct(product)") {{product.dealerProductId}}
           td.clickable(@click="showProduct(product)") {{product.dealerProductLocation}}
           td.clickable(@click="showProduct(product)") {{product.dealerProductQtd}}
           td.clickable(@click="showProduct(product)") {{product.storeProductPrice | currencyBr}}
