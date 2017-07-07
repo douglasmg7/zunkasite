@@ -102,7 +102,7 @@
           storeProductTitle: '',
           dealerProductQtd: 0,
           dealerProductActive: true,
-          dealerProductCommercialize: false,
+          dealerProductCommercialize: true,
           images: [],
           // Modal must delete this product if user not save it.
           // To modal know which button to show.

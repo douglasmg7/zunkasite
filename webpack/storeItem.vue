@@ -35,20 +35,20 @@
         .col-md-4.col-md-offset-1
           .row
             .col-md-12
-              img.img-responsive.center-block(:src='getImgUrl(0)' v-if='imagesSelected.length > 0')
+              img.img-responsive.center-block(:src='getImgUrl(selectedThumbnail)' v-if='imagesSelected.length > 0')
           .row
-            .col-md-2
-              img.img-responsive.center-block(:src='getImgUrl(0)' v-if='imagesSelected.length > 0')
-            .col-md-2
-              img.img-responsive.center-block(:src='getImgUrl(1)' v-if='imagesSelected.length > 1')
-            .col-md-2
-              img.img-responsive.center-block(:src='getImgUrl(2)' v-if='imagesSelected.length > 2') 
-            .col-md-2
-              img.img-responsive.center-block(:src='getImgUrl(3)' v-if='imagesSelected.length > 3')
-            .col-md-2
-              img.img-responsive.center-block(:src='getImgUrl(4)' v-if='imagesSelected.length > 4')
-            .col-md-2
-              img.img-responsive.center-block(:src='getImgUrl(5)' v-if='imagesSelected.length > 5')
+            .col-md-3
+              img.img-responsive(:src='getImgUrl(0)' v-if='imagesSelected.length > 0' @click='selectedThumbnail=0')
+            .col-md-3
+              img.img-responsive(:src='getImgUrl(1)' v-if='imagesSelected.length > 1' @click='selectedThumbnail=1')
+            .col-md-3
+              img.img-responsive(:src='getImgUrl(2)' v-if='imagesSelected.length > 2' @click='selectedThumbnail=2') 
+            .col-md-3
+              img.img-responsive(:src='getImgUrl(3)' v-if='imagesSelected.length > 3' @click='selectedThumbnail=3')
+            //- .col-md-2
+            //-   img.img-responsive(:src='getImgUrl(4)' v-if='imagesSelected.length > 4' @click='selectedThumbnail=4')
+            //- .col-md-2
+            //-   img.img-responsive(:src='getImgUrl(5)' v-if='imagesSelected.length > 5' @click='selectedThumbnail=5')
         .col-md-6
           // Title.
           h3.product-name {{product.storeProductTitle}}
@@ -102,18 +102,12 @@
       return {
         // text for search products
         search: '',
-        imageUrls: []
+        selectedThumbnail: 0
       }
     },
     props:['$http', 'user', 'product'],
     created(){
       // this.getImagesUrl(this.product);
-    },
-    mounted(){
-      // console.log('init');
-      // console.log(this.product.dealer);
-      // // console.log(vueProduct.dealer);
-      // console.log('end');
     },
     methods: {
       // Retrive products page.

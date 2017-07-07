@@ -21,11 +21,13 @@ router.get('/', function (req, res) {
     ? {'dealerProductCommercialize': true, 'desc': {$regex: req.query.search, $options: 'i'}}
     : {'dealerProductCommercialize': true};
     // : {'dealerProductCommercialize': {$exists: true, $eq: true}};
+  // log.info('search: ' + JSON.stringify(search) + ', skip: ' + skip + ', PAGE_SIZE_ADMIN: ' + PAGE_SIZE_ADMIN);
   const cursor = mongo.db.collection(dbConfig.collStoreProducts).find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PAGE_SIZE_ADMIN);
   Promise.all([
     cursor.toArray(),
     cursor.count()
   ]).then(([products, count])=>{
+    log.warn('Products length: ' + products.length);
     res.json({products, page, pageCount: Math.ceil(count / PAGE_SIZE_ADMIN)});
   }).catch(err=>{
     console.log(`Error getting data, err: ${err}`);

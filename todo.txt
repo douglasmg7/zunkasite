@@ -5,32 +5,7 @@ implementar unit test
 erros
   no descrescent sort for price and the others colums
 
-mouserover
-  view description
-
 num of products to not commercialize must be in to a config, not harded coded
-
-_id
-  verificar se criar novo item no store product pode vim a ser igual ao recebido da all nations product
-
-store products
-  - Título (hp definir)
-  - image
-      todas as imagens utilizaveis, incluindo do fornecedor e as de downloads
-  - Ícone (hp definir)
-      vai aparecer junto com o título e a descrição primária
-  - Descrição primária (hp definir)
-  - Descrição completa (hp definir)
-  - Marca/Fabricante (hp definir)
-  - Grupo/Categoria (hp definir)
-  - Garantia tempo (hp definir)
-  - Observação garantia (hp definir)
-  - preço do fornecedor
-  - Lucro (valor ou porcentagem, se digitar porcento usar porcentagem)
-  - desconto pagamento em dinheiro (valor e checkbox habilitando)
-      aplica ao valor final e não somente ao lucro
-      aplicar valor padrão
-  - qtd estoque (original)
 
 
   v-for="product in products | orderBy orderCol order | filterBy filterName in 'desc'"
@@ -54,3 +29,7 @@ store products
     top: -0.6em
     padding-right: 0.3em
     padding-left: 0.1em
+
+- bug - delete images, add others and save.
+- bug point entry price.
+- missing accentuation.

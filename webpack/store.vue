@@ -33,7 +33,7 @@
         .ui.five.doubling.cards
           a.ui.card(v-for='(product, index) in products', :href='"product/" + product._id')
             .image
-              img(:src='imgUrl(index)')
+              img(:src='getImgUrl(product)')
               .description {{product.storeProductTitle}}
               .price
                 sup R$
@@ -105,8 +105,17 @@
             console.log(`Error - logout(), err: ${err}`);
           });
       },
-      imgUrl(index){
-        return `/img/${this.products[index].dealer.replace(/\s/g, '')}/products/${this.products[index]._id}/dealer-img-01.jpeg`;
+      getImgUrl(product){
+        let selImgName = 'no-image';
+        for (var i = 0; i < product.images.length; i++) {
+          if (product.images[i].selected) {
+            selImgName = product.images[i].name;
+            // console.info('filename: ' + product._id + '/' + selImgName);
+            break;
+          }
+          
+        }
+        return `/img/${product._id}/${selImgName}`;
       }
     },
     filters: {
@@ -119,7 +128,7 @@
       currencyCents(value){
         return accounting.formatMoney(value, '', 2, '.', ',').split(',')[1];
       }
-    }
+    },
   }
 </script>
 <style lang='stylus'>
