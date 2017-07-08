@@ -106,6 +106,7 @@
       },
       getImgUrl(product){
         let selImgName = 'no-image';
+        console.log(JSON.stringify(product.images));
         for (var i = 0; i < product.images.length; i++) {
           if (product.images[i].selected) {
             selImgName = product.images[i].name;
