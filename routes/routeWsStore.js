@@ -19,7 +19,7 @@ router.get('/', function (req, res) {
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
   const skip = (page - 1) * PAGE_SIZE_ADMIN;
   const search = req.query.search
-    ? {'dealerProductCommercialize': true, 'desc': {$regex: req.query.search, $options: 'i'}}
+    ? {'dealerProductCommercialize': true, 'storeProductTitle': {$regex: req.query.search, $options: 'i'}}
     : {'dealerProductCommercialize': true};
     // : {'dealerProductCommercialize': {$exists: true, $eq: true}};
   // log.info('search: ' + JSON.stringify(search) + ', skip: ' + skip + ', PAGE_SIZE_ADMIN: ' + PAGE_SIZE_ADMIN);

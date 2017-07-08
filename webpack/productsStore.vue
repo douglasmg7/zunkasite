@@ -79,6 +79,7 @@
     methods: {
       // Get products page.
       getProducts(page=1){
+        // console.warn('search: ', this.search);
         this.$http.get(`${wsPath.store}?page=${page}&search=${this.search}`)
           .then((res)=>{
             this.products = res.body.products;
@@ -100,9 +101,14 @@
           dealer: 'zunka',
           storeProductId: '',
           storeProductTitle: '',
+          storeProductMarkup: 0,
+          storeProductDiscountValue: 0,
+          storeProductDiscountType: '%',
           dealerProductQtd: 0,
           dealerProductActive: true,
           dealerProductCommercialize: true,
+          dealerProductPrice: 0,
+
           images: [],
           // Modal must delete this product if user not save it.
           // To modal know which button to show.

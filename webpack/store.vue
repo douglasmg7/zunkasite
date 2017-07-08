@@ -28,7 +28,7 @@
             li
               // Exit.
               a(href='/users/logout' v-if="this.user.username") Sair
-          form.navbar-form.navbar-right
+          .navbar-form.navbar-right
             input.form-control(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
     .container
       .row
@@ -39,8 +39,8 @@
               h4.description {{product.storeProductTitle}}
               h3.price
                 sup R$
-                | {{product.storeProductPrice | currencyInt}}
-                sup {{product.storeProductPrice | currencyCents}}
+                | {{formatProdcutPrice(product) | currencyInt}}
+                sup {{formatProdcutPrice(product) | currencyCents}}
       .row
         .col-md-10.col-md-offset-1
           footer
@@ -115,6 +115,9 @@
           
         }
         return `/img/${product._id}/${selImgName}`;
+      },
+      formatProdcutPrice(product){
+        return product.storeProductPrice.toString().replace(',', '.');
       }
     },
     filters: {
@@ -133,9 +136,11 @@
 <style lang='stylus'>
   a.product
     text-decoration: none;
+    color: green
   .price
     clear: both
     margin-top: 0.6em
+    color: black
     // font-size: 1.8em
   .price > sup,
   .price > sup
@@ -143,4 +148,6 @@
     top: -0.6em
     padding-right: 0.3em
     padding-left: 0.2em
+  footer
+    height: 50px    
 </style>

@@ -28,7 +28,7 @@
             li
               // Exit.
               a(href='/users/logout' v-if="this.user.username") Sair
-          form.navbar-form.navbar-right
+          .navbar-form.navbar-right
             input.form-control(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
     .container
       .row
@@ -43,7 +43,7 @@
           // Title.
           h3.product-name {{product.storeProductTitle}}
           // Price
-          h3.product-price {{product.storeProductPrice | currencyBr}}
+          h3.product-price {{formatProdcutPrice() | currencyBr}}
           // Detail.
           ul.product-detail
             li(v-for='detail in productDetail') {{detail}}
@@ -117,6 +117,9 @@
       // Get image url.
       getImgUrl(index){
         return `/img/${this.product._id}/${this.imagesSelected[index].name}`;
+      },
+      formatProdcutPrice(){
+        return this.product.storeProductPrice.toString().replace(',', '.');
       }
     },
     filters: {

@@ -64,12 +64,12 @@
                 label Fornecedor
                 //- .ui.right.labeled.disabled.input
                 .ui.right.labeled.input
-                  input(v-model='product.dealerProductWarrantyDays')
+                  input.input-integer(v-model='product.dealerProductWarrantyDays')
                   .ui.label.basic Dias
               .four.wide.field
                 label Loja
                 .ui.right.labeled.input
-                  input(v-model='product.storeProductWarrantyDays')
+                  input.input-integer(v-model='product.storeProductWarrantyDays')
                   .ui.label.basic Dias
               .eight.wide.field
                 label Observação
@@ -84,19 +84,19 @@
             .fields
               .four.wide.field
                 label Fornecedor
-                //- .ui.labeled.disabled.input
                 .ui.labeled.input
                   .ui.label.basic R$
-                  input(v-model='product.dealerProductPrice')
+                  input.input-money(v-model='product.dealerProductPrice')
+                  //- input(v-model='product.dealerProductPrice', @keypress='nopoint')
               .four.wide.field
                 label Lucro
                 .ui.right.labeled.input
-                  input(v-model='product.storeProductMarkup')
+                  input.input-money(v-model='product.storeProductMarkup')
                   .ui.label.basic %
               .four.wide.field
                 label Desconto
                 .ui.action.input
-                  input(v-model='product.storeProductDiscountValue')
+                  input.input-money(v-model='product.storeProductDiscountValue')
                   select.ui.compact.selection.dropdown(v-model='product.storeProductDiscountType')
                     input(v-model='product.storeProductDiscountType' type='hidden')
                     option(value='%') %
@@ -151,7 +151,49 @@
       };
     },
     props:['$http', 'product', 'productMakers', 'productCategories'],
+    created(){
+
+
+      // window.nopoint = function(event){
+      //   console.warn(event.which);
+      //   if (event.which >= 48 && event.which <= 57 || event.which === 44) {
+      //     console.warn(true);
+      //     event.preventDefault();
+      //   } else {
+      //     console.log(false);
+      //   }
+      // }
+
+      // window.addEventListener('keypress', function(e){
+      //   console.log(e.target);
+      // });
+    },
     mounted(){
+      // Input-money.
+      $('.input-money').on('keypress', function(event){
+        if (true) {}
+        return (
+          // 0-9.
+          event.which >= 48 && event.which <= 57 || 
+          // , (just one).
+          event.which === 44 && (event.target.value.match(/,/) === null) ||
+          // Arrows and delete.
+          event.which === 0 ||
+          // Backspace.
+          event.which === 8
+        );
+      });
+      // Input-money.
+      $('.input-integer').on('keypress', function(event){
+        return (
+          // 0-9
+          event.which >= 48 && event.which <= 57 || 
+          // Arrows and delete.
+          event.which === 0 ||
+          // Backspace.
+          event.which === 8
+        );
+      });
       // Form event.
       $('.ui.form').form({
         onSuccess: function (event, fields) {
@@ -200,6 +242,14 @@
       .modal('setting', 'duration', 0);
     },    
     methods: {
+      // nopoint: function(event){
+      //   // console.info(event.charCode);
+      //   console.log(event.which);
+      //   if (event.which >= 48 && event.which <= 57 || event.which === 44) {
+      //   } else {
+      //     event.preventDefault();
+      //   }
+      // },
       // Save product.
       saveProduct(){
         let self = this;
@@ -321,23 +371,29 @@
     },
     computed: {
       finalPrice() {
-        let result = this.product.dealerProductPrice;
+        let result;
+        if (this.product.dealerProductPrice) {
+          result = this.product.dealerProductPrice.replace(',', '.');
+        }
+        // console.warn('result', result);
+        // console.warn('type', typeof(result));
         // apply markup
         if (this.product.storeProductMarkup > 0) {
-          result *= (1 + (this.product.storeProductMarkup / 100));
+          result *= (1 + (this.product.storeProductMarkup.replace(',', '.') / 100));
         }
         // apply discount
         if (this.product.storeProductDiscountEnable){
           // by value
           if ('R$' === this.product.storeProductDiscountType) {
-            result -= this.product.storeProductDiscountValue;
+            result -= this.product.storeProductDiscountValue.replace(',', '.');
           // by percentage
           } else {
-            result -= result * (this.product.storeProductDiscountValue / 100);
+            result -= result * (this.product.storeProductDiscountValue.replace(',', '.') / 100);
           }
         }
-        this.product.storeProductPrice = result;
-        return accounting.formatMoney(result, '', 2, '.', ',');
+        this.product.storeProductPrice = accounting.formatMoney(result, '', 2, '.', ',');
+        // console.warn('storeProductPrice: ', this.product.storeProductPrice);
+        return this.product.storeProductPrice;
       }
     },
     filters: { currencyBr(value){ return accounting.formatMoney(value, "R$ ", 2, ".", ","); }}

@@ -30,6 +30,4 @@ num of products to not commercialize must be in to a config, not harded coded
     padding-right: 0.3em
     padding-left: 0.1em
 
-- bug - delete images, add others and save.
-- bug point entry price.
-- thumbnail site.
+- site search on site item not working.
