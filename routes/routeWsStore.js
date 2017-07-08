@@ -13,6 +13,7 @@ const formidable = require('formidable');
 const PAGE_SIZE_ADMIN = 50;
 // Page size for site pagination.
 const PAGE_SIZE_STORE = 10;
+
 // Get products.
 router.get('/', function (req, res) {
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
@@ -27,12 +28,13 @@ router.get('/', function (req, res) {
     cursor.toArray(),
     cursor.count()
   ]).then(([products, count])=>{
-    log.warn('Products length: ' + products.length);
+    // log.warn('Products length: ' + products.length);
     res.json({products, page, pageCount: Math.ceil(count / PAGE_SIZE_ADMIN)});
   }).catch(err=>{
     console.log(`Error getting data, err: ${err}`);
   });
 });
+
 // Get dropdown elements
 router.get('/dropdown', function(req, res) {
   Promise.all([
@@ -124,6 +126,7 @@ router.delete('/:_id', function(req, res) {
       res.json('status: fail');
     });
 });
+
 // Upload product pictures.
 router.put('/upload-product-images/:_id', (req, res)=>{
   const form = formidable.IncomingForm();
@@ -132,6 +135,7 @@ router.put('/upload-product-images/:_id', (req, res)=>{
   form.uploadDir = DIR_IMG_PRODUCT;
   form.keepExtensions = true;
   form.multiples = true;
+  form.imageNames = [];
   // Verifiy file size.
   form.on('fileBegin', function(name, file){
     if (form.bytesExpected > MAX_FILE_SIZE_UPLOAD) {
@@ -141,6 +145,7 @@ router.put('/upload-product-images/:_id', (req, res)=>{
   // Received name and file.
   form.on('file', function(name, file) {
     log.info(`"${file.name}" uploaded to "${file.path}"`);
+    form.imageNames.push(path.basename(file.path));
   });
   // Err.
   form.on('error', function(err) {
@@ -151,7 +156,7 @@ router.put('/upload-product-images/:_id', (req, res)=>{
   });
   // All files have been uploaded.
   form.on('end', function() {
-    res.json('status: success');
+    res.json({imageNames: form.imageNames});
   });
   // Create folder if not exist and start upload.
   fse.ensureDir(DIR_IMG_PRODUCT, err=>{
@@ -183,59 +188,59 @@ router.put('/remove-product-image/:_id/:urlImage', (req, res)=>{
   }
 });
 
-// Delete a product image.
-router.put('/remove-uploaded-image/:_id', (req, res)=>{
-  mongo.db.collection(dbConfig.collStoreProducts).findOne({_id: new ObjectId(req.params._id)})
-  .then(result=>{
-    // Get list uploaded images.
-    fse.readdir(path.join(__dirname, '..', 'dist/img/', req.params._id), (err, files)=>{
-      if (err) {
-        log.error(err + '\n', new Error().stack);
-      } 
-      else {
-        // Remove uploaded images not in product images.
-        const images = result.images;
-        let exist;
-        files.forEach(function(file) {
-          exist = false;
-          images.forEach(function(image) {
-            if (file === image.name) {
-              exist = true;
-            }  
-          });
-          // Uploaded image not in product images.
-          if (!exist) {
-            // Remove uploaded image.
-            let fileToRemove = file;
-            fse.remove(path.join(__dirname, '..', 'dist/img/', req.params._id, fileToRemove), err=>{
-              if (err) { log.error(ERROR().stack, err); }
-            });
-          }
-        });
-        res.json('status: success');
-      }
-    });
-  }).catch(err=>{
-    log.error(err + '\n', new Error().stack);
-    res.json('status: fail');
-  });
-});
+// // Delete a product image.
+// router.put('/remove-uploaded-image/:_id', (req, res)=>{
+//   mongo.db.collection(dbConfig.collStoreProducts).findOne({_id: new ObjectId(req.params._id)})
+//   .then(result=>{
+//     // Get list uploaded images.
+//     fse.readdir(path.join(__dirname, '..', 'dist/img/', req.params._id), (err, files)=>{
+//       if (err) {
+//         log.error(err + '\n', new Error().stack);
+//       } 
+//       else {
+//         // Remove uploaded images not in product images.
+//         const images = result.images;
+//         let exist;
+//         files.forEach(function(file) {
+//           exist = false;
+//           images.forEach(function(image) {
+//             if (file === image.name) {
+//               exist = true;
+//             }  
+//           });
+//           // Uploaded image not in product images.
+//           if (!exist) {
+//             // Remove uploaded image.
+//             let fileToRemove = file;
+//             fse.remove(path.join(__dirname, '..', 'dist/img/', req.params._id, fileToRemove), err=>{
+//               if (err) { log.error(ERROR().stack, err); }
+//             });
+//           }
+//         });
+//         res.json('status: success');
+//       }
+//     });
+//   }).catch(err=>{
+//     log.error(err + '\n', new Error().stack);
+//     res.json('status: fail');
+//   });
+// });
 
-// Get list of product images url.
-router.get('/uploaded-image-names/:_id', function(req, res) {
-  const DIR_IMG_PRODUCT = path.join(__dirname, '..', 'dist/img/', req.params._id);
-  // Get list of files.
-  fse.readdir(DIR_IMG_PRODUCT, (err, files)=>{
-    if (err) {
-      // Err, because dir is created when the first image is uploaded.
-      log.error(err + '\n', new Error().stack);
-      res.json([]);
-    } else {
-      // log.info(JSON.stringify(files));
-      res.json(files);
-    }
-  });
-});
+// // Get list of product images url.
+// router.get('/uploaded-image-names/:_id', function(req, res) {
+//   const DIR_IMG_PRODUCT = path.join(__dirname, '..', 'dist/img/', req.params._id);
+//   // Get list of files.
+//   fse.readdir(DIR_IMG_PRODUCT, (err, files)=>{
+//     if (err) {
+//       // Err, because dir is created when the first image is uploaded.
+//       log.error(err + '\n', new Error().stack);
+//       res.json([]);
+//     } else {
+//       // log.info(JSON.stringify(files));
+//       res.json(files);
+//     }
+//   });
+// });
 
 // Get products to commercialize.
 router.get('/products-commercialize', function (req, res) {

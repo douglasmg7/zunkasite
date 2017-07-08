@@ -36,19 +36,9 @@
           .row
             .col-md-12
               img.img-responsive.center-block(:src='getImgUrl(selectedThumbnail)' v-if='imagesSelected.length > 0')
-          .row
-            .col-md-3
-              img.img-responsive(:src='getImgUrl(0)' v-if='imagesSelected.length > 0' @click='selectedThumbnail=0')
-            .col-md-3
-              img.img-responsive(:src='getImgUrl(1)' v-if='imagesSelected.length > 1' @click='selectedThumbnail=1')
-            .col-md-3
-              img.img-responsive(:src='getImgUrl(2)' v-if='imagesSelected.length > 2' @click='selectedThumbnail=2') 
-            .col-md-3
-              img.img-responsive(:src='getImgUrl(3)' v-if='imagesSelected.length > 3' @click='selectedThumbnail=3')
-            //- .col-md-2
-            //-   img.img-responsive(:src='getImgUrl(4)' v-if='imagesSelected.length > 4' @click='selectedThumbnail=4')
-            //- .col-md-2
-            //-   img.img-responsive(:src='getImgUrl(5)' v-if='imagesSelected.length > 5' @click='selectedThumbnail=5')
+          .row(v-for='(r, index) in new Array(colsByRow)')
+            .col-md-3(v-for='(i, index2) in imagesSelectedByRow[index]')
+              img.img-responsive(:src='getImgUrl(index * colsByRow + index2)' @click='selectedThumbnail=index * colsByRow + index2')
         .col-md-6
           // Title.
           h3.product-name {{product.storeProductTitle}}
@@ -102,12 +92,22 @@
       return {
         // text for search products
         search: '',
-        selectedThumbnail: 0
+        selectedThumbnail: 0,
+        colsByRow: 4,
+        imagesSelectedByRow: []
       }
     },
     props:['$http', 'user', 'product'],
     created(){
-      // this.getImagesUrl(this.product);
+      let numRows = Math.ceil(this.imagesSelected.length / this.colsByRow);
+      // Create um array for each row.
+      for (var i = 0; i < numRows; i++) {
+        this.imagesSelectedByRow.push(new Array());
+      }
+      // Fill each array with images.
+      for (var i=0 ; i < this.imagesSelected.length; i++) {
+        this.imagesSelectedByRow[Math.floor(i/this.colsByRow)].push(this.imagesSelected[i]);
+      }
     },
     methods: {
       // Retrive products page.
@@ -117,7 +117,7 @@
       // Get image url.
       getImgUrl(index){
         return `/img/${this.product._id}/${this.imagesSelected[index].name}`;
-      }      
+      }
     },
     filters: {
       currencyBr(value){

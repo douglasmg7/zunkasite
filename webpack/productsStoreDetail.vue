@@ -172,8 +172,6 @@
           }, 100);},
         onHidden: function() {
           const vueSelf = appVue.$refs.productsStore.$refs.productStoreDetail;
-          // Clean images urls for the next time that modal open.
-          // vueSelf.images = [];
           // User not saved new product.
           if (vueSelf.product.isNewProduct) {
             // Delete from db.
@@ -181,13 +179,6 @@
               .then((res)=>{})
               .catch((err)=>{ console.error(err); });
           } 
-          // Remove uploaded images, user not saved the product.
-          else if (vueSelf.product.removeUploadedImage) {
-            // Remove uploaded images.
-            vueSelf.$http.put(`${wsPath.store}/remove-uploaded-image/${vueSelf.product._id}`)
-              .then((res)=>{})
-              .catch((err)=>{ console.error(err); });
-          }
         },
         onDeny(e) {
           // No prompt, just close the modal.
@@ -215,19 +206,6 @@
         const wasNewProduct = this.product.isNewProduct;
         // Keep product on db, when the windows close.
         this.product.isNewProduct = false;
-        // Keep image uploaded on server.
-        this.product.removeUploadedImage = false;
-        // Save urlImage configuration on product object.
-
-        // this.product.images = this.images;
-
-        // this.product.images = [];
-        // this.images.forEach(function(image) {
-        //   if (image.selected) {
-        //     self.product.images.push(image);
-        //   }
-        // });
-
         // Update product on db.
         this.$http.put(`${wsPath.store}/${this.product._id}`, this.product)
           .then((res)=>{
@@ -240,6 +218,8 @@
           })
           .catch((err)=>{ console.error(err); });
       },
+
+      // Delete a product.
       deleteProduct(product){
         // Delete from db.
         this.$http.delete(`${wsPath.store}/${product._id}`)
@@ -258,71 +238,13 @@
         let self = this;
         this.$http.put(`${wsPath.allNations}/download-dealer-images/${product._id}`)
           .then(()=>{
-            self.getUploadedImageNames(self.product);
           })
           .catch((err)=>{ console.error(err); });
       },
 
-      // Get names of uploaded images.
-      getUploadedImageNames(product){
-        // get list of images url
-        this.$http.get(`${wsPath.store}/uploaded-image-names/${product._id}`)
-          .then(result=>{
-            // Updated url images.
-            this.updateProductImages(result.body);
-          })
-          .catch(err=>{
-            console.error(err);
-          })
-      },
-
-      // Add uploaded images to product images.
-      updateProductImages(uploadedImageNames){
-        let self = this;
-        // Not selected images.
-        let hasImage;
-        // Add url images that not exist on selected images.
-        uploadedImageNames.forEach(function(uploadedImageName){
-          hasImage = false;
-          for (let i = 0; i < self.product.images.length; i++) {
-            if (uploadedImageName === self.product.images[i].name) {
-              hasImage = true;
-              break;
-            }
-          }
-          if(!hasImage){
-            self.product.images.push({name: uploadedImageName, selected: false});
-            // Remove uploaded images if user do not save product.
-            self.product.removeUploadedImage = true;
-          }
-        });
-      },
-
-      // // Update image urls, order and selection.
-      // updateProductImages(uploadedImageNames){
-      //   // Mount first the selected images to use, after the rest of loaded url images from server, that not was selected to use.
-      //   // Get selected images.
-      //   let self = this;
-      //   this.images = this.product.images.slice(0);
-      //   // Not selected images.
-      //   let foundUlrImage;
-      //   // Add url images that not exist on selected images.
-      //   uploadedImageNames.forEach(function(uploadedImageName){
-      //     foundUlrImage = false;
-      //     for (let i = 0; i < self.images.length; i++) {
-      //       if (uploadedImageName === self.images[i].name) {
-      //         foundUlrImage = true;
-      //         break;
-      //       }
-      //     }
-      //     if(!foundUlrImage){
-      //       self.images.push({name: uploadedImageName, selected: false});
-      //     }
-      //   });
-      // },
-
       // Upload pictures to server.
       uploadProductImage(){
+        let self = this;
         let files = $('input:file')[0].files;
         // no files
         if (files.length === 0) {
@@ -338,10 +260,12 @@
             formData.append('pictures[]', files[i]);
             // formData.append('photos[]', files[i], files[i].name);
           }
-          let self = this;
           this.$http.put(`${wsPath.store}/upload-product-images/${this.product._id}`, formData)
-            .then(()=>{
-              this.getUploadedImageNames(this.product);
+            .then((result)=>{
+              result.body.imageNames.forEach(function(imageName){
+                self.product.images.push({name: imageName, selected: false});
+              });
+              // this.getUploadedImageNames(this.product);
             })
             .catch((err)=>{ console.error(err); });
         }
@@ -393,22 +317,6 @@
       // Delete image from server.
       deleteImage(index){
         this.$delete(this.product.images, index);
-
-        // this.product.images[index].delete = true;
-
-
-        // // Delete image from server.
-        // this.$http.put(`${wsPath.store}/remove-product-image/${this.product._id}/${this.images[index]}`)
-        //   .then(result=>{
-        //     // get uploaded images urls.
-        //     this.getUploadedImageNames(this.product);
-        //   })
-        //   .catch(err=>{
-        //     console.error(err);
-        //     this.getUploadedImageNames(this.product);
-        //   })
-        // // Delete from modeal, if product be saved, product.images is updated with this.images.
-        // this.$delete(this.images, index);
       }
     },
     computed: {
