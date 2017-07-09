@@ -84,7 +84,8 @@
     // props:['$http', 'initSearch', 'username', 'group'],
     props:['$http', 'user', 'initSearch'],
     created() {
-      // search from a product item page, not from this store page
+      // On reload page use the query string for search, not the input search.
+      this.search = this.initSearch;
       this.getProducts();
     },
     methods: {
