@@ -43,7 +43,7 @@
           // Title.
           h3.product-name {{product.storeProductTitle}}
           // Price
-          h3.product-price(v-if='this.product.storeProductPrice.replace(",", ".") > 0') {{formatProdcutPrice() | currencyBr}}
+          h3.product-price(v-if='this.product.storeProductPrice.toString().replace(",", ".") > 0') {{formatProdcutPrice() | currencyBr}}
           // Detail.
           ul.product-detail(v-if='productDetail.length > 0')
             li(v-for='detail in productDetail') {{detail}}

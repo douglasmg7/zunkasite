@@ -32,7 +32,8 @@
             input.form-control(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
     .container
       .row
-        .col-md-3(v-for='(product, index) in products' v-if='product.storeProductTitle.trim() !== ""')
+        // Must have title and price more than 0 to be show.
+        .col-md-3(v-for='(product, index) in products' v-if='product.storeProductTitle.trim() !== "" && product.storeProductPrice.toString().replace(",", ".") > 0')
           .thumbnail
             a.product(:href='"product/" + product._id')
               img(:src='getImgUrl(product)' v-if='getImgUrl(product) !== ""')
