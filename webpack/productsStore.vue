@@ -24,7 +24,7 @@
           //- td.clickable(@click="showProduct(product)") {{product.dealerProductId}}
           td.clickable(@click="showProduct(product)") {{product.dealerProductLocation}}
           td.clickable(@click="showProduct(product)") {{product.dealerProductQtd}}
-          td.clickable(@click="showProduct(product)") {{product.storeProductPrice | currencyBr}}
+          td.clickable(@click="showProduct(product)") {{product.storeProductPrice.toString().replace(',', '.') | currencyBr}}
     .ui.hidden.divider
     .ui.center.aligned.container
       .ui.pagination.menu

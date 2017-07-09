@@ -31,9 +31,10 @@
           .navbar-form.navbar-right
             input.form-control(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
     .container
-      .row
+      .row(v-for='i in Math.ceil(products.length / colsByRow)')
         // Must have title and price more than 0 to be show.
-        .col-md-3(v-for='(product, index) in products' v-if='product.storeProductTitle.trim() !== "" && product.storeProductPrice.toString().replace(",", ".") > 0')
+        //- .col-md-3.pull-left(v-for='i in Math.floor(products.length / colsByRow)' v-if='product.storeProductTitle.trim() !== "" && product.storeProductPrice.toString().replace(",", ".") > 0')
+        .col-md-3(v-for='product in products.slice((i - 1) * colsByRow, i * colsByRow)')
           .thumbnail
             a.product(:href='"product/" + product._id')
               img(:src='getImgUrl(product)' v-if='getImgUrl(product) !== ""')
@@ -67,13 +68,16 @@
     data: function(){
       return {
         products: [],
-        // curret page for pagination
+        // Curret page for pagination.
         page:1,
-        // number of pages for pagination
+        // Number of pages for pagination.
         pageCount: 1,
-        // text for search products
-        search: ''
-        // pulga: 'asdfasdfasdf'
+        // Text for search products.
+        search: '',
+        // Number of cols by rows to show products.
+        colsByRow: 4,
+        // Products by row.
+        productsByRow: []
       }
     },
     // Text for search products and user logged.
@@ -91,6 +95,7 @@
             this.products = res.body.products;
             this.page = res.body.page;
             this.pageCount = res.body.pageCount;
+            // console.log('products count: ', this.products.length);
           })
           .catch((err)=>{
             console.log(`Error - getProducts(), err: ${err}`);
