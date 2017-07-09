@@ -56,7 +56,7 @@ router.put('/set-commercialize/:_id', function(req, res) {
       {_id: _id},
       {
         $set: {
-          dealer: 'Manual',
+          dealerName: 'Manual',
           dealerProductId: product.code,
           dealerProductLastUpdate: product.ts,
           dealerProductTitle: product.desc,

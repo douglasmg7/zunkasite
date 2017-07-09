@@ -28,7 +28,7 @@ mongo.connect(dbConfig.url, (err, db)=>{
 
 const categories = [
   {
-    dealer: 'Sul Imports', 
+    dealerName: 'Sul Imports', 
     dealerProductId: '3470239479',
     dealerProductTitle: 'Caixa de som',
     dealerProductActive: true,
@@ -53,7 +53,7 @@ const categories = [
     storeProductCommercialize: true
   },
   {
-    dealer: 'Delta Imports', 
+    dealerName: 'Delta Imports', 
     dealerProductId: '34702sdf39479',
     dealerProductTitle: 'Pen drive',
     dealerProductActive: true,

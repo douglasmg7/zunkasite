@@ -97,11 +97,11 @@ function insertProductsStore(db, products, callback){
   // Add each product to the bulk.
   for (let product of products) {
     bulk
-      .find({dealerProductId: product.code, dealer: "AllNations"})
+      .find({dealerProductId: product.code, dealerName: "AllNations"})
       .upsert()
       .updateOne({
         $set: {
-          dealer: "AllNations",
+          dealerName: "AllNations",
           dealerProductId: product.code,
           dealerProductLastUpdate: product.ts,
           dealerProductTitle: product.desc,

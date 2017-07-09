@@ -16,7 +16,7 @@
               input(v-model='product.storeProductTitle')
             .field
               label Fornecedor
-              input.ui.input(v-model='product.dealerProductTitle')
+              input.ui.input(v-model='product.dealerName')
             .field
               label Imagens
               .wrapper-image(v-if='product.images.length > 0' v-for='(image, index) in product.images', :class='{selected: image.selected}')
@@ -371,24 +371,26 @@
     },
     computed: {
       finalPrice() {
+        console.log('finalPrice');
         let result;
         if (this.product.dealerProductPrice) {
-          result = this.product.dealerProductPrice.replace(',', '.');
+          // if (this.product.dealerProductPrice == '') { this.product.dealerProductPrice = '0'}
+          result = this.product.dealerProductPrice.toString().replace(',', '.');
         }
         // console.warn('result', result);
         // console.warn('type', typeof(result));
         // apply markup
         if (this.product.storeProductMarkup > 0) {
-          result *= (1 + (this.product.storeProductMarkup.replace(',', '.') / 100));
+          result *= (1 + (this.product.storeProductMarkup.toString().replace(',', '.') / 100));
         }
         // apply discount
         if (this.product.storeProductDiscountEnable){
           // by value
-          if ('R$' === this.product.storeProductDiscountType) {
-            result -= this.product.storeProductDiscountValue.replace(',', '.');
+          if ('R$' == this.product.storeProductDiscountType) {
+            result -= this.product.storeProductDiscountValue.toString().replace(',', '.');
           // by percentage
           } else {
-            result -= result * (this.product.storeProductDiscountValue.replace(',', '.') / 100);
+            result -= result * (this.product.storeProductDiscountValue.toString().replace(',', '.') / 100);
           }
         }
         this.product.storeProductPrice = accounting.formatMoney(result, '', 2, '.', ',');

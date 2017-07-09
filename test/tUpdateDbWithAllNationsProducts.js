@@ -132,7 +132,7 @@ describe('Store products', function(){
         expect(flt.storeProductMarkup).to.equal('20%');
         expect(flt.storeProductRebateValue).to.equal('5%');
         expect(flt.storeProductRebateActive).to.equal(true);
-        expect(flt.dealer).to.equal('AllNations');
+        expect(flt.dealerName).to.equal('AllNations');
         expect(flt.dealerProductLastUpdate.toISOString()).to.equal('2016-09-23T12:54:51.000Z'); // updated
         expect(flt.dealerProductTitle).to.equal('FILTRO DE LINHA PCTOP 3 TOMADAS FLP-03');
         expect(flt.dealerProductDesc).to.equal('Filtro de linha PCTOP 3 tomadas (2p+t)\r\nModelo: flp-03\r\n110v / 220v\r\n10a\r\nCabo: 1,5m\r\nChave liga/desliga\r\nFusível protetor'); // updated
@@ -160,7 +160,7 @@ describe('Store products', function(){
         expect(lapTop.storeProductMarkup).to.equal(19);
         expect(lapTop.storeProductRebateValue).to.equal(4);
         expect(lapTop.storeProductRebateActive).to.equal(false);
-        expect(lapTop.dealer).to.equal('AllNations');
+        expect(lapTop.dealerName).to.equal('AllNations');
         expect(lapTop.dealerProductLastUpdate.toISOString()).to.equal('2016-01-10T13:01:10.000Z');
         expect(lapTop.dealerProductTitle).to.equal('LAPTOP DELL B');
         expect(lapTop.dealerProductDesc).to.equal('no tecnical description');
@@ -188,7 +188,7 @@ describe('Store products', function(){
         expect(flt2.storeProductMarkup).to.be.an('undefined');
         expect(flt2.storeProductRebateValue).to.be.an('undefined');
         expect(flt2.storeProductRebateActive).to.be.an('undefined');
-        expect(flt2.dealer).to.equal('AllNations');
+        expect(flt2.dealerName).to.equal('AllNations');
         expect(flt2.dealerProductLastUpdate.toISOString()).to.equal('2016-09-27T20:48:33.000Z');
         expect(flt2.dealerProductTitle).to.equal('FILTRO DE LINHA PCTOP 3 TOMADAS FLP-03');
         expect(flt2.dealerProductDesc).to.equal('Filtro de linha PCTOP 3 tomadas (2p+t)\r\nModelo: flp-03\r\n110v / 220v\r\n10a\r\nCabo: 1,5m\r\nChave liga/desliga\r\nFusível protetor');

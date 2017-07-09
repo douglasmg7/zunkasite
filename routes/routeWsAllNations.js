@@ -53,7 +53,7 @@ router.put('/set-commercialize/:_id', function(req, res) {
       {_id: _id},
       {
         $set: {
-          dealer: 'AllNations',
+          dealerName: 'AllNations',
           dealerProductId: product.code,
           dealerProductLastUpdate: product.ts,
           dealerProductTitle: product.desc,

@@ -87,7 +87,7 @@ describe('Web service store products', ()=>{
         expect(res.body[0].storeProductMarkup).to.equal('20%');
         expect(res.body[0].storeProductRebateValue).to.equal('5%');
         expect(res.body[0].storeProductRebateActive).to.be.true;
-        expect(res.body[0].dealer).to.equal('AllNations');
+        expect(res.body[0].dealerName).to.equal('AllNations');
         expect(res.body[0].dealerProductId).to.equal('0046860');
         expect(res.body[0].dealerProductLastUpdate).to.equal('2016-08-19T13:01:10.000Z');
         expect(res.body[0].dealerProductTitle).to.equal('FILTRO DE LINHA PCTOP 3 TOMADAS FLP-03');
