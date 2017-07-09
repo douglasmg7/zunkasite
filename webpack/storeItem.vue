@@ -43,24 +43,24 @@
           // Title.
           h3.product-name {{product.storeProductTitle}}
           // Price
-          h3.product-price {{formatProdcutPrice() | currencyBr}}
+          h3.product-price(v-if='this.product.storeProductPrice.replace(",", ".") > 0') {{formatProdcutPrice() | currencyBr}}
           // Detail.
-          ul.product-detail
+          ul.product-detail(v-if='productDetail.length > 0')
             li(v-for='detail in productDetail') {{detail}}
-      .row
+      .row(v-if='product.storeProductDescription.trim() !== ""')
         .col-md-10.col-md-offset-1
           //- Description.
           hr
           h5.title Descrição do produto
           p {{product.storeProductDescription}}
-      .row
+      .row(v-if='productInformationTechnical.length > 0 || productInformationAdditional.length > 0')
         .col-md-10.col-md-offset-1
           //- Informations.
           hr
           h5.title Informação do produto
           .row
             //- Technical information.
-            .col-md-6
+            .col-md-6(v-if='productInformationTechnical.length > 0')
               h5 Detalhe técnico
               .table-responsive
                 table.table
@@ -69,7 +69,7 @@
                       td {{infoTech[0]}}
                       td {{infoTech[1]}}
             //- Additional information.
-            .col-md-6
+            .col-md-6(v-if='productInformationAdditional.length > 0')
               h5 Informações adicionais
               .table-responsive
                 table.table
@@ -119,6 +119,7 @@
         return `/img/${this.product._id}/${this.imagesSelected[index].name}`;
       },
       formatProdcutPrice(){
+        console.log(`price: '${this.product.storeProductPrice}'`);
         return this.product.storeProductPrice.toString().replace(',', '.');
       }
     },
@@ -146,11 +147,18 @@
       },
       // Each line of product detail become one array item.
       productDetail(){
+        if (this.product.storeProductDetail.trim() === '') {
+          return new Array();
+        }
         return this.product.storeProductDetail.split('\n');
       },
       // Each line of technical information become a array item, each item in line separeted by ; become array item.
       productInformationTechnical(){
         let infoTech = [];
+        // Avoid create elements if there is nothing.
+        if (this.product.storeProductTechnicalInformation.trim() === '') {
+          return infoTech;
+        }
         this.product.storeProductTechnicalInformation.split('\n').forEach(function(info) {
           infoTech.push(info.split(';'));
         });
@@ -159,6 +167,10 @@
       // Each line of additional information become a array item, each item in line separeted by ; become array item.
       productInformationAdditional(){
         let infoAdd = [];
+        // Avoid create elements if there is nothing.
+        if (this.product.storeProductAdditionalInformation.trim() === '') {
+          return infoAdd;
+        }
         this.product.storeProductAdditionalInformation.split('\n').forEach(function(info) {
           infoAdd.push(info.split(';'));
         });

@@ -32,10 +32,10 @@
             input.form-control(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
     .container
       .row
-        .col-md-3(v-for='(product, index) in products')
+        .col-md-3(v-for='(product, index) in products' v-if='product.storeProductTitle.trim() !== ""')
           .thumbnail
             a.product(:href='"product/" + product._id')
-              img(:src='getImgUrl(product)')
+              img(:src='getImgUrl(product)' v-if='getImgUrl(product) !== ""')
               h4.description {{product.storeProductTitle}}
               h3.price
                 sup R$
@@ -105,18 +105,19 @@
           });
       },
       getImgUrl(product){
-        let selImgName = 'no-image';
-        console.log(JSON.stringify(product.images));
+        let selImgName = '';
+        // console.log(JSON.stringify(product.images));
         for (var i = 0; i < product.images.length; i++) {
           if (product.images[i].selected) {
             selImgName = product.images[i].name;
             // console.info('filename: ' + product._id + '/' + selImgName);
             break;
-          }
-          
+          }          
         }
+        if (selImgName === '') { return selImgName; }
         return `/img/${product._id}/${selImgName}`;
       },
+      // Format price with ',' instead of ','. 
       formatProdcutPrice(product){
         return product.storeProductPrice.toString().replace(',', '.');
       }
