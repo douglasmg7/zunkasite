@@ -47,6 +47,7 @@
           // Detail.
           ul.product-detail(v-if='productDetail.length > 0')
             li(v-for='detail in productDetail') {{detail}}
+          button.btn.btn-success.add-cart(@click='addToCart') Adicionar ao carrinho
       .row(v-if='product.storeProductDescription.trim() !== ""')
         .col-md-10.col-md-offset-1
           //- Description.
@@ -121,6 +122,15 @@
       formatProdcutPrice(){
         console.log(`price: '${this.product.storeProductPrice}'`);
         return this.product.storeProductPrice.toString().replace(',', '.');
+      },
+      addToCart(){
+        this.$http.put(`/cart/add/${this.product._id}`)
+        .then((res)=>{
+          console.log(res);
+        })
+        .catch((err)=>{
+          console.error(err);
+        });
       }
     },
     filters: {
@@ -195,4 +205,7 @@
     background-color: #F3F3F3
   footer
     height: 50px
+  button.add-cart
+    margin-top: 1em
+    // margin-left: 1em
 </style>

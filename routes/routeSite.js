@@ -53,4 +53,34 @@ router.get('/product/:_id', function(req, res, next) {
   });
 });
 
+// Add product to cart.
+router.put('/cart/add/:product_id', (req, res, next)=>{
+  console.log('cart');
+  // console.log('signedCookies', req.signedCookies);
+  // console.log('sessionStore', req.sessionStore);
+  console.log('sessionID: ', req.sessionID);
+  console.log('session: ', req.session);
+  console.log('user: ', req.user);
+  // If no user logged, use the session.
+  let user = req.user ? req.user : req.session;
+  // Create cart.
+  if (!user.cart) {
+    user.cart = {products: []};
+  }
+  // Product alredy on cart, add more one.
+  let prodctFound = false;
+  user.cart.products.forEach(function(product) {
+    if (product._id === req.params.product_id){
+      product.qtd++;
+      prodctFound = true;
+    }
+  });
+  // Product not in the cart yet.
+  if (!prodctFound) {
+    user.cart.products.push({_id: req.params.product_id, qtd: 1});
+  }
+  console.log('user cart', JSON.stringify(user.cart));
+  res.json({seccess: true});
+})
+
 module.exports = router;
