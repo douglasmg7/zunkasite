@@ -1,0 +1,56 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Login Using bootstrap.
+    include components/bootstrap.css.pug
+  body
+    nav.navbar.navbar-inverse.navbar-static-top
+      //- .container-fluid
+      .container
+        .navbar-header
+          button.navbar-toggle.collapsed(type='button' data-toggle='collapse' data-target='#navbar' aria-expanded='false' aria-controls='navbar')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar     
+          // Home.
+          a.navbar-brand(href='/') ZUNKA
+        #navbar.navbar-collapse.collapse
+          ul.nav.navbar-nav.navbar-right
+            // Username.
+            if user.username
+              li
+                a= user.username
+            // Sign-in.
+            if !user.username
+              li
+                a(href='/users/login') Entrar
+            // Cart.
+            li
+              a(href='/cart') Carrinho 
+                span.badge= cart.totalQtd
+            // Admin.
+            if user.group == 'admin'
+              li
+                a(href='/configProducts/store') Admin
+            // Logout.
+            if user.username
+              li
+                a(href='/users/logout') Sair
+          .navbar-form.navbar-right
+            input.form-control(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
+    .container
+      .row
+        .col-md-6.col-md-offset-3
+          ul.list-group
+            each product in cart.products
+              li.list-group-item
+                strong= product._id
+                span= product.qtd
+      .row
+        .col-md-10.col-md-offset-1
+          footer
+    include components/jquery.js.pug
+    include components/bootstrap.js.pug

@@ -21,7 +21,7 @@
               a(href='/users/login' v-if="!this.user.username") Entrar
             li
               // Cart.
-              a(href='#') Carrinho
+              a(href='/cart') Carrinho
             li
               // Admin.
               a(href='/configProducts/store' v-if="this.user.group == 'admin'") Admin
@@ -135,13 +135,13 @@
     },
     filters: {
       currencyBr(value){
-        return accounting.formatMoney(value, 'R$ ', 2, '.', ',');
+        return accounting.formatMoney(value.toString().replace('.', ''), 'R$ ', 2, '.', ',');
       },
       currencyInt(value){
-        return accounting.formatMoney(value, '', 2, '.', ',').split(',')[0];
+        return accounting.formatMoney(value.toString().replace('.', ''), '', 2, '.', ',').split(',')[0];
       },
       currencyCents(value){
-        return accounting.formatMoney(value, '', 2, '.', ',').split(',')[1];
+        return accounting.formatMoney(value.toString().replace('.', ''), '', 2, '.', ',').split(',')[1];
       }
     },
     computed:{

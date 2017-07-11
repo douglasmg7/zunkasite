@@ -30,4 +30,9 @@ num of products to not commercialize must be in to a config, not harded coded
     padding-right: 0.3em
     padding-left: 0.1em
 
-- site search on site item not working.
+- gif reload, because site is too low to load.
+- criar campo html para produto.
+- bcrypt-nodejs (maybe use this).
+- csrf = require('csurf')
+- express-validator - youtube - Building a Shopping Cart - #8 Validation
+- store: new MongoStore({ url: dbUrl }) - ttl, autoremove

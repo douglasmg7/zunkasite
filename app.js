@@ -79,8 +79,8 @@ var sessionOpts = {
   secret: app.get('secret'),
   resave: true, // saved new sessions
   saveUninitialized: true, // automatically write to the session store
-  cookie: { maxAge: 2419200000 }, // configure when sessions expires,
-  store: new MongoStore({ url: dbUrl })
+  cookie: { maxAge: 2419200000 }, // configure when sessions expires in ms.
+  store: new MongoStore({ url: dbUrl })   // Use a current connection.
 };
 // if (app.get('env') === 'production') {
 //   app.set('trust proxy', 1); // trust first proxy
@@ -101,6 +101,7 @@ app.use(session(sessionOpts));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
+// passport.use('local.signup', new LocalStrategy(, )) see youtube Build a Shopping Cart - #7 
 passport.use(new LocalStrategy(function (username, password, done) {
   mongo.db.collection(dbConfig.collSession).findOne({username: username}, (err, user)=>{
     // console.log(`user from db: ${JSON.stringify(user)}`);
@@ -175,8 +176,6 @@ passport.deserializeUser(function(id, done) {
 // app.use(webpackHotMiddleware);
 
 // routes
-// Site.
-app.use('/', routeSite);
 // Users.
 app.use('/users', routeUsers);
 // Web service.
@@ -185,6 +184,8 @@ app.use('/ws/allnations', routeWsAllNations);
 app.use('/ws/store', routeWsStore);
 // Products configuration.
 app.use('/configProducts', routeConfigProducts);
+// Site.
+app.use('/', routeSite);
 
 app.use(function(err, req, res, next) {
   res.status(500).send({error: 'Internal server error.'});

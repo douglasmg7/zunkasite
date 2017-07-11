@@ -53,21 +53,47 @@ router.get('/product/:_id', function(req, res, next) {
   });
 });
 
+// Cart page.
+router.get('/cart', (req, res, next)=>{
+  res.render('cart', {
+    user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
+    cart: req.session.cart || { products: [], qtd: 0 }
+  });
+})
+
 // Add product to cart.
 router.put('/cart/add/:product_id', (req, res, next)=>{
   console.log('cart');
-  // console.log('signedCookies', req.signedCookies);
-  // console.log('sessionStore', req.sessionStore);
-  console.log('sessionID: ', req.sessionID);
-  console.log('session: ', req.session);
-  console.log('user: ', req.user);
+  // console.log('sessionID: ', req.sessionID);
+  // console.log('session: ', req.session);
+  // console.log('user: ', req.user);
+
+  let product;
+  // Get product from db.
+  mongo.db.collection(dbConfig.collStoreProducts).findOne({_id: _id})
+  .then(result=>{
+    // Product exist.
+    if (result._id) {
+      product = result;
+    // Not exist the product.
+    } else {
+      log.error(`product ${req.params._id} not found to add to cart.`);
+      res.status(404).send('Produto não encontrado na base de dados.');
+    }
+  })
+  .catch((err)=>{
+    console.log(err, new Error().stack);
+    res.status(404).send('Produto não encontrado na base de dados.');
+  });
+
   // If no user logged, use the session.
-  let user = req.user ? req.user : req.session;
+  // let user = req.user || req.session;
+  let user = req.session;
   // Create cart.
   if (!user.cart) {
-    user.cart = {products: []};
+    user.cart = {products: [], totalQtd: 0, totalPrice: 0};
   }
-  // Product alredy on cart, add more one.
+  // If product alredy on cart, add more one.
   let prodctFound = false;
   user.cart.products.forEach(function(product) {
     if (product._id === req.params.product_id){
@@ -75,11 +101,17 @@ router.put('/cart/add/:product_id', (req, res, next)=>{
       prodctFound = true;
     }
   });
-  // Product not in the cart yet.
+  // Product not in the cart yet, add!
   if (!prodctFound) {
-    user.cart.products.push({_id: req.params.product_id, qtd: 1});
+    user.cart.products.push({_id: req.params.product_id, qtd: 1, title: product.storeProductTitle, price: product.storePorductPrice});
   }
-  console.log('user cart', JSON.stringify(user.cart));
+  // Calculate products total quantity and price.
+  user.cart.totalQtd = 0;
+  user.cart.products.forEach(function(product) {
+    user.cart.totalQtd += product.qtd;
+    user.cart.totalPrice += product.price;
+  });
+  // console.log('user cart', JSON.stringify(user.cart));
   res.json({seccess: true});
 })
 
