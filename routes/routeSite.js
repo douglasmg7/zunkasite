@@ -62,7 +62,7 @@ router.get('/cart', (req, res, next)=>{
 })
 
 // Add product to cart.
-router.put('/cart/add/:product_id', (req, res, next)=>{
+router.put('/cart/add/:_id', (req, res, next)=>{
   console.log('cart');
   // console.log('sessionID: ', req.sessionID);
   // console.log('session: ', req.session);
@@ -70,7 +70,7 @@ router.put('/cart/add/:product_id', (req, res, next)=>{
 
   let product;
   // Get product from db.
-  mongo.db.collection(dbConfig.collStoreProducts).findOne({_id: _id})
+  mongo.db.collection(dbConfig.collStoreProducts).findOne({_id: req.params._id})
   .then(result=>{
     // Product exist.
     if (result._id) {
@@ -95,18 +95,19 @@ router.put('/cart/add/:product_id', (req, res, next)=>{
   }
   // If product alredy on cart, add more one.
   let prodctFound = false;
-  user.cart.products.forEach(function(product) {
-    if (product._id === req.params.product_id){
-      product.qtd++;
+  user.cart.products.forEach(function(item) {
+    if (item._id === product._id){
+      item.qtd++;
       prodctFound = true;
     }
   });
   // Product not in the cart yet, add!
   if (!prodctFound) {
-    user.cart.products.push({_id: req.params.product_id, qtd: 1, title: product.storeProductTitle, price: product.storePorductPrice});
+    user.cart.products.push({_id: product._id, qtd: 1, title: product.storeProductTitle, price: product.storePorductPrice});
   }
   // Calculate products total quantity and price.
   user.cart.totalQtd = 0;
+  user.cart.totalPrice = 0;
   user.cart.products.forEach(function(product) {
     user.cart.totalQtd += product.qtd;
     user.cart.totalPrice += product.price;

@@ -152,8 +152,6 @@
     },
     props:['$http', 'product', 'productMakers', 'productCategories'],
     created(){
-
-
       // window.nopoint = function(event){
       //   console.warn(event.which);
       //   if (event.which >= 48 && event.which <= 57 || event.which === 44) {
@@ -374,27 +372,25 @@
         console.log('finalPrice');
         let result;
         if (this.product.dealerProductPrice) {
-          // if (this.product.dealerProductPrice == '') { this.product.dealerProductPrice = '0'}
-          result = this.product.dealerProductPrice.toString().replace(',', '.');
+          result = accounting.parse(this.product.dealerProductPrice, ',');
         }
         // console.warn('result', result);
         // console.warn('type', typeof(result));
         // apply markup
-        if (this.product.storeProductMarkup > 0) {
-          result *= (1 + (this.product.storeProductMarkup.toString().replace(',', '.') / 100));
+        if (accounting.parse(this.product.storeProductMarkup, ',') > 0) {
+          result *= (1 + (accounting.parse(this.product.storeProductMarkup, ',') / 100));
         }
         // apply discount
         if (this.product.storeProductDiscountEnable){
           // by value
           if ('R$' == this.product.storeProductDiscountType) {
-            result -= this.product.storeProductDiscountValue.toString().replace(',', '.');
+            result -= accounting.parse(this.product.storeProductDiscountValue, ',');
           // by percentage
           } else {
-            result -= result * (this.product.storeProductDiscountValue.toString().replace(',', '.') / 100);
+            result -= result * (accounting.parse(this.product.storeProductDiscountValue, ',') / 100);
           }
         }
         this.product.storeProductPrice = accounting.formatMoney(result, '', 2, '.', ',');
-        // console.warn('storeProductPrice: ', this.product.storeProductPrice);
         return this.product.storeProductPrice;
       }
     },

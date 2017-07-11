@@ -43,7 +43,7 @@
           // Title.
           h3.product-name {{product.storeProductTitle}}
           // Price
-          h3.product-price(v-if='this.product.storeProductPrice.toString().replace(",", ".") > 0') {{formatProdcutPrice() | currencyBr}}
+          h3.product-price(v-if='accountingParse(this.product.storeProductPrice, ",") > 0') R$ {{ product.storeProductPrice }}
           // Detail.
           ul.product-detail(v-if='productDetail.length > 0')
             li(v-for='detail in productDetail') {{detail}}
@@ -111,6 +111,8 @@
       }
     },
     methods: {
+      // Accaunting.
+      accountingParse: accounting.parse,
       // Retrive products page.
       getProducts(page=1){
         window.location.href = `/?page=1&search=${this.search}`;
@@ -118,10 +120,6 @@
       // Get image url.
       getImgUrl(index){
         return `/img/${this.product._id}/${this.imagesSelected[index].name}`;
-      },
-      formatProdcutPrice(){
-        console.log(`price: '${this.product.storeProductPrice}'`);
-        return this.product.storeProductPrice.toString().replace(',', '.');
       },
       addToCart(){
         this.$http.put(`/cart/add/${this.product._id}`)
@@ -131,17 +129,6 @@
         .catch((err)=>{
           console.error(err);
         });
-      }
-    },
-    filters: {
-      currencyBr(value){
-        return accounting.formatMoney(value.toString().replace('.', ''), 'R$ ', 2, '.', ',');
-      },
-      currencyInt(value){
-        return accounting.formatMoney(value.toString().replace('.', ''), '', 2, '.', ',').split(',')[0];
-      },
-      currencyCents(value){
-        return accounting.formatMoney(value.toString().replace('.', ''), '', 2, '.', ',').split(',')[1];
       }
     },
     computed:{

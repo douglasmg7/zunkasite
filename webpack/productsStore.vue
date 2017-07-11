@@ -24,7 +24,7 @@
           //- td.clickable(@click="showProduct(product)") {{product.dealerProductId}}
           td.clickable(@click="showProduct(product)") {{product.dealerProductLocation}}
           td.clickable(@click="showProduct(product)") {{product.dealerProductQtd}}
-          td.clickable(@click="showProduct(product)") {{product.storeProductPrice.toString().replace(',', '.') | currencyBr}}
+          td.clickable(@click="showProduct(product)") R$ {{product.storeProductPrice}}
     .ui.hidden.divider
     .ui.center.aligned.container
       .ui.pagination.menu
@@ -107,19 +107,19 @@
           storeProductAdditionalInformation: '',
           storeProductMaker: '',
           storeProductCategory: '',
-          storeProductWarrantyDays: '',
-          storeProductWarrantyDetail: '',
-          storeProductMarkup: 0,
+          storeProductWarrantyDays: 30,
+          storeProductWarrantyDetail: 'Direto com a loja.',
+          storeProductMarkup: '0,00',
           storeProductDiscountEnable: false,
-          storeProductDiscountValue: 0,
+          storeProductDiscountValue: '0,00',
           storeProductDiscountType: '%',
           storeProductCommercialize: false,
           dealerProductTitle: '',
-          dealerProductWarrantyDays: '',
+          dealerProductWarrantyDays: 90,
           dealerProductQtd: 0,
           dealerProductActive: true,
           dealerProductCommercialize: true,
-          dealerProductPrice: 0,
+          dealerProductPrice: '0,00',
           images: [],
           // Modal must delete this product if user not save it.
           // To modal know which button to show.

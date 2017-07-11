@@ -33,16 +33,15 @@
     .container
       .row(v-for='i in Math.ceil(products.length / colsByRow)')
         // Must have title and price more than 0 to be show.
-        //- .col-md-3.pull-left(v-for='i in Math.floor(products.length / colsByRow)' v-if='product.storeProductTitle.trim() !== "" && product.storeProductPrice.toString().replace(",", ".") > 0')
         .col-md-3(v-for='product in products.slice((i - 1) * colsByRow, i * colsByRow)')
           .thumbnail
             a.product(:href='"product/" + product._id')
               img(:src='getImgUrl(product)' v-if='getImgUrl(product) !== ""')
-              h4.description {{product.storeProductTitle}}
+              h4.description {{ product.storeProductTitle }}
               h3.price
                 sup R$
-                | {{formatProdcutPrice(product) | currencyInt}}
-                sup {{formatProdcutPrice(product) | currencyCents}}
+                | {{ product.storeProductPrice | currencyInt }}
+                sup {{ product.storeProductPrice | currencyCents }}
       .row
         .col-md-10.col-md-offset-1
           footer
@@ -124,20 +123,16 @@
         if (selImgName === '') { return selImgName; }
         return `/img/${product._id}/${selImgName}`;
       },
-      // Format price with ',' instead of ','. 
-      formatProdcutPrice(product){
-        return product.storeProductPrice.toString().replace(',', '.');
-      }
     },
     filters: {
       currencyBr(value){
-        return accounting.formatMoney(value.toString().replace('.', ''), 'R$ ', 2, '.', ',');
+        return accounting.formatMoney(value, 'R$ ', 2, '.', ',');
       },
       currencyInt(value){
-        return accounting.formatMoney(value.toString().replace('.', ''), '', 2, '.', ',').split(',')[0];
+        return accounting.formatMoney(accounting.parse(value, ','), '', 2, '.', ',').split(',')[0];
       },
       currencyCents(value){
-        return accounting.formatMoney(value.toString().replace('.', ''), '', 2, '.', ',').split(',')[1];
+        return accounting.formatMoney(accounting.parse(value, ','), '', 2, '.', ',').split(',')[1];
       }
     },
   }
