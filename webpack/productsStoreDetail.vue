@@ -86,17 +86,17 @@
                 label Fornecedor
                 .ui.labeled.input
                   .ui.label.basic R$
-                  input.input-money(v-model='product.dealerProductPrice')
+                  input.input-money(v-model='inputDealerProductPrice')
                   //- input(v-model='product.dealerProductPrice', @keypress='nopoint')
               .four.wide.field
                 label Lucro
                 .ui.right.labeled.input
-                  input.input-money(v-model='product.storeProductMarkup')
+                  input.input-money(v-model='inputStoreProductMarkup')
                   .ui.label.basic %
               .four.wide.field
                 label Desconto
                 .ui.action.input
-                  input.input-money(v-model='product.storeProductDiscountValue')
+                  input.input-money(v-model='inputStoreProductDiscountValue')
                   select.ui.compact.selection.dropdown(v-model='product.storeProductDiscountType')
                     input(v-model='product.storeProductDiscountType' type='hidden')
                     option(value='%') %
@@ -105,7 +105,7 @@
                 label Loja
                 .ui.labeled.disabled.input
                   .ui.label.basic R$
-                  input(v-model='finalPrice')
+                  input(v-model='inputStoreProductPrice')
           //- status
           .ui.segment
             h3.ui.dividing.header Status
@@ -147,7 +147,9 @@
   export default {
     data: function(){
       return {
-        // images: []
+        inputDealerProductPrice: 0,
+        inputStoreProductDiscountValue: 0,
+        inputStoreProductMarkup: 0
       };
     },
     props:['$http', 'product', 'productMakers', 'productCategories'],
@@ -203,12 +205,11 @@
         onShow: function (){
           setTimeout(function () {
             $('.ui.dropdown').dropdown({duration: 0});
-              // Update images urls.
+              // Update forms.
               const vueSelf = appVue.$refs.productsStore.$refs.productStoreDetail;
-              
-              // if (vueSelf.product._id) {
-              //   vueSelf.getUploadedImageNames(vueSelf.product)
-              // }
+              vueSelf.inputDealerProductPrice = accounting.formatMoney(vueSelf.product.dealerProductPrice, "", 2, ".", ",");
+              vueSelf.inputStoreProductMarkup = accounting.formatMoney(vueSelf.product.storeProductMarkup, "", 2, ".", ",");
+              vueSelf.inputStoreProductDiscountValue = accounting.formatMoney(vueSelf.product.storeProductDiscountValue, "", 2, ".", ",");
           }, 100);},
         onHidden: function() {
           const vueSelf = appVue.$refs.productsStore.$refs.productStoreDetail;
@@ -368,33 +369,43 @@
       }
     },
     computed: {
-      finalPrice() {
-        console.log('finalPrice');
+      inputStoreProductPrice() {
         let result;
         if (this.product.dealerProductPrice) {
-          result = accounting.parse(this.product.dealerProductPrice, ',');
+          result = this.product.dealerProductPrice;
         }
-        // console.warn('result', result);
-        // console.warn('type', typeof(result));
-        // apply markup
-        if (accounting.parse(this.product.storeProductMarkup, ',') > 0) {
-          result *= (1 + (accounting.parse(this.product.storeProductMarkup, ',') / 100));
+        // Apply markup.
+        if (this.product.storeProductMarkup > 0) {
+          result *= (1 + (this.product.storeProductMarkup / 100));
         }
-        // apply discount
+        // Apply discount.
         if (this.product.storeProductDiscountEnable){
-          // by value
+          // By value.
           if ('R$' == this.product.storeProductDiscountType) {
-            result -= accounting.parse(this.product.storeProductDiscountValue, ',');
-          // by percentage
+            result -= this.product.storeProductDiscountValue;
+          // By percentage.
           } else {
-            result -= result * (accounting.parse(this.product.storeProductDiscountValue, ',') / 100);
+            result -= result * (this.product.storeProductDiscountValue / 100);
           }
         }
-        this.product.storeProductPrice = accounting.formatMoney(result, '', 2, '.', ',');
-        return this.product.storeProductPrice;
+        this.product.storeProductPrice = accounting.parse(accounting.toFixed(result, 2), '.');
+        return accounting.formatMoney(result, '', 2, '.', ',');
       }
     },
-    filters: { currencyBr(value){ return accounting.formatMoney(value, "R$ ", 2, ".", ","); }}
+    filters: { 
+      currencyBr(value){ return accounting.formatMoney(value, "R$ ", 2, ".", ","); }
+    },
+    watch: {
+      inputDealerProductPrice: function(val){
+        this.product.dealerProductPrice = accounting.parse(val, ',');
+      },
+      inputStoreProductDiscountValue: function(val){
+        this.product.storeProductDiscountValue  = accounting.parse(val, ',');
+      },
+      inputStoreProductMarkup: function(val){
+        this.product.storeProductMarkup = accounting.parse(val, ',');
+      }
+    }
   }
 </script>
 <style lang='stylus'>

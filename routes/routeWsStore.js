@@ -21,8 +21,8 @@ router.get('/products-commercialize', function (req, res) {
   // \S matches any non-white-space character.
   // \s matches any white-space character.
   const search = req.query.search
-    ? {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$regex: /[1-9]/}, 'storeProductTitle': {$regex: req.query.search, $options: 'i'}}
-    : {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$regex: /[1-9]/}};
+    ? {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$gt: 0}, 'storeProductTitle': {$regex: req.query.search, $options: 'i'}}
+    : {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$gt: 0}};
     // ? {'storeProductCommercialize': true, 'storeProductTitle': {$regex: req.query.search, $options: 'i'}}
     // : {'storeProductCommercialize': true};
   const cursor = mongo.db.collection(dbConfig.collStoreProducts).find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PAGE_SIZE_STORE);

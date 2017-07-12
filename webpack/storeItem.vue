@@ -43,7 +43,7 @@
           // Title.
           h3.product-name {{product.storeProductTitle}}
           // Price
-          h3.product-price(v-if='accountingParse(this.product.storeProductPrice, ",") > 0') R$ {{ product.storeProductPrice }}
+          h3.product-price(v-if='accountingParse(this.product.storeProductPrice, ",") > 0') {{ product.storeProductPrice | currencyBr}}
           // Detail.
           ul.product-detail(v-if='productDetail.length > 0')
             li(v-for='detail in productDetail') {{detail}}
@@ -129,6 +129,17 @@
         .catch((err)=>{
           console.error(err);
         });
+      }
+    },
+    filters: {
+      currencyBr(value){
+        return accounting.formatMoney(value, 'R$ ', 2, '.', ',');
+      },
+      currencyInt(value){
+        return accounting.formatMoney(accounting.parse(value, ','), '', 2, '.', ',').split(',')[0];
+      },
+      currencyCents(value){
+        return accounting.formatMoney(accounting.parse(value, ','), '', 2, '.', ',').split(',')[1];
       }
     },
     computed:{
