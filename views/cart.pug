@@ -3,7 +3,7 @@ html(lang="en")
   head
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Carrinho.
+    title Carrinho de compras
     include components/bootstrap.css.pug
   body
     nav.navbar.navbar-inverse.navbar-static-top
@@ -46,10 +46,10 @@ html(lang="en")
         .col-md-8.col-md-offset-2
           button.btn.btn-primary.delete-cart Delete Cart
       .row
-        .col-md-10.col-md-offset-1
-          h3: strong Carrinho de comparas
+        .col-md-12
+          h3: strong Carrinho de compras
       .row
-        .col-md-10.col-md-offset-1
+        .col-md-12
           table.table
             thead
               tr
@@ -60,12 +60,13 @@ html(lang="en")
                 td Valor total
             tbody
               each product in cart.products
+                //- tr(class=product._id)
                 tr
                   td: a(href='/product/' + product._id): img.product(src='/img/' + product._id +'/' + product.image)
                   td 
-                    p #{product.title}
+                    a.product-title(href='/product/' + product._id) #{product.title}
                     a.remove-product(data-product_id=product._id) Remover
-                  td #{product.qtd}
+                  td: p.product-qtd #{product.qtd}
                     //- button.btn.btn-primary.btn-xs.dropdown-toggle(type='button' data-toggle='dropdown')
                       | #{product.qtd}
                       span.caret
@@ -74,19 +75,20 @@ html(lang="en")
                       li: a(href='#') 1
                       li: a(href='#') 2
                       li: a(href='#') 3
-                  td R$ #{product.price.toString().replace('.', ',')}
-                  td R$ #{(product.price * product.qtd).toString().replace('.', ',')}
+                  td: p.product-price R$ #{product.price.toString().replace('.', ',')}
+                  td: p.product-price R$ #{(product.price * product.qtd).toString().replace('.', ',')}
       .row
-        .col-md-10.col-md-offset-1
+        .col-md-12
           H4: strong 
             | Subtotal (#{cart.totalQtd} #{cart.totalQtd == 0 ? 'item' : 'itens'}): 
             span.price R$#{cart.totalPrice.toString().replace('.', ',')}
       .row
-        .col-md-10.col-md-offset-1
+        .col-md-12
           button.btn.btn-primary(type='button') Comprar
       .row
-        .col-md-10.col-md-offset-1
+        .col-md-12
           footer
+            p O preço e a disponibilidade dos itens na loja estão sujetios a mudanças. O carrinho é um local temporário para guardar a lista de seus ítens e reflete o preço mais recente.
     include components/jquery.js.pug
     include components/bootstrap.js.pug
     script.
@@ -103,16 +105,27 @@ html(lang="en")
 
       // Remove a cart item.
       $('a.remove-product').on('click', function(event){
-        let product_id =$(event.target).data('product_id');
+        // a.remove-product
+        let $target = $(event.target);
+        let $aTitle = $target.prev();
+        let product_id = $target.data('product_id');
         $.ajax({
           method: 'PUT',
           url: 'cart/remove/' + product_id
         })
-        .done(function(msg){
-          alert('Produto removido.');
+        .done(function(result){
+          $target.closest('tr').html(
+            $('<td class="product-removed" colspan="5"></td>')
+              .append($aTitle.removeClass('product-title'))
+              .append('<span> Foi removido do carrinho de compras. </span>')
+          );
         });
       })
     style.
+      table tbody tr {
+        margin-top: 2em;
+        margin-bottom: 2em;
+      }
       span.price{
         color: green;
       }
@@ -120,3 +133,27 @@ html(lang="en")
         max-width: 100px;
         height: auto;
       }
+      footer p {
+        font-size: .9em;
+      }
+      a.product-title {
+        display: block;
+        text-decoration: none;
+      }
+      a.remove-product {
+        font-size: .9em;
+        cursor: pointer;
+      }
+      p.product-price,
+      p.product-qtd,
+      a.product-title {
+        font-size: 1.2em;
+      }
+      p.product-price,
+      p.product-qtd {
+        color: green;
+      }
+      .product-removed {
+        font-size: .9em;
+      }
+

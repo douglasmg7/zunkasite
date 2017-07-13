@@ -137,7 +137,14 @@ router.put('/cart/remove/:_id', (req, res, next)=>{
       }
     }
   }
-  res.json({success: true});
+  // Calculate products total quantity and price.
+  user.cart.totalQtd = 0;
+  user.cart.totalPrice = 0;
+  user.cart.products.forEach(function(product) {
+    user.cart.totalQtd += product.qtd;
+    user.cart.totalPrice += product.price;
+  });
+  res.json({success: true, msg: 'Product removed', productRemovedId: req.params._id});
 })
 
 // Delete cart (development).
