@@ -124,7 +124,7 @@
       addToCart(){
         this.$http.put(`/cart/add/${this.product._id}`)
         .then((res)=>{
-          console.log(res);
+          // console.log(res);
         })
         .catch((err)=>{
           console.error(err);

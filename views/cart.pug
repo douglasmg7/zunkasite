@@ -3,7 +3,7 @@ html(lang="en")
   head
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Login Using bootstrap.
+    title Carrinho.
     include components/bootstrap.css.pug
   body
     nav.navbar.navbar-inverse.navbar-static-top
@@ -42,15 +42,81 @@ html(lang="en")
           .navbar-form.navbar-right
             input.form-control(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
     .container
+      //- .row
+        .col-md-8.col-md-offset-2
+          button.btn.btn-primary.delete-cart Delete Cart
       .row
-        .col-md-6.col-md-offset-3
-          ul.list-group
-            each product in cart.products
-              li.list-group-item
-                strong= product._id
-                span= product.qtd
+        .col-md-10.col-md-offset-1
+          h3: strong Carrinho de comparas
+      .row
+        .col-md-10.col-md-offset-1
+          table.table
+            thead
+              tr
+                td
+                td
+                td Quantidade
+                td Valor unitário
+                td Valor total
+            tbody
+              each product in cart.products
+                tr
+                  td: a(href='/product/' + product._id): img.product(src='/img/' + product._id +'/' + product.image)
+                  td 
+                    p #{product.title}
+                    a.remove-product(data-product_id=product._id) Remover
+                  td #{product.qtd}
+                    //- button.btn.btn-primary.btn-xs.dropdown-toggle(type='button' data-toggle='dropdown')
+                      | #{product.qtd}
+                      span.caret
+                    //- ul.dropdown-menu
+                      li: a(href='#') 0
+                      li: a(href='#') 1
+                      li: a(href='#') 2
+                      li: a(href='#') 3
+                  td R$ #{product.price.toString().replace('.', ',')}
+                  td R$ #{(product.price * product.qtd).toString().replace('.', ',')}
+      .row
+        .col-md-10.col-md-offset-1
+          H4: strong 
+            | Subtotal (#{cart.totalQtd} #{cart.totalQtd == 0 ? 'item' : 'itens'}): 
+            span.price R$#{cart.totalPrice.toString().replace('.', ',')}
+      .row
+        .col-md-10.col-md-offset-1
+          button.btn.btn-primary(type='button') Comprar
       .row
         .col-md-10.col-md-offset-1
           footer
     include components/jquery.js.pug
     include components/bootstrap.js.pug
+    script.
+      // For development only.
+      $('button.delete-cart').on('click', function(){
+        $.ajax({
+          method: 'PUT',
+          url: 'delete-cart',
+        })
+        .done(function(msg){
+          alert(JSON.stringify(msg));
+        });
+      });
+
+      // Remove a cart item.
+      $('a.remove-product').on('click', function(event){
+        let product_id =$(event.target).data('product_id');
+        $.ajax({
+          method: 'PUT',
+          url: 'cart/remove/' + product_id
+        })
+        .done(function(msg){
+          alert('Produto removido.');
+        });
+      })
+    style.
+      span.price{
+        color: green;
+      }
+      img.product{
+        max-width: 100px;
+        height: auto;
+      }

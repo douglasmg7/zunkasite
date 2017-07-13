@@ -63,18 +63,54 @@ router.get('/cart', (req, res, next)=>{
 
 // Add product to cart.
 router.put('/cart/add/:_id', (req, res, next)=>{
-  console.log('cart');
   // console.log('sessionID: ', req.sessionID);
   // console.log('session: ', req.session);
   // console.log('user: ', req.user);
 
-  let product;
+  // If no user logged, use the session.
+  // let user = req.user || req.session;
+  let user = req.session;      
   // Get product from db.
-  mongo.db.collection(dbConfig.collStoreProducts).findOne({_id: req.params._id})
+  let _id = new ObjectId(req.params._id);
+  mongo.db.collection(dbConfig.collStoreProducts).findOne({_id: _id})
   .then(result=>{
     // Product exist.
     if (result._id) {
-      product = result;
+      let product = result;
+      // Create cart.
+      if (!user.cart) {
+        user.cart = {products: [], totalQtd: 0, totalPrice: 0};
+      }
+      // If product alredy on cart, add more one.
+      let prodctFound = false;
+      for (var i = 0; i < user.cart.products.length; i++) {
+        if (user.cart.products[i]._id == product._id){
+          user.cart.products[i].qtd++;
+          prodctFound = true;
+          break;
+        }        
+      }
+      // Product alredy in the cart, add more one.
+      if (!prodctFound) {
+        // Find image
+        let image;
+        for (var i = 0; i < product.images.length; i++) {
+          if (product.images[i].selected) {
+            image = product.images[i].name;
+            break;
+          }
+        }
+        user.cart.products.push({_id: product._id, qtd: 1, title: product.storeProductTitle, price: product.storeProductPrice, image: image});
+      }
+      // Calculate products total quantity and price.
+      user.cart.totalQtd = 0;
+      user.cart.totalPrice = 0;
+      user.cart.products.forEach(function(product) {
+        user.cart.totalQtd += product.qtd;
+        user.cart.totalPrice += product.price;
+      });
+      // console.log('user cart', JSON.stringify(user.cart));
+      res.json({seccess: true});      
     // Not exist the product.
     } else {
       log.error(`product ${req.params._id} not found to add to cart.`);
@@ -85,34 +121,35 @@ router.put('/cart/add/:_id', (req, res, next)=>{
     console.log(err, new Error().stack);
     res.status(404).send('Produto não encontrado na base de dados.');
   });
+})
 
+// Remove product from cart.
+router.put('/cart/remove/:_id', (req, res, next)=>{
+  // If no user logged, use the session.
+  // let user = req.user || req.session;
+  let user = req.session;
+  // Find product into cart and remove it.
+  if (user.cart) {
+    for (var i = 0; i  < user.cart.products.length; i++) {
+      if (user.cart.products[i]._id = req.params._id) {
+        user.cart.products.splice(i, 1);
+        break;
+      }
+    }
+  }
+  res.json({success: true});
+})
+
+// Delete cart (development).
+router.put('/delete-cart', (req, res, next)=>{
+  console.log('cart');
   // If no user logged, use the session.
   // let user = req.user || req.session;
   let user = req.session;
   // Create cart.
-  if (!user.cart) {
-    user.cart = {products: [], totalQtd: 0, totalPrice: 0};
+  if (user.cart) {
+    delete user.cart;
   }
-  // If product alredy on cart, add more one.
-  let prodctFound = false;
-  user.cart.products.forEach(function(item) {
-    if (item._id === product._id){
-      item.qtd++;
-      prodctFound = true;
-    }
-  });
-  // Product not in the cart yet, add!
-  if (!prodctFound) {
-    user.cart.products.push({_id: product._id, qtd: 1, title: product.storeProductTitle, price: product.storePorductPrice});
-  }
-  // Calculate products total quantity and price.
-  user.cart.totalQtd = 0;
-  user.cart.totalPrice = 0;
-  user.cart.products.forEach(function(product) {
-    user.cart.totalQtd += product.qtd;
-    user.cart.totalPrice += product.price;
-  });
-  // console.log('user cart', JSON.stringify(user.cart));
   res.json({seccess: true});
 })
 
