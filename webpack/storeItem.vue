@@ -21,7 +21,8 @@
               a(href='/users/login' v-if="!this.user.username") Entrar
             li
               // Cart.
-              a(href='/cart') Carrinho
+              a(href='/cart') Carrinho&nbsp
+                span.badge {{ cart.totalQtd }}
             li
               // Admin.
               a(href='/configProducts/store' v-if="this.user.group == 'admin'") Admin
@@ -98,7 +99,7 @@
         imagesSelectedByRow: []
       }
     },
-    props:['$http', 'user', 'product'],
+    props:['$http', 'user', 'product', 'cart'],
     created(){
       let numRows = Math.ceil(this.imagesSelected.length / this.colsByRow);
       // Create um array for each row.

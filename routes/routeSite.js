@@ -19,8 +19,10 @@ router.get('/', function(req, res, next) {
   // log.verbose(`get / - req.user: ${JSON.stringify(req.user)}`);
   // log.verbose(`get / - req.isAuthenticated(): ${req.isAuthenticated()}`);
   // res.render('store', {initSearch: req.query.search});
+  let cart = 
   res.render('store', {
     user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
+    cart: req.session.cart || { products: [], totalQtd: 0, totalPrice: 0 },
     initSearch: req.query.search
   });
 });
@@ -44,6 +46,7 @@ router.get('/product/:_id', function(req, res, next) {
       // console.log(JSON.stringify(result));
       res.render('storeItem', {
         user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
+        cart: req.session.cart || { products: [], totalQtd: 0, totalPrice: 0 },
         product: result
       });
     // Not exist the product.
@@ -62,7 +65,7 @@ router.get('/product/:_id', function(req, res, next) {
 router.get('/cart', (req, res, next)=>{
   res.render('cart', {
     user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
-    cart: req.session.cart || { products: [], qtd: 0 },
+    cart: req.session.cart || { products: [], totalQtd: 0, totalPrice: 0 },
     formatMoney: formatMoney
   });
 })

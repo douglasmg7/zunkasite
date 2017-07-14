@@ -21,7 +21,8 @@
               a(href='/users/login' v-if="!this.user.username") Entrar
             li
               // Cart.
-              a(href='/cart') Carrinho
+              a(href='/cart') Carrinho&nbsp
+                span.badge {{ cart.totalQtd }}
             li
               // Admin.
               a(href='/configProducts/store' v-if="this.user.group == 'admin'") Admin
@@ -81,7 +82,7 @@
     },
     // Text for search products and user logged.
     // props:['$http', 'initSearch', 'username', 'group'],
-    props:['$http', 'user', 'initSearch'],
+    props:['$http', 'user', 'cart', 'initSearch'],
     created() {
       // On reload page use the query string for search, not the input search.
       this.search = this.initSearch;

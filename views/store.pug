@@ -10,6 +10,7 @@ html(lang="en")
     //- Make pug data disponible to vue instance.
     script.
       let vueUser = !{JSON.stringify(user)}
+      let vueCart = !{JSON.stringify(cart)}
       let vueInitSearch = '#{initSearch}'
     include components/jquery.js.pug
     include components/bootstrap.js.pug      
