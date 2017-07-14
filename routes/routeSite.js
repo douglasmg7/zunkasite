@@ -6,6 +6,11 @@ const ObjectId = require('mongodb').ObjectId;
 const log = require('../bin/log');
 // const stringify = require('js-stringify')
 
+// Format number to money format.
+function formatMoney(val){
+  return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
 // Index.
 router.get('/', function(req, res, next) {
   req.query.search = req.query.search || '';
@@ -57,7 +62,8 @@ router.get('/product/:_id', function(req, res, next) {
 router.get('/cart', (req, res, next)=>{
   res.render('cart', {
     user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
-    cart: req.session.cart || { products: [], qtd: 0 }
+    cart: req.session.cart || { products: [], qtd: 0 },
+    formatMoney: formatMoney
   });
 })
 
@@ -81,18 +87,21 @@ router.put('/cart/add/:_id', (req, res, next)=>{
       if (!user.cart) {
         user.cart = {products: [], totalQtd: 0, totalPrice: 0};
       }
-      // If product alredy on cart, add more one.
+      // Product alredy in cart, add more one.
       let prodctFound = false;
       for (var i = 0; i < user.cart.products.length; i++) {
         if (user.cart.products[i]._id == product._id){
+          // Add quantity.
           user.cart.products[i].qtd++;
+          // Update price.
+          user.cart.products[i].price = product.storeProductPrice;
           prodctFound = true;
           break;
         }        
       }
-      // Product alredy in the cart, add more one.
+      // Product not in the cart, add it.
       if (!prodctFound) {
-        // Find image
+        // Find first image selected.
         let image;
         for (var i = 0; i < product.images.length; i++) {
           if (product.images[i].selected) {
@@ -107,7 +116,7 @@ router.put('/cart/add/:_id', (req, res, next)=>{
       user.cart.totalPrice = 0;
       user.cart.products.forEach(function(product) {
         user.cart.totalQtd += product.qtd;
-        user.cart.totalPrice += product.price;
+        user.cart.totalPrice += (product.price * product.qtd);
       });
       // console.log('user cart', JSON.stringify(user.cart));
       res.json({seccess: true});      
@@ -144,7 +153,7 @@ router.put('/cart/remove/:_id', (req, res, next)=>{
     user.cart.totalQtd += product.qtd;
     user.cart.totalPrice += product.price;
   });
-  res.json({success: true, msg: 'Product removed', productRemovedId: req.params._id});
+  res.json({success: true, msg: 'Product removed', productRemovedId: req.params._id, cart: user.cart});
 })
 
 // Delete cart (development).

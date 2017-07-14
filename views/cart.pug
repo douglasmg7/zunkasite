@@ -30,7 +30,7 @@ html(lang="en")
             // Cart.
             li
               a(href='/cart') Carrinho 
-                span.badge= cart.totalQtd
+                span#total-qtd.badge= cart.totalQtd
             // Admin.
             if user.group == 'admin'
               li
@@ -75,13 +75,13 @@ html(lang="en")
                       li: a(href='#') 1
                       li: a(href='#') 2
                       li: a(href='#') 3
-                  td: p.product-price R$ #{product.price.toString().replace('.', ',')}
-                  td: p.product-price R$ #{(product.price * product.qtd).toString().replace('.', ',')}
+                  td: p.product-price #{formatMoney(product.price)}
+                  td: p.product-price #{formatMoney(product.price * product.qtd)}
       .row
         .col-md-12
-          H4: strong 
-            | Subtotal (#{cart.totalQtd} #{cart.totalQtd == 0 ? 'item' : 'itens'}): 
-            span.price R$#{cart.totalPrice.toString().replace('.', ',')}
+          H4
+            strong Subtotal (#{cart.totalQtd} #{cart.totalQtd == 0 ? 'item): ' : 'itens): '}
+            span#subtotal-price #{formatMoney(cart.totalPrice)}
       .row
         .col-md-12
           button.btn.btn-primary(type='button') Comprar
@@ -114,20 +114,29 @@ html(lang="en")
           url: 'cart/remove/' + product_id
         })
         .done(function(result){
+          // Update title.
           $target.closest('tr').html(
             $('<td class="product-removed" colspan="5"></td>')
               .append($aTitle.removeClass('product-title'))
               .append('<span> Foi removido do carrinho de compras. </span>')
           );
+          // Update price and quantity.
+          $('#subtotal-price')
+            .html('R$ ' + result.cart.totalPrice.toString().replace('.', ','))
+            .prev().html('Subtotal (' + result.cart.totalQtd + (result.cart.totalQtd == 0 ? 'item):&nbsp' : 'itens):&nbsp'));
+          // Update quantity.
+          $('#total-qtd').html(result.cart.totalQtd);
         });
-      })
-    style.
-      table tbody tr {
-        margin-top: 2em;
-        margin-bottom: 2em;
+      });
+
+      // Format number to currency.
+      function toCurrencyFormat(val){
+        return 'R$' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
       }
-      span.price{
+    style.
+      #subtotal-price{
         color: green;
+        font-weight: bold;
       }
       img.product{
         max-width: 100px;
@@ -148,6 +157,7 @@ html(lang="en")
       p.product-qtd,
       a.product-title {
         font-size: 1.2em;
+        padding-top: .6em;
       }
       p.product-price,
       p.product-qtd {
