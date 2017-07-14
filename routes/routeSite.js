@@ -117,6 +117,9 @@ router.put('/cart/add/:_id', (req, res, next)=>{
       user.cart.products.forEach(function(product) {
         user.cart.totalQtd += product.qtd;
         user.cart.totalPrice += (product.price * product.qtd);
+        // console.log('product: ', product.storeProductTitle);
+        // console.log('totalQtd: ', user.cart.totalQtd);
+        // console.log('totalPrice: ', user.cart.totalPrice);
       });
       // console.log('user cart', JSON.stringify(user.cart));
       res.json({seccess: true});      
@@ -140,7 +143,7 @@ router.put('/cart/remove/:_id', (req, res, next)=>{
   // Find product into cart and remove it.
   if (user.cart) {
     for (var i = 0; i  < user.cart.products.length; i++) {
-      if (user.cart.products[i]._id = req.params._id) {
+      if (user.cart.products[i]._id === req.params._id) {
         user.cart.products.splice(i, 1);
         break;
       }
@@ -151,7 +154,7 @@ router.put('/cart/remove/:_id', (req, res, next)=>{
   user.cart.totalPrice = 0;
   user.cart.products.forEach(function(product) {
     user.cart.totalQtd += product.qtd;
-    user.cart.totalPrice += product.price;
+    user.cart.totalPrice += (product.price * product.qtd);
   });
   res.json({success: true, msg: 'Product removed', productRemovedId: req.params._id, cart: user.cart});
 })
