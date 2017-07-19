@@ -32,6 +32,17 @@
           .navbar-form.navbar-right
             input.form-control(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
     .container
+      .row(v-if="this.productAdded")
+        .col-md-12.col
+          .cart
+            .item
+              img(:src='this.productAdded.image')
+              span Adicionado ao carrinho
+            .sub-total
+              span Subtotal
+            .buttons
+              button.btn.btn-primary Carrinho
+              button.btn.btn-success Finalizar compra
       .row(v-for='i in Math.ceil(products.length / colsByRow)')
         // Must have title and price more than 0 to be show.
         .col-md-3(v-for='product in products.slice((i - 1) * colsByRow, i * colsByRow)')
@@ -80,9 +91,7 @@
         productsByRow: []
       }
     },
-    // Text for search products and user logged.
-    // props:['$http', 'initSearch', 'username', 'group'],
-    props:['$http', 'user', 'cart', 'initSearch'],
+    props:['$http', 'user', 'cart', 'initSearch', 'productAdded'],
     created() {
       // On reload page use the query string for search, not the input search.
       this.search = this.initSearch;
@@ -153,6 +162,25 @@
     top: -0.6em
     padding-right: 0.3em
     padding-left: 0.2em
+  .cart
+    display: table
+    height: 5em
+    border: .1em solid red
+    margin-bottom: 2em
+  .cart > .item
+    display: table-cell
+    vertical-align: middle
+    border: .1em solid green
+  .cart > .item > img
+    max-height: 4em
+  .cart > .sub-total
+    display: table-cell
+    vertical-align: middle;
+    border: .1em solid green
+  .cart > .buttons
+    display: table-cell
+    vertical-align: middle;
+    border: .1em solid green
   footer
     height: 50px    
 </style>

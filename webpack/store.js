@@ -17,7 +17,8 @@ window.appVue = new Vue({
         $http: this.$http,
         user: vueUser,
         cart: vueCart,
-        initSearch: vueInitSearch
+        initSearch: vueInitSearch,
+        productAdded: vueProductAdded
       }
     });
   },

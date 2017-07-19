@@ -125,6 +125,10 @@
       addToCart(){
         this.$http.put(`/cart/add/${this.product._id}`)
         .then((res)=>{
+          // Success.
+          if (res.body.success) {
+            window.location.href = `/last-product-added-to-cart/${this.product._id}`;
+          }
           // console.log(res);
         })
         .catch((err)=>{

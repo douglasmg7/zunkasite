@@ -19,11 +19,55 @@ router.get('/', function(req, res, next) {
   // log.verbose(`get / - req.user: ${JSON.stringify(req.user)}`);
   // log.verbose(`get / - req.isAuthenticated(): ${req.isAuthenticated()}`);
   // res.render('store', {initSearch: req.query.search});
-  let cart = 
+  // Last product added to cart.
   res.render('store', {
     user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
     cart: req.session.cart || { products: [], totalQtd: 0, totalPrice: 0 },
-    initSearch: req.query.search
+    initSearch: req.query.search,
+    productAdded: null
+  });
+});
+
+// Index.
+router.get('/last-product-added-to-cart/:_id', function(req, res, next) {
+  req.query.search = req.query.search || '';
+  // Mongodb formated _id product.
+  let _id;
+  try {
+    _id = new ObjectId(req.params._id);
+  } catch (e) {
+    res.status(404).send('Produto não encontrado.');
+    console.log(`error creating mongo ObjectId, error: ${e}`);
+    return;
+  }
+  // Get last product added to from db.
+  mongo.db.collection(dbConfig.collStoreProducts).findOne({_id: _id})
+    .then(product=>{
+      // Product exist.
+      if (product._id) {
+        // First image selected to use.
+        let image;
+        for (var i = 0; i < product.images.length; i++) {
+          if (product.images[i].selected) {
+            image = product.images[i].name;
+            break;
+          }
+        }
+        res.render('store', {
+          user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
+          cart: req.session.cart || { products: [], totalQtd: 0, totalPrice: 0 },
+          initSearch: req.query.search,
+          productAdded: {image: `/img/${product._id}/${image}`}
+        });
+      // Not exist the product.
+      } else {
+        console.log(`product ${req.params._id} not found`);
+        res.status(404).send('Produto não encontrado.');
+      }
+    })
+    .catch((err)=>{
+      console.log(`error getting product from db, _id: ${req.params._id}, err: ${err}`);
+      res.status(404).send('Produto não encontrado.');
   });
 });
 
@@ -125,7 +169,7 @@ router.put('/cart/add/:_id', (req, res, next)=>{
         // console.log('totalPrice: ', user.cart.totalPrice);
       });
       // console.log('user cart', JSON.stringify(user.cart));
-      res.json({seccess: true});      
+      res.json({success: true});      
     // Not exist the product.
     } else {
       log.error(`product ${req.params._id} not found to add to cart.`);
