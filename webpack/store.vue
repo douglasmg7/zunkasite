@@ -33,16 +33,19 @@
             input.form-control(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
     .container
       .row(v-if="this.productAdded")
-        .col-md-12.col
+        .col-md-12
           .cart
             .item
+              span.glyphicon.glyphicon-ok
               img(:src='this.productAdded.image')
               span Adicionado ao carrinho
             .sub-total
-              span Subtotal
+              span  Subtotal 
+              span ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}}): 
+              span {{ cart.totalPrice | currencyBr }}
             .buttons
-              button.btn.btn-primary Carrinho
-              button.btn.btn-success Finalizar compra
+              a.btn.btn-primary(href='/cart') Carrinho
+              // button.btn.btn-success Finalizar compra
       .row(v-for='i in Math.ceil(products.length / colsByRow)')
         // Must have title and price more than 0 to be show.
         .col-md-3(v-for='product in products.slice((i - 1) * colsByRow, i * colsByRow)')
@@ -164,23 +167,43 @@
     padding-left: 0.2em
   .cart
     display: table
-    height: 5em
-    border: .1em solid red
+    height: 4em
+    border: 1px solid #ccc
     margin-bottom: 2em
+    font-size: 1.2em
+    width: 100%
+    font-weight: bold
   .cart > .item
+  .cart > .sub-total
+  .cart > .buttons
     display: table-cell
     vertical-align: middle
-    border: .1em solid green
+  .cart > .sub-total
+  .cart > .buttons
+    padding-left: 1em
+    padding-right: 1em  
+    background-color: #f3f3f3
+  .cart > .item
+    border-right: 1px solid #ccc
+    white-space: nowrap
+  .cart > .item > span
+    padding-left: 1em
+    padding-right: 1em
+    color: green
+  .cart > .item > .glyphicon
+    font-size: 1.5em
   .cart > .item > img
     max-height: 4em
   .cart > .sub-total
-    display: table-cell
-    vertical-align: middle;
-    border: .1em solid green
+    width: 100%
+  .cart > .sub-total > span:nth-child(2)
+    font-weight: normal
+  .cart > .sub-total > span:nth-child(3)
+    color: green
   .cart > .buttons
-    display: table-cell
-    vertical-align: middle;
-    border: .1em solid green
+    text-align: right
+  .cart > .buttons > button
+    margin: .7em    
   footer
     height: 50px    
 </style>
