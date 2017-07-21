@@ -61,26 +61,30 @@ html(lang="en")
             tbody
               each product in cart.products
                 //- tr(class=product._id)
-                tr
+                tr(data-product_id=product._id)
                   td: a(href='/product/' + product._id): img.product(src='/img/' + product._id +'/' + product.image)
                   td 
                     a.product-title(href='/product/' + product._id) #{product.title}
-                    a.remove-product(data-product_id=product._id) Remover
-                  td: p.product-qtd #{product.qtd}
-                    //- button.btn.btn-primary.btn-xs.dropdown-toggle(type='button' data-toggle='dropdown')
-                      | #{product.qtd}
-                      span.caret
-                    //- ul.dropdown-menu
-                      li: a(href='#') 0
-                      li: a(href='#') 1
-                      li: a(href='#') 2
-                      li: a(href='#') 3
+                    a.remove-product Remover
+                  //- td: p.product-qtd #{product.qtd}
+                  td.product-qtd
+                    .dropdown
+                      button.btn.btn-default.dropdown-troggle(type='button' data-toggle='dropdown')
+                        span #{product.qtd}
+                        span &nbsp&nbsp
+                        span.caret
+                      ul.dropdown-menu
+                        li: a(href='#') 1
+                        li: a(href='#') 2
+                        li: a(href='#') 3
+                        li: a(href='#') 4
+                        li: a(href='#') 5
                   td: p.product-price #{formatMoney(product.price)}
                   td: p.product-price #{formatMoney(product.price * product.qtd)}
       .row
         .col-md-12
           H4
-            strong Subtotal (#{cart.totalQtd} #{cart.totalQtd >= 0 ? 'item): ' : 'itens): '}
+            strong Subtotal (#{cart.totalQtd} #{cart.totalQtd > 1 ? 'itens): ' : 'item): '}
             span#subtotal-price #{formatMoney(cart.totalPrice)}
       //- .row
         .col-md-12
@@ -103,12 +107,45 @@ html(lang="en")
         });
       });
 
+      // Change product quantity.
+      $('tr').find('.product-qtd').find('a').on('click', function(event){
+        let $a = $(event.target);
+        let $tr = $a.closest('tr');
+        let productQtd = $a.html();
+        let productId = $tr.data('product_id');
+        //- console.log('qtd: ', productQtd);
+        //- console.log('id: ', productId);
+        $.ajax({
+          method: 'PUT',
+          url: 'cart/change-qtd/' + productId + '/' + productQtd
+        })
+        .done(function(result){
+          // Update quantity selected.
+          $a.closest('td').find('button').children().eq(0).html(productQtd);
+          // Update product (price * quantity).
+          let products = result.cart.products;
+          for(let i = 0; i < result.cart.products.length; i++){
+            if (products[i]._id === productId) {
+              $tr.children().last().prev().children().html(formatMoney(products[i].price));
+              $tr.children().last().children().html(formatMoney(products[i].price * products[i].qtd));
+              break;
+            }
+          }
+          // Update total price and total quantity.
+          $('#subtotal-price')
+            .html(formatMoney(result.cart.totalPrice))
+            .prev().html('Subtotal (' + result.cart.totalQtd + (result.cart.totalQtd > 1 ? ' itens):&nbsp' : ' item):&nbsp'));
+          // Update quantity.
+          $('#total-qtd').html(result.cart.totalQtd);
+        });        
+      });
+
       // Remove a cart item.
       $('a.remove-product').on('click', function(event){
         // a.remove-product
         let $target = $(event.target);
         let $aTitle = $target.prev();
-        let product_id = $target.data('product_id');
+        let product_id = $target.closest('tr').data('product_id');
         $.ajax({
           method: 'PUT',
           url: 'cart/remove/' + product_id
@@ -123,7 +160,7 @@ html(lang="en")
           // Update price and quantity.
           $('#subtotal-price')
             .html(formatMoney(result.cart.totalPrice))
-            .prev().html('Subtotal (' + result.cart.totalQtd + (result.cart.totalQtd == 0 ? 'item):&nbsp' : 'itens):&nbsp'));
+            .prev().html('Subtotal (' + result.cart.totalQtd + (result.cart.totalQtd > 1 ? ' itens):&nbsp' : ' item):&nbsp'));
           // Update quantity.
           $('#total-qtd').html(result.cart.totalQtd);
         });

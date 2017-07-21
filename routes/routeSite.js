@@ -182,6 +182,34 @@ router.put('/cart/add/:_id', (req, res, next)=>{
   });
 })
 
+// Change product quantity from cart.
+router.put('/cart/change-qtd/:_id/:qtd', (req, res, next)=>{
+  // If no user logged, use the session.
+  // let user = req.user || req.session;
+  let user = req.session;
+
+  console.log('_id:', req.params._id);
+  console.log('qtd: ',req.params.qtd);
+
+  // Find product into cart and remove it.
+  if (user.cart) {
+    for (var i = 0; i  < user.cart.products.length; i++) {
+      if (user.cart.products[i]._id === req.params._id) {
+        user.cart.products[i].qtd = parseInt(req.params.qtd, 10);
+        break;
+      }
+    }
+  }
+  // Calculate products total quantity and price.
+  user.cart.totalQtd = 0;
+  user.cart.totalPrice = 0;
+  user.cart.products.forEach(function(product) {
+    user.cart.totalQtd += product.qtd;
+    user.cart.totalPrice += (product.price * product.qtd);
+  });
+  res.json({success: true, msg: 'Product quantity changed', productQtdChanged: req.params._id, cart: user.cart});
+})
+
 // Remove product from cart.
 router.put('/cart/remove/:_id', (req, res, next)=>{
   // If no user logged, use the session.
