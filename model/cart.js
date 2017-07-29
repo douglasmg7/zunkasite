@@ -12,17 +12,31 @@ module.exports = function Cart(cart) {
     this.totalPrice = 0;
     this.products = [];
   }
+  this.changed = false;
 
-  // Add product.
+  // Re-caluculate total quantity and price.
+  this.update = function(){
+    // Calculate products total quantity and price.
+    this.totalQtd = 0;
+    this.totalPrice = 0;
+    let that = this;
+    this.products.forEach(function(product) {
+      that.totalQtd += product.qtd;
+      that.totalPrice += (product.price * product.qtd);
+    });
+    this.changed = true;    
+  }  
+
+  // Add product from db not from other cart.
   this.addProduct = function(product){
     let prodctFound = false;
     for (var i = 0; i < this.products.length; i++) {
       // Product alredy in the cart.
-      if (products[i]._id == product._id){
+      if (this.products[i]._id == product._id){
         // Add quantity.
-        products[i].qtd++;
+        this.products[i].qtd++;
         // Update price.
-        products[i].price = product.storeProductPrice;
+        this.products[i].price = product.storeProductPrice;
         prodctFound = true;
         break;
       }        
@@ -37,26 +51,60 @@ module.exports = function Cart(cart) {
           break;
         }
       }
-      products.push({_id: product._id, qtd: 1, title: product.storeProductTitle, price: product.storeProductPrice, image: image});
+      this.products.push({_id: product._id, qtd: 1, title: product.storeProductTitle, price: product.storeProductPrice, image: image});
     }
-    // Calculate products total quantity and price.
-    user.cart.totalQtd = 0;
-    user.cart.totalPrice = 0;
-    user.cart.products.forEach(function(product) {
-      user.cart.totalQtd += product.qtd;
-      user.cart.totalPrice += (product.price * product.qtd);
-      // console.log('product: ', product.storeProductTitle);
-      // console.log('totalQtd: ', user.cart.totalQtd);
-      // console.log('totalPrice: ', user.cart.totalPrice);
-    });
+    // Re-caluculate total quantity and price.
+    this.update();
+  }
+
+  // Change product quantity from cart.
+  this.changeProductQtd = function(_id, qtd){
+    for (var i = 0; i  < this.products.length; i++) {
+      if (this.products[i]._id === _id) {
+        this.products[i].qtd = parseInt(qtd, 10);
+        break;
+      }
+    }
+    // Re-caluculate total quantity and price.
+    this.update();  
+  }
+
+  // Remove product from cart.
+  this.removeProduct = function(_id){
+    for (var i = 0; i  < this.products.length; i++) {
+      if (this.products[i]._id === _id) {
+        this.products.splice(i, 1);
+        break;
+      }
+    }
+    // Re-caluculate total quantity and price.
+    this.update();
   }
 
   // Merge cart .
   this.mergeCart = function(cart){
     if (cart) {
       for (let i = 0; i < cart.products.length; i++) {
-        this.addProduct(cart.products[i]);
-      }      
+        let newProduct = cart.products[i];
+        let prodctFound = false;
+        for (let j = 0; j < this.products.length; j++) {
+          // Product alredy in the cart.
+          if (this.products[j]._id == newProduct._id){
+            // Add quantity.
+            this.products[j].qtd++;
+            // Update price.
+            this.products[j].price = product.storeProductPrice;
+            prodctFound = true;
+            break;
+          }        
+        }
+        // Product not in the cart, add it.
+        if (!prodctFound) {
+          this.products.push(newProduct);
+        }
+      }
+    // Re-caluculate total quantity and price.
+    this.update();
     }
   }  
 }

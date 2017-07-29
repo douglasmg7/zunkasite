@@ -108,11 +108,11 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 // passport.use('local.signup', new LocalStrategy(, )) see youtube Build a Shopping Cart - #7 
-passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, function (email, password, done) {
-  log.warn('LocalStrategy - Redis.');
+passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'password', passReqToCallback: true }, function (req, email, password, done) {
+  // log.warn('LocalStrategy - Redis.');
+  // log.warn('req.sessionId: ', req.sessionID);
   redis.get(`user:${email}`, (err, strUser)=>{
-    log.info('strUser: ', strUser);
-    // console.log(`user from db: ${JSON.stringify(user)}`);
+    // log.info('strUser: ', strUser);
     if (err) { 
       log.error(`Passport.use - local strategy - Database error: ${err}`); 
       return done(err, false, {message: 'Internal error.'}); 
@@ -125,40 +125,40 @@ passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'passwor
     let user = JSON.parse(strUser);
     // Password match.
     if (password === user.password){
-      return done(null, user); 
+      // log.warn('new authentication');
+      // Merge cart from session.
+      redis.get(`cart:${req.sessionID}`, (err, sessCart)=>{
+        if (sessCart) {
+          // Get authenticated user cart.
+          redis.get(`cart:${user.email}`, (err, userCart)=>{
+            let cart;
+            if (userCart) {
+              cart = new Cart(JSON.parse(userCart));
+            } else {
+              cart = new Cart();
+            }
+            // Merge anonymous cart to authenticated user cart.
+            cart.mergeCart(JSON.parse(sessCart));
+            redis.del(`cart:${req.sessionID}`);
+            redis.set(`cart:${user.email}`, JSON.stringify(cart), (err)=>{
+              // log.warn('merged cart: ', JSON.stringify(cart));
+              return done(null, user); 
+            });   
+          }); 
+        }
+        // No cart session to merge.
+        else {
+          return done(null, user); 
+        }        
+      });
+    } 
     // Wrong password.
-    } else {
+    else {
       log.warn(`Incorrect password for user ${email}`);
       return done(null, false, { message: 'Senha incorreta.'} ); 
     }
   });
 }));
-
-// // Using mongo db.
-// passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, function (email, password, done) {
-//   log.info('mongo db - LocalStrategy');
-//   mongo.db.collection(dbConfig.collUser).findOne({email: email}, (err, user)=>{
-//     // console.log(`user from db: ${JSON.stringify(user)}`);
-//     if (err) { 
-//       log.error(`Passport.use - local strategy - Database error: ${err}`); 
-//       return done(err, false, {message: 'Internal error.'}); 
-//     }
-//     // User not found.
-//     if (!user) { 
-//       log.warn(`User ${email} not found on database.`); 
-//       return done(null, false, { message: 'Usuário não cadastrado.'} ); 
-//     }
-//     // Password match.
-//     if (password === user.password){
-//       return done(null, user); 
-
-//     // Wrong password.
-//     } else {
-//       log.warn(`Incorrect password for user ${email}`);
-//       return done(null, false, { message: 'Senha incorreta.'} ); 
-//     }
-//   });
-// }));
 
 // passport.use(new LocalStrategy(function (username, password, done) {
 //   mongo.db.collection(dbConfig.collSession).findOne({username: username}, (err, user)=>{
@@ -185,8 +185,6 @@ passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'passwor
 // Serialize _id to session, write _id to session.passport.user.
 passport.serializeUser(function(user, done) {
   log.info('passport.serialize');
-  // User made authentication in this request.
-  req.madeAuthenticationNow = true;
   done(null, user.email);
 });
 
@@ -198,66 +196,41 @@ passport.deserializeUser(function(id, done) {
     // log.info('user: ', value);
     done(null, JSON.parse(value));
   });
-  // done(null, JSON.parse(redis.get(`user:${id}`)));
-  // const _id = new ObjectId(id);
-  // mongo.db.collection(dbConfig.collUser).findOne({_id: _id}, (err, user)=>{
-  //   console.log(`user from db: ${JSON.stringify(user)}`);
-  //   return done(err, user);
-  // });
 });
 
-// Cart.
-app.use(function(req, res, next) {
-  log.warn('#### cart - start.');
-  // User made authentication in this request.
-  if (req.madeAuthenticationNow && req.session.cart) {
-    log.warn('new authentication');
-    // Get authenticated user cart.
-    redis.get(`cart:${req.user.email}`, (err, value)=>{
-      log.info('redis cart: ', value);
-      if (value) {
-        req.cart = new Cart(JSON.parse(value));
-      } else {
-        req.cart = new Cart();
-      }
-      // Merge anonymous cart to authenticated user cart.
-      req.cart.mergeCart(req.session.cart);
-      delete req.session.cart;
-      redis.set(`cart:${req.user.email}`, req.cart);   
-      next();
-    });     
-  } 
-  // Alredy authenticated user.
-  else if (req.isAuthenticated()){
-    log.warn('alredy authenticated');
-    // Get cart.
-    redis.get(`cart:${req.user.email}`, (err, value)=>{
-      log.info('redis cart: ', value);
-      req.cart = new Cart(JSON.parse(value));
-      next();
-    }); 
-  }
-  // Anonymous user.
-  else {
-    log.warn('anonymous');
-    req.cart = new Cart(req.session.cart);
-    next();
-  }
-  log.warn('#### cart - end.');
-});
-
-app.use(function (req, res, next){
-  log.warn('--->next app use');
-  next();
-});
-
-// routes
-// Users.
-app.use('/users', routeUsers);
-// Web service.
+// Routes.
+// Web service - they no need the middleware cart.
 app.use('/ws/manual', routeWsAllNations);
 app.use('/ws/allnations', routeWsAllNations);
 app.use('/ws/store', routeWsStore);
+
+// Cart.
+app.use(function(req, res, next) {
+  // log.warn('req.sessionID: ', req.sessionID);
+  // Get cart.
+  let cartKey = req.isAuthenticated() ? req.user.email : req.sessionID;
+  redis.get(`cart:${cartKey}`, (err, value)=>{
+    if (value) {
+      req.cart = new Cart(JSON.parse(value));
+    } else {
+      req.cart = new Cart();
+    }
+    next();
+  }); 
+  // Save cart when the response finish.
+  res.on('finish', function(){
+    if (req.cart.changed) {
+      let cartKey = req.isAuthenticated() ? req.user.email : req.sessionID;
+      redis.set(`cart:${cartKey}`, JSON.stringify(req.cart), (err)=>{
+        if (err) { log.error(err, new Error().stack) ;}
+      });
+    }
+  })  
+});
+
+// Routes.
+// Users.
+app.use('/users', routeUsers);
 // Products configuration.
 app.use('/configProducts', routeConfigProducts);
 // Site.

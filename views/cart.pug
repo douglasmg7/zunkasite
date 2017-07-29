@@ -20,11 +20,11 @@ html(lang="en")
         #navbar.navbar-collapse.collapse
           ul.nav.navbar-nav.navbar-right
             // Username.
-            if user.username
+            if user.name
               li
-                a= user.username
+                a= user.name
             // Sign-in.
-            if !user.username
+            if !user.name
               li
                 a(href='/users/login') Entrar
             // Cart.
@@ -36,7 +36,7 @@ html(lang="en")
               li
                 a(href='/configProducts/store') Admin
             // Logout.
-            if user.username
+            if user.name
               li
                 a(href='/users/logout') Sair
           .navbar-form.navbar-right
