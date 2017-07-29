@@ -14,11 +14,11 @@
         #navbar.navbar-collapse.collapse
           ul.nav.navbar-nav.navbar-right
             li
-              // Username.
-              a(v-if="this.user.username") {{this.user.username}}
+              // name.
+              a(v-if="this.user.name") {{this.user.name}}
             li
               // Sign-in.
-              a(href='/users/login' v-if="!this.user.username") Entrar
+              a(href='/users/login' v-if="!this.user.name") Entrar
             li
               // Cart.
               a(href='/cart') Carrinho&nbsp
@@ -28,7 +28,7 @@
               a(href='/configProducts/store' v-if="this.user.group == 'admin'") Admin
             li
               // Exit.
-              a(href='/users/logout' v-if="this.user.username") Sair
+              a(href='/users/logout' v-if="this.user.name") Sair
           .navbar-form.navbar-right
             input.form-control(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
     .container

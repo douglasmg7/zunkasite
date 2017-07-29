@@ -21,11 +21,14 @@ html(lang="en")
               //- .alert.alert-danger(role='alert') 
                 p.text-center Usuario nao existe.
               form(action='/users/signup' method='post')
+                //- Name.
                 .form-group
-                  //- label Usuario
-                  input.form-control(type='text' name='username' placeholder='usuario')
+                  input.form-control(type='text' name='name' placeholder='nome')                 
+                //- Email.
                 .form-group
-                  //- label Senha
+                  input.form-control(type='text' name='email' placeholder='e-mail')
+                //- Senha.
+                .form-group
                   input.form-control(type='password' name='password' placeholder='senha')
                 input.btn.btn-primary.btn-block(type='submit' value='Cadastrar')
         .col-md-4

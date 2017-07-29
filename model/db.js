@@ -19,7 +19,7 @@ mongo.connect(url, (err, database)=>{
     process.exit(1);
   } else {
     state.db = database;
-    log.info('Connected to mongoDb.');
+    log.info('Connected to Mongo.');
   }
 });
 

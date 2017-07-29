@@ -1,4 +1,5 @@
 const express = require('express');
+const redis = require('../model/redis');
 const router = express.Router();
 const mongo = require('../model/db');
 const dbConfig = require('../bin/dbConfig');
@@ -15,24 +16,46 @@ router.get('/signup', (req, res, next)=>{
 // Sign up request.
 router.post('/signup', (req, res, next)=>{
   // log.debug(`req.body: ${JSON.stringify(req.body)}`);
-  if (req.body.username && req.body.password) {
-    // Create user.
-    const user = {
-      username: req.body.username,
-      password: req.body.password,
-      group: 'client',
-      status: 'active'
-    };
-    // Insert user on database.
-    mongo.db.collection(dbConfig.collSession).insertOne(user)
-    .then(result=>{
-      log.info(`Usuario cadastrado com sucesso: ${JSON.stringify(user)}`)
-      res.redirect('/users/login');
-    })
-    .catch(err=>{
-      res.json({ success: false, message: 'Sign up failed' });
-      console.log(`sign-up-error: ${err}`);
+  if (req.body.name && req.body.email && req.body.password) {
+    // Find user on redis.
+    redis.get(`user:${req.body.email}`, (err, result)=>{
+      // User alredy exist.
+      if (result) {
+        log.warn('User alredy exist.');
+        res.redirect('/users/signup');
+      }
+      // Not exit user yet.
+      else {
+        // Create user.
+        const user = {
+          name: req.body.name,
+          email: req.body.email,
+          password: req.body.password,
+          group: 'client',
+          status: 'active'
+        };        
+        redis.set(`user:${user.email}`, JSON.stringify(user), (err, result)=>{
+          if (err) {
+            res.json({ success: false, message: 'Sign up failed' });
+            log.error(`sign-up-error: ${err}`);
+          }
+          else{
+            log.info(`Usuario cadastrado com sucesso: ${JSON.stringify(user)}`);
+            res.redirect('/users/login');
+          }
+        });
+      }
     });
+    // // Insert user on database.
+    // mongo.db.collection(dbConfig.collUser).insertOne(user)
+    // .then(result=>{
+    //   log.info(`Usuario cadastrado com sucesso: ${JSON.stringify(user)}`);
+    //   res.redirect('/users/login');
+    // })
+    // .catch(err=>{
+    //   res.json({ success: false, message: 'Sign up failed' });
+    //   console.log(`sign-up-error: ${err}`);
+    // });
   };
 });
 
@@ -77,22 +100,10 @@ router.get('/login', (req, res, next)=>{
   res.render('login', { message: error });
 });
 
-// Login semantic-ui page.
-router.get('/logins', (req, res, next)=>{
-  // Message from authentication, who set a flash message with erros.
-  res.render('loginS', { message: req.flash('error') });
-});
-
 // Login clean page.
 router.get('/loginc', (req, res, next)=>{
   // Message from authentication, who set a flash message with erros.
   res.render('loginC', { message: req.flash('error') });
-});
-
-// Login clean page.
-router.get('/logincl', (req, res, next)=>{
-  // Message from authentication, who set a flash message with erros.
-  res.render('loginCL', { message: req.flash('error') });
 });
 
 // Login request.
@@ -105,15 +116,13 @@ router.post('/login',
   })
 );
 
-// logout
+// logout.
 router.get('/logout', (req, res, next)=>{
   console.log(`req.user: ${JSON.stringify(req.user)}`);
   if (req.isAuthenticated()) {
-    log.verbose(`User ${req.user.username} has Logout.`);
     req.logout();
     res.redirect('/users/login');
   } else {
-    log.verbose('No user logged to make logout.');
     res.redirect('/users/login');
   }
 });

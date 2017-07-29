@@ -48,6 +48,8 @@ const dbConfig = {
   collProductMakers: 'productMakers',
   // product categories, use in dropdown
   collProductCategories: 'productCategories',
+  // User.
+  collUser: 'user',
   // sessions
   collSession: 'sessions'
 };

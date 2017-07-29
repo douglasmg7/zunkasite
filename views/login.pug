@@ -17,23 +17,23 @@ html(lang="en")
         .col-md-4
           .panel.panel-default
             .panel-body
-              h1.text-left Identificacao
+              h1.text-left Identificação
               if message != ''
                 .alert.alert-danger(v-if='' role='alert') 
                   p.text-center #{message}
                   //- p.text-center Usuario ou senha incorretos.
               form(action='/users/login' method='post')
                 .form-group
-                  //- label Usuario
-                  input.form-control(type='text' name='username' placeholder='usuario')
+                  //- label email.
+                  input.form-control(type='text' name='email' placeholder='e-mail')
                 .form-group
-                  //- label Senha
+                  //- label senha.
                   input.form-control(type='password' name='password' placeholder='senha')
                   p.help-block 
                     a(href='/') Esqueceu a senha?
                 input.btn.btn-primary.btn-block(type='submit' value='Entrar')
                 hr/
-                p.help-block Nao tem cadastro?
+                p.help-block Não tem cadastro?
                 a.btn.btn-info.btn-block(href='/users/signup') Cadastrar
         .col-md-4
     include components/jquery.js.pug

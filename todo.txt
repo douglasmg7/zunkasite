@@ -38,7 +38,9 @@ num of products to not commercialize must be in to a config, not harded coded
 - store: new MongoStore({ url: dbUrl }) - ttl, autoremove
 
 - madeira  -    Baliza               -       Oriental
-            10,5 - R$ 17,00             -     10,0 - R$ 12,17
+                                               3,0 - R$  4,25
+                                               6,0 - R$  8,30   
+            10,5 - R$ 17,00             -     10,5 - R$ 12,17
             13,5 - R$ 22,00             -     12,5 - R$ 15,80
             17,5 - R$ 28,00             -     16,5 - R$ 21,00
             20,5 - R$ 32,00             -     19,5 - R$ 26,14 a partir de 4m
@@ -48,7 +50,17 @@ num of products to not commercialize must be in to a config, not harded coded
   40m (17,5) - 1120,00                     40m (16,5) - 850,00
   26m (14 x 14) - 1950,00                  26m (12,5 x 12,5) - 1315,00
 
+                                           vigas        - 12m (12,5 - R$ 15,80) - 189,60
+                                           transversais - 30m (10,5 x R$ 12,17) - 365,10
+                                           transversais - 30m ( 6,5 x R$  8,30) - 249,00
+                                           transversais - 30m ( 3,0 x R$  4,25) - 127,50
+                                           pilares      - 20m (12,5 - R$ 15,80) - 316,00
+                                           total - 870,70 / 754,00 / 632,00
+
   Tirol
   3382-1955
   Alysson
   Roxinho - 12 x 12 - 49,00
+
+  26 e 38
+  remover connect-mongo

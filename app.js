@@ -2,24 +2,31 @@
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
+// General log.
+const log = require('./bin/log');
 // Log transaction.
 const morgan = require('morgan');
 // Body.
 const bodyParser = require('body-parser');
-// Database.
+// Mongo.
 const dbConfig = require('./bin/dbConfig');
 const mongo = require('./model/db');
 const ObjectId = require('mongodb').ObjectId;
+// Redis.
+const redis = require('./model/redis');
 // Authentication.
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
-const MongoStore = require('connect-mongo')(session);
+// const MongoStore = require('connect-mongo')(session);
+const redisStore = require('connect-redis')(session);
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
+// Cart.
+const Cart = require('./model/cart');
 // Paypal
-const paypal = require('paypal-rest-sdk');
+// const paypal = require('paypal-rest-sdk');
 // Webpack HMR - hot module reload.
 const webpack = require('webpack');
 const webpackConfig = require('./webpack.config');
@@ -30,8 +37,6 @@ const webpackDevMiddleware = require('webpack-dev-middleware')(compiler, {
   stats: {colors: true, chunks: false}
 });
 const webpackHotMiddleware = require('webpack-hot-middleware')(compiler);
-// Personal modules.
-const log = require('./bin/log');
 // app must be before routes
 const app = express();
 // routes
@@ -80,7 +85,8 @@ var sessionOpts = {
   resave: true, // saved new sessions
   saveUninitialized: true, // automatically write to the session store
   cookie: { maxAge: 2419200000 }, // configure when sessions expires in ms.
-  store: new MongoStore({ url: dbUrl })   // Use a current connection.
+  store: new redisStore({ client: redis })   // Use a current connection.
+  // store: new MongoStore({ url: dbUrl })   // Use a current connection.
 };
 // if (app.get('env') === 'production') {
 //   app.set('trust proxy', 1); // trust first proxy
@@ -102,29 +108,57 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 // passport.use('local.signup', new LocalStrategy(, )) see youtube Build a Shopping Cart - #7 
-passport.use(new LocalStrategy(function (username, password, done) {
-  mongo.db.collection(dbConfig.collSession).findOne({username: username}, (err, user)=>{
+passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, function (email, password, done) {
+  log.warn('LocalStrategy - Redis.');
+  redis.get(`user:${email}`, (err, strUser)=>{
+    log.info('strUser: ', strUser);
     // console.log(`user from db: ${JSON.stringify(user)}`);
     if (err) { 
       log.error(`Passport.use - local strategy - Database error: ${err}`); 
       return done(err, false, {message: 'Internal error.'}); 
     }
     // User not found.
-    if (!user) { 
-      log.warn(`User ${username} not found on database.`); 
-      return done(null, false, { message: 'Usuario nao cadastrado.'} ); 
+    if (!strUser) { 
+      log.warn(`email ${email} not found on database.`); 
+      return done(null, false, { message: 'Usuário não cadastrado.'} ); 
     }
+    let user = JSON.parse(strUser);
     // Password match.
     if (password === user.password){
       return done(null, user); 
-
     // Wrong password.
     } else {
-      log.warn(`Incorrect password for user ${username}`);
+      log.warn(`Incorrect password for user ${email}`);
       return done(null, false, { message: 'Senha incorreta.'} ); 
     }
   });
 }));
+
+// // Using mongo db.
+// passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, function (email, password, done) {
+//   log.info('mongo db - LocalStrategy');
+//   mongo.db.collection(dbConfig.collUser).findOne({email: email}, (err, user)=>{
+//     // console.log(`user from db: ${JSON.stringify(user)}`);
+//     if (err) { 
+//       log.error(`Passport.use - local strategy - Database error: ${err}`); 
+//       return done(err, false, {message: 'Internal error.'}); 
+//     }
+//     // User not found.
+//     if (!user) { 
+//       log.warn(`User ${email} not found on database.`); 
+//       return done(null, false, { message: 'Usuário não cadastrado.'} ); 
+//     }
+//     // Password match.
+//     if (password === user.password){
+//       return done(null, user); 
+
+//     // Wrong password.
+//     } else {
+//       log.warn(`Incorrect password for user ${email}`);
+//       return done(null, false, { message: 'Senha incorreta.'} ); 
+//     }
+//   });
+// }));
 
 // passport.use(new LocalStrategy(function (username, password, done) {
 //   mongo.db.collection(dbConfig.collSession).findOne({username: username}, (err, user)=>{
@@ -150,30 +184,72 @@ passport.use(new LocalStrategy(function (username, password, done) {
 
 // Serialize _id to session, write _id to session.passport.user.
 passport.serializeUser(function(user, done) {
-  // log.info('passport.serialize');
-  done(null, user._id);
+  log.info('passport.serialize');
+  // User made authentication in this request.
+  req.madeAuthenticationNow = true;
+  done(null, user.email);
 });
-// Deserialize from the session, use session.passport.user to find user into db.
-passport.deserializeUser(function(id, done) {
-  // log.info('passport.deserialize');
-  const _id = new ObjectId(id);
-  mongo.db.collection(dbConfig.collSession).findOne({_id: _id}, (err, user)=>{
-    // console.log(`user from db: ${JSON.stringify(user)}`);
-    return done(err, user);
-  });
-});
-// function authenticationMiddleware () {
-//   return function (req, res, next) {
-//     if (req.isAuthenticated()) {
-//       return next();
-//     }
-//     res.redirect('/');
-//   };
-// }
 
-// // webpack HMR
-// app.use(webpackDevMiddleware);
-// app.use(webpackHotMiddleware);
+// Deserialize.
+passport.deserializeUser(function(id, done) {
+  log.info('passport.deserialize');
+  // log.info('id: ', id);
+  redis.get(`user:${id}`, (err, value)=>{
+    // log.info('user: ', value);
+    done(null, JSON.parse(value));
+  });
+  // done(null, JSON.parse(redis.get(`user:${id}`)));
+  // const _id = new ObjectId(id);
+  // mongo.db.collection(dbConfig.collUser).findOne({_id: _id}, (err, user)=>{
+  //   console.log(`user from db: ${JSON.stringify(user)}`);
+  //   return done(err, user);
+  // });
+});
+
+// Cart.
+app.use(function(req, res, next) {
+  log.warn('#### cart - start.');
+  // User made authentication in this request.
+  if (req.madeAuthenticationNow && req.session.cart) {
+    log.warn('new authentication');
+    // Get authenticated user cart.
+    redis.get(`cart:${req.user.email}`, (err, value)=>{
+      log.info('redis cart: ', value);
+      if (value) {
+        req.cart = new Cart(JSON.parse(value));
+      } else {
+        req.cart = new Cart();
+      }
+      // Merge anonymous cart to authenticated user cart.
+      req.cart.mergeCart(req.session.cart);
+      delete req.session.cart;
+      redis.set(`cart:${req.user.email}`, req.cart);   
+      next();
+    });     
+  } 
+  // Alredy authenticated user.
+  else if (req.isAuthenticated()){
+    log.warn('alredy authenticated');
+    // Get cart.
+    redis.get(`cart:${req.user.email}`, (err, value)=>{
+      log.info('redis cart: ', value);
+      req.cart = new Cart(JSON.parse(value));
+      next();
+    }); 
+  }
+  // Anonymous user.
+  else {
+    log.warn('anonymous');
+    req.cart = new Cart(req.session.cart);
+    next();
+  }
+  log.warn('#### cart - end.');
+});
+
+app.use(function (req, res, next){
+  log.warn('--->next app use');
+  next();
+});
 
 // routes
 // Users.
@@ -221,5 +297,14 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
+
+// function authenticationMiddleware () {
+//   return function (req, res, next) {
+//     if (req.isAuthenticated()) {
+//       return next();
+//     }
+//     res.redirect('/');
+//   };
+// }
 
 module.exports = app;
