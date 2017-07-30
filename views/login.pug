@@ -23,6 +23,7 @@ html(lang="en")
                   p.text-center #{message}
                   //- p.text-center Usuario ou senha incorretos.
               form(action='/users/login' method='post')
+                input(type='hidden' name='_csrf' value=csrfToken)
                 .form-group
                   //- label email.
                   input.form-control(type='text' name='email' placeholder='e-mail')

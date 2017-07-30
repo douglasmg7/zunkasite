@@ -16,6 +16,7 @@ const ObjectId = require('mongodb').ObjectId;
 const redis = require('./model/redis');
 // Authentication.
 const cookieParser = require('cookie-parser');
+const csurf = require('csurf');
 const session = require('express-session');
 const flash = require('connect-flash');
 // const MongoStore = require('connect-mongo')(session);
@@ -82,8 +83,8 @@ let dbUrl = null;
 app.get('env') === 'test' ? dbUrl = dbConfig.urlUnitTest : dbUrl = dbConfig.url;
 var sessionOpts = {
   secret: app.get('secret'),
-  resave: true, // saved new sessions
-  saveUninitialized: true, // automatically write to the session store
+  resave: false, // Save just when changed.
+  saveUninitialized: false, // Create if have some thing.
   cookie: { maxAge: 2419200000 }, // configure when sessions expires in ms.
   store: new redisStore({ client: redis })   // Use a current connection.
   // store: new MongoStore({ url: dbUrl })   // Use a current connection.
@@ -104,6 +105,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // authentication
 app.use(cookieParser(app.get('secret')));
 app.use(session(sessionOpts));
+app.use(csurf());
+// app.use(csrf({ cookie: true }));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
@@ -236,39 +239,46 @@ app.use('/configProducts', routeConfigProducts);
 // Site.
 app.use('/', routeSite);
 
+// CSRF error handler.
+app.use(function (err, req, res, next) {
+  log.warn('CRSF attack!');
+  if (err.code !== 'EBADCSRFTOKEN') return next(err)
+  res.status(403).send('Form tampered!');
+})
+
+// Error handlers.
 app.use(function(err, req, res, next) {
   res.status(500).send({error: 'Internal server error.'});
-  // res.json(500, {ERROR: 'Internal server error.'} );
   log.error(err.stack);
 });
-// catch 404 and forward to error handler
+
+// // Development error handler.
+// // Will print stacktrace.
+// if (app.get('env') === 'development') {
+//   app.use(function(err, req, res, next) {
+//     res.status(err.status || 500);
+//     res.render('error', {      
+//       message: err.message,
+//       error: err
+//     });
+//   });
+// // Production error handler.
+// // No stacktraces leaked to user.  
+// } else {
+//   app.use(function(err, req, res, next) {
+//     res.status(err.status || 500);
+//     res.render('error', {
+//       message: err.message,
+//       error: {}
+//     });
+//   });  
+// }
+
+// Catch 404 and forward to error handler.
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
-});
-
-// error handlers
-
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
-}
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
 });
 
 // function authenticationMiddleware () {

@@ -89,7 +89,8 @@ router.get('/product/:_id', function(req, res, next) {
       res.render('storeItem', {
         user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
         cart: req.cart,
-        product: result
+        product: result,
+        csrfToken: req.csrfToken()
       });
     // Not exist the product.
     } else {
@@ -109,7 +110,8 @@ router.get('/cart', (req, res, next)=>{
   res.render('cart', {
     user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
     cart: req.cart,
-    formatMoney: formatMoney
+    formatMoney: formatMoney,
+    csrfToken: req.csrfToken()
   });
 })
 

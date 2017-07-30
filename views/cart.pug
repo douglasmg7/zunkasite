@@ -96,17 +96,6 @@ html(lang="en")
     include components/jquery.js.pug
     include components/bootstrap.js.pug
     script.
-      // For development only.
-      $('button.delete-cart').on('click', function(){
-        $.ajax({
-          method: 'PUT',
-          url: 'delete-cart',
-        })
-        .done(function(msg){
-          alert(JSON.stringify(msg));
-        });
-      });
-
       // Change product quantity.
       $('tr').find('.product-qtd').find('a').on('click', function(event){
         let $a = $(event.target);
@@ -117,7 +106,8 @@ html(lang="en")
         //- console.log('id: ', productId);
         $.ajax({
           method: 'PUT',
-          url: 'cart/change-qtd/' + productId + '/' + productQtd
+          url: 'cart/change-qtd/' + productId + '/' + productQtd,
+          data: { _csrf: '#{csrfToken}'}
         })
         .done(function(result){
           // Update quantity selected.

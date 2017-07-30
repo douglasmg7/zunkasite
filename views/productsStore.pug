@@ -9,7 +9,8 @@ html(lang="en")
     #app
     //- Make pug data disponible to vue instance.
     script.
-      let vueUser = !{JSON.stringify(user)}  
+      let vueUser = !{JSON.stringify(user)}
+      let vueCsrfToken = !{JSON.stringify(csrfToken)}
     include components/jquery.js.pug
     include components/semantic.js.pug
     include components/vue.js.pug

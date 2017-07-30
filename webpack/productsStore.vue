@@ -34,6 +34,7 @@
     products-store-detail(
       ref='productStoreDetail'
       :$http='$http',
+      :csrfToken='csrfToken',
       :product='selectedProduct', 
       :productMakers='productMakers', 
       :productCategories='productCategories',
@@ -71,7 +72,7 @@
         search: ''
       }
     },
-    props: ['$http', 'user'],
+    props: ['$http', 'user', 'csrfToken'],
     created() {
       this.getProducts();
       this.getDropdown();
@@ -126,7 +127,7 @@
           isNewProduct: true
         };
         // Insert product on db.
-        this.$http.post(`${wsPath.store}/`, this.selectedProduct)
+        this.$http.post(`${wsPath.store}/`, { product: this.selectedProduct, _csrf: this.csrfToken })
           .then((res)=>{
             // Include _id received from db.
             this.selectedProduct._id = res.body._id;

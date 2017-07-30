@@ -21,6 +21,7 @@ html(lang="en")
               //- .alert.alert-danger(role='alert') 
                 p.text-center Usuario nao existe.
               form(action='/users/signup' method='post')
+                input(type='hidden' name='_csrf' value=csrfToken)
                 //- Name.
                 .form-group
                   input.form-control(type='text' name='name' placeholder='nome')                 

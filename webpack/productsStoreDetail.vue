@@ -152,7 +152,7 @@
         inputStoreProductMarkup: 0
       };
     },
-    props:['$http', 'product', 'productMakers', 'productCategories'],
+    props:['$http', 'csrfToken', 'product', 'productMakers', 'productCategories'],
     created(){
       // window.nopoint = function(event){
       //   console.warn(event.which);
@@ -216,7 +216,8 @@
           // User not saved new product.
           if (vueSelf.product.isNewProduct) {
             // Delete from db.
-            vueSelf.$http.delete(`${wsPath.store}/${vueSelf.product._id}`)
+            console.warn('_csrf-delete: ', vueSelf.csrfToken);
+            vueSelf.$http.delete(`${wsPath.store}/${vueSelf.product._id}`, { _csrf: vueSelf.csrfToken })
               .then((res)=>{})
               .catch((err)=>{ console.error(err); });
           } 
@@ -271,7 +272,8 @@
       // Delete a product.
       deleteProduct(product){
         // Delete from db.
-        this.$http.delete(`${wsPath.store}/${product._id}`)
+        console.warn('_csrf-deleteProduct: ', this.csrfToken);
+        this.$http.delete(`${wsPath.store}/${product._id}`, { _csrf: this.csrfToken })
           .then((res)=>{
           })
           .catch((err)=>{ console.error(err); });  

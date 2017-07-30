@@ -99,7 +99,7 @@
         imagesSelectedByRow: []
       }
     },
-    props:['$http', 'user', 'product', 'cart'],
+    props:['$http', 'user', 'product', 'cart', 'csrfToken'],
     created(){
       let numRows = Math.ceil(this.imagesSelected.length / this.colsByRow);
       // Create um array for each row.
@@ -123,7 +123,7 @@
         return `/img/${this.product._id}/${this.imagesSelected[index].name}`;
       },
       addToCart(){
-        this.$http.put(`/cart/add/${this.product._id}`)
+        this.$http.put(`/cart/add/${this.product._id}`, { _csrf: this.csrfToken })
         .then((res)=>{
           // Success.
           if (res.body.success) {

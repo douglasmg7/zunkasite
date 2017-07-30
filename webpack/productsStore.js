@@ -13,7 +13,7 @@ window.appVue = new Vue({
  	render (h) {
  		return h(productsStore, 
       {
-        props: {$http: this.$http, user: vueUser}, 
+        props: {$http: this.$http, user: vueUser, csrfToken: vueCsrfToken}, 
         ref: 'productsStore'
       });
 	}

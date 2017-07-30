@@ -38,6 +38,7 @@ router.get('/products-commercialize', function (req, res) {
 
 // Get products.
 router.get('/', function (req, res) {
+  console.warn('getProducts-csrf: ', req.csrfToken());
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
   const skip = (page - 1) * PAGE_SIZE_ADMIN;
   const search = req.query.search
@@ -59,6 +60,7 @@ router.get('/', function (req, res) {
 
 // Get dropdown elements
 router.get('/dropdown', function(req, res) {
+  console.warn('getDropdown-csrf: ', req.csrfToken());
   Promise.all([
     mongo.db.collection(dbConfig.collProductMakers).find().sort({name: 1}).toArray(),
     mongo.db.collection(dbConfig.collProductCategories).find().sort({name: 1}).toArray()
@@ -72,7 +74,8 @@ router.get('/dropdown', function(req, res) {
 
 // Insert a product.
 router.post('/', function(req, res) {
-  mongo.db.collection(dbConfig.collStoreProducts).insert(req.body)
+  console.warn('insertProduct-csrf: ', req.csrfToken());
+  mongo.db.collection(dbConfig.collStoreProducts).insert(req.body.product)
   .then(result=>{
     // Create folder.
     fse.ensureDir(path.join(__dirname, '../dist/img', result.ops[0]._id.toString()), err=>{

@@ -50,7 +50,7 @@
         // Must have title and price more than 0 to be show.
         .col-md-3(v-for='product in products.slice((i - 1) * colsByRow, i * colsByRow)')
           .thumbnail
-            a.product(:href='"product/" + product._id')
+            a.product(:href='"/product/" + product._id')
               img(:src='getImgUrl(product)' v-if='getImgUrl(product) !== ""')
               h4.description {{ product.storeProductTitle }}
               h3.price
