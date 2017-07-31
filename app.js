@@ -201,8 +201,22 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
+// Set csrf token.
+app.use((req, res, next)=>{
+  // Log request.
+  log.warn('REQUEST: ', req.method + ' - ' + req.path);
+  log.warn('headers: ', req.headers);
+  log.warn('body: ', JSON.stringify(req.body));
+  // log.warn('req.headers: ', JSON.stringify(req.headers));
+  // log.warn('req: ', Object.keys(req));
+  // log.warn('req.headers: ', Object.keys(req.headers));
+  log.warn('Generated csrfToken: ', req.csrfToken());
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
 // Routes.
-// Web service - they no need the middleware cart.
+// Web service - they no need the cart middleware.
 app.use('/ws/manual', routeWsAllNations);
 app.use('/ws/allnations', routeWsAllNations);
 app.use('/ws/store', routeWsStore);
@@ -241,8 +255,8 @@ app.use('/', routeSite);
 
 // CSRF error handler.
 app.use(function (err, req, res, next) {
-  log.warn('CRSF attack!');
   if (err.code !== 'EBADCSRFTOKEN') return next(err)
+  log.warn('CRSF attack!');
   res.status(403).send('Form tampered!');
 })
 

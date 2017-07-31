@@ -10,7 +10,7 @@ const log = require('../bin/log');
 
 // Signup page.
 router.get('/signup', (req, res, next)=>{
-  res.render('signup', { csrfToken: req.csrfToken(), message: req.flash('error') });
+  res.render('signup', { message: req.flash('error') });
 });
 
 // Sign up request.
@@ -87,7 +87,8 @@ router.get('/login', (req, res, next)=>{
   // req.flash - message from authentication, which set a flash message with erros.
   const error = req.flash('error');
   log.debug(`Login flash error: ${error}`);
-  res.render('login', { csrfToken: req.csrfToken(), message: error });
+  // res.render('login', { csrfToken: req.csrfToken(), message: error });
+  res.render('login', { message: error });
 });
 
 // Login clean page.
