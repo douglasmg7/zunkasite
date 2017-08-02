@@ -1,4 +1,5 @@
 /* eslint no-unused-vars: 0 */
+'use strict';
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
@@ -119,96 +120,7 @@ app.use(csurf());
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-// passport.use('local.signup', new LocalStrategy(, )) see youtube Build a Shopping Cart - #7 
-passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'password', passReqToCallback: true }, function (req, email, password, done) {
-  // log.warn('LocalStrategy - Redis.');
-  // log.warn('req.sessionId: ', req.sessionID);
-  redis.get(`user:${email}`, (err, strUser)=>{
-    // log.info('strUser: ', strUser);
-    if (err) { 
-      log.error(`Passport.use - local strategy - Database error: ${err}`); 
-      return done(err, false, {message: 'Internal error.'}); 
-    }
-    // User not found.
-    if (!strUser) { 
-      log.warn(`email ${email} not found on database.`); 
-      return done(null, false, { message: 'Usuário não cadastrado.'} ); 
-    }
-    let user = JSON.parse(strUser);
-    // Password match.
-    if (password === user.password){
-      // log.warn('new authentication');
-      // Merge cart from session.
-      redis.get(`cart:${req.sessionID}`, (err, sessCart)=>{
-        if (sessCart) {
-          // Get authenticated user cart.
-          redis.get(`cart:${user.email}`, (err, userCart)=>{
-            let cart;
-            if (userCart) {
-              cart = new Cart(JSON.parse(userCart));
-            } else {
-              cart = new Cart();
-            }
-            // Merge anonymous cart to authenticated user cart.
-            cart.mergeCart(JSON.parse(sessCart));
-            redis.del(`cart:${req.sessionID}`);
-            redis.set(`cart:${user.email}`, JSON.stringify(cart), (err)=>{
-              // log.warn('merged cart: ', JSON.stringify(cart));
-              return done(null, user); 
-            });   
-          }); 
-        }
-        // No cart session to merge.
-        else {
-          return done(null, user); 
-        }        
-      });
-    } 
-    // Wrong password.
-    else {
-      log.warn(`Incorrect password for user ${email}`);
-      return done(null, false, { message: 'Senha incorreta.'} ); 
-    }
-  });
-}));
-
-// passport.use(new LocalStrategy(function (username, password, done) {
-//   mongo.db.collection(dbConfig.collSession).findOne({username: username}, (err, user)=>{
-//     // console.log(`user from db: ${JSON.stringify(user)}`);
-//     if (err) { log.error(`Database error: ${err}`); return done(err); }
-//     // User not found.
-//     if (!user) { log.warn(`User ${username} not found on database.`); return done(null, false, {message: 'Usuario nao cadastrado.'}); }
-//     // Verify password.
-//     log.info('Before bcrypt compare.');
-//     bcrypt.compare(password, user.password, (err, res)=>{
-//       if (err) { log.error(`bcrypt error: ${err}`); }
-//       // Correct password.
-//       if (res) {
-//         return done(null, user, {message: `Bem vindo ${user.username}`});
-//       // Wrong password.
-//       } else {
-//         log.warn(`Incorrect password for user ${username}`);
-//         return done(null, false, {message: 'Senha incorreta.'});
-//       }
-//     });
-//   });
-// }));
-
-// Serialize _id to session, write _id to session.passport.user.
-passport.serializeUser(function(user, done) {
-  log.info('passport.serialize');
-  done(null, user.email);
-});
-
-// Deserialize.
-passport.deserializeUser(function(id, done) {
-  log.info('passport.deserialize');
-  // log.info('id: ', id);
-  redis.get(`user:${id}`, (err, value)=>{
-    // log.info('user: ', value);
-    done(null, JSON.parse(value));
-  });
-});
+require('./config/passport');
 
 // Set vars for using in views.
 app.use((req, res, next)=>{
