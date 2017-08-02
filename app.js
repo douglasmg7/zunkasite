@@ -23,10 +23,10 @@ const flash = require('connect-flash');
 const redisStore = require('connect-redis')(session);
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt-nodejs');
 // Cart.
 const Cart = require('./model/cart');
-// Paypal
+// Paypal.
 // const paypal = require('paypal-rest-sdk');
 // Webpack HMR - hot module reload.
 const webpack = require('webpack');
@@ -38,9 +38,9 @@ const webpackDevMiddleware = require('webpack-dev-middleware')(compiler, {
   stats: {colors: true, chunks: false}
 });
 const webpackHotMiddleware = require('webpack-hot-middleware')(compiler);
-// app must be before routes
+// App must be before routes.
 const app = express();
-// routes
+// Routes.
 const routeUsers = require('./routes/routeUsers');
 const routeSite = require('./routes/routeSite');
 const routeWsManual = require('./routes/routeWsManual');
@@ -51,25 +51,25 @@ const routeConfigProducts = require('./routes/routeConfigProducts');
 // Node env.
 log.info(`NODE_ENV: ${process.env.NODE_ENV}`);
 
-// transaction log - no log in test mode.
+// Transaction log - no log in test mode.
 if (app.get('env') !== 'test') {
   app.use(morgan('dev'));
 }
 
-// statics
+// Statics
 app.use(express.static(path.join(__dirname, 'dist/')));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components/')));
 app.use('/semantic', express.static(path.join(__dirname, 'semantic/')));
 
-// for cookie and json web token
+// For cookie and json web token
 app.set('secret', 'd7ga8gat3kaz0m');
 
-// pretty in development
+// Pretty in development
 if (app.get('env') === 'development') {
   app.locals.pretty = true;
 }
 
-// view engine setup
+// View engine setup.
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
@@ -105,6 +105,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // authentication
 app.use(cookieParser(app.get('secret')));
 app.use(session(sessionOpts));
+// // Debug.
+// app.use((req, res, next)=>{
+//   // Log request.
+//   log.warn('REQUEST: ', req.method + ' - ' + req.path);
+//   log.warn('headers: ', req.headers);
+//   log.warn('body: ', JSON.stringify(req.body));
+//   next();
+// });
+
 app.use(csurf());
 // app.use(csrf({ cookie: true }));
 app.use(flash());
@@ -201,16 +210,9 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-// Set csrf token.
+// Set vars for using in views.
 app.use((req, res, next)=>{
-  // Log request.
-  log.warn('REQUEST: ', req.method + ' - ' + req.path);
-  log.warn('headers: ', req.headers);
-  log.warn('body: ', JSON.stringify(req.body));
-  // log.warn('req.headers: ', JSON.stringify(req.headers));
-  // log.warn('req: ', Object.keys(req));
-  // log.warn('req.headers: ', Object.keys(req.headers));
-  log.warn('Generated csrfToken: ', req.csrfToken());
+  // log.debug('Generated csrfToken: ', req.csrfToken());
   res.locals.csrfToken = req.csrfToken();
   next();
 });

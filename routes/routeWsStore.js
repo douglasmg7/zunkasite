@@ -38,7 +38,7 @@ router.get('/products-commercialize', function (req, res) {
 
 // Get products.
 router.get('/', function (req, res) {
-  console.warn('getProducts-csrf: ', req.csrfToken());
+  // console.warn('getProducts-csrf: ', req.csrfToken());
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
   const skip = (page - 1) * PAGE_SIZE_ADMIN;
   const search = req.query.search
@@ -60,7 +60,7 @@ router.get('/', function (req, res) {
 
 // Get dropdown elements
 router.get('/dropdown', function(req, res) {
-  console.warn('getDropdown-csrf: ', req.csrfToken());
+  // console.warn('getDropdown-csrf: ', req.csrfToken());
   Promise.all([
     mongo.db.collection(dbConfig.collProductMakers).find().sort({name: 1}).toArray(),
     mongo.db.collection(dbConfig.collProductCategories).find().sort({name: 1}).toArray()

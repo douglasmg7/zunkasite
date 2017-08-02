@@ -216,8 +216,7 @@
           // User not saved new product.
           if (vueSelf.product.isNewProduct) {
             // Delete from db.
-            console.warn('_csrf-delete: ', vueSelf.csrfToken);
-            vueSelf.$http.delete(`${wsPath.store}/${vueSelf.product._id}`, { _csrf: vueSelf.csrfToken })
+            vueSelf.$http.delete(`${wsPath.store}/${vueSelf.product._id}`, { headers: { 'csrf-token': vueSelf.csrfToken } })
               .then((res)=>{})
               .catch((err)=>{ console.error(err); });
           } 
@@ -257,7 +256,7 @@
         // Keep product on db, when the windows close.
         this.product.isNewProduct = false;
         // Update product on db.
-        this.$http.put(`${wsPath.store}/${this.product._id}`, this.product)
+        this.$http.put(`${wsPath.store}/${this.product._id}`, this.product, { headers: { 'csrf-token': this.csrfToken } })
           .then((res)=>{
             // Product list must be updated.
             if (wasNewProduct) {
@@ -272,8 +271,7 @@
       // Delete a product.
       deleteProduct(product){
         // Delete from db.
-        console.warn('_csrf-deleteProduct: ', this.csrfToken);
-        this.$http.delete(`${wsPath.store}/${product._id}`, { _csrf: this.csrfToken })
+        this.$http.delete(`${wsPath.store}/${product._id}`, { headers: { 'csrf-token': this.csrfToken } })
           .then((res)=>{
           })
           .catch((err)=>{ console.error(err); });  
