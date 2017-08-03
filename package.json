@@ -30,6 +30,7 @@
     "fs-extra": "^3.0.1",
     "mongodb": "^2.2.28",
     "morgan": "^1.8.2",
+    "nodemailer": "^4.0.1",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "paypal-rest-sdk": "^1.7.1",

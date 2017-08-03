@@ -3,8 +3,20 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const redis = require('../model/redis');
 const bcrypt = require('bcrypt-nodejs');
+const nodemailer = require('nodemailer');
 // My moudles.
 const log = require('../bin/log');
+
+// Transporter object using the default SMTP transport.
+let transporter = nodemailer.createTransport({
+    host: 'zunka.com.br',
+    port: 25,
+    secure: true, // secure:true for port 465, secure:false for port 587
+    auth: {
+        user: 'zunka',
+        pass: 'SergioMiranda1'
+    }
+});
 
 // How to save user on the session.
 passport.serializeUser(function(user, done) {
@@ -59,6 +71,19 @@ passport.use('local.signup', new LocalStrategy({
           return done(err);
         }
         else{
+          let mailOptions = {
+              from: 'Zunka site',
+              to: 'douglasmg7@gmail.com',
+              subject: 'Zunka test.',
+              text: 'Nada por enquanto.'
+          }; 
+          transporter.sendMail(mailOptions, function(err, info){
+              if(err){
+                log.error(err, new Error().stack);
+              } else {
+                log.info("mail send successfully");
+              }
+          }); 
           done(null, newUser);
         }
       });
