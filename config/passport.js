@@ -33,6 +33,8 @@ passport.use('local.signup', new LocalStrategy({
   req.checkBody('email', 'E-mail inválido.').isEmail();
   req.checkBody('password', 'Senha deve conter pelo menos 8 caracteres.').isLength({ min: 8});
   req.checkBody('password', 'Senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
+  req.sanitizeBody('name').escape().trim();
+  req.sanitizeBody("email").normalizeEmail();
   req.getValidationResult().then(function(result) {
     if (!result.isEmpty()) {
       let messages = [];
@@ -40,14 +42,14 @@ passport.use('local.signup', new LocalStrategy({
       return done(null, false, req.flash('error', messages));
     }    
     // Verify if user exist.
-    redis.get(`user:${email}`, (err, redisUser)=>{
+    redis.get(`user:${req.body.email}`, (err, redisUser)=>{
       if (err) { return done(err, { message: 'Internal error.'} ); }
       if (redisUser) { return done(null, false, { message: 'E-mail já cadastrado.' }); }
       // Create user.
-      const cryptPassword = bcrypt.hashSync(password.trim(), bcrypt.genSaltSync(5), null);
+      const cryptPassword = bcrypt.hashSync(req.body.password.trim(), bcrypt.genSaltSync(5), null);
       const newUser = {
         name: req.body.name.trim(),
-        email: email.trim(),
+        email: req.body.email.trim(),
         password: cryptPassword,
         group: 'client',
         status: 'active'
@@ -69,13 +71,14 @@ passport.use('local.signin', new LocalStrategy({ usernameField: 'email', passwor
   // Validation.
   req.checkBody('email', 'E-mail inválido.').isEmail();
   req.checkBody('password', 'Senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
+  req.sanitizeBody("email").normalizeEmail();
   req.getValidationResult().then(function(result) {
     if (!result.isEmpty()) {
       let messages = [];
       messages.push(result.array()[0].msg);
       return done(null, false, req.flash('error', messages));
     }    
-    redis.get(`user:${email}`, (err, strUser)=>{
+    redis.get(`user:${req.body.email}`, (err, strUser)=>{
       if (err) { 
         log.error(`Passport.use - local strategy - Database error: ${err}`); 
         return done(err, false, {message: 'Internal error.'}); 
@@ -87,7 +90,7 @@ passport.use('local.signin', new LocalStrategy({ usernameField: 'email', passwor
       }
       let user = JSON.parse(strUser);
       // Password match.
-      if (bcrypt.compareSync(password, user.password)) {
+      if (bcrypt.compareSync(req.body.password, user.password)) {
         // Merge cart from session.
         redis.get(`cart:${req.sessionID}`, (err, sessCart)=>{
           if (sessCart) {
