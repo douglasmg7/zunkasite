@@ -10,40 +10,29 @@ const log = require('../bin/log');
 
 // Signup page.
 router.get('/signup', (req, res, next)=>{
-  res.render('signup', { message: req.flash('error') });
+  res.render('signup', { messages: req.flash('error') });
 });
 
-// Sign up request.
+// Signup request.
 router.post('/signup', passport.authenticate('local.signup', {
-  successRedirect: '/',
+  successRedirect: '/users/login',
   failureRedirect: '/users/signup',
+  badRequestMessage: 'Campo(s) não preenchidos.',
   failureFlash: true
 }));
 
-// Login bootstrap page.
+// Login page.
 router.get('/login', (req, res, next)=>{
-  // req.flash - message from authentication, which set a flash message with erros.
-  const error = req.flash('error');
-  log.debug(`Login flash error: ${error}`);
-  // res.render('login', { csrfToken: req.csrfToken(), message: error });
-  res.render('login', { message: error });
-});
-
-// Login clean page.
-router.get('/loginc', (req, res, next)=>{
-  // Message from authentication, who set a flash message with erros.
-  res.render('loginC', { message: req.flash('error') });
+  res.render('login', { messages: req.flash('error') });
 });
 
 // Login request.
-router.post('/login',
-  passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: 'login',
-    badRequestMessage: 'Falta credenciais.',
-    failureFlash: true
-  })
-);
+router.post('/login', passport.authenticate('local.signin', {
+  successRedirect: '/',
+  failureRedirect: 'login',
+  badRequestMessage: 'Falta credenciais.',
+  failureFlash: true
+}));
 
 // logout.
 router.get('/logout', (req, res, next)=>{
@@ -55,5 +44,11 @@ router.get('/logout', (req, res, next)=>{
     res.redirect('/users/login');
   }
 });
+
+// // Login page (no bootstrap).
+// router.get('/loginc', (req, res, next)=>{
+//   // Message from authentication, who set a flash message with erros.
+//   res.render('loginC', { message: req.flash('error') });
+// });
 
 module.exports = router;

@@ -18,17 +18,19 @@ html(lang="en")
           .panel.panel-default
             .panel-body
               h1.text-left Identificação
-              if message != ''
-                .alert.alert-danger(v-if='' role='alert') 
-                  p.text-center #{message}
-                  //- p.text-center Usuario ou senha incorretos.
+              each message in messages
+                .alert.alert-danger(role='alert') 
+                  p.text-center #{message}              
+              //- if message != ''
+              //-   .alert.alert-danger(v-if='' role='alert') 
+              //-     p.text-center #{message}
               form(action='/users/login' method='post')
                 input(type='hidden' name='_csrf' value=csrfToken)
+                //- label email.
                 .form-group
-                  //- label email.
                   input.form-control(type='text' name='email' placeholder='e-mail')
+                //- label senha.
                 .form-group
-                  //- label senha.
                   input.form-control(type='password' name='password' placeholder='senha')
                   p.help-block 
                     a(href='/') Esqueceu a senha?

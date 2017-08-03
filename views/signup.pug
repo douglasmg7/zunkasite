@@ -18,8 +18,12 @@ html(lang="en")
           .panel.panel-default
             .panel-body
               h1.text-left Cadastro
-              //- .alert.alert-danger(role='alert') 
-                p.text-center Usuario nao existe.
+              each message in messages
+                .alert.alert-danger(role='alert') 
+                  p.text-center #{message}
+              //- if message != ''
+              //-   .alert.alert-danger(v-if='' role='alert') 
+              //-     p.text-center #{message}
               form(action='/users/signup' method='post')
                 input(type='hidden' name='_csrf' value=csrfToken)
                 //- Name.

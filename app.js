@@ -9,6 +9,8 @@ const log = require('./bin/log');
 const morgan = require('morgan');
 // Body.
 const bodyParser = require('body-parser');
+// Validation.
+const validator = require('express-validator');
 // Mongo.
 const dbConfig = require('./bin/dbConfig');
 const mongo = require('./model/db');
@@ -98,10 +100,11 @@ var sessionOpts = {
 // webpack HMR
 app.use(webpackDevMiddleware);
 app.use(webpackHotMiddleware);
-
-// body
+// body.
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+// Validation.
+app.use(validator());
 
 // authentication
 app.use(cookieParser(app.get('secret')));
