@@ -64,3 +64,5 @@ num of products to not commercialize must be in to a config, not harded coded
 
   26 e 38
   remover connect-mongo
+
+https://www.npmjs.com/package/nodemailer-stub-transport

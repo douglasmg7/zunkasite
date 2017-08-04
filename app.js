@@ -50,6 +50,7 @@ const routeWsManual = require('./routes/routeWsManual');
 const routeWsAllNations = require('./routes/routeWsAllNations');
 const routeWsStore = require('./routes/routeWsStore');
 const routeConfigProducts = require('./routes/routeConfigProducts');
+const routeTest = require('./routes/routeTest');
 
 // Node env.
 log.info(`NODE_ENV: ${process.env.NODE_ENV}`);
@@ -167,6 +168,8 @@ app.use(function(req, res, next) {
 app.use('/users', routeUsers);
 // Products configuration.
 app.use('/configProducts', routeConfigProducts);
+// Test.
+app.use('/test', routeTest);
 // Site.
 app.use('/', routeSite);
 
