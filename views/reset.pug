@@ -3,7 +3,7 @@ html(lang="en")
   head
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Login.
+    title Redefinição de senha.
     include components/bootstrap.css.pug
   body
     nav.navbar.navbar-inverse.navbar-static-top
@@ -17,27 +17,18 @@ html(lang="en")
         .col-md-4
           .panel.panel-default
             .panel-body
-              h1.text-left Identificação
+              h1.text-left Redefinir senha
               each message in messages
                 .alert.alert-danger(role='alert') 
                   p.text-center #{message}              
-              //- if message != ''
-              //-   .alert.alert-danger(v-if='' role='alert') 
-              //-     p.text-center #{message}
-              form(action='/users/login' method='post')
+              //- form(action='/users/reset' method='post')
+              form(method='post')
                 input(type='hidden' name='_csrf' value=csrfToken)
-                //- label email.
                 .form-group
-                  input.form-control(type='text' name='email' placeholder='e-mail')
-                //- label senha.
+                  input.form-control(type='password' name='password' placeholder='Nova senha')
                 .form-group
-                  input.form-control(type='password' name='password' placeholder='senha')
-                  p.help-block 
-                    a(href='/') Esqueceu a senha?
-                input.btn.btn-primary.btn-block(type='submit' value='Entrar')
-                hr/
-                p.help-block Não tem cadastro?
-                a.btn.btn-info.btn-block(href='/users/signup') Cadastrar
+                  input.form-control(type='password' name='password' placeholder='Confirme a nova senha')
+                input.btn.btn-primary.btn-block(type='submit' value='Alterar senha')
         .col-md-4
     include components/jquery.js.pug
     include components/bootstrap.js.pug

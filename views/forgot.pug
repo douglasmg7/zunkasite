@@ -1,0 +1,35 @@
+
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Redefinição de senha.
+    include components/bootstrap.css.pug
+  body
+    nav.navbar.navbar-inverse.navbar-static-top
+      //- .container-fluid
+      .container
+        .navbar-header
+          a.navbar-brand(href='/') ZUNKA
+    .container
+      .row
+        .col-md-4
+        .col-md-4
+          .panel.panel-default
+            .panel-body
+              h1.text-left Senha esquecida
+              each message in messages
+                .alert.alert-danger(role='alert') 
+                  p.text-center #{message} 
+              each instruction in instructions
+                .alert.alert-info(role='alert') 
+                  p.text-center #{instruction}                               
+              form(method='post')
+                input(type='hidden' name='_csrf' value=csrfToken)
+                //- Email
+                .form-group
+                  input.form-control(type='text' name='email' placeholder='e-mail')
+                input.btn.btn-primary.btn-block(type='submit' value='Redefinir senha')
+        .col-md-4
+    include components/jquery.js.pug
+    include components/bootstrap.js.pug
