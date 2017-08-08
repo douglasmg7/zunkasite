@@ -9,20 +9,8 @@ const crypto = require('crypto');
 // Personal modules.
 const log = require('../bin/log');
 
-// // Transporter object using the default SMTP transport.
-// let transporter = nodemailer.createTransport({
-//     host: 'zunka.com.br',
-//     port: 25,
-//     secure: true, // secure:true for port 465, secure:false for port 587
-//     auth: {
-//         user: 'zunka',
-//         pass: 'SergioMiranda1'
-//     }
-// });
-
 // Transporter object using the default SMTP transport.
 let transporter = nodemailer.createTransport({
-    // requireTLS: true,
     host: 'smtps.dialhost.com.br',
     port: 587,
     // secure:true for port 465, secure:false for port 587

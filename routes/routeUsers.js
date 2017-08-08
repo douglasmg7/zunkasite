@@ -98,14 +98,10 @@ router.post('/forgot', (req, res, next)=>{
                   subject: 'Solicitação para Redefinir senha.',
                   text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a redefinição da senha de sua conta.\n\n' + 
                         'Por favor click no link, ou cole no seu navegador de internet para completar o processo.\n\n' + 
-                        'https://' + req.headers.host + '/users/reset/' + token + '\n' +
+                        'https://' + req.headers.host + '/users/reset/' + token + '\n\n' +
                         // 'Esta solicitação de redefinição expira em duas horas.\n' +
                         'Se não foi você que requisitou esta redefinição de senha, por favor ignore este e-mail e sua senha permanecerá a mesma.'
               }; 
-                        //   text: 'Você recebeu este e-mail porquê Você (ou alguem) requisitou a redefinição da senha de sua conta.\n\n' + 
-                        // 'Por favor click no link, ou cole no seu navegador de internet para completar o processo.\n\n' + 
-                        // 'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-                        // 'Se não foi você que requisitou esta redefinição de senha, por favor ignore este e-mail e sua senha permanecerá a mesma.'
               log.info('text', mailOptions.text);
               // // Send email.
               // transporter.sendMail(mailOptions, function(err, info){
@@ -128,7 +124,6 @@ router.post('/forgot', (req, res, next)=>{
 
 // Reset password page.
 router.get('/reset/:token', (req, res, next)=>{
-  // log.info('flash" ', req.flash());
   res.render('reset', req.flash() );
 });
 
