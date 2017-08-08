@@ -3,6 +3,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const redis = require('../model/redis');
 const bcrypt = require('bcrypt-nodejs');
+const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 // My moudles.
 const log = require('../bin/log');
@@ -66,48 +67,39 @@ passport.use('local.signup', new LocalStrategy({
         group: 'client',
         status: 'active'
       };        
-      // Create user.
-      redis.set(`user:${newUser.email}`, JSON.stringify(newUser), (err, result)=>{
-        // Internal error.
-        if (err) {
-          return done(err, false, { message: 'Internal error.'});
+      // Create a radom key.
+      crypto.randomBytes(20, function(err, buf) {
+        if (err) { 
+          log.error(err, new Error().stack);
+          return done(err, false, { message: 'Serviço indisponível.'});
         }
-        else{
-          // Create a radom key.
-          crypto.randomBytes(20, function(err, buf) {
-            if (err) { 
-              log.error(err, new Error().stack);
-              return done(err, false, { message: 'Serviço indisponível.'});
-            }
-            var token = buf.toString('hex');
-            // Make token disponible for 2 horas (2 x 60 x 60 = 7200).
-            redis.setex(`user:${token}`, 7200, req.body.email, err=>{
-              if (err) { 
-                log.error(err, new Error().stack);
-                return done(err, false, { message: 'Serviço indisponível.'});
-              }
-              let mailOptions = {
-                  from: 'dev@zunka.com.br',
-                  to: req.body.email,
-                  subject: 'Solicitação de criação de conta no site da Zunka.',
-                  text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a criação de uma conta no site da Zunka usando este e-mail.\n\n' + 
-                        'Por favor click no link, ou cole no seu navegador de internet para confirmar a criação da conta.\n\n' + 
-                        'https://' + req.headers.host + '/users/confirm/' + token + '\n\n' +
-                        'Se não foi você que requisitou esta criação de conta, por favor ignore este e-mail e nenhuma conta será criada.'
-              }; 
-              log.info('text', mailOptions.text);
-              // transporter.sendMail(mailOptions, function(err, info){
-              //   if(err){
-              //     log.error(err, new Error().stack);
-              //   } else {
-              //     log.info("mail send successfully");
-              //   }
-              // }); 
-              req.flash('success', `Foi enviado um e-mail para ${req.body.email} com instruções para completar cadastro.`);
-              done(null, newUser);
-            });
-          });
-        }
+        var token = buf.toString('hex');
+        // Create temp user disponible for 2 horas (2 x 60 x 60 = 7200).
+        redis.setex(`user:${token}`, 7200, JSON.stringify(newUser), err=>{
+          if (err) { 
+            log.error(err, new Error().stack);
+            return done(err, false, { message: 'Serviço indisponível.'});
+          }
+          let mailOptions = {
+              from: 'dev@zunka.com.br',
+              to: req.body.email,
+              subject: 'Solicitação de criação de conta no site da Zunka.',
+              text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a criação de uma conta no site da Zunka usando este e-mail.\n\n' + 
+                    'Por favor click no link, ou cole no seu navegador de internet para confirmar a criação da conta.\n\n' + 
+                    'https://' + req.headers.host + '/users/login/' + token + '\n\n' +
+                    'Se não foi você que requisitou esta criação de conta, por favor ignore este e-mail e nenhuma conta será criada.'
+          }; 
+          log.info('text', mailOptions.text);
+          // transporter.sendMail(mailOptions, function(err, info){
+          //   if(err){
+          //     log.error(err, new Error().stack);
+          //   } else {
+          //     log.info("mail send successfully");
+          //   }
+          // }); 
+          req.flash('success', `Foi enviado um e-mail para ${req.body.email} com instruções para completar o cadastro.`);
+          done(null, newUser);
+        });
       });
     });
   });

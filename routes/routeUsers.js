@@ -28,6 +28,42 @@ router.get('/login', (req, res, next)=>{
   res.render('login', req.flash());
 });
 
+// Confirm signup.
+router.get('/login/:token', (req, res, next)=>{
+  // Get temp user.
+  redis.get(`user:${req.params.token}`, (err, tempUser)=>{
+    log.info('tempUser', tempUser);
+    // Internal error.
+    if (err) { 
+      log.error(err, Error().stack);
+      req.flash('error', 'Serviço indisponível.');
+      return res.redirect('/users/login/');
+    }        
+    // Not exist token with temp user.
+    if (!tempUser) { 
+      req.flash('error', 'Solicitação de criação de conta expirou.');
+      return res.redirect('/users/login/');
+    }
+    // Temp user found.
+    else {
+      const objUser = JSON.parse(tempUser);
+      redis.set(`user:${objUser.email}`, tempUser, err=>{
+        if(err) {
+          log.error(err, new Error().stack);
+          res.falsh('error', 'Não foi possível confirmar o cadastro.\nFavor entrar em contato com o suporte técnico.');
+          res.redirect('/users/login/');
+          return;
+        }
+        redis.del(`user:${req.params.token}`, err=>{
+          if (err) { log.error(err, new Error().stack); }
+        });
+        req.flash('success', 'Cadastro finalizado com sucesso.');
+        res.redirect('/users/login/');
+      });
+    }
+  });      
+});
+
 // Login request.
 router.post('/login', passport.authenticate('local.signin', {
   successRedirect: '/',
@@ -112,7 +148,6 @@ router.post('/forgot', (req, res, next)=>{
               //   }
               // });
               req.flash('success', `Foi enviado um e-mail para ${req.body.email} com instruções para a alteração da senha.`)
-              // res.render('forgot', { messages: req.flash('error'), instructions: [instructionMessage] });
               res.redirect('back');
             });
           });
@@ -170,7 +205,7 @@ router.post('/reset/:token', (req, res, next)=>{
               if(err) {
                 log.error(err, new Error().stack);
                 res.falsh('error', 'Não foi possível alterar a senha.\nFavor entrar em contato com o suporte técnico.');
-                res.redirect('reset', { messages: req.flash('error') });
+                res.redirect('reset', req.flash() );
                 return;
               }
               req.flash('success', 'Senha alterada com sucesso.');
@@ -182,6 +217,7 @@ router.post('/reset/:token', (req, res, next)=>{
     }
   });
 });
+
 // // Login page (no bootstrap).
 // router.get('/loginc', (req, res, next)=>{
 //   // Message from authentication, who set a flash message with erros.
