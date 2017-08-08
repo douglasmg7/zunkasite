@@ -18,12 +18,14 @@ html(lang="en")
           .panel.panel-default
             .panel-body
               h1.text-left Cadastro
-              each message in messages
-                .alert.alert-danger(role='alert') 
-                  p.text-center #{message}
-              //- if message != ''
-              //-   .alert.alert-danger(v-if='' role='alert') 
-              //-     p.text-center #{message}
+              if error
+                each err in error
+                  .alert.alert-danger(role='alert') 
+                    p.text-center #{err} 
+              if success
+                each suc in success
+                  .alert.alert-info(role='alert') 
+                    p.text-center #{suc}               
               form(action='/users/signup' method='post')
                 input(type='hidden' name='_csrf' value=csrfToken)
                 //- Name.

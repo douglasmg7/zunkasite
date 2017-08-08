@@ -18,12 +18,14 @@ html(lang="en")
           .panel.panel-default
             .panel-body
               h1.text-left Identificação
-              each message in messages
-                .alert.alert-danger(role='alert') 
-                  p.text-center #{message}              
-              //- if message != ''
-              //-   .alert.alert-danger(v-if='' role='alert') 
-              //-     p.text-center #{message}
+              if error
+                each err in error
+                  .alert.alert-danger(role='alert') 
+                    p.text-center #{err} 
+              if success
+                each suc in success
+                  .alert.alert-info(role='alert') 
+                    p.text-center #{suc}                            
               form(action='/users/login' method='post')
                 input(type='hidden' name='_csrf' value=csrfToken)
                 //- label email.
@@ -33,7 +35,7 @@ html(lang="en")
                 .form-group
                   input.form-control(type='password' name='password' placeholder='senha')
                   p.help-block 
-                    a(href='/') Esqueceu a senha?
+                    a(href='forgot/') Esqueceu a senha?
                 input.btn.btn-primary.btn-block(type='submit' value='Entrar')
                 hr/
                 p.help-block Não tem cadastro?

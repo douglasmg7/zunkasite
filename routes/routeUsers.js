@@ -5,13 +5,14 @@ const router = express.Router();
 const mongo = require('../model/db');
 const dbConfig = require('../bin/dbConfig');
 const passport = require('passport');
+const bcrypt = require('bcrypt-nodejs');
 const crypto = require('crypto');
 // Personal modules.
 const log = require('../bin/log');
 
 // Signup page.
 router.get('/signup', (req, res, next)=>{
-  res.render('signup', { messages: req.flash('error') });
+  res.render('signup', req.flash());
 });
 
 // Signup request.
@@ -24,7 +25,7 @@ router.post('/signup', passport.authenticate('local.signup', {
 
 // Login page.
 router.get('/login', (req, res, next)=>{
-  res.render('login', { messages: req.flash('error') });
+  res.render('login', req.flash());
 });
 
 // Login request.
@@ -48,73 +49,141 @@ router.get('/logout', (req, res, next)=>{
 
 // Forgot password page.
 router.get('/forgot', (req, res, next)=>{
-  res.render('forgot', { messages: req.flash('error') });
+  res.render('forgot', req.flash());
 });
 
 // Forgot password.
 router.post('/forgot', (req, res, next)=>{
-  // Create a radom key.
-  crypto.randomBytes(20, function(err, buf) {
-    if (err) { 
-      log.error(err, new Error().stack);
-      req.flash('error', 'Serviço indisponível.');
-      res.redirect('back');            
-      return; 
+  // Validation.
+  req.checkBody('email', 'E-mail inválido.').isEmail();
+  req.sanitizeBody("email").normalizeEmail();
+  req.getValidationResult().then(function(result) {
+    if (!result.isEmpty()) {
+      let messages = [];
+      messages.push(result.array()[0].msg);
+      req.flash('error', messages);
+      res.redirect('back');
+      return;
+    } 
+    else {
+      redis.get(`user:${req.body.email}`, (err, user)=>{
+        // No exist.
+        if(!user){
+          req.flash('error', `O email ${req.body.email} não está cadastrado no sistema.`);
+          res.redirect('back');
+          return;
+        }
+        // Email exist.
+        else {
+          // Create a radom key.
+          crypto.randomBytes(20, function(err, buf) {
+            if (err) { 
+              log.error(err, new Error().stack);
+              req.flash('error', 'Serviço indisponível.');
+              res.redirect('back');            
+              return; 
+            }
+            var token = buf.toString('hex');
+            // Make token disponible for 2 horas (2 x 60 x 60 = 7200).
+            redis.setex(`reset:${token}`, 7200, req.body.email, err=>{
+              if (err) { 
+                log.error(err, new Error().stack);
+                req.flash('error', 'Serviço indisponível.');
+                res.redirect('back');            
+                return; 
+              }
+              let mailOptions = {
+                  from: 'dev@zunka.com.br',
+                  to: req.body.email,
+                  subject: 'Solicitação para Redefinir senha.',
+                  text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a redefinição da senha de sua conta.\n\n' + 
+                        'Por favor click no link, ou cole no seu navegador de internet para completar o processo.\n\n' + 
+                        'https://' + req.headers.host + '/users/reset/' + token + '\n' +
+                        // 'Esta solicitação de redefinição expira em duas horas.\n' +
+                        'Se não foi você que requisitou esta redefinição de senha, por favor ignore este e-mail e sua senha permanecerá a mesma.'
+              }; 
+                        //   text: 'Você recebeu este e-mail porquê Você (ou alguem) requisitou a redefinição da senha de sua conta.\n\n' + 
+                        // 'Por favor click no link, ou cole no seu navegador de internet para completar o processo.\n\n' + 
+                        // 'http://' + req.headers.host + '/reset/' + token + '\n\n' +
+                        // 'Se não foi você que requisitou esta redefinição de senha, por favor ignore este e-mail e sua senha permanecerá a mesma.'
+              log.info('text', mailOptions.text);
+              // // Send email.
+              // transporter.sendMail(mailOptions, function(err, info){
+              //   if(err){
+              //     log.error(err, new Error().stack);
+              //   } else {
+              //     log.info(`Reset email sent to ${req.body.email}`);
+              //   }
+              // });
+              req.flash('success', `Foi enviado um e-mail para ${req.body.email} com instruções para a alteração da senha.`)
+              // res.render('forgot', { messages: req.flash('error'), instructions: [instructionMessage] });
+              res.redirect('back');
+            });
+          });
+        }
+      });
     }
-    var token = buf.toString('hex');
-    // Make token disponible for 6 horas (6 x 60 x 60 = 21600).
-    redis.setex(`reset:${req.body.email}`, 60, token, err=>{
-      if (err) { 
-        log.error(err, new Error().stack);
-        req.flash('error', 'Serviço indisponível.');
-        res.redirect('back');            
-        return; 
-      }
-      let mailOptions = {
-          from: 'dev@zunka.com.br',
-          to: 'douglasmg7@gmail.com',
-          subject: 'Solicitação para Redefinir senha.',
-          text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a criação da senha de sua conta.\n\n' + 
-                'Por favor click no link, ou cole no seu navegador de internet para completar o processo.\n\n' + 
-                'http://' + req.headers.host + '/reset/' + token + '\n' +
-                // 'Esta solicitação de redefinição expira em duas horas.\n' +
-                'Se não foi você que requisitou esta redefinição de senha, por favor ignore este e-mail e sua senha permanecerá a mesma.'
-      }; 
-                //   text: 'Você recebeu este e-mail porquê Você (ou alguem) requisitou a redefinição da senha de sua conta.\n\n' + 
-                // 'Por favor click no link, ou cole no seu navegador de internet para completar o processo.\n\n' + 
-                // 'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-                // 'Se não foi você que requisitou esta redefinição de senha, por favor ignore este e-mail e sua senha permanecerá a mesma.'
-      log.info('text', mailOptions.text);
-      // transporter.sendMail(mailOptions, function(err, info){
-      //   if(err){
-      //     // log.error(err, new Error().stack);
-      //     log.error(err);
-      //   } else {
-      //     log.info("mail send successfully");
-      //   }
-      // });
-      let instructionMessage = `Foi enviado um e-mail para ${req.body.email} com instruções para a alteração da senha.`
-      res.render('forgot', { messages: req.flash('error'), instructions: [instructionMessage] });
-    })
   });
 });
 
 // Reset password page.
 router.get('/reset/:token', (req, res, next)=>{
-  res.render('reset', { messages: req.flash('error') });
+  // log.info('flash" ', req.flash());
+  res.render('reset', req.flash() );
 });
 
 // Reset password.
 router.post('/reset/:token', (req, res, next)=>{
-  log.info('params: ', JSON.stringify(req.params));
-  log.info('token: ', req.params.token);
-  redis.get(`reset:${req.params.token}`, result=>{
-    log.info('result: ', result);
-    // Not exist token for reset password.
-    if (!result) { 
-      req.flash('error', 'Chave para alteração da senha expirou.');
-      // return res.redirect(`reset/${req.params.token}`);
-      return res.redirect('back');
+  // Validation.
+  req.checkBody('password', 'Senha deve conter pelo menos 8 caracteres.').isLength({ min: 8});
+  req.checkBody('password', 'Senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
+  req.checkBody('password', 'Senha e Confirmação da senha devem ser iguais.').equals(req.body.passwordConfirm);
+  req.sanitizeBody("email").normalizeEmail();
+  req.getValidationResult().then(function(result) {
+    if (!result.isEmpty()) {
+      let messages = [];
+      messages.push(result.array()[0].msg);
+      req.flash('error', messages);
+      res.redirect('back');
+      return;
+    } 
+    else {
+      redis.get(`reset:${req.params.token}`, (err, email)=>{
+        // Internal error.
+        if (err) { 
+          log.error(err, Error().stack);
+          req.flash('error', 'Serviço indisponível.');
+          return res.redirect('back');
+        }        
+        // Not exist token to reset password.
+        if (!email) { 
+          req.flash('error', 'Chave para alteração da senha expirou.');
+          return res.redirect('back');
+        }
+        // Token found.
+        else {
+          redis.get(`user:${email}`, (err, user)=>{
+            // Internal error.
+            if (err) { 
+              log.error(err, Error().stack);
+              req.flash('error', 'Serviço indisponível.');
+              return res.redirect('back');
+            }             
+            user = JSON.parse(user);
+            user.password = bcrypt.hashSync(req.body.password.trim(), bcrypt.genSaltSync(5), null);
+            redis.set(`user:${email}`, JSON.stringify(user), err=>{
+              if(err) {
+                log.error(err, new Error().stack);
+                res.falsh('error', 'Não foi possível alterar a senha.\nFavor entrar em contato com o suporte técnico.');
+                res.redirect('reset', { messages: req.flash('error') });
+                return;
+              }
+              req.flash('success', 'Senha alterada com sucesso.');
+              res.redirect('back');
+            });
+          });
+        }
+      });      
     }
   });
 });

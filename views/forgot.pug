@@ -17,13 +17,15 @@ html(lang="en")
         .col-md-4
           .panel.panel-default
             .panel-body
-              h1.text-left Senha esquecida
-              each message in messages
-                .alert.alert-danger(role='alert') 
-                  p.text-center #{message} 
-              each instruction in instructions
-                .alert.alert-info(role='alert') 
-                  p.text-center #{instruction}                               
+              h1.text-left Redefinir Senha
+              if error
+                each err in error
+                  .alert.alert-danger(role='alert') 
+                    p.text-center #{err} 
+              if success
+                each suc in success
+                  .alert.alert-info(role='alert') 
+                    p.text-center #{suc}                              
               form(method='post')
                 input(type='hidden' name='_csrf' value=csrfToken)
                 //- Email

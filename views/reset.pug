@@ -18,16 +18,20 @@ html(lang="en")
           .panel.panel-default
             .panel-body
               h1.text-left Redefinir senha
-              each message in messages
-                .alert.alert-danger(role='alert') 
-                  p.text-center #{message}              
-              //- form(action='/users/reset' method='post')
+              if error
+                each err in error
+                  .alert.alert-danger(role='alert') 
+                    p.text-center #{err} 
+              if success
+                each suc in success
+                  .alert.alert-info(role='alert') 
+                    p.text-center #{suc}              
               form(method='post')
                 input(type='hidden' name='_csrf' value=csrfToken)
                 .form-group
                   input.form-control(type='password' name='password' placeholder='Nova senha')
                 .form-group
-                  input.form-control(type='password' name='password' placeholder='Confirme a nova senha')
+                  input.form-control(type='password' name='passwordConfirm' placeholder='Confirme a nova senha')
                 input.btn.btn-primary.btn-block(type='submit' value='Alterar senha')
         .col-md-4
     include components/jquery.js.pug
