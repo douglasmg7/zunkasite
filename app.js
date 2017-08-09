@@ -130,7 +130,8 @@ require('./config/passport');
 app.use((req, res, next)=>{
   // log.debug('Generated csrfToken: ', req.csrfToken());
   res.locals.csrfToken = req.csrfToken();
-  res.locals.user = req.user;
+  res.locals.user = req.user ? req.user : { name: undefined, group: undefined };
+  res.locals.path = req.path;
   next();
 });
 

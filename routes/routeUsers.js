@@ -230,13 +230,33 @@ router.post('/reset/:token', (req, res, next)=>{
   });
 });
 
-// Account page.
-router.get('/account', (req, res, next)=>{
-  res.render('account', req.flash());
+// Info page.
+router.get('/info', (req, res, next)=>{
+  res.render('user/info', req.flash());
+});
+
+// Access page.
+router.get('/access', (req, res, next)=>{
+  res.render('user/access', req.flash());
+});
+
+// Orders page.
+router.get('/orders', (req, res, next)=>{
+  res.render('user/orders', req.flash());
+});
+
+// Address page.
+router.get('/address', (req, res, next)=>{
+  res.render('user/address', req.flash());
+});
+
+// Delete account page.
+router.get('/delete', (req, res, next)=>{
+  res.render('user/delete', req.flash());
 });
 
 // Delete account.
-router.post('/account/delete', (req, res, next)=>{
+router.post('/delete', (req, res, next)=>{
   // Delete user.
   redis.del(`user:${req.user.email}`, (err)=>{
     if (err) {

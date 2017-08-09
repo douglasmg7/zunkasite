@@ -1,0 +1,8 @@
+mixin menuItem(title, url)
+  li(class=url == path ? 'active' : ''): a(href=url)= title
+ul.nav.nav-pills.nav-stacked
+  +menuItem('Pedidos', '/users/orders')
+  +menuItem('Dados Cadastrais', '/users/info')
+  +menuItem('Dados de acesso', '/users/access')
+  +menuItem('Endereços', '/users/address')
+  +menuItem('Apagar conta', '/users/delete')
