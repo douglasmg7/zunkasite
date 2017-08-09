@@ -18,7 +18,8 @@
           //- i.search.link.icon(v-on:click='$emit("search", searchText)')
       // User name.
       .ui.item
-        i.large.user.icon(v-if="this.user.username") 
+      a.ui.item(href='/users/account' v-if="this.user.username")
+        i.large.user.icon
         | {{this.user.username}}
       // Sign-in.
       a.ui.item(href='/users/login' v-if="!this.user.username")

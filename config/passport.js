@@ -81,22 +81,21 @@ passport.use('local.signup', new LocalStrategy({
             return done(err, false, { message: 'Serviço indisponível.'});
           }
           let mailOptions = {
-              from: 'dev@zunka.com.br',
-              to: req.body.email,
-              subject: 'Solicitação de criação de conta no site da Zunka.',
-              text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a criação de uma conta no site da Zunka usando este e-mail.\n\n' + 
-                    'Por favor click no link, ou cole no seu navegador de internet para confirmar a criação da conta.\n\n' + 
-                    'https://' + req.headers.host + '/users/login/' + token + '\n\n' +
-                    'Se não foi você que requisitou esta criação de conta, por favor ignore este e-mail e nenhuma conta será criada.'
+                from: 'dev@zunka.com.br',
+                to: req.body.email,
+                subject: 'Solicitação de criação de conta no site da Zunka.',
+                text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a criação de uma conta no site da Zunka usando este e-mail.\n\n' + 
+                      'Por favor click no link, ou cole no seu navegador de internet para confirmar a criação da conta.\n\n' + 
+                      'https://' + req.headers.host + '/users/login/' + token + '\n\n' +
+                      'Se não foi você que requisitou esta criação de conta, por favor ignore este e-mail e nenhuma conta será criada.'
           }; 
-          log.info('text', mailOptions.text);
-          // transporter.sendMail(mailOptions, function(err, info){
-          //   if(err){
-          //     log.error(err, new Error().stack);
-          //   } else {
-          //     log.info("mail send successfully");
-          //   }
-          // }); 
+          transporter.sendMail(mailOptions, function(err, info){
+            if(err){
+              log.error(err, new Error().stack);
+            } else {
+              log.info("mail send successfully");
+            }
+          }); 
           req.flash('success', `Foi enviado um e-mail para ${req.body.email} com instruções para completar o cadastro.`);
           done(null, newUser);
         });

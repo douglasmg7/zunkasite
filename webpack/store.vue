@@ -15,7 +15,7 @@
           ul.nav.navbar-nav.navbar-right
             li
               // name.
-              a(v-if="this.user.name") {{this.user.name}}
+              a(href='/users/account' v-if="this.user.name") {{this.user.name}}
             li
               // Sign-in.
               a(href='/users/login' v-if="!this.user.name") Entrar

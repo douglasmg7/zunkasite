@@ -7,8 +7,20 @@ const dbConfig = require('../bin/dbConfig');
 const passport = require('passport');
 const bcrypt = require('bcrypt-nodejs');
 const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 // Personal modules.
 const log = require('../bin/log');
+
+// Transporter object using the default SMTP transport.
+let transporter = nodemailer.createTransport({
+    host: 'smtps.dialhost.com.br',
+    port: 587,
+    // secure:true for port 465, secure:false for port 587
+    auth: {
+        user: 'dev@zunka.com.br',
+        pass: 'SergioMiranda1'
+    }
+});
 
 // Signup page.
 router.get('/signup', (req, res, next)=>{
@@ -139,14 +151,14 @@ router.post('/forgot', (req, res, next)=>{
                         'Se não foi você que requisitou esta redefinição de senha, por favor ignore este e-mail e sua senha permanecerá a mesma.'
               }; 
               log.info('text', mailOptions.text);
-              // // Send email.
-              // transporter.sendMail(mailOptions, function(err, info){
-              //   if(err){
-              //     log.error(err, new Error().stack);
-              //   } else {
-              //     log.info(`Reset email sent to ${req.body.email}`);
-              //   }
-              // });
+              // Send email.
+              transporter.sendMail(mailOptions, function(err, info){
+                if(err){
+                  log.error(err, new Error().stack);
+                } else {
+                  log.info(`Reset email sent to ${req.body.email}`);
+                }
+              });
               req.flash('success', `Foi enviado um e-mail para ${req.body.email} com instruções para a alteração da senha.`)
               res.redirect('back');
             });
@@ -209,7 +221,7 @@ router.post('/reset/:token', (req, res, next)=>{
                 return;
               }
               req.flash('success', 'Senha alterada com sucesso.');
-              res.redirect('back');
+              res.redirect('/users/login/');
             });
           });
         }
@@ -218,6 +230,27 @@ router.post('/reset/:token', (req, res, next)=>{
   });
 });
 
+// Account page.
+router.get('/account', (req, res, next)=>{
+  res.render('account', req.flash());
+});
+
+// Delete account.
+router.post('/account/delete', (req, res, next)=>{
+  // Delete user.
+  redis.del(`user:${req.user.email}`, (err)=>{
+    if (err) {
+      req.logout();
+      log.error(err, new Error().stack);
+      req.flash('error', 'Serviço indisponível.');
+      res.redirect('/users/login/');
+      return;
+    }
+    req.logout();
+    req.flash('success', 'Conta apagada com sucesso.');
+    res.redirect('/users/login/');
+  });      
+});
 // // Login page (no bootstrap).
 // router.get('/loginc', (req, res, next)=>{
 //   // Message from authentication, who set a flash message with erros.
