@@ -45,13 +45,16 @@ passport.use('local.signup', new LocalStrategy({
   req.checkBody('email', 'E-mail inválido.').isEmail();
   req.checkBody('password', 'Senha deve conter pelo menos 8 caracteres.').isLength({ min: 8});
   req.checkBody('password', 'Senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
-  req.checkBody('password', 'Confirmação do password e password devem ser iguais').equals(req.body.passwordConfirm);
+  req.checkBody('password', 'Senha e confirmação da senha devem ser iguais').equals(req.body.passwordConfirm);
   req.checkBody('name', 'Nome inválido.').isLength({min: 1, max: 40});
-  req.checkBody('cpf', 'Cpf inválido.').isLength({min: 1, max: 40});
-  req.checkBody('birthday', 'Data de nacimento inválida.').isLength({min: 1, max: 40});
-  req.checkBody('phone', 'Telefone inválido.').isLength({min: 1, max: 40});
+  req.checkBody('cpf', 'Campo cpf deve ser preenchido.').notEmpty();
+  req.checkBody('cpf', 'Cpf inválido.').isCpf();
+  req.checkBody('birthday', 'Data de nacimento inválida.').isDate();
+  req.checkBody('phone', 'Campo telefone deve ser preenchido.').notEmpty();
+  req.checkBody('phone', 'Telefone inválido.').isLength({min: 14, max: 16});
   req.sanitizeBody("email").normalizeEmail();
   req.sanitizeBody('name').escape().trim();
+  req.sanitizeBody('birthday').toDate();
   req.getValidationResult().then(function(result) {
     if (!result.isEmpty()) {
       let messages = [];

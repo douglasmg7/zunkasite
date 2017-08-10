@@ -11,6 +11,7 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 // Validation.
 const validator = require('express-validator');
+const cpfValidator = require('gerador-validador-cpf');
 // Mongo.
 const dbConfig = require('./bin/dbConfig');
 const mongo = require('./model/db');
@@ -105,7 +106,11 @@ app.use(webpackHotMiddleware);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 // Validation.
-app.use(validator());
+app.use(validator({
+  customValidators: {
+    isCpf: function(value){ return cpfValidator.validate(value); }
+  }
+}));
 
 // authentication
 app.use(cookieParser(app.get('secret')));
