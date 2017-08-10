@@ -42,12 +42,16 @@ passport.use('local.signup', new LocalStrategy({
   passReqToCallback: true
 }, function(req, email, password, done){
   // Validation.
-  req.checkBody('name', 'Nome inválido.').isLength({min: 1, max: 40});
   req.checkBody('email', 'E-mail inválido.').isEmail();
   req.checkBody('password', 'Senha deve conter pelo menos 8 caracteres.').isLength({ min: 8});
   req.checkBody('password', 'Senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
-  req.sanitizeBody('name').escape().trim();
+  req.checkBody('password', 'Confirmação do password e password devem ser iguais').equal(req.body.passwordConfirm);
+  req.checkBody('name', 'Nome inválido.').isLength({min: 1, max: 40});
+  req.checkBody('cpf', 'Cpf inválido.').isLength({min: 1, max: 40});
+  req.checkBody('birthday', 'Data de nacimento inválida.').isLength({min: 1, max: 40});
+  req.checkBody('phone', 'Telefone inválido.').isLength({min: 1, max: 40});
   req.sanitizeBody("email").normalizeEmail();
+  req.sanitizeBody('name').escape().trim();
   req.getValidationResult().then(function(result) {
     if (!result.isEmpty()) {
       let messages = [];
@@ -61,9 +65,12 @@ passport.use('local.signup', new LocalStrategy({
       // Create user.
       const cryptPassword = bcrypt.hashSync(req.body.password.trim(), bcrypt.genSaltSync(5), null);
       const newUser = {
-        name: req.body.name.trim(),
-        email: req.body.email.trim(),
+        email: req.body.email,
         password: cryptPassword,
+        name: req.body.name,
+        cpf: req.body.cpf,
+        birthday: req.body.birthday,
+        phone: [req.body.phone],
         group: 'client',
         status: 'active'
       };        

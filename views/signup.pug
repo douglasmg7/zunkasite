@@ -1,8 +1,8 @@
 doctype html
-html(lang="en")
+html(lang='en')
   head
     meta(charset='utf-8')
-    meta(name="viewport" content="width=device-width, initial-scale=1")
+    meta(name='viewport' content='width=device-width, initial-scale=1')
     title Cadastro de usuario.
     include components/bootstrap.css.pug
   body
@@ -25,9 +25,9 @@ html(lang="en")
               form(action='/users/signup' method='post')
                 input(type='hidden' name='_csrf' value=csrfToken)               
                 //- Email.
-                .form-group
+                .form-group.has-error
                   label E-mail
-                  input.form-control(type='text' name='email' placeholder='E-mail')
+                  input.form-control(type='email' name='email' placeholder='E-mail' maxlength='40' required title='Entre um e-mail válido.')
                 //- Password.
                 .form-group
                   label Senha
@@ -39,20 +39,34 @@ html(lang="en")
                 //- Name.
                 .form-group
                   label Nome completo
-                  input.form-control(type='text' name='name' placeholder='Nome completo')       
+                  input.form-control(type='text' name='name' placeholder='Nome completo' maxlength='40' required pattern="banana|cherry")       
                 //- CPF.
                 .form-group
                   label CPF
-                  input.form-control(type='text' name='cpf' placeholder='000.000.000-70')                                              
+                  input.form-control(id='cpf' type='text' name='cpf' placeholder='000.000.000-70')                                              
                 //- Birthday.
                 .form-group
                   label Data de nascimento
-                  input.form-control(type='text' name='birthday' placeholder='00/00/0000')                                   
+                  input.form-control(id='birthday' type='text' name='birthday')                                   
                 //- Telefone.
                 .form-group
                   label Telefone
-                  input.form-control(type='text' name='phone' placeholder='(000) 0000-0000')                    
+                  input.form-control(id='phone' type='text' name='phone' placeholder='(000) 0000-0000')                    
                 input.btn.btn-primary.btn-block(type='submit' value='Cadastrar')
         .col-md-4
     include components/jquery.js.pug
+    include components/jquery.maskedinput.js.pug
     include components/bootstrap.js.pug
+    include components/cpf.js.pug
+    script.
+      jQuery(function($){
+        // Maskedinput.
+        $('#birthday').mask('99/99/9999',{placeholder:'dd/mm/yyyy'});
+        $('#cpf').mask('999.999.999-99');
+        $('#phone').mask('(999) 99999-9999');
+        // Validate cpf.
+        $('#cpf').on('keyup', function(event){
+          console.log(event.target.value);
+          console.log(CPF.validate(event.target.value));
+        });
+      });
