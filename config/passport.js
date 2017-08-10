@@ -45,7 +45,7 @@ passport.use('local.signup', new LocalStrategy({
   req.checkBody('email', 'E-mail inválido.').isEmail();
   req.checkBody('password', 'Senha deve conter pelo menos 8 caracteres.').isLength({ min: 8});
   req.checkBody('password', 'Senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
-  req.checkBody('password', 'Confirmação do password e password devem ser iguais').equal(req.body.passwordConfirm);
+  req.checkBody('password', 'Confirmação do password e password devem ser iguais').equals(req.body.passwordConfirm);
   req.checkBody('name', 'Nome inválido.').isLength({min: 1, max: 40});
   req.checkBody('cpf', 'Cpf inválido.').isLength({min: 1, max: 40});
   req.checkBody('birthday', 'Data de nacimento inválida.').isLength({min: 1, max: 40});

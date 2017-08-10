@@ -22,12 +22,14 @@ html(lang='en')
                 each suc in success
                   .alert.alert-info(role='alert') 
                     p.text-center #{suc}               
-              form(action='/users/signup' method='post')
+              form(id='form-signup' action='/users/signup' method='post')
                 input(type='hidden' name='_csrf' value=csrfToken)               
                 //- Email.
-                .form-group.has-error
-                  label E-mail
-                  input.form-control(type='email' name='email' placeholder='E-mail' maxlength='40' required title='Entre um e-mail válido.')
+                //- .form-group.has-error
+                .form-group
+                  label(for='email') E-mail
+                  input.form-control(id='email' type='email' name='email' placeholder='E-mail')
+                  //- input.form-control(type='email' name='email' placeholder='E-mail' required maxlength='40' title='Entre um e-mail válido.')
                 //- Password.
                 .form-group
                   label Senha
@@ -39,7 +41,8 @@ html(lang='en')
                 //- Name.
                 .form-group
                   label Nome completo
-                  input.form-control(type='text' name='name' placeholder='Nome completo' maxlength='40' required pattern="banana|cherry")       
+                  input.form-control(type='text' name='name' placeholder='Nome completo')       
+                  //- input.form-control(type='text' name='name' placeholder='Nome completo' required maxlength='40' pattern="banana|cherry")       
                 //- CPF.
                 .form-group
                   label CPF
@@ -56,17 +59,54 @@ html(lang='en')
         .col-md-4
     include components/jquery.js.pug
     include components/jquery.maskedinput.js.pug
+    include components/jquery.validation.js.pug
     include components/bootstrap.js.pug
     include components/cpf.js.pug
+    include components/jquery.validation.localization.js.pug
     script.
       jQuery(function($){
         // Maskedinput.
         $('#birthday').mask('99/99/9999',{placeholder:'dd/mm/yyyy'});
         $('#cpf').mask('999.999.999-99');
         $('#phone').mask('(999) 99999-9999');
-        // Validate cpf.
-        $('#cpf').on('keyup', function(event){
-          console.log(event.target.value);
-          console.log(CPF.validate(event.target.value));
+        // Validator method for cpf.
+        $.validator.addMethod('cpf', function(value, element){ return CPF.validate(value); }, 'Por favor, forneça um CPF válido.');
+        // Form validation.
+        $('#form-signup').validate({
+          rules:{
+            eamil: {
+              required: true,
+              email: true
+            },
+            password: {
+              required: true,
+              minlength: 8,
+              maxlength: 20
+            },
+            name: {
+              required: true,
+              minlength: 2,
+              maxlength: 40
+            },
+            passwordConfirm: {
+              required: true,
+              minlength: 8,
+              maxlength: 20,
+              equalTo: '#password'            
+            },
+            cpf: {
+              cpf: true
+            }
+          },      
+          messages: {
+          },
+          highlight: function (element) {
+              $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+          },
+          success: function (element) {
+              //- element.text('OK!').addClass('valid')
+              //-     .closest('.form-group').removeClass('has-error').addClass('has-success');
+              $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+          }              
         });
       });
