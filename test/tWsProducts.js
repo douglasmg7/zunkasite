@@ -12,7 +12,7 @@ chai.use(chaiHttp);
 // Store products to populate db test.
 const productsStore = require('./storeProducts.json');
 // Db configurations.
-const dbConfig = require('../bin/dbConfig');
+const dbConfig = require('../config/db');
 
 // Server to test.
 let server = null;

@@ -5,7 +5,7 @@ const http = require('http');
 const https = require('https');
 const express = require('express');
 const fs = require('fs');
-const log = require('./log');
+const log = require('../config/log');
 
 // Get ssh key and certificate.
 let sshOptions = {

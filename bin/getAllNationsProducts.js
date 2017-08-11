@@ -11,9 +11,9 @@ const cheerio = require('cheerio');
 const argv = require('yargs').argv;
 
 // personal modules
-const log = require('./log');
+const log = require('../config/log');
 const timer = require('./timer');
-const dbConfig = require('./dbConfig');
+const dbConfig = require('../config/db');
 
 // Sensitive data.
 const WS_USER = '0014770';

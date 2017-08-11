@@ -1,8 +1,8 @@
 'use strict';
 
 const mongo = require('mongodb').MongoClient;
-const dbConfig = require('../bin/dbConfig');
-const log = require('../bin/log');
+const dbConfig = require('../config/db');
+const log = require('../config/log');
 
 const state = {
   db: null,

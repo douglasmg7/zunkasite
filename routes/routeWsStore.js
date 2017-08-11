@@ -6,7 +6,7 @@ const dbConfig = mongo.config;
 const ObjectId = require('mongodb').ObjectId;
 const path = require('path');
 const fse = require('fs-extra');
-const log = require('../bin/log');
+const log = require('../config/log');
 // File upload.
 const formidable = require('formidable');
 // Page size for admin pagination.

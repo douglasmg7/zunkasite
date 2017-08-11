@@ -1,0 +1,204 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+    title Cadastro de usuario.
+    include components/bootstrap.css.pug
+  body
+    include navbar.pug
+    .container
+      .row
+        .col-md-4
+        .col-md-4
+          .panel.panel-default
+            .panel-body
+              h1.text-left Cadastro
+              if error
+                each err in error
+                  .alert.alert-danger(role='alert') 
+                    p.text-center #{err} 
+              if success
+                each suc in success
+                  .alert.alert-info(role='alert') 
+                    p.text-center #{suc}               
+              form(id='form-signup' action='/users/signup' method='post')
+                input(type='hidden' name='_csrf' value=csrfToken)               
+                //- Email.
+                //- .form-group.has-error
+                .form-group
+                  label(for='email') E-mail
+                  input.form-control(type='email' name='email' placeholder='E-mail' id='email')
+                  //- input.form-control(type='email' name='email' placeholder='E-mail' required maxlength='40' title='Entre um e-mail válido.')
+                //- Password.
+                .form-group
+                  label(for='password') Senha
+                  input.form-control(type='password' name='password' placeholder='Senha' id='password')
+                //- Confirm password.
+                .form-group
+                  label(for='passwordConfirm') Confirme a senha
+                  input.form-control(type='password' name='passwordConfirm' placeholder='Senha' id='passwordConfirm')      
+                //- Name.
+                .form-group
+                  label(for='name') Nome completo
+                  input.form-control(type='text' name='name' placeholder='Nome completo' id='name')       
+                  //- input.form-control(type='text' name='name' placeholder='Nome completo' required maxlength='40' pattern="banana|cherry")       
+                //- CPF.
+                .form-group
+                  label(for='cpf') CPF
+                  input.form-control(type='text' name='cpf' id='cpf')                                              
+                //- Birthday.
+                //- .form-group
+                  label(for='birthday') Data de nascimento
+                  input.form-control(type='text' name='birthday' id='birthday')                                   
+                //- Telefone.
+                .form-group
+                  label(for='cellPhone') Celular
+                  input.form-control(type='text' name='cellPhone' id='cellPhone')     
+                .form-group
+                  label(for='phone') Telefone fixo (opcional)
+                  input.form-control(type='text' name='phone' id='phone')                  
+                h1.text-left Endereço
+                .form-group
+                  label(for='cep') CEP
+                  input.form-control(type='text' name='cep' id='cep')
+                  a(href='http://m.correios.com.br/movel/buscaCepConfirma.do' target='_blank') Não sei meu CEP
+                  p.loading.hide Buscando dados do cpf...
+                  .alert.alert-warning.hide(role='alert')
+                    p Não foi possível encontrar o CEP informado. Por favor confira os dados e tente novamente.
+                .addressFields.hide
+                  .form-group
+                    label(for='address') Endereço
+                    input.form-control(type='text' name='address' id='address')
+                  .form-group
+                    label(for='addressNumber') Número
+                    input.form-control(type='text' name='addressNumber' id='addressNumber')
+                  .form-group
+                    label(for='addressComplement') Complemento
+                    input.form-control(type='text' name='addressComplement' id='addressComplement')
+                  .form-group
+                    label(for='district') Bairro
+                    input.form-control(type='text' name='district' id='district')       
+                  .form-group
+                    label(for='city') Cidade
+                    input.form-control(type='text' name='city' id='city')  
+                  .form-group
+                    label(for='state') Estado
+                    input.form-control(type='text' name='state' id='state')                                                                                     
+                .checkbox
+                  label
+                    input(type='checkbox' name='newletter' id='newletter') 
+                    strong Desejo receber ofertas por e-mail                  
+                input.btn.btn-primary.btn-block(type='submit' value='Cadastrar')
+        .col-md-4
+    include components/jquery.js.pug
+    include components/jquery.maskedinput.js.pug
+    include components/jquery.validation.js.pug
+    include components/bootstrap.js.pug
+    include components/cpf.js.pug
+    include components/jquery.validation.localization.js.pug
+    script.
+      jQuery(function($){
+        // Maskedinput.
+        $('#birthday').mask('99/99/9999',{placeholder:'dd/mm/yyyy'});
+        $('#cpf').mask('999.999.999-99');
+        $('#phone').mask('(999) 99999-9999');
+        $('#cep').mask('99999-999');
+        // Validator method for cpf.
+        $.validator.addMethod('cpf', function(value, element){ return CPF.validate(value); }, 'Por favor, forneça um CPF válido.');
+        $.validator.addMethod('cep', function(value, element){ return value.match(/^\d{5}-\d{3}$/); }, 'Por favor, forneça um CEP válido.');
+        // Form validation.
+        $('#form-signup').validate({
+          rules:{
+            eamil: {
+              required: true,
+              email: true
+            },
+            password: {
+              required: true,
+              minlength: 8,
+              maxlength: 20
+            },
+            passwordConfirm: {
+              required: true,
+              equalTo: '#password'            
+            },            
+            name: {
+              required: true,
+              minlength: 2,
+              maxlength: 40
+            },
+            cpf: {
+              cpf: true
+            },
+            birthday: {
+              required: true,
+              date: true
+            },
+            phone: {
+              required: true,
+              minlength: 14,
+              maxlength: 16              
+            },
+            cep: {
+              cep: true
+            },            
+          },      
+          messages: {
+            phone: {
+              minlength: 'Telefone inválido.',
+              maxlength: 'Telefone inválido.'
+            }
+          },
+          highlight: function (element) {
+              $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+              // Keep address hide.
+              if ($(element).attr('id') == 'cep') {
+                $('form').find('.addressFields').addClass('hide');
+              }
+          },
+          success: function (element) {
+            // Remove erros.
+            element.closest('.form-group').removeClass('has-error').addClass('has-success');
+            // Get CEP information.
+            if (element.attr('for') == 'cep') {
+              // Show message loading cep data.
+              element.siblings('.loading').removeClass('hide');
+              // Get cep data.
+              let cep = $('#cep').val().replace(/\D/g, '');
+              $.ajax({
+                method: 'GET',
+                url: `https://viacep.com.br/ws/${cep}/json/`
+              })
+              .done(function(result){
+                // Remove message loading cep data.
+                element.siblings('.loading').addClass('hide');
+                // Not found CEP.
+                if (result.erro) {
+                  // Hide address fields.
+                  $('form').find('.addressFields').addClass('hide');
+                  element.siblings('.alert').removeClass('hide');
+                  //- $('#state').val('');
+                  //- $('#city').val('');
+                  //- $('#district').val('');
+                  //- $('#address').val('');
+                }
+                // Found CEP.
+                else {
+                  $('form').find('.addressFields').removeClass('hide');
+                  // Show address fields.
+                  element.siblings('.alert').addClass('hide');
+                  // Estado.
+                  if (result.uf) { $('#state').val(result.uf).attr('disabled', true); } else { $('#state').val('').removeAttr('disabled'); }
+                  // Cidade.
+                  if (result.localidade) { $('#city').val(result.localidade).attr('disabled', true); } else { $('#city').val('').removeAttr('disabled'); }                
+                  // Bairro.
+                  if (result.bairro) { $('#district').val(result.bairro).attr('disabled', true); } else { $('#district').val('').removeAttr('disabled'); }                
+                  // Logradouro.
+                  if (result.logradouro) { $('#address').val(result.logradouro).attr('disabled', true); } else { $('#address').val('').removeAttr('disabled'); }  
+                }
+              });
+            }
+          }              
+        });
+      });

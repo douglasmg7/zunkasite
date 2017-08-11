@@ -3,8 +3,8 @@
 const expect = require('chai').expect;
 const mongo = require('mongodb').MongoClient;
 // personal modules
-const log = require('./log');
-const dbConfig = require('./dbConfig');
+const log = require('../config/log');
+const dbConfig = require('../config/db');
 log.info('Inserindo lista de categoria dos produtos na base de dados, para uso em dropdowns.');
 // Connect to mongo.
 mongo.connect(dbConfig.url, (err, db)=>{

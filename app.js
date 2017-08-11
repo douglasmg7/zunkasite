@@ -4,7 +4,7 @@ const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
 // General log.
-const log = require('./bin/log');
+const log = require('./config/log');
 // Log transaction.
 const morgan = require('morgan');
 // Body.
@@ -13,9 +13,10 @@ const bodyParser = require('body-parser');
 const validator = require('express-validator');
 const cpfValidator = require('gerador-validador-cpf');
 // Mongo.
-const dbConfig = require('./bin/dbConfig');
+const dbConfig = require('./config/db');
 const mongo = require('./model/db');
 const ObjectId = require('mongodb').ObjectId;
+const mongoose = require('./model/mongoose');
 // Redis.
 const redis = require('./model/redis');
 // Authentication.

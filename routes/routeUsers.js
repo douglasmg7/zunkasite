@@ -3,13 +3,13 @@ const express = require('express');
 const redis = require('../model/redis');
 const router = express.Router();
 const mongo = require('../model/db');
-const dbConfig = require('../bin/dbConfig');
+const dbConfig = require('../config/db');
 const passport = require('passport');
 const bcrypt = require('bcrypt-nodejs');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 // Personal modules.
-const log = require('../bin/log');
+const log = require('../config/log');
 
 // Transporter object using the default SMTP transport.
 let transporter = nodemailer.createTransport({

@@ -1,5 +1,5 @@
 'use strict';
 
-const dbConfig = require('./dbConfig');
+const dbConfig = require('../config/db');
 
 console.log(dbConfig.urlTest);

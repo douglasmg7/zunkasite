@@ -9,7 +9,7 @@ const mongo = require('mongodb').MongoClient;
 // personal modules
 const productsAllNations = require('./allNationsProducts.json');
 const productsStore = require('./storeProducts.json');
-const dbConfig = require('../bin/dbConfig');
+const dbConfig = require('../config/db');
 // Module to test.
 const AllNations = require('../bin/updateDbWithAllNationsProducts');
 

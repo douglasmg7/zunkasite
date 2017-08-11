@@ -10,7 +10,7 @@ const fs = require('fs');
 const assert = require('assert');
 const mongo = require('mongodb').MongoClient;
 // Personal modules.
-const dbConfig = require('../../bin/dbConfig');
+const dbConfig = require('../../config/db');
 // File to write the json data.
 const FILE_NAME = 'allNationsProducts.json';
 // Amount of products to be created.

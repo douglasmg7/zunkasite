@@ -3,8 +3,8 @@
 const expect = require('chai').expect;
 const mongo = require('mongodb').MongoClient;
 // Personal modules.
-const log = require('./log');
-const dbConfig = require('./dbConfig');
+const log = require('../config/log');
+const dbConfig = require('../config/db');
 log.info('Connecting to db...');
 // Connect to mongo.
 mongo.connect(dbConfig.url, (err, db)=>{

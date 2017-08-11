@@ -8,8 +8,8 @@ const fs = require('fs');
 const mongo = require('mongodb').MongoClient;
 
 // personal modules
-const log = require('./log');
-const dbConfig = require('./dbConfig');
+const log = require('../config/log');
+const dbConfig = require('../config/db');
 // signal to run the script to update store db
 const watchDogFile = require('./watchDogConfig').updateAllNationProductsFileName;
 

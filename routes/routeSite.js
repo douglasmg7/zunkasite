@@ -4,7 +4,7 @@ const router = express.Router();
 const mongo = require('../model/db');
 const dbConfig = mongo.config;
 const ObjectId = require('mongodb').ObjectId;
-const log = require('../bin/log');
+const log = require('../config/log');
 // const stringify = require('js-stringify')
 
 // Format number to money format.
