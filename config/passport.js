@@ -46,7 +46,7 @@ passport.use('local.signup', new LocalStrategy({
   req.checkBody('password', 'Senha deve conter pelo menos 8 caracteres.').isLength({ min: 8});
   req.checkBody('password', 'Senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
   req.checkBody('password', 'Senha e confirmação da senha devem ser iguais').equals(req.body.passwordConfirm);
-  req.checkBody('name', 'Nome inválido.').isLength({min: 1, max: 40});
+  req.checkBody('name', 'Nome inválido.').isLength({min: 2, max: 40});
   req.checkBody('cpf', 'Campo cpf deve ser preenchido.').notEmpty();
   req.checkBody('cpf', 'Cpf inválido.').isCpf();
   req.checkBody('birthday', 'Data de nacimento inválida.').isDate();
@@ -74,7 +74,7 @@ passport.use('local.signup', new LocalStrategy({
         cpf: req.body.cpf,
         birthday: req.body.birthday,
         phone: [req.body.phone],
-        group: 'client',
+        group: 'admin',  // client
         status: 'active'
       };        
       // Create a radom key.
@@ -99,13 +99,14 @@ passport.use('local.signup', new LocalStrategy({
                       'https://' + req.headers.host + '/users/login/' + token + '\n\n' +
                       'Se não foi você que requisitou esta criação de conta, por favor ignore este e-mail e nenhuma conta será criada.'
           }; 
-          transporter.sendMail(mailOptions, function(err, info){
-            if(err){
-              log.error(err, new Error().stack);
-            } else {
-              log.info("mail send successfully");
-            }
-          }); 
+          log.info('link: ', 'https://' + req.headers.host + '/users/login/' + token + '\n\n');
+          // transporter.sendMail(mailOptions, function(err, info){
+          //   if(err){
+          //     log.error(err, new Error().stack);
+          //   } else {
+          //     log.info("mail send successfully");
+          //   }
+          // }); 
           req.flash('success', `Foi enviado um e-mail para ${req.body.email} com instruções para completar o cadastro.`);
           done(null, newUser);
         });

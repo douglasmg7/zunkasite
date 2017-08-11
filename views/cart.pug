@@ -8,54 +8,61 @@ html(lang="en")
   body
     include navbar.pug
     .container
-      .row
-        .col-md-12
-          h3: strong Carrinho de compras
-      .row
-        .col-md-12
-          table.table
-            thead
-              tr
-                td
-                td
-                td Quantidade
-                td Valor unitário
-                td Valor total
-            tbody
-              each product in cart.products
-                //- tr(class=product._id)
-                tr(data-product_id=product._id)
-                  td: a(href='/product/' + product._id): img.product(src='/img/' + product._id +'/' + product.image)
-                  td 
-                    a.product-title(href='/product/' + product._id) #{product.title}
-                    a.remove-product Remover
-                  //- td: p.product-qtd #{product.qtd}
-                  td.product-qtd
-                    .dropdown
-                      button.btn.btn-default.dropdown-troggle(type='button' data-toggle='dropdown')
-                        span #{product.qtd}
-                        span &nbsp&nbsp
-                        span.caret
-                      ul.dropdown-menu
-                        li: a(href='#') 1
-                        li: a(href='#') 2
-                        li: a(href='#') 3
-                        li: a(href='#') 4
-                        li: a(href='#') 5
-                  td: p.product-price #{formatMoney(product.price)}
-                  td: p.product-price #{formatMoney(product.price * product.qtd)}
-      .row
-        .col-md-12
-          H4
-            strong Subtotal (#{cart.totalQtd} #{cart.totalQtd > 1 ? 'itens): ' : 'item): '}
-            span#subtotal-price #{formatMoney(cart.totalPrice)}
-      //- .row
-        .col-md-12
-          button.btn.btn-primary(type='button') Comprar
-      .row
-        .col-md-12
-          footer
-            p O preço e a disponibilidade dos itens na loja estão sujetios a mudanças. O carrinho é um local temporário para guardar a lista de seus ítens e reflete o preço mais recente.
+      if cart.products.length == 0
+        .row
+          .col-md-2
+          .col-md-8
+            h3: strong Ainda não existem produtos no seu carrinho de compras
+          .col-md-2
+      else
+        .row
+          .col-md-12
+            h3: strong Carrinho de compras
+        .row
+          .col-md-12
+            table.table
+              thead
+                tr
+                  td
+                  td
+                  td Quantidade
+                  td Valor unitário
+                  td Valor total
+              tbody
+                each product in cart.products
+                  //- tr(class=product._id)
+                  tr(data-product_id=product._id)
+                    td: a(href='/product/' + product._id): img.product(src='/img/' + product._id +'/' + product.image)
+                    td 
+                      a.product-title(href='/product/' + product._id) #{product.title}
+                      a.remove-product Remover
+                    //- td: p.product-qtd #{product.qtd}
+                    td.product-qtd
+                      .dropdown
+                        button.btn.btn-default.dropdown-troggle(type='button' data-toggle='dropdown')
+                          span #{product.qtd}
+                          span &nbsp&nbsp
+                          span.caret
+                        ul.dropdown-menu
+                          li: a(href='#') 1
+                          li: a(href='#') 2
+                          li: a(href='#') 3
+                          li: a(href='#') 4
+                          li: a(href='#') 5
+                    td: p.product-price #{formatMoney(product.price)}
+                    td: p.product-price #{formatMoney(product.price * product.qtd)}
+        .row
+          .col-md-12
+            H4
+              strong Subtotal (#{cart.totalQtd} #{cart.totalQtd > 1 ? 'itens): ' : 'item): '}
+              span#subtotal-price #{formatMoney(cart.totalPrice)}
+        //- .row
+          .col-md-12
+            button.btn.btn-primary(type='button') Comprar
+        .row
+          .col-md-12
+            footer
+              p O preço e a disponibilidade dos itens na loja estão sujetios a mudanças. O carrinho é um local temporário para guardar a lista de seus ítens e reflete o preço mais recente.
     include components/jquery.js.pug
     include components/bootstrap.js.pug
     script.
