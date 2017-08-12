@@ -1,12 +1,13 @@
 'use strict';
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const redis = require('../model/redis');
+const redis = require('../db/redis');
 const bcrypt = require('bcrypt-nodejs');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 // My moudles.
 const log = require('./log');
+const User = require('../model/user');
 
 // Transporter object using the default SMTP transport.
 let transporter = nodemailer.createTransport({
@@ -162,6 +163,75 @@ passport.use('local.signin', new LocalStrategy({ usernameField: 'email', passwor
     });
   });
 }));
+
+
+// // Signup.
+// passport.use('local.signup', new LocalStrategy({
+//   usernameField: 'email',
+//   passwordField: 'password',
+//   passReqToCallback: true
+// }, function(req, email, password, done){
+//   // Validation.
+//   req.checkBody('email', 'E-mail inválido.').isEmail();
+//   req.checkBody('password', 'Senha deve conter pelo menos 8 caracteres.').isLength({ min: 8});
+//   req.checkBody('password', 'Senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
+//   req.checkBody('password', 'Senha e confirmação da senha devem ser iguais').equals(req.body.passwordConfirm);
+//   req.sanitizeBody("email").normalizeEmail();
+//   req.getValidationResult().then(function(result) {
+//     if (!result.isEmpty()) {
+//       let messages = [];
+//       messages.push(result.array()[0].msg);
+//       return done(null, false, req.flash('error', messages));
+//     }    
+//     // Verify if user exist.
+//     redis.get(`user:${req.body.email}`, (err, redisUser)=>{
+//       if (err) { return done(err, { message: 'Internal error.'} ); }
+//       if (redisUser) { return done(null, false, { message: 'E-mail já cadastrado.' }); }
+//       // Create user.
+//       const cryptPassword = bcrypt.hashSync(req.body.password.trim(), bcrypt.genSaltSync(5), null);
+//       const newUser = {
+//         email: req.body.email,
+//         password: cryptPassword,
+//         group: 'admin',  // client
+//         status: 'emailConfirm'
+//       };        
+//       // Create a radom key.
+//       crypto.randomBytes(20, function(err, buf) {
+//         if (err) { 
+//           log.error(err, new Error().stack);
+//           return done(err, false, { message: 'Serviço indisponível.'});
+//         }
+//         var token = buf.toString('hex');
+//         // Create temp user disponible for 2 horas (2 x 60 x 60 = 7200).
+//         redis.setex(`user:${token}`, 7200, JSON.stringify(newUser), err=>{
+//           if (err) { 
+//             log.error(err, new Error().stack);
+//             return done(err, false, { message: 'Serviço indisponível.'});
+//           }
+//           let mailOptions = {
+//                 from: 'dev@zunka.com.br',
+//                 to: req.body.email,
+//                 subject: 'Solicitação de criação de conta no site da Zunka.',
+//                 text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a criação de uma conta no site da Zunka usando este e-mail.\n\n' + 
+//                       'Por favor click no link, ou cole no seu navegador de internet para confirmar a criação da conta.\n\n' + 
+//                       'https://' + req.headers.host + '/users/login/' + token + '\n\n' +
+//                       'Se não foi você que requisitou esta criação de conta, por favor ignore este e-mail e nenhuma conta será criada.'
+//           }; 
+//           log.info('link: ', 'https://' + req.headers.host + '/users/login/' + token + '\n\n');
+//           // transporter.sendMail(mailOptions, function(err, info){
+//           //   if(err){
+//           //     log.error(err, new Error().stack);
+//           //   } else {
+//           //     log.info("mail send successfully");
+//           //   }
+//           // }); 
+//           req.flash('success', `Foi enviado um e-mail para ${req.body.email} com instruções para completar o cadastro.`);
+//           done(null, newUser);
+//         });
+//       });
+//     });
+//   });
+// }));
 
 
 // // Signup.

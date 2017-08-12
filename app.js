@@ -14,11 +14,12 @@ const validator = require('express-validator');
 const cpfValidator = require('gerador-validador-cpf');
 // Mongo.
 const dbConfig = require('./config/db');
-const mongo = require('./model/db');
+const mongo = require('./db/mongo');
 const ObjectId = require('mongodb').ObjectId;
-const mongoose = require('./model/mongoose');
+// Mongoose.
+const mongoose = require('./db/mongoose');
 // Redis.
-const redis = require('./model/redis');
+const redis = require('./db/redis');
 // Authentication.
 const cookieParser = require('cookie-parser');
 const csurf = require('csurf');

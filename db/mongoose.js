@@ -8,16 +8,26 @@ const state = {
   config: dbConfig
 };
 
-// Define which db to use.
-let url = null;
-process.env.NODE_ENV === 'unitTest' ? url = dbConfig.urlUnitTest : url = dbConfig.url;
-
+// Uri.
+let uri = null;
+process.env.NODE_ENV === 'unitTest' ? uri = dbConfig.urlUnitTest : uri = dbConfig.url;
+// Options.
+let options = {
+  useMongoClient: true,
+  socketTimeoutMS: 0,
+  keepAlive: true,
+  reconnectTries: 30
+};
 // Mongoose.
-mongoose.connect(process.env.NODE_ENV === 'unitTest' ? dbConfig.urlUnitTest : dbConfig.url);
+mongoose.connect(uri, options, function(err){
+  if (err) {
+    log.error('Mongoose connection error.', {err: err});
+  }
+});
 state.db = mongoose.connection;
 // Error.
 state.db.on('error', function(err){
-  log.error('MongoDb connection error.', {err: err});
+  log.error('Mongoose connection error.', {err: err});
   process.exit(1);
 });
 // Success.

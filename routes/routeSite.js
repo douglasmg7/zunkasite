@@ -1,7 +1,7 @@
 'use strict';
 const express = require('express');
 const router = express.Router();
-const mongo = require('../model/db');
+const mongo = require('../db/mongo');
 const dbConfig = mongo.config;
 const ObjectId = require('mongodb').ObjectId;
 const log = require('../config/log');

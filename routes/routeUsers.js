@@ -1,8 +1,8 @@
 'use strict';
 const express = require('express');
-const redis = require('../model/redis');
+const redis = require('../db/redis');
 const router = express.Router();
-const mongo = require('../model/db');
+const mongo = require('../db/mongo');
 const dbConfig = require('../config/db');
 const passport = require('passport');
 const bcrypt = require('bcrypt-nodejs');
