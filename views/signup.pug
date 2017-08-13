@@ -23,13 +23,15 @@ html(lang='en')
                   .alert.alert-info(role='alert') 
                     p.text-center #{suc}               
               form(id='form-signup' action='/users/signup' method='post')
-                input(type='hidden' name='_csrf' value=csrfToken)               
+                input(type='hidden' name='_csrf' value=csrfToken)
+                //- Name.
+                .form-group
+                  label(for='name') Nome
+                  input.form-control(type='text' name='name' id='name')                              
                 //- Email.
-                //- .form-group.has-error
                 .form-group
                   label(for='email') E-mail
                   input.form-control(type='email' name='email' id='email')
-                  //- input.form-control(type='email' name='email' placeholder='E-mail' required maxlength='40' title='Entre um e-mail válido.')
                 //- Password.
                 .form-group
                   label(for='password') Senha
@@ -50,6 +52,11 @@ html(lang='en')
         // Form validation.
         $('#form-signup').validate({
           rules:{
+            name: {
+              required: true,
+              minlength: 2,
+              maxlength: 40             
+            },          
             eamil: {
               required: true,
               email: true

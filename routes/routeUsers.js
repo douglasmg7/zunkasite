@@ -10,6 +10,8 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 // Personal modules.
 const log = require('../config/log');
+const User = require('../model/user');
+const EmailConfirmation = require('../model/emailConfirmation');
 
 // Transporter object using the default SMTP transport.
 let transporter = nodemailer.createTransport({
@@ -42,38 +44,40 @@ router.get('/login', (req, res, next)=>{
 
 // Confirm signup.
 router.get('/login/:token', (req, res, next)=>{
-  // Get temp user.
-  redis.get(`user:${req.params.token}`, (err, tempUser)=>{
-    log.info('tempUser', tempUser);
+  EmailConfirmation.findOne({ token: req.params.token }, (err, emailConfirmation)=>{
     // Internal error.
     if (err) { 
       log.error(err, Error().stack);
       req.flash('error', 'Serviço indisponível.');
       return res.redirect('/users/login/');
-    }        
-    // Not exist token with temp user.
-    if (!tempUser) { 
-      req.flash('error', 'Solicitação de criação de conta expirou.');
-      return res.redirect('/users/login/');
-    }
-    // Temp user found.
-    else {
-      const objUser = JSON.parse(tempUser);
-      redis.set(`user:${objUser.email}`, tempUser, err=>{
-        if(err) {
+    }  
+    // Found Email confirmation.    
+    if (emailConfirmation) { 
+      // Create the new user.
+      let newUser = new User();
+      newUser.name = emailConfirmation.name;
+      newUser.email = emailConfirmation.email;
+      newUser.password = emailConfirmation.password;
+      newUser.group = ['admin'];
+      newUser.status = 'active';
+      // Save.
+      newUser.save((err, result)=>{
+        if (err) { 
           log.error(err, new Error().stack);
           res.falsh('error', 'Não foi possível confirmar o cadastro.\nFavor entrar em contato com o suporte técnico.');
           res.redirect('/users/login/');
-          return;
         }
-        redis.del(`user:${req.params.token}`, err=>{
-          if (err) { log.error(err, new Error().stack); }
-        });
+        emailConfirmation.remove(err=>{ if (err) { log.error(err, new Error().stack); } });
         req.flash('success', 'Cadastro finalizado com sucesso.');
-        res.redirect('/users/login/');
-      });
-    }
-  });      
+        res.redirect('/users/login/');          
+      });  
+    } 
+    // No email confirmation.
+    else {
+      req.flash('error', 'Solicitação de criação de conta expirou.');
+      return res.redirect('/users/login/');    
+    }  
+  })     
 });
 
 // Login request.

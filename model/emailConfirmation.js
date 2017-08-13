@@ -6,10 +6,8 @@ let schema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, index: { unique : true}, required: true },
   password: { type: String, required: true },
-  group: { type: Array, required: true },
-  status: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
-  ModifiedAt: { type: Date, default: Date.now }
+  token: { type: String},  
+  createdAt: { type: Date, expires: '24h', default: Date.now } // 2 horas (2 x 60 x 60 = 7200).
 });
 // Encrypt password.
 schema.methods.encryptPassword = function(password){
@@ -20,5 +18,5 @@ schema.methods.validPassword = function(password){
   return bcrypt.compareSync(password, this.password);
 };
 
-module.exports = mongoose.model('User', schema);
+module.exports = mongoose.model('EmailConfirmation', schema);
 

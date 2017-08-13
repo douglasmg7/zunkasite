@@ -7,7 +7,9 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 // My moudles.
 const log = require('./log');
+const Cart = require('../model/cart');
 const User = require('../model/user');
+const EmailConfirmation = require('../model/emailConfirmation')
 
 // Transporter object using the default SMTP transport.
 let transporter = nodemailer.createTransport({
@@ -20,19 +22,18 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-// How to save user on the session.
+// How to save user id on the session.
 passport.serializeUser(function(user, done) {
   log.info('passport.serialize');
   done(null, user.email);
 });
 
-// Use the user saved in the session to retrive the data.
+// Use the user id saved in the session to retrive the data.
 passport.deserializeUser(function(id, done) {
   log.info('passport.deserialize');
   // log.info('id: ', id);
-  redis.get(`user:${id}`, (err, value)=>{
-    // log.info('user: ', value);
-    done(null, JSON.parse(value));
+  User.findOne({email: id}, (err, user)=>{
+    done(null, user)
   });
 });
 
@@ -43,6 +44,8 @@ passport.use('local.signup', new LocalStrategy({
   passReqToCallback: true
 }, function(req, email, password, done){
   // Validation.
+  req.checkBody('name', 'Nome deve conter pelo menos 2 caracteres.').isLength({ min: 2});
+  req.checkBody('name', 'Nome deve conter no máximo 40 caracteres.').isLength({ max: 40});
   req.checkBody('email', 'E-mail inválido.').isEmail();
   req.checkBody('password', 'Senha deve conter pelo menos 8 caracteres.').isLength({ min: 8});
   req.checkBody('password', 'Senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
@@ -54,31 +57,29 @@ passport.use('local.signup', new LocalStrategy({
       messages.push(result.array()[0].msg);
       return done(null, false, req.flash('error', messages));
     }    
-    // Verify if user exist.
-    redis.get(`user:${req.body.email}`, (err, redisUser)=>{
+    // Find user.
+    User.findOne({email: email}, (err, user)=>{
       if (err) { return done(err, { message: 'Internal error.'} ); }
-      if (redisUser) { return done(null, false, { message: 'E-mail já cadastrado.' }); }
-      // Create user.
-      const cryptPassword = bcrypt.hashSync(req.body.password.trim(), bcrypt.genSaltSync(5), null);
-      const newUser = {
-        email: req.body.email,
-        password: cryptPassword,
-        group: 'admin',  // client
-        status: 'emailConfirm'
-      };        
+      if (user) { return done(null, false, { message: 'E-mail já cadastrado.' }); }
       // Create a radom key.
-      crypto.randomBytes(20, function(err, buf) {
+      crypto.randomBytes(20, function(err, rawToken) {
         if (err) { 
           log.error(err, new Error().stack);
           return done(err, false, { message: 'Serviço indisponível.'});
         }
-        var token = buf.toString('hex');
-        // Create temp user disponible for 2 horas (2 x 60 x 60 = 7200).
-        redis.setex(`user:${token}`, 7200, JSON.stringify(newUser), err=>{
+        let token = rawToken.toString('hex')
+        // Create the new user.
+        let emailConfirmation = new EmailConfirmation();
+        emailConfirmation.name = req.body.name;
+        emailConfirmation.email = req.body.email;
+        emailConfirmation.password = emailConfirmation.encryptPassword(req.body.password);
+        emailConfirmation.token = token;
+        // Save.
+        emailConfirmation.save((err, result)=>{
           if (err) { 
             log.error(err, new Error().stack);
             return done(err, false, { message: 'Serviço indisponível.'});
-          }
+          }     
           let mailOptions = {
                 from: 'dev@zunka.com.br',
                 to: req.body.email,
@@ -97,7 +98,7 @@ passport.use('local.signup', new LocalStrategy({
           //   }
           // }); 
           req.flash('success', `Foi enviado um e-mail para ${req.body.email} com instruções para completar o cadastro.`);
-          done(null, newUser);
+          done(null, emailConfirmation);               
         });
       });
     });
@@ -116,35 +117,28 @@ passport.use('local.signin', new LocalStrategy({ usernameField: 'email', passwor
       messages.push(result.array()[0].msg);
       return done(null, false, req.flash('error', messages));
     }    
-    redis.get(`user:${req.body.email}`, (err, strUser)=>{
+    User.findOne({ email: email}, (err, user)=>{
       if (err) { 
         log.error(`Passport.use - local strategy - Database error: ${err}`); 
         return done(err, false, {message: 'Internal error.'}); 
       }
       // User not found.
-      if (!strUser) { 
+      if (!user) { 
         log.warn(`email ${email} not found on database.`); 
         return done(null, false, { message: 'Usuário não cadastrado.'} ); 
       }
-      let user = JSON.parse(strUser);
       // Password match.
-      if (bcrypt.compareSync(req.body.password, user.password)) {
-        // Merge cart from session.
+      if (user.validPassword(password)) {
+       // Merge cart from session.
         redis.get(`cart:${req.sessionID}`, (err, sessCart)=>{
           if (sessCart) {
             // Get authenticated user cart.
             redis.get(`cart:${user.email}`, (err, userCart)=>{
-              let cart;
-              if (userCart) {
-                cart = new Cart(JSON.parse(userCart));
-              } else {
-                cart = new Cart();
-              }
+              let cart = userCart ? new Cart(JSON.parse(userCart)) : new Cart();
               // Merge anonymous cart to authenticated user cart.
               cart.mergeCart(JSON.parse(sessCart));
               redis.del(`cart:${req.sessionID}`);
               redis.set(`cart:${user.email}`, JSON.stringify(cart), (err)=>{
-                // log.warn('merged cart: ', JSON.stringify(cart));
                 return done(null, user); 
               });   
             }); 
@@ -154,10 +148,9 @@ passport.use('local.signin', new LocalStrategy({ usernameField: 'email', passwor
             return done(null, user); 
           }        
         });
-      } 
+      }
       // Wrong password.
       else {
-        log.warn(`Incorrect password for user ${email}`);
         return done(null, false, { message: 'Senha incorreta.'} ); 
       }
     });

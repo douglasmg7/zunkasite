@@ -285,7 +285,7 @@
       // Download dealer images from dealer server.
       downloadDealerImages(product){
         let self = this;
-        this.$http.put(`${wsPath.allNations}/download-dealer-images/${product._id}`)
+        this.$http.put(`${wsPath.allNations}/download-dealer-images/${product._id}`, { headers: { 'csrf-token': this.csrfToken } })
           .then(()=>{
           })
           .catch((err)=>{ console.error(err); });
@@ -309,7 +309,7 @@
             formData.append('pictures[]', files[i]);
             // formData.append('photos[]', files[i], files[i].name);
           }
-          this.$http.put(`${wsPath.store}/upload-product-images/${this.product._id}`, formData)
+          this.$http.put(`${wsPath.store}/upload-product-images/${this.product._id}`, formData, { headers: { 'csrf-token': this.csrfToken } })
             .then((result)=>{
               result.body.imageNames.forEach(function(imageName){
                 self.product.images.push({name: imageName, selected: false});

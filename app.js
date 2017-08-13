@@ -54,85 +54,53 @@ const routeWsAllNations = require('./routes/routeWsAllNations');
 const routeWsStore = require('./routes/routeWsStore');
 const routeConfigProducts = require('./routes/routeConfigProducts');
 const routeTest = require('./routes/routeTest');
-
 // Node env.
 log.info(`NODE_ENV: ${process.env.NODE_ENV}`);
-
 // Transaction log - no log in test mode.
 if (app.get('env') !== 'test') {
   app.use(morgan('dev'));
 }
-
+// For cookie and json web token
+app.set('secret', 'd7ga8gat3kaz0m');
+// Pretty in development.
+if (app.get('env') === 'development') {
+  app.locals.pretty = true;
+}
+// View engine setup.
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 // Statics
 app.use(express.static(path.join(__dirname, 'dist/')));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components/')));
 app.use('/semantic', express.static(path.join(__dirname, 'semantic/')));
-
-// For cookie and json web token
-app.set('secret', 'd7ga8gat3kaz0m');
-
-// Pretty in development
-if (app.get('env') === 'development') {
-  app.locals.pretty = true;
-}
-
-// View engine setup.
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
-
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-
-// Passport does not directly manage your session, it only uses the session.
-// So you configure session attributes (e.g. life of your session) via express
-// define which db to use.
-let dbUrl = null;
-app.get('env') === 'test' ? dbUrl = dbConfig.urlUnitTest : dbUrl = dbConfig.url;
-var sessionOpts = {
-  secret: app.get('secret'),
-  resave: false, // Save just when changed.
-  saveUninitialized: false, // Create if have some thing.
-  cookie: { maxAge: 2419200000 }, // configure when sessions expires in ms.
-  store: new redisStore({ client: redis })   // Use a current connection.
-  // store: new MongoStore({ url: dbUrl })   // Use a current connection.
-};
-// if (app.get('env') === 'production') {
-//   app.set('trust proxy', 1); // trust first proxy
-//   sessionOpts.cookie.secure = true; // serve secure cookies
-// }
-
 // webpack HMR
 app.use(webpackDevMiddleware);
 app.use(webpackHotMiddleware);
 // body.
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-// Validation.
-app.use(validator({
-  customValidators: {
-    isCpf: function(value){ return cpfValidator.validate(value); }
-  }
-}));
-
+// Session options.
+var sessionOpts = {
+  secret: app.get('secret'),
+  resave: false, // Save just when changed.
+  saveUninitialized: false, // Create if have some thing.
+  cookie: { maxAge: 2419200000 }, // configure when sessions expires in ms.
+  store: new redisStore({ client: redis })
+};
+// if (app.get('env') === 'production') {
+//   app.set('trust proxy', 1); // trust first proxy
+//   sessionOpts.cookie.secure = true; // serve secure cookies
+// }
 // authentication
 app.use(cookieParser(app.get('secret')));
 app.use(session(sessionOpts));
-// // Debug.
-// app.use((req, res, next)=>{
-//   // Log request.
-//   log.warn('REQUEST: ', req.method + ' - ' + req.path);
-//   log.warn('headers: ', req.headers);
-//   log.warn('body: ', JSON.stringify(req.body));
-//   next();
-// });
-
 app.use(csurf());
-// app.use(csrf({ cookie: true }));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 require('./config/passport');
-
 // Set vars for using in views.
 app.use((req, res, next)=>{
   // log.debug('Generated csrfToken: ', req.csrfToken());
@@ -141,13 +109,17 @@ app.use((req, res, next)=>{
   res.locals.path = req.path;
   next();
 });
-
+// Validation.
+app.use(validator({
+  customValidators: {
+    isCpf: function(value){ return cpfValidator.validate(value); }
+  }
+}));
 // Routes.
 // Web service - they no need the cart middleware.
 app.use('/ws/manual', routeWsAllNations);
 app.use('/ws/allnations', routeWsAllNations);
 app.use('/ws/store', routeWsStore);
-
 // Cart.
 app.use(function(req, res, next) {
   // log.warn('req.sessionID: ', req.sessionID);
@@ -173,7 +145,6 @@ app.use(function(req, res, next) {
     }
   })  
 });
-
 // Routes.
 // Users.
 app.use('/users', routeUsers);
@@ -183,20 +154,17 @@ app.use('/configProducts', routeConfigProducts);
 app.use('/test', routeTest);
 // Site.
 app.use('/', routeSite);
-
 // CSRF error handler.
 app.use(function (err, req, res, next) {
   if (err.code !== 'EBADCSRFTOKEN') return next(err)
   log.warn('CRSF attack!');
   res.status(403).send('Form tampered!');
 })
-
 // Error handlers.
 app.use(function(err, req, res, next) {
-  res.status(500).send({error: 'Internal server error.'});
   log.error(err.stack);
+  res.status(500).send({error: 'Internal server error.'});
 });
-
 // // Development error handler.
 // // Will print stacktrace.
 // if (app.get('env') === 'development') {
@@ -219,12 +187,14 @@ app.use(function(err, req, res, next) {
 //   });  
 // }
 
-// Catch 404 and forward to error handler.
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+
+
+// // Catch 404 and forward to error handler.
+// app.use(function(req, res, next) {
+//   var err = new Error('Not Found');
+//   err.status = 404;
+//   next(err);
+// });
 
 // function authenticationMiddleware () {
 //   return function (req, res, next) {
@@ -234,5 +204,10 @@ app.use(function(req, res, next) {
 //     res.redirect('/');
 //   };
 // }
+
+// Catch 404.
+app.use(function(req, res, next) {
+  res.status(404).send('Nada aqui!');
+});
 
 module.exports = app;
