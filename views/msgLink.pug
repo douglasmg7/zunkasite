@@ -1,0 +1,21 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Redefinição de senha.
+    include components/bootstrap.css.pug
+  body
+    h1 #{warningMsg}
+    h1 #{linkMsg}
+    h1 #{linkUrl}
+    .container
+      .row
+        .col-md-4
+        .col-md-4
+          .alert.alert-warning(role='alert') 
+            p.text-center #{warningMsg} 
+          a(href=linkUrl) #{linkMsg}
+        .col-md-4
+    include components/jquery.js.pug
+    include components/bootstrap.js.pug

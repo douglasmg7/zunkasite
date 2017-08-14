@@ -12,6 +12,7 @@ const nodemailer = require('nodemailer');
 const log = require('../config/log');
 const User = require('../model/user');
 const EmailConfirmation = require('../model/emailConfirmation');
+const PasswordReset = require('../model/passwordReset');
 
 // Transporter object using the default SMTP transport.
 let transporter = nodemailer.createTransport({
@@ -118,56 +119,57 @@ router.post('/forgot', (req, res, next)=>{
       return;
     } 
     else {
-      redis.get(`user:${req.body.email}`, (err, user)=>{
+      User.findOne({ email: req.body.email }, (err, user)=>{
         // No exist.
         if(!user){
           req.flash('error', `O email ${req.body.email} não está cadastrado no sistema.`);
           res.redirect('back');
           return;
-        }
-        // Email exist.
-        else {
-          // Create a radom key.
-          crypto.randomBytes(20, function(err, buf) {
+        }        
+        // Create token.
+        crypto.randomBytes(20, function(err, buf) {
+          if (err) { 
+            log.error(err, new Error().stack);
+            req.flash('error', 'Serviço indisponível.');
+            res.redirect('back');            
+            return; 
+          }
+          var token = buf.toString('hex');
+          // Include on db.
+          new PasswordReset({
+            email: user.email,
+            token: token
+          })
+          .save(err=>{
             if (err) { 
               log.error(err, new Error().stack);
               req.flash('error', 'Serviço indisponível.');
               res.redirect('back');            
               return; 
             }
-            var token = buf.toString('hex');
-            // Make token disponible for 2 horas (2 x 60 x 60 = 7200).
-            redis.setex(`reset:${token}`, 7200, req.body.email, err=>{
-              if (err) { 
-                log.error(err, new Error().stack);
-                req.flash('error', 'Serviço indisponível.');
-                res.redirect('back');            
-                return; 
-              }
-              let mailOptions = {
-                  from: 'dev@zunka.com.br',
-                  to: req.body.email,
-                  subject: 'Solicitação para Redefinir senha.',
-                  text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a redefinição da senha de sua conta.\n\n' + 
-                        'Por favor click no link, ou cole no seu navegador de internet para completar o processo.\n\n' + 
-                        'https://' + req.headers.host + '/users/reset/' + token + '\n\n' +
-                        // 'Esta solicitação de redefinição expira em duas horas.\n' +
-                        'Se não foi você que requisitou esta redefinição de senha, por favor ignore este e-mail e sua senha permanecerá a mesma.'
-              }; 
-              log.info('text', mailOptions.text);
-              // Send email.
-              transporter.sendMail(mailOptions, function(err, info){
-                if(err){
-                  log.error(err, new Error().stack);
-                } else {
-                  log.info(`Reset email sent to ${req.body.email}`);
-                }
-              });
-              req.flash('success', `Foi enviado um e-mail para ${req.body.email} com instruções para a alteração da senha.`)
-              res.redirect('back');
-            });
+            let mailOptions = {
+                from: 'dev@zunka.com.br',
+                to: req.body.email,
+                subject: 'Solicitação para Redefinir senha.',
+                text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a redefinição da senha de sua conta.\n\n' + 
+                      'Por favor click no link, ou cole no seu navegador de internet para completar o processo.\n\n' + 
+                      'https://' + req.headers.host + '/users/reset/' + token + '\n\n' +
+                      // 'Esta solicitação de redefinição expira em duas horas.\n' +
+                      'Se não foi você que requisitou esta redefinição de senha, por favor ignore este e-mail e sua senha permanecerá a mesma.'
+            }; 
+            log.info('link', 'https://' + req.headers.host + '/users/reset/' + token + '\n\n');
+            // // Send email.
+            // transporter.sendMail(mailOptions, function(err, info){
+            //   if(err){
+            //     log.error(err, new Error().stack);
+            //   } else {
+            //     log.info(`Reset email sent to ${req.body.email}`);
+            //   }
+            // });
+            req.flash('success', `Foi enviado um e-mail para ${req.body.email} com instruções para a alteração da senha.`)
+            res.redirect('back');
           });
-        }
+        });        
       });
     }
   });
@@ -175,7 +177,20 @@ router.post('/forgot', (req, res, next)=>{
 
 // Reset password page.
 router.get('/reset/:token', (req, res, next)=>{
-  res.render('reset', req.flash() );
+  PasswordReset.findOne({ token: req.params.token }, (err, passwordReset)=>{
+    if (!err) {
+      // log.error(err, Error().stack);
+      return res.status(500).render('error/500', { message: 'Não conseguimos encontrar sua chave.'});
+    }
+    // Found.
+    if (passwordReset) {
+      res.render('reset', req.flash() );
+    } 
+    // Not found.
+    else {
+      return res.render('msgLink', { warningMsg: 'Chave para alteração de senha expirou.', linkMsg: 'Deseja criar uma nova chave', linkUrl: '/users/forgot/'});
+    }
+  });
 });
 
 // Reset password.
@@ -184,7 +199,6 @@ router.post('/reset/:token', (req, res, next)=>{
   req.checkBody('password', 'Senha deve conter pelo menos 8 caracteres.').isLength({ min: 8});
   req.checkBody('password', 'Senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
   req.checkBody('password', 'Senha e Confirmação da senha devem ser iguais.').equals(req.body.passwordConfirm);
-  req.sanitizeBody("email").normalizeEmail();
   req.getValidationResult().then(function(result) {
     if (!result.isEmpty()) {
       let messages = [];
@@ -194,42 +208,52 @@ router.post('/reset/:token', (req, res, next)=>{
       return;
     } 
     else {
-      redis.get(`reset:${req.params.token}`, (err, email)=>{
+      PasswordReset.findOne({ token: req.params.token }, (err, passwordReset)=>{
         // Internal error.
-        if (err) { 
+        if (!err) { 
           log.error(err, Error().stack);
-          req.flash('error', 'Serviço indisponível.');
-          return res.redirect('back');
+          return res.render('/error/internal', { message: 'Não conseguimos encontrar sua chave.'});
         }        
         // Not exist token to reset password.
-        if (!email) { 
-          req.flash('error', 'Chave para alteração da senha expirou.');
-          return res.redirect('back');
+        if (!passwordReset) { 
+          return res.render('msgLink', { warningMsg: 'Chave para alteração de senha expirou.', linkMsg: 'Deseja criar uma nova chave', linkUrl: '/users/forgot/'});
+          // return res.redirect('back');
         }
         // Token found.
         else {
-          redis.get(`user:${email}`, (err, user)=>{
+          User.findOne({ email: passwordReset.email }, (err, user)=>{
             // Internal error.
             if (err) { 
               log.error(err, Error().stack);
-              req.flash('error', 'Serviço indisponível.');
-              return res.redirect('back');
-            }             
-            user = JSON.parse(user);
-            user.password = bcrypt.hashSync(req.body.password.trim(), bcrypt.genSaltSync(5), null);
-            redis.set(`user:${email}`, JSON.stringify(user), err=>{
-              if(err) {
-                log.error(err, new Error().stack);
-                res.falsh('error', 'Não foi possível alterar a senha.\nFavor entrar em contato com o suporte técnico.');
-                res.redirect('reset', req.flash() );
-                return;
-              }
-              req.flash('success', 'Senha alterada com sucesso.');
-              res.redirect('/users/login/');
-            });
-          });
+              return res.render('msgLink', { warningMsg: 'Sinto muito, estamos com problemas, alguma coisa deu errada no servidor.', linkMsg: '', linkUrl: ''});
+            }
+            // User not found.
+            if (!user) {
+              req.flash('error', 'Usuário não cadastrado.');
+              return res.render('msgLink', { msgLink: 'Deseja criar um cadastro?', link: 'signup/'});
+            }
+            // User found.
+            else {
+              // Update password.      
+              user.password = user.encryptPassword(req.body.password);
+              user.save(err=>{
+                if(err) {
+                  log.error(err, new Error().stack);
+                  res.falsh('error', 'Não foi possível alterar a senha.\nFavor entrar em contato com o suporte técnico.');
+                  res.redirect('reset', req.flash() );
+                  return;
+                }
+                // Remove password reset.
+                passwordReset.remove(err=>{
+                  if (err) { log.error(err, new Error().stack); }
+                })
+                req.flash('success', 'Senha alterada com sucesso.');
+                res.redirect('/users/login/');              
+              })                 
+            }
+          })
         }
-      });      
+      })     
     }
   });
 });
