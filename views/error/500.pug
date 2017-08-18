@@ -7,18 +7,20 @@ html(lang="en")
   body
     h1 500
     h2 Erro inesperado :(
-    h3 Ocorreu um erro e sua requisição não pode ser finalizada
-    h4 Por favor, tente mais tarde. Esperamos que até lá o problema tenha sido resolvido.
+    h3 Ocorreu um erro e sua requisição não pode ser finalizada.
+    h3 Por favor, tente mais tarde. Esperamos que até lá o problema já tenha sido resolvido.
   style.
-    body {
-      background-color: #F2F2F2;
+    * {
+      font-family: arial;
+      font-weight: lighter;
     }
-    h1, h2 {
-      color: #0072C6;
-    }
-    h3, h4 {
-      color: #9BA5B2;
-    }
+    body { background-color: #F2F2F2; padding: 1em}
+    h1 { font-size: 7em; margin: 0;}
+    h2 { font-size: 2em; margin: 0em 0em 1em 0em}
+    h3 { font-size: 1.2em; margin: .5em 0em 0em 0em}
+    h1, h2 { color: #0072C6; }
+    h3 { color: hsl(0, 0%, 40%); }
+    h3.err { color: red; margin-top: 2em; }
 
 
 

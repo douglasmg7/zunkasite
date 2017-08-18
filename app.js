@@ -156,45 +156,26 @@ app.use('/test', routeTest);
 app.use('/', routeSite);
 // CSRF error handler.
 app.use(function (err, req, res, next) {
-  if (err.code !== 'EBADCSRFTOKEN') return next(err)
+  if (err.code !== 'EBADCSRFTOKEN') return next(err);
   log.warn('CRSF attack!');
-  res.status(403).send('Form tampered!');
+  res.status(403).send('CRSF attack!');
 })
-// Error handlers.
-app.use(function(err, req, res, next) {
-  log.error(err.stack);
-  res.status(500).send({error: 'Internal server error.'});
+
+
+// Production error handler (using default error handle for development).
+if (app.get('env') !== 'development') {
+  app.use(function(err, req, res, next) {
+    log.error(err.stack);
+    res.status(err.status || 500).render('error/500');
+  });  
+}
+
+// Catch 404.
+app.use(function(req, res, next) {
+  res.status(404).send('Página não encontrada.');
 });
-// // Development error handler.
-// // Will print stacktrace.
-// if (app.get('env') === 'development') {
-//   app.use(function(err, req, res, next) {
-//     res.status(err.status || 500);
-//     res.render('error', {      
-//       message: err.message,
-//       error: err
-//     });
-//   });
-// // Production error handler.
-// // No stacktraces leaked to user.  
-// } else {
-//   app.use(function(err, req, res, next) {
-//     res.status(err.status || 500);
-//     res.render('error', {
-//       message: err.message,
-//       error: {}
-//     });
-//   });  
-// }
 
-
-
-// // Catch 404 and forward to error handler.
-// app.use(function(req, res, next) {
-//   var err = new Error('Not Found');
-//   err.status = 404;
-//   next(err);
-// });
+module.exports = app
 
 // function authenticationMiddleware () {
 //   return function (req, res, next) {
@@ -205,9 +186,4 @@ app.use(function(err, req, res, next) {
 //   };
 // }
 
-// Catch 404.
-app.use(function(req, res, next) {
-  res.status(404).send('Nada aqui!');
-});
-
-module.exports = app;
+;

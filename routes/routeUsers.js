@@ -178,17 +178,14 @@ router.post('/forgot', (req, res, next)=>{
 // Reset password page.
 router.get('/reset/:token', (req, res, next)=>{
   PasswordReset.findOne({ token: req.params.token }, (err, passwordReset)=>{
-    if (!err) {
-      // log.error(err, Error().stack);
-      return res.status(500).render('error/500', { message: 'Não conseguimos encontrar sua chave.'});
-    }
+    if (err) { return next(err); }
     // Found.
     if (passwordReset) {
       res.render('reset', req.flash() );
     } 
     // Not found.
     else {
-      return res.render('msgLink', { warningMsg: 'Chave para alteração de senha expirou.', linkMsg: 'Deseja criar uma nova chave', linkUrl: '/users/forgot/'});
+      return res.render('messageLink', { message: 'Chave para alteração de senha expirou.', linkMessage: 'Deseja criar uma nova chave?', linkUrl: '/users/forgot/'});
     }
   });
 });
