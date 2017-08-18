@@ -206,44 +206,27 @@ router.post('/reset/:token', (req, res, next)=>{
     } 
     else {
       PasswordReset.findOne({ token: req.params.token }, (err, passwordReset)=>{
-        // Internal error.
-        if (!err) { 
-          log.error(err, Error().stack);
-          return res.render('/error/internal', { message: 'Não conseguimos encontrar sua chave.'});
-        }        
+        if (err) { return next(err); }     
         // Not exist token to reset password.
         if (!passwordReset) { 
-          return res.render('msgLink', { warningMsg: 'Chave para alteração de senha expirou.', linkMsg: 'Deseja criar uma nova chave', linkUrl: '/users/forgot/'});
-          // return res.redirect('back');
+          return res.render('messageLink', { message: 'Chave para alteração de senha expirou.', linkMessage: 'Deseja criar uma nova chave?', linkUrl: '/users/forgot/'});          
         }
         // Token found.
         else {
           User.findOne({ email: passwordReset.email }, (err, user)=>{
-            // Internal error.
-            if (err) { 
-              log.error(err, Error().stack);
-              return res.render('msgLink', { warningMsg: 'Sinto muito, estamos com problemas, alguma coisa deu errada no servidor.', linkMsg: '', linkUrl: ''});
-            }
+            if (err) { return next(err); }  
             // User not found.
             if (!user) {
-              req.flash('error', 'Usuário não cadastrado.');
-              return res.render('msgLink', { msgLink: 'Deseja criar um cadastro?', link: 'signup/'});
+              return res.render('messageLink', { message: 'Usuário não cadastrado.', linkMessage: 'Deseja criar um cadastro?', linkUrl: '/users/signup/'});          
             }
             // User found.
             else {
               // Update password.      
               user.password = user.encryptPassword(req.body.password);
               user.save(err=>{
-                if(err) {
-                  log.error(err, new Error().stack);
-                  res.falsh('error', 'Não foi possível alterar a senha.\nFavor entrar em contato com o suporte técnico.');
-                  res.redirect('reset', req.flash() );
-                  return;
-                }
+                if(err) { return next(err); }
                 // Remove password reset.
-                passwordReset.remove(err=>{
-                  if (err) { log.error(err, new Error().stack); }
-                })
+                passwordReset.remove(err=>{ if(err) { return next(err); } })
                 req.flash('success', 'Senha alterada com sucesso.');
                 res.redirect('/users/login/');              
               })                 
