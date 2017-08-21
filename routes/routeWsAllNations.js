@@ -11,6 +11,7 @@ const downloadAllNationsImage = require('../bin/downloadAllNationsImage');
 // page size for pagination
 const PAGE_SIZE = 50;
 const DIR_IMG_PRODUCTS = path.join(__dirname, '..', '/dist/img/allnations/products');
+
 // get products
 router.get('/', function (req, res) {
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
@@ -98,6 +99,7 @@ router.put('/set-commercialize/:_id', function(req, res) {
     res.json({'status': 'fail'});
   });
 });
+
 // get dealer images
 router.put('/download-dealer-images/:id', (req, res)=>{
   mongo.db.collection(dbConfig.collStoreProducts).findOne(
@@ -148,6 +150,7 @@ router.put('/download-dealer-images/:id', (req, res)=>{
     res.json('status: fail');
   });
 });
+
 // // get dealer images
 // router.put('/download-dealer-images/:id', (req, res)=>{
 //   mongo.db.collection(dbConfig.collStoreProducts).findOne(
@@ -187,4 +190,19 @@ router.put('/download-dealer-images/:id', (req, res)=>{
 //     res.json('status: fail');
 //   });
 // });
+
+// Check permission.
+function checkPermission (req, res, next) {
+  // Should be admin.
+  if (req.isAuthenticated() && req.user.group.includes('admin')) {
+    return next();
+  }
+  if (req.path === 'GET') {
+    res.redirect('/');
+  } else {
+    log.warn(req.method, req.originalUrl, ' - permission denied');
+    res.json('status: permission denied');    
+  }
+}
+
 module.exports = router;

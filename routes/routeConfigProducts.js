@@ -8,11 +8,6 @@ router.get('/store', checkPermission, (req, res, next)=>{
   res.render('productsStore', { user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined }, csrfToken: req.csrfToken() });
 });
 
-// // Manual products.
-// router.get('/manual', (req, res)=>{
-//   res.render('productsManual', { user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined } });
-// });
-
 // All nations products.
 router.get('/allnations', checkPermission, (req, res, next)=>{
   res.render('productsAllNations', { user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined } });

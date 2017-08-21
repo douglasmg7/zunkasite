@@ -73,7 +73,7 @@ router.get('/dropdown', function(req, res) {
 });
 
 // Insert a product.
-router.post('/', function(req, res) {
+router.post('/', checkPermission, function(req, res) {
   console.warn('insertProduct-csrf: ', req.csrfToken());
   mongo.db.collection(dbConfig.collStoreProducts).insert(req.body.product)
   .then(result=>{
@@ -90,7 +90,7 @@ router.post('/', function(req, res) {
 });
 
 // Update a product.
-router.put('/:id', function(req, res) {
+router.put('/:id', checkPermission, function(req, res) {
   // Error if try to update document id.
   const product_id = req.body._id;
   const images = req.body.images;
@@ -135,7 +135,7 @@ router.put('/:id', function(req, res) {
 });
 
 // Delete a product.
-router.delete('/:_id', function(req, res) {
+router.delete('/:_id', checkPermission, function(req, res) {
   // Error if try to update document id.
   delete req.body._id;
   mongo.db.collection(dbConfig.collStoreProducts).deleteOne( {_id: new ObjectId(req.params._id)} )
@@ -153,7 +153,7 @@ router.delete('/:_id', function(req, res) {
 });
 
 // Upload product pictures.
-router.put('/upload-product-images/:_id', (req, res)=>{
+router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
   const form = formidable.IncomingForm();
   const DIR_IMG_PRODUCT = path.join(__dirname, '..', 'dist/img/', req.params._id);
   const MAX_FILE_SIZE_UPLOAD = 10 * 1024 * 1024;
@@ -195,7 +195,7 @@ router.put('/upload-product-images/:_id', (req, res)=>{
 });
 
 // Delete a product image.
-router.put('/remove-product-image/:_id/:urlImage', (req, res)=>{
+router.put('/remove-product-image/:_id/:urlImage', checkPermission, (req, res)=>{
   // Some security, just permit remove .jpeg extension file.'
   if (path.extname(req.params.urlImage) === '.jpeg') {
     const IMAGE_PATH = path.join(__dirname, '..', '/dist/img', req.params._id, req.params.urlImage);
@@ -212,5 +212,15 @@ router.put('/remove-product-image/:_id/:urlImage', (req, res)=>{
     });    
   }
 });
+
+// Check permission.
+function checkPermission (req, res, next) {
+  // Should be admin.
+  if (req.isAuthenticated() && req.user.group.includes('admin')) {
+    return next();
+  }
+  log.warn(req.method, req.originalUrl, ' - permission denied');
+  res.json('status: permission denied');
+}
 
 module.exports = router;

@@ -26,12 +26,12 @@ let transporter = nodemailer.createTransport({
 });
 
 // Signup page.
-router.get('/signup', (req, res, next)=>{
+router.get('/signup', checkNotLogged, (req, res, next)=>{
   res.render('signup', req.flash());
 });
 
 // Signup request.
-router.post('/signup', passport.authenticate('local.signup', {
+router.post('/signup', checkNotLogged, passport.authenticate('local.signup', {
   successRedirect: '/users/login',
   failureRedirect: '/users/signup',
   badRequestMessage: 'Campo(s) não preenchidos.',
@@ -39,7 +39,7 @@ router.post('/signup', passport.authenticate('local.signup', {
 }));
 
 // Login page.
-router.get('/login', (req, res, next)=>{
+router.get('/login', checkNotLogged, (req, res, next)=>{
   res.render('login', req.flash());
 });
 
@@ -82,7 +82,7 @@ router.get('/login/:token', (req, res, next)=>{
 });
 
 // Login request.
-router.post('/login', passport.authenticate('local.signin', {
+router.post('/login', checkNotLogged, passport.authenticate('local.signin', {
   successRedirect: '/',
   failureRedirect: 'login',
   badRequestMessage: 'Falta credenciais.',
@@ -101,7 +101,7 @@ router.get('/logout', (req, res, next)=>{
 });
 
 // Forgot password page.
-router.get('/forgot', (req, res, next)=>{
+router.get('/forgot', checkNotLogged, (req, res, next)=>{
   res.render('forgot', req.flash());
 });
 
@@ -284,5 +284,23 @@ router.post('/delete', (req, res, next)=>{
 //   // Message from authentication, who set a flash message with erros.
 //   res.render('loginC', { message: req.flash('error') });
 // });
+
+// Check permission.
+function checkPermission (req, res, next) {
+  // Should be admin.
+  if (req.isAuthenticated() && req.user.group.includes('admin')) {
+    return next();
+  }
+  res.redirect('/');
+}
+
+// Check not logged.
+function checkNotLogged (req, res, next) {
+  // Should be admin.
+  if (!req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/');
+}
 
 module.exports = router;
