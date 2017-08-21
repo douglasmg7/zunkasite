@@ -45,7 +45,6 @@
 <script>
   /* globals accounting */
   'use strict';
-  import wsPath from '../bin/wsPath';
   import accounting from 'accounting';
   // Components.
   import menuProducts from './menuProducts.vue';
@@ -81,7 +80,7 @@
       // Get products page.
       getProducts(page=1){
         // console.warn('search: ', this.search);
-        this.$http.get(`${wsPath.store}?page=${page}&search=${this.search}`)
+        this.$http.get(`/ws/store?page=${page}&search=${this.search}`)
           .then((res)=>{
             this.products = res.body.products;
             this.page = res.body.page;
@@ -127,7 +126,7 @@
           isNewProduct: true
         };
         // Insert product on db.
-        this.$http.post(`${wsPath.store}/`, { product: this.selectedProduct, _csrf: this.csrfToken })
+        this.$http.post(`/ws/store/`, { product: this.selectedProduct, _csrf: this.csrfToken })
           .then((res)=>{
             // Include _id received from db.
             this.selectedProduct._id = res.body._id;
@@ -168,7 +167,7 @@
       },      
       // Get dropdown options.
       getDropdown(){
-        this.$http.get(`${wsPath.store}/dropdown`)
+        this.$http.get(`/ws/store/dropdown`)
           .then((res)=>{
             this.productMakers = res.body.productMakers;
             this.productCategories = res.body.productCategories;

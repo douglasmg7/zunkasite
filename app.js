@@ -49,7 +49,7 @@ const app = express();
 // Routes.
 const routeUsers = require('./routes/routeUsers');
 const routeSite = require('./routes/routeSite');
-const routeWsManual = require('./routes/routeWsManual');
+// const routeWsManual = require('./routes/routeWsManual');
 const routeWsAllNations = require('./routes/routeWsAllNations');
 const routeWsStore = require('./routes/routeWsStore');
 const routeConfigProducts = require('./routes/routeConfigProducts');
@@ -117,7 +117,7 @@ app.use(validator({
 }));
 // Routes.
 // Web service - they no need the cart middleware.
-app.use('/ws/manual', routeWsAllNations);
+// app.use('/ws/manual', routeWsAllNations);
 app.use('/ws/allnations', routeWsAllNations);
 app.use('/ws/store', routeWsStore);
 // Cart.
@@ -175,15 +175,4 @@ app.use(function(req, res, next) {
   res.status(404).send('Página não encontrada.');
 });
 
-module.exports = app
-
-// function authenticationMiddleware () {
-//   return function (req, res, next) {
-//     if (req.isAuthenticated()) {
-//       return next();
-//     }
-//     res.redirect('/');
-//   };
-// }
-
-;
+module.exports = app;

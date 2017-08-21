@@ -141,7 +141,6 @@
 <script>
   'use strict';
   import accounting from 'accounting';
-  import wsPath from '../bin/wsPath';
   const self = this;
 
   export default {
@@ -216,7 +215,7 @@
           // User not saved new product.
           if (vueSelf.product.isNewProduct) {
             // Delete from db.
-            vueSelf.$http.delete(`${wsPath.store}/${vueSelf.product._id}`, { headers: { 'csrf-token': vueSelf.csrfToken } })
+            vueSelf.$http.delete(`/ws/store/${vueSelf.product._id}`, { headers: { 'csrf-token': vueSelf.csrfToken } })
               .then((res)=>{})
               .catch((err)=>{ console.error(err); });
           } 
@@ -256,7 +255,7 @@
         // Keep product on db, when the windows close.
         this.product.isNewProduct = false;
         // Update product on db.
-        this.$http.put(`${wsPath.store}/${this.product._id}`, this.product, { headers: { 'csrf-token': this.csrfToken } })
+        this.$http.put(`/ws/store/${this.product._id}`, this.product, { headers: { 'csrf-token': this.csrfToken } })
           .then((res)=>{
             // Product list must be updated.
             if (wasNewProduct) {
@@ -271,7 +270,7 @@
       // Delete a product.
       deleteProduct(product){
         // Delete from db.
-        this.$http.delete(`${wsPath.store}/${product._id}`, { headers: { 'csrf-token': this.csrfToken } })
+        this.$http.delete(`/ws/store/${product._id}`, { headers: { 'csrf-token': this.csrfToken } })
           .then((res)=>{
           })
           .catch((err)=>{ console.error(err); });  
@@ -285,7 +284,7 @@
       // Download dealer images from dealer server.
       downloadDealerImages(product){
         let self = this;
-        this.$http.put(`${wsPath.allNations}/download-dealer-images/${product._id}`, { headers: { 'csrf-token': this.csrfToken } })
+        this.$http.put(`/ws/allnations/download-dealer-images/${product._id}`, { headers: { 'csrf-token': this.csrfToken } })
           .then(()=>{
           })
           .catch((err)=>{ console.error(err); });
@@ -309,7 +308,7 @@
             formData.append('pictures[]', files[i]);
             // formData.append('photos[]', files[i], files[i].name);
           }
-          this.$http.put(`${wsPath.store}/upload-product-images/${this.product._id}`, formData, { headers: { 'csrf-token': this.csrfToken } })
+          this.$http.put(`/ws/store/upload-product-images/${this.product._id}`, formData, { headers: { 'csrf-token': this.csrfToken } })
             .then((result)=>{
               result.body.imageNames.forEach(function(imageName){
                 self.product.images.push({name: imageName, selected: false});

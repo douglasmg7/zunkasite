@@ -32,7 +32,6 @@
 <script>
   /* globals accounting */
   'use strict';
-  import wsPath from '../bin/wsPath';
   import accounting from 'accounting';
   // components
   import menuProducts from './menuProducts.vue';
@@ -66,7 +65,7 @@
     methods: {
       // retrive products page
       getProducts(page=1){
-        this.$http.get(`${wsPath.allNations}?page=${page}&search=${this.search}`)
+        this.$http.get(`/ws/allnations?page=${page}&search=${this.search}`)
           .then((res)=>{
             this.products = res.body.products;
             this.page = res.body.page;
