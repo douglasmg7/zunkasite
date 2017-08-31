@@ -23,31 +23,9 @@ html(lang="en")
               if success
                 each suc in success
                   .alert.alert-info(role='alert') 
-                    p.text-center #{suc}               
-              form(action='/users/account/delete' method='post')
-                input(type='hidden' name='_csrf' value=csrfToken)
-                //- Name.
-                .form-group
-                  label Nome completo
-                  input.form-control(type='text' value=user.name name='name' placeholder='Nome completo')                 
-                //- Email.
-                .form-group
-                  label E-mail
-                  input.form-control(type='text' value=user.email name='email' placeholder='e-mail')        
-                //- Cpf.
-                .form-group
-                  label CPF
-                  input.form-control(type='text' name='cpf' placeholder='cpf')
-                //- Barth day.
-                .form-group
-                  label Data de nascimento
-                  input.form-control(type='text' name='birthDay' placeholder='Data de nascimento')
-                //- Phone
-                .form-group
-                  label Telefone
-                  input.form-control(type='text' name='phone' placeholder='Telefone para contato')                                                                              
-                //- Remover conta.
-                input.btn.btn-danger.btn-block(type='submit' value='Remover conta')
+                    p.text-center #{suc}                                                                                          
+              //- Remover conta.
+              a.btn.btn-info.btn-block(href='add-address') Adicionar Endereço
         .col-md-2
     include ../components/jquery.js.pug
     include ../components/bootstrap.js.pug

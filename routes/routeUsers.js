@@ -13,6 +13,7 @@ const log = require('../config/log');
 const User = require('../model/user');
 const EmailConfirmation = require('../model/emailConfirmation');
 const PasswordReset = require('../model/passwordReset');
+const Address = require('../model/address');
 
 // Transporter object using the default SMTP transport.
 let transporter = nodemailer.createTransport({
@@ -256,6 +257,52 @@ router.get('/orders', (req, res, next)=>{
 // Address page.
 router.get('/address', (req, res, next)=>{
   res.render('user/address', req.flash());
+});
+
+// Add address page.
+router.get('/add-address', (req, res, next)=>{
+  res.render('user/addAddress', req.flash());
+});
+
+// Add address.
+router.post('/add-address', (req, res, next)=>{
+  log.info('body', JSON.stringify(req.body));
+  // Validation.
+  req.checkBody('cep', 'Campo CEP deve ser preenchido.').notEmpty();
+  req.checkBody('address', 'Campo ENDEREÇO deve ser preenchido.').notEmpty();
+  req.checkBody('addressNumber', 'Campo NÚMERO deve ser preenchido.').notEmpty();
+  req.checkBody('district', 'Campo BAIRRO deve ser preenchido.').notEmpty();
+  req.checkBody('city', 'Campo CIDADE deve ser preenchido.').notEmpty();
+  req.checkBody('state', 'Campo ESTADO deve ser preenchido.').notEmpty();
+  req.getValidationResult().then(function(result) {
+    if (!result.isEmpty()) {
+      let messages = [];
+      messages.push(result.array()[0].msg);
+      req.flash('error', messages);
+      res.redirect('back');
+      return;
+    } 
+    else {
+      User.findOne({ email: req.user.email }, (err, user)=>{
+        if (err) { return next(err); } 
+
+        let address = {
+          cep: req.body.cep,
+          address: req.body.address,
+          addressNumber: req.body.addressNumber,
+          addressComplement: req.body.addressComplement,
+          district: req.body.district,
+          city: req.body.city,
+          state: req.body.state
+        };  
+        user.address.push(address);
+        user.save(err => {
+          if (err) { return next(err); } 
+          res.redirect('/users/address');
+        });        
+      });
+    }
+  });
 });
 
 // Delete account page.
