@@ -1,0 +1,66 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Conta.
+    include ../components/bootstrap.css.pug
+  body
+    include ../navbar.pug
+    .container
+      .row
+        .col-md-2
+        .col-md-8
+          //- ol.breadcrumb
+            li
+              a(href='/users/account') Conta
+          //- Flash erros.          
+          if error
+            each err in error
+              .alert.alert-danger(role='alert') 
+                p.text-center #{err} 
+          //- Flash success.
+          if success
+            each suc in success
+              .alert.alert-info(role='alert') 
+                p.text-center #{suc}             
+        .col-md-2
+      .row
+        .col-md-4
+          a(href='/users/orders')      
+            .panel.panel-default
+              .panel-body
+                .row
+                  .col-md-1
+                  .col-md-2
+                    h1.glyphicon.glyphicon-shopping-cart 
+                  .col-md-8
+                    h4.text-left Pedidos
+                    p.text-left Acompanhe seus pedidos. 
+                  .col-md-1
+        .col-md-4
+          a(href='/users/address')      
+            .panel.panel-default
+              .panel-body
+                .row
+                  .col-md-1
+                  .col-md-2
+                    h1.glyphicon.glyphicon-home 
+                  .col-md-8
+                    h4.text-left Endereços
+                    p.text-left Altere seus endereços.
+                  .col-md-1      
+        .col-md-4
+          a(href='/users/access')      
+            .panel.panel-default
+              .panel-body
+                .row
+                  .col-md-1
+                  .col-md-2
+                    h1.glyphicon.glyphicon-user
+                  .col-md-8
+                    h4.text-left Usuario e senha
+                    p.text-left Altere seu nome e senha.
+                  .col-md-1   
+    include ../components/jquery.js.pug
+    include ../components/bootstrap.js.pug

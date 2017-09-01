@@ -9,23 +9,56 @@ html(lang="en")
     include ../navbar.pug
     .container
       .row
-        .col-md-2
-        .col-md-2
-          include ./menu.pug      
-        .col-md-6
-          .panel.panel-default
-            .panel-body
-              h1.text-left Endereços
-              if error
-                each err in error
-                  .alert.alert-danger(role='alert') 
-                    p.text-center #{err} 
-              if success
-                each suc in success
-                  .alert.alert-info(role='alert') 
-                    p.text-center #{suc}                                                                                          
-              //- Remover conta.
-              a.btn.btn-info.btn-block(href='add-address') Adicionar Endereço
-        .col-md-2
+        .col-md-12
+          ol.breadcrumb
+            li
+              a(href='/users/account') Sua Conta
+            li.active Seus Endereços
+          h2.text-left Seus Endereços
+          //- Flash erros.          
+          if error
+            each err in error
+              .alert.alert-danger(role='alert') 
+                p.text-center #{err} 
+          //- Flash success.
+          if success
+            each suc in success
+              .alert.alert-info(role='alert') 
+                p.text-center #{suc}    
+      .row
+        .col-md-4
+          a(href='/users/orders')      
+            .panel.panel-default
+              .panel-body
+                .row
+                    a(href='add-address')
+                      h3.text-center Adicionar endereço 
+        //- Address list.
+        if addresss
+          each address in addresss
+            .col-md-4
+              .panel.panel-default
+                .panel-body                  
+                  h4 #{address.cep}                                                                                                
+                  p #{address.address}                                                                                                
+                  p #{address.addressNumber}                                                                                                
+                  p #{address.addressComplement}                                                                                                
+                  p #{address.district}                                                                                                
+                  p #{address.city}                                                                                                
+                  p #{address.state}
+                  span(data-user_id=address.user_id)
+                    a.edit-address(href='/') Editar 
+                    strong &nbsp | &nbsp                                                                                       
+                    p.remove-address Apagar
+                    strong &nbsp | &nbsp
+                    a.default-address(href='/') Marcar como padrão                                                                                             
     include ../components/jquery.js.pug
     include ../components/bootstrap.js.pug
+  script.
+    $('remove-address').on('click', function(event){
+      if (confirm(' Confirma a remoção do endereço ' + event.target.data(user_id))) {
+        console.log('cofirmed');
+      } else {
+        console.log('not confirmed');
+      }
+    });

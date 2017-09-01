@@ -239,9 +239,9 @@ router.post('/reset/:token', (req, res, next)=>{
   });
 });
 
-// Info page.
-router.get('/info', (req, res, next)=>{
-  res.render('user/info', req.flash());
+// Account page.
+router.get('/account', (req, res, next)=>{
+  res.render('user/account', req.flash());
 });
 
 // Access page.
@@ -256,7 +256,13 @@ router.get('/orders', (req, res, next)=>{
 
 // Address page.
 router.get('/address', (req, res, next)=>{
-  res.render('user/address', req.flash());
+  Address.find({ user_id: req.user._id }, (err, addresss)=>{
+    if (err) return next(err);
+    log.info(JSON.stringify(addresss[0]));
+    let data = req.flash();
+    data.addresss = addresss;
+    res.render('user/address', data); 
+  })
 });
 
 // Add address page.
@@ -285,18 +291,16 @@ router.post('/add-address', (req, res, next)=>{
     else {
       User.findOne({ email: req.user.email }, (err, user)=>{
         if (err) { return next(err); } 
-
-        let address = {
-          cep: req.body.cep,
-          address: req.body.address,
-          addressNumber: req.body.addressNumber,
-          addressComplement: req.body.addressComplement,
-          district: req.body.district,
-          city: req.body.city,
-          state: req.body.state
-        };  
-        user.address.push(address);
-        user.save(err => {
+        let address = new Address();
+        address.user_id = req.user._id;
+        address.cep = req.body.cep;
+        address.address = req.body.address;
+        address.addressNumber = req.body.addressNumber;
+        address.addressComplement = req.body.addressComplement;
+        address.district = req.body.district;
+        address.city = req.body.city;
+        address.state = req.body.state;
+        address.save(err => {
           if (err) { return next(err); } 
           res.redirect('/users/address');
         });        
