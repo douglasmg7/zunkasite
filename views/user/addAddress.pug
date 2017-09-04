@@ -22,10 +22,15 @@ html(lang='en')
                 each suc in success
                   .alert.alert-info(role='alert') 
                     p.text-center #{suc}               
-              //- form(id='form-add-address' action='/users/signup' method='post')
               form(id='form-add-address' method='post')
                 input(type='hidden' name='_csrf' value=csrfToken)                               
                 h1.text-left Endereço
+                .form-group
+                  label(for='name') Nome
+                  input.form-control(type='text' name='name' id='name')       
+                .form-group
+                  label(for='phone') Telefone
+                  input.form-control(type='text' name='phone' id='phone')                
                 .form-group
                   label(for='cep') CEP
                   input.form-control(type='text' name='cep' id='cep')
@@ -64,6 +69,7 @@ html(lang='en')
       jQuery(function($){
         // Maskedinput.
         $('#cep').mask('99999-999');
+        $('#phone').mask('(99) 99999-9999');
         // Validator method for cpf.
         $.validator.addMethod('cep', function(value, element){ return value.match(/^\d{5}-\d{3}$/); }, 'Por favor, forneça um CEP válido.');
         // Form validation.
@@ -72,6 +78,16 @@ html(lang='en')
             cep: {
               cep: true
             },            
+            name: {
+              required: true,
+              minlength: 2,
+              maxlength: 40
+            },
+            phone: {
+              required: true,
+              minlength: 14,
+              maxlength: 16              
+            }
           },      
           messages: {
           },

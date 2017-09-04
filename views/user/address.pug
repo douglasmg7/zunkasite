@@ -31,34 +31,86 @@ html(lang="en")
             .panel.panel-default
               .panel-body
                 .row
-                    a(href='add-address')
+                    a(href='address/add')
                       h3.text-center Adicionar endereço 
         //- Address list.
         if addresss
           each address in addresss
             .col-md-4
-              .panel.panel-default
+              .panel.panel-default.address(data-address-id=address._id)
+                if address.default
+                  .panel-heading Padrão
                 .panel-body                  
-                  h4 #{address.cep}                                                                                                
+                  h4 #{address.name}                                                                                                
+                  p #{address.phone}                                                                                                
+                  p #{address.cep}                                                                                                
                   p #{address.address}                                                                                                
                   p #{address.addressNumber}                                                                                                
                   p #{address.addressComplement}                                                                                                
                   p #{address.district}                                                                                                
                   p #{address.city}                                                                                                
                   p #{address.state}
-                  span(data-user_id=address.user_id)
-                    a.edit-address(href='/') Editar 
+                  span
+                    a.edit-address Editar 
                     strong &nbsp | &nbsp                                                                                       
-                    p.remove-address Apagar
+                    a.remove-address Apagar
                     strong &nbsp | &nbsp
-                    a.default-address(href='/') Marcar como padrão                                                                                             
+                    a.set-default-address Marcar como padrão                                                                                             
     include ../components/jquery.js.pug
     include ../components/bootstrap.js.pug
   script.
-    $('remove-address').on('click', function(event){
-      if (confirm(' Confirma a remoção do endereço ' + event.target.data(user_id))) {
-        console.log('cofirmed');
-      } else {
-        console.log('not confirmed');
+    // Remove address.
+    $('.remove-address').on('click', function(event){
+      let $target = $(event.target);
+      let $panel = $target.closest('.panel');
+      let addressId = $panel.data('address-id');
+      console.log(addressId);
+      if (confirm('Confirma a remoção do endereço ?')) {
+        $.ajax({
+          method: 'PUT',
+          url: 'address/remove/' + addressId,
+          data: { _csrf: '#{csrfToken}'}
+        })
+        .done(function(result){
+          // Remove address.
+          $target.closest('.col-md-4').remove();
+        });
       }
     });
+    // Set address as default.
+    $('.set-default-address').on('click', function(event){
+      console.log('clicked set-default-address');
+      let $target = $(event.target);
+      let $panel = $target.closest('.panel');
+      let addressId = $panel.data('address-id');
+      console.log('adddres-id: ', addressId);
+      $.ajax({
+        method: 'PUT',
+        url: 'address/default/' + addressId,
+        data: { _csrf: '#{csrfToken}'}
+      })
+      .done(function(result){
+        console.log(result);
+        // Change default adddress.
+        // Find all address panels.
+        $('.panel').find('.address').each(function(){
+          let $this = $(this);
+          // Set as default.
+          if($this.data('address-id') === addressId) {
+            if($this.find('.panel-heading').length === 0){
+              $this.prepend('<div class=panel-heading> Padrão </div>');
+            }
+          }
+          // Unset as default. 
+          else {
+            $this.find('.panel-heading').remove();
+          }
+        });
+      });
+    });    
+  style.
+    .remove-address:hover,
+    .edit-address:hover,
+    .set-default-address:hover {
+      cursor: pointer;
+    }

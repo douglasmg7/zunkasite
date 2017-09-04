@@ -258,7 +258,6 @@ router.get('/orders', (req, res, next)=>{
 router.get('/address', (req, res, next)=>{
   Address.find({ user_id: req.user._id }, (err, addresss)=>{
     if (err) return next(err);
-    log.info(JSON.stringify(addresss[0]));
     let data = req.flash();
     data.addresss = addresss;
     res.render('user/address', data); 
@@ -266,14 +265,15 @@ router.get('/address', (req, res, next)=>{
 });
 
 // Add address page.
-router.get('/add-address', (req, res, next)=>{
+router.get('/address/add', (req, res, next)=>{
   res.render('user/addAddress', req.flash());
 });
 
 // Add address.
-router.post('/add-address', (req, res, next)=>{
-  log.info('body', JSON.stringify(req.body));
+router.post('/address/add', (req, res, next)=>{
   // Validation.
+  req.checkBody('name', 'Campo NOME deve ser preenchido.').notEmpty();
+  req.checkBody('phone', 'Campo PHONE deve ser preenchido.').notEmpty();
   req.checkBody('cep', 'Campo CEP deve ser preenchido.').notEmpty();
   req.checkBody('address', 'Campo ENDEREÇO deve ser preenchido.').notEmpty();
   req.checkBody('addressNumber', 'Campo NÚMERO deve ser preenchido.').notEmpty();
@@ -281,6 +281,7 @@ router.post('/add-address', (req, res, next)=>{
   req.checkBody('city', 'Campo CIDADE deve ser preenchido.').notEmpty();
   req.checkBody('state', 'Campo ESTADO deve ser preenchido.').notEmpty();
   req.getValidationResult().then(function(result) {
+    // Send validations errors to client.
     if (!result.isEmpty()) {
       let messages = [];
       messages.push(result.array()[0].msg);
@@ -288,24 +289,56 @@ router.post('/add-address', (req, res, next)=>{
       res.redirect('back');
       return;
     } 
+    // Save address.
     else {
-      User.findOne({ email: req.user.email }, (err, user)=>{
+      let address = new Address();
+      address.user_id = req.user._id;
+      address.name = req.body.name;
+      address.phone = req.body.phone;
+      address.cep = req.body.cep;
+      address.address = req.body.address;
+      address.addressNumber = req.body.addressNumber;
+      address.addressComplement = req.body.addressComplement;
+      address.district = req.body.district;
+      address.city = req.body.city;
+      address.state = req.body.state;
+      log.info('address to add: ', address);
+      address.save(function(err) {
         if (err) { return next(err); } 
-        let address = new Address();
-        address.user_id = req.user._id;
-        address.cep = req.body.cep;
-        address.address = req.body.address;
-        address.addressNumber = req.body.addressNumber;
-        address.addressComplement = req.body.addressComplement;
-        address.district = req.body.district;
-        address.city = req.body.city;
-        address.state = req.body.state;
-        address.save(err => {
-          if (err) { return next(err); } 
-          res.redirect('/users/address');
-        });        
-      });
+        res.redirect('/users/address');
+      });        
     }
+  });
+});
+
+// Set address as default.
+router.put('/address/default/:addressId', (req, res, next)=>{
+  Address.findById(req.params.addressId, function(err, address){
+    if (err) { next(err) };
+    if (address) {
+      // Set all not default.
+      Address.where({ user_id: address.user_id }).updateMany({ default: false }, err=>{
+        if (err) { next(err) };
+        // Set default.
+        address.default = true;
+        address.save(err=>{
+          if (err) { next(err) };
+          res.json({success: true, msg: 'Address default changed.' });  
+        });
+        // Address.where({ _id: addressId}).updateOne({ default: true }, err=>{
+        //   if (err) { next(err) };
+        //   res.json({success: true, msg: 'Address default changed.' });  
+        // })
+      });    
+    }
+  })
+});
+
+// Remove user address.
+router.put('/address/remove/:addressId', (req, res, next)=>{
+  Address.remove({ _id: req.params.addressId}, (err)=>{
+    if (err) { next(err) };
+    res.json({success: true, msg: 'Address removed.' });  
   });
 });
 

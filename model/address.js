@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 // Schema.
 let schema = new mongoose.Schema({
-  user_id: { type: mongoose.Schema.Types.ObjectId, required:true },
+  user_id: { type: mongoose.Schema.Types.ObjectId, required: true },
   name: { type: String, required: true },       // Used by carrier for contact.
   default: { type: Boolean, default: false },   // Used as default address.
   phone: { type: String, required: true },
