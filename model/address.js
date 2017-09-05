@@ -9,7 +9,7 @@ let schema = new mongoose.Schema({
   cep: { type: String, required: true },
   address: { type: String, required: true },
   addressNumber: { type: String, required: true },
-  addressComplement: { type: String, required: true },
+  addressComplement: { type: String, default: '' },
   district: { type: String, required: true },
   city: { type: String, required: true },
   state: { type: String, required: true },
