@@ -28,16 +28,15 @@ html(lang="en")
       .row
         .col-md-4
           a(href='/users/orders')      
-            .panel.panel-default
+            .panel.panel-default(style='min-height: 400px; max-height: 400px')
               .panel-body
-                .row
-                    a(href='address/add')
-                      h3.text-center Adicionar endereço 
+                a(href='address/add')
+                  h3.text-center Adicionar endereço
         //- Address list.
         if addresss
           each address in addresss
             .col-md-4
-              .panel.panel-default.address(data-address-id=address._id)
+              .panel.panel-default.address(data-address-id=address._id, style='min-height: 400px; max-height: 400px')
                 if address.default
                   .panel-heading Padrão
                 .panel-body                  
@@ -110,4 +109,8 @@ html(lang="en")
     .edit-address:hover,
     .set-default-address:hover {
       cursor: pointer;
+    }
+    panel {
+      max-height: 400;
+      min-height: 400;
     }
