@@ -35,25 +35,28 @@ html(lang="en")
           each address in addresss
             .col-md-4
               .address-container(data-address-id=address._id)
-                if address.default
-                  .address-header Padrão
-                .address-body             
-                  h4 #{address.name}                                                                                                
-                  p #{address.phone}                                                                                                
-                  p #{address.cep}                                                                                                
-                  p #{address.address}                                                                                                
-                  p #{address.addressNumber}                                                                                                
-                  p #{address.addressComplement}                                                                                                
-                  p #{address.district}                                                                                                
-                  p #{address.city}                                                                                                
-                  p #{address.state}
-                .address-footer                                                                          
-                  span
-                    a.edit-address(href=`address/edit?addressId=${address._id}`) Editar 
-                    strong &nbsp | &nbsp                                                                                       
-                    a.remove-address Apagar
-                    strong &nbsp | &nbsp
-                    a.set-default-address Marcar como padrão                   
+                .table-row  
+                  if address.default
+                    .address-header Padrão
+                .table-row  
+                  .address-body             
+                    p.name #{address.name}                                                                                                
+                    p #{address.phone}                                                                                                
+                    p #{address.cep}                                                                                                
+                    p #{address.address}                                                                                                
+                    p #{address.addressNumber}                                                                                                
+                    p #{address.addressComplement}                                                                                                
+                    p #{address.district}                                                                                                
+                    p #{address.city}                                                                                                
+                    p #{address.state}
+                .table-row  
+                  .address-footer                                                                          
+                    span
+                      a.edit-address(href=`address/edit?addressId=${address._id}`) Editar 
+                      strong &nbsp | &nbsp                                                                                       
+                      a.remove-address Apagar
+                      strong &nbsp | &nbsp
+                      a.set-default-address Marcar como padrão                   
     include ../components/jquery.js.pug
     include ../components/bootstrap.js.pug
   script.
@@ -109,11 +112,12 @@ html(lang="en")
     .set-default-address:hover {
       cursor: pointer;
     }
+    /* Add address */
     .addressPanel {
       display: table;
       width: 100%;
       border: 2px dashed gray;
-      height: 400px;
+      height: 350px;
       border-radius: 5px;
     }
     .addressPanel h3 {
@@ -124,41 +128,45 @@ html(lang="en")
     a.not-decoration {
       text-decoration: none;
     }
-
-
+    /* Adress panel*/
     .address-container{
       display: table;
       border: 2px solid lightgray;
-      height: 450px;
+      height: 350px;
       width: 100%;
-      border-radius: 5px; 
+      border-radius: 5px;
+    }
+    .table-row{
+      display: table-row;
+      width: 100%;
     }
     .address-header, 
     .address-body, 
     .address-footer{
-      display: table-row;
-      margin: 1em;
+      display: table-cell;
+      width: 100%;
+      padding: 1em;
     }
     .address-header{
       height: 3.5em;
-      background-color: whitesmoke;
       border-bottom: 2px solid lightgray;
       border-top-left-radius: 5px;
       border-top-right-radius: 5px;      
     }
     .address-body{
-      top: 3em;
-      height: 100%;
-      background-color: whitesmoke;
-      max-height: 450px;
     }
     .address-footer{
       height: 3.5em;
-      background-color: whitesmoke;
-      border-top: 2px solid lightgray;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;    
     }
+    .address-container p {
+      height: 1em;
+    }
+    .address-container p.name {
+      font-weight: bold;
+    }    
+
 
     /*
     .address-container{
