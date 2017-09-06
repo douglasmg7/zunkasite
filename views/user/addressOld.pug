@@ -34,10 +34,10 @@ html(lang="en")
         if addresss
           each address in addresss
             .col-md-4
-              .address-container(data-address-id=address._id)
+              .panel.panel-default.address(data-address-id=address._id, style='min-height: 400px; max-height: 400px')
                 if address.default
-                  .address-header Padrão
-                .address-body             
+                  .panel-heading Padrão
+                .panel-body                  
                   h4 #{address.name}                                                                                                
                   p #{address.phone}                                                                                                
                   p #{address.cep}                                                                                                
@@ -47,13 +47,12 @@ html(lang="en")
                   p #{address.district}                                                                                                
                   p #{address.city}                                                                                                
                   p #{address.state}
-                .address-footer                                                                          
                   span
                     a.edit-address(href=`address/edit?addressId=${address._id}`) Editar 
                     strong &nbsp | &nbsp                                                                                       
                     a.remove-address Apagar
                     strong &nbsp | &nbsp
-                    a.set-default-address Marcar como padrão                   
+                    a.set-default-address Marcar como padrão                                                                                             
     include ../components/jquery.js.pug
     include ../components/bootstrap.js.pug
   script.
@@ -124,75 +123,3 @@ html(lang="en")
     a.not-decoration {
       text-decoration: none;
     }
-
-
-    .address-container{
-      display: table;
-      border: 2px solid lightgray;
-      height: 450px;
-      width: 100%;
-      border-radius: 5px; 
-    }
-    .address-header, 
-    .address-body, 
-    .address-footer{
-      display: table-row;
-      margin: 1em;
-    }
-    .address-header{
-      height: 3.5em;
-      background-color: whitesmoke;
-      border-bottom: 2px solid lightgray;
-      border-top-left-radius: 5px;
-      border-top-right-radius: 5px;      
-    }
-    .address-body{
-      top: 3em;
-      height: 100%;
-      background-color: whitesmoke;
-      max-height: 450px;
-    }
-    .address-footer{
-      height: 3.5em;
-      background-color: whitesmoke;
-      border-top: 2px solid lightgray;
-      border-bottom-left-radius: 5px;
-      border-bottom-right-radius: 5px;    
-    }
-
-    /*
-    .address-container{
-      position: relative;
-      border: 2px solid lightgray;
-      min-height: 450px;
-      border-radius: 5px; 
-    }
-    .address-header, 
-    .address-body, 
-    .address-footer{
-      padding: 1em;
-    }
-    .address-header{
-      height: 3.5em;
-      background-color: whitesmoke;
-      border-bottom: 2px solid lightgray;
-      border-top-left-radius: 5px;
-      border-top-right-radius: 5px;      
-    }
-    .address-body{
-      position: absolute;
-      top: 3em;
-      height: 100%;
-      background-color: whitesmoke;
-      max-height: 450px;
-    }
-    .address-footer{
-      position: absolute;
-      bottom: 2px;
-      height: 3.5em;
-      background-color: whitesmoke;
-      border-top: 2px solid lightgray;
-      border-bottom-left-radius: 5px;
-      border-bottom-right-radius: 5px;    
-    }
-    */
