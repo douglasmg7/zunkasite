@@ -254,6 +254,72 @@ router.get('/orders', (req, res, next)=>{
   res.render('user/orders', req.flash());
 });
 
+// Edit name page.
+router.get('/access/name', (req, res, next)=>{
+  res.render('user/editName', req.flash());
+});
+// Edit name.
+router.post('/access/name/:userId', checkPermission, (req, res, next)=>{
+  // Validation.
+  req.checkBody('name', 'Campo NOME deve ser preenchido.').notEmpty();
+  req.getValidationResult().then(function(result) {
+    // Send validations errors to client.
+    if (!result.isEmpty()) {
+      let messages = [];
+      messages.push(result.array()[0].msg);
+      req.flash('error', messages);
+      res.redirect('back');
+      return;
+    } 
+    // Save address.
+    else {
+      if (!req.body.userId) { return next(new Error('No userId to find user data.')); }
+      User.findById(req.body.userId, (err, user)=>{
+        if (err) { return next(err) };
+        if (!user) { return next(new Error('Not found user to save.')); }
+        user.name = req.body.name;
+        user.save(function(err) {
+          if (err) { return next(err); } 
+          res.redirect('/users/access');
+        });  
+      });
+    }
+  });
+});
+
+// Edit email page.
+router.get('/access/email', (req, res, next)=>{
+  res.render('user/editEmail', req.flash());
+});
+// Edit name.
+router.post('/access/email/:userId', checkPermission, (req, res, next)=>{
+  // Validation.
+  req.checkBody('name', 'Campo NOME deve ser preenchido.').notEmpty();
+  req.getValidationResult().then(function(result) {
+    // Send validations errors to client.
+    if (!result.isEmpty()) {
+      let messages = [];
+      messages.push(result.array()[0].msg);
+      req.flash('error', messages);
+      res.redirect('back');
+      return;
+    } 
+    // Save address.
+    else {
+      if (!req.body.userId) { return next(new Error('No userId to find user data.')); }
+      User.findById(req.body.userId, (err, user)=>{
+        if (err) { return next(err) };
+        if (!user) { return next(new Error('Not found user to save.')); }
+        user.name = req.body.name;
+        user.save(function(err) {
+          if (err) { return next(err); } 
+          res.redirect('/users/access');
+        });  
+      });
+    }
+  });
+});
+
 // Address page.
 router.get('/address', (req, res, next)=>{
   Address.find({ user_id: req.user._id }, (err, addresss)=>{
@@ -422,10 +488,10 @@ router.post('/delete', (req, res, next)=>{
 // Check permission.
 function checkPermission (req, res, next) {
   // Should be admin.
-  if (req.isAuthenticated() && req.user.group.includes('admin')) {
+  if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/');
+  res.redirect('/users/login');
 }
 
 // Check not logged.

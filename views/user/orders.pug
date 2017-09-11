@@ -9,45 +9,64 @@ html(lang="en")
     include ../navbar.pug
     .container
       .row
-        .col-md-2
-        .col-md-2
-          include ./menu.pug      
-        .col-md-6
-          .panel.panel-default
-            .panel-body
-              h1.text-left Pedidos.
-              if error
-                each err in error
-                  .alert.alert-danger(role='alert') 
-                    p.text-center #{err} 
-              if success
-                each suc in success
-                  .alert.alert-info(role='alert') 
-                    p.text-center #{suc}               
-              form(action='/users/account/delete' method='post')
-                input(type='hidden' name='_csrf' value=csrfToken)
-                //- Name.
-                .form-group
-                  label Nome completo
-                  input.form-control(type='text' value=user.name name='name' placeholder='Nome completo')                 
-                //- Email.
-                .form-group
-                  label E-mail
-                  input.form-control(type='text' value=user.email name='email' placeholder='e-mail')        
-                //- Cpf.
-                .form-group
-                  label CPF
-                  input.form-control(type='text' name='cpf' placeholder='cpf')
-                //- Barth day.
-                .form-group
-                  label Data de nascimento
-                  input.form-control(type='text' name='birthDay' placeholder='Data de nascimento')
-                //- Phone
-                .form-group
-                  label Telefone
-                  input.form-control(type='text' name='phone' placeholder='Telefone para contato')                                                                              
-                //- Remover conta.
-                input.btn.btn-danger.btn-block(type='submit' value='Remover conta')
-        .col-md-2
+        .col-md-12
+          ol.breadcrumb
+            li
+              a(href='/users/account') Sua Conta
+            li.active Seus Pedidos
+          h2.text-left Seus Pedidos
+          //- Flash erros.          
+          if error
+            each err in error
+              .alert.alert-danger(role='alert') 
+                p.text-center #{err} 
+          //- Flash success.
+          if success
+            each suc in success
+              .alert.alert-info(role='alert') 
+                p.text-center #{suc}    
+      .row
+        //- Address list.
+        if orders
+          each order in orders
+            .col-md-4
+              .z-panel.address(data-address-id=order._id)
+                .z-panel-heading Padrão
+                .z-panel-body                                                                                                         
+                .z-panel-footer                                                                                          
     include ../components/jquery.js.pug
     include ../components/bootstrap.js.pug
+  script.
+  style.
+    a.not-decoration {
+      text-decoration: none;
+    }
+    /* Panel */
+    .z-panel{
+      border: 1px solid lightgray;
+      min-height: 400px;
+      border-radius: 5px; 
+    }
+    .z-panel-heading, 
+    .z-panel-body, 
+    .z-panel-footer{
+      padding: 1em;
+    }
+    .z-panel-heading{
+      height: 3.5em;
+      border-bottom: 1px solid lightgray;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;      
+    }
+    .z-panel-body{
+    }
+    .z-panel-body > p.name {
+      font-weight: bold;
+    }
+    .z-panel-footer{
+      position: absolute;
+      bottom: 1px;
+      height: 3.5em;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;    
+    }

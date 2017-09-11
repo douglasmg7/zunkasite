@@ -9,45 +9,69 @@ html(lang="en")
     include ../navbar.pug
     .container
       .row
-        .col-md-2
-        .col-md-2
-          include ./menu.pug      
+        .col-md-3
         .col-md-6
-          .panel.panel-default
-            .panel-body
-              h1.text-left Dados de acesso
-              if error
-                each err in error
-                  .alert.alert-danger(role='alert') 
-                    p.text-center #{err} 
-              if success
-                each suc in success
-                  .alert.alert-info(role='alert') 
-                    p.text-center #{suc}               
-              form(action='/users/account/delete' method='post')
-                input(type='hidden' name='_csrf' value=csrfToken)
-                //- Name.
-                .form-group
-                  label Nome completo
-                  input.form-control(type='text' value=user.name name='name' placeholder='Nome completo')                 
-                //- Email.
-                .form-group
-                  label E-mail
-                  input.form-control(type='text' value=user.email name='email' placeholder='e-mail')        
-                //- Cpf.
-                .form-group
-                  label CPF
-                  input.form-control(type='text' name='cpf' placeholder='cpf')
-                //- Barth day.
-                .form-group
-                  label Data de nascimento
-                  input.form-control(type='text' name='birthDay' placeholder='Data de nascimento')
-                //- Phone
-                .form-group
-                  label Telefone
-                  input.form-control(type='text' name='phone' placeholder='Telefone para contato')                                                                              
-                //- Remover conta.
-                input.btn.btn-danger.btn-block(type='submit' value='Remover conta')
-        .col-md-2
+          ol.breadcrumb
+            li
+              a(href='/users/account') Sua Conta
+            li.active Autenticação
+          h2.text-left Autenticação
+          //- Flash erros.          
+          if error
+            each err in error
+              .alert.alert-danger(role='alert') 
+                p.text-center #{err} 
+          //- Flash success.
+          if success
+            each suc in success
+              .alert.alert-info(role='alert') 
+                p.text-center #{suc}    
+          .z-panel
+            .z-panel-item
+              p Nome completo
+              p= user.name
+              a(href='access/name') Editar
+            .z-panel-item
+              p E-mail
+              p= user.email
+              a(href='access/email') Editar
+            .z-panel-item
+              p Número de telefone celular
+              if user.cellPhone
+                p= user.cellPhone
+              else
+                p **********
+              a(href='access/cell-phone') Editar
+            .z-panel-item
+              p Senha
+              p **********
+              a(href='access/password') Editar
+            .z-panel-item
+              p CPF
+              p **********       
+              a(href='access/cpf') Editar
+          p &nbsp
+          a.btn.btn-primary(href='account') Concluído              
+          p &nbsp
+        .col-md-3
     include ../components/jquery.js.pug
     include ../components/bootstrap.js.pug
+  style.
+    a.not-decoration {
+      text-decoration: none;
+    }
+    /* Panel */
+    .z-panel{
+      border: 1px solid lightgray;
+      border-radius: 5px; 
+    }
+    .z-panel-item{
+      padding: 1em;
+      border-bottom: 1px solid lightgray;
+    }
+    .z-panel-item:last-child{
+      border-bottom: 0px;
+    }
+    .z-panel-item > p:nth-child(2){
+      font-weight: bold;
+    }

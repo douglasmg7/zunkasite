@@ -1,0 +1,86 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Dados de acesso.
+    include ../components/bootstrap.css.pug
+  body
+    include ../navbar.pug
+    .container
+      .row
+        .col-md-3
+        .col-md-6
+          ol.breadcrumb
+            li
+              a(href='/users/account') Sua Conta
+            li
+              a(href='/users/access') Autenticação
+            li.active Altere Seu E-mail
+          h2.text-left Altere Seu E-mail
+          //- Flash erros.          
+          if error
+            each err in error
+              .alert.alert-danger(role='alert') 
+                p.text-center #{err} 
+          //- Flash success.
+          if success
+            each suc in success
+              .alert.alert-info(role='alert') 
+                p.text-center #{suc}    
+          .z-panel
+            form(id='form-edit-email' method='post' action=`/users/access/email/${user._id}`)
+              input(type='hidden' name='_csrf' value=csrfToken)
+              .form-group
+                label E-mail antigo
+                p= user.email
+              .form-group
+                label(for='email') Novo e-mail
+                input.form-control(type='text' name='email' id='email')
+              .form-group
+                label(for='emailConfirm') Entre o e-mail novamente
+                input.form-control(type='text' name='emailConfirm' id='emailConfirm')      
+              .form-group
+                label(for='password') Senha
+                input.form-control(type='password' name='password' id='password')        
+              input.btn.btn-primary(type='submit' value='Salvar Alterações')               
+        .col-md-3
+    include ../components/jquery.js.pug
+    include ../components/bootstrap.js.pug
+    script.
+      jQuery(function($){
+        // Form validation.
+        $('#form-edit-email').validate({
+          rules:{
+            eamil: {
+              required: true,
+              email: true
+            },
+            eamilConfirm: {
+              required: true,
+              equalTo: '#eamil'            
+            },            
+            password: {
+              required: true,
+              minlength: 8,
+              maxlength: 20
+            }
+          },      
+          messages: {
+          },
+          highlight: function (element) {
+              $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+          },
+          success: function (element) {
+            // Remove erros.
+            element.closest('.form-group').removeClass('has-error').addClass('has-success');
+          }          
+        });
+      });    
+  style.
+    /* Panel */
+    .z-panel{
+      border: 1px solid lightgray;
+      border-radius: 5px;
+      padding: 1em;
+    }

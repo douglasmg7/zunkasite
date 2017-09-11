@@ -1,0 +1,50 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Dados de acesso.
+    include ../components/bootstrap.css.pug
+  body
+    include ../navbar.pug
+    .container
+      .row
+        .col-md-3
+        .col-md-6
+          ol.breadcrumb
+            li
+              a(href='/users/account') Sua Conta
+            li
+              a(href='/users/access') Autenticação
+            li.active Altere Seu Nome
+          h2.text-left Altere Seu Nome
+          //- Flash erros.          
+          if error
+            each err in error
+              .alert.alert-danger(role='alert') 
+                p.text-center #{err} 
+          //- Flash success.
+          if success
+            each suc in success
+              .alert.alert-info(role='alert') 
+                p.text-center #{suc}    
+          .z-panel
+            form(method='post' action=`/users/access/name/${user._id}`)
+              input(type='hidden' name='_csrf' value=csrfToken)
+              .form-group
+                label(for='name') Novo nome
+                input.form-control(type='text' name='name' id='name' value=user.name)
+              input.btn.btn-primary(type='submit' value='Salvar Alterações')               
+        .col-md-3
+    include ../components/jquery.js.pug
+    include ../components/bootstrap.js.pug
+  style.
+    a.not-decoration {
+      text-decoration: none;
+    }
+    /* Panel */
+    .z-panel{
+      border: 1px solid lightgray;
+      border-radius: 5px;
+      padding: 1em;
+    }
