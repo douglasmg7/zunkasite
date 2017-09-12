@@ -273,8 +273,8 @@ router.post('/access/name/:userId', checkPermission, (req, res, next)=>{
     } 
     // Save address.
     else {
-      if (!req.body.userId) { return next(new Error('No userId to find user data.')); }
-      User.findById(req.body.userId, (err, user)=>{
+      if (!req.params.userId) { return next(new Error('No userId to find user data.')); }
+      User.findById(req.params.userId, (err, user)=>{
         if (err) { return next(err) };
         if (!user) { return next(new Error('Not found user to save.')); }
         user.name = req.body.name;
@@ -291,10 +291,13 @@ router.post('/access/name/:userId', checkPermission, (req, res, next)=>{
 router.get('/access/email', (req, res, next)=>{
   res.render('user/editEmail', req.flash());
 });
-// Edit name.
+// Edit email.
 router.post('/access/email/:userId', checkPermission, (req, res, next)=>{
   // Validation.
-  req.checkBody('name', 'Campo NOME deve ser preenchido.').notEmpty();
+  req.checkBody('email', 'E-mail inválido.').isEmail();
+  req.checkBody('emailConfirm', 'E-mail e Confirmação do e-mail devem ser iguais.').equals(req.body.email);
+  req.checkBody('password', 'Senha inválida.').notEmpty();
+  req.sanitizeBody("email").normalizeEmail();
   req.getValidationResult().then(function(result) {
     // Send validations errors to client.
     if (!result.isEmpty()) {
@@ -306,11 +309,128 @@ router.post('/access/email/:userId', checkPermission, (req, res, next)=>{
     } 
     // Save address.
     else {
-      if (!req.body.userId) { return next(new Error('No userId to find user data.')); }
-      User.findById(req.body.userId, (err, user)=>{
+      if (!req.params.userId) { return next(new Error('No userId to find user data.')); }
+      User.findById(req.params.userId, (err, user)=>{
         if (err) { return next(err) };
         if (!user) { return next(new Error('Not found user to save.')); }
-        user.name = req.body.name;
+        // Verify password.
+        if (user.validPassword(req.body.password)) {
+          user.email = req.body.email;
+          user.save(function(err) {
+            if (err) { return next(err); } 
+            res.redirect('/users/login');
+          });  
+        // Inválid password.
+        } else {
+          req.flash('error', 'Senha incorreta');
+          res.redirect('back');
+        }
+      });
+    }
+  });
+});
+
+// Edit cell phone page.
+router.get('/access/cell-phone', (req, res, next)=>{
+  res.render('user/editCellPhone', req.flash());
+});
+// Edit cell phone.
+router.post('/access/cell-phone/:userId', checkPermission, (req, res, next)=>{
+  // Validation.
+  req.checkBody('cellphone', 'Campo NÚMERO DE TELEFONE CELULAR deve ser preenchido.').notEmpty();
+  req.getValidationResult().then(function(result) {
+    // Send validations errors to client.
+    if (!result.isEmpty()) {
+      let messages = [];
+      messages.push(result.array()[0].msg);
+      req.flash('error', messages);
+      res.redirect('back');
+      return;
+    } 
+    // Save address.
+    else {
+      if (!req.params.userId) { return next(new Error('No userId to find user data.')); }
+      User.findById(req.params.userId, (err, user)=>{
+        if (err) { return next(err) };
+        if (!user) { return next(new Error('Not found user to save.')); }
+        user.cellPhone = req.body.cellphone;
+        user.save(function(err) {
+          if (err) { return next(err); } 
+          res.redirect('/users/access');
+        });  
+      });
+    }
+  });
+});
+
+// Edit password page.
+router.get('/access/password', (req, res, next)=>{
+  res.render('user/editPassword', req.flash());
+});
+// Edit password.
+router.post('/access/password/:userId', checkPermission, (req, res, next)=>{
+  // Validation.
+  req.checkBody('password', 'Senha inválida.').notEmpty();
+  req.checkBody('passwordNew', 'Nova senha deve conter pelo menos 8 caracteres.').isLength({ min: 8});
+  req.checkBody('passwordNew', 'Nova senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
+  req.checkBody('passwordNewConfirm', 'Nova senha e confirmação da nova senha devem ser iguais').equals(req.body.passwordNew);  
+  req.getValidationResult().then(function(result) {
+    // Send validations errors to client.
+    if (!result.isEmpty()) {
+      let messages = [];
+      messages.push(result.array()[0].msg);
+      req.flash('error', messages);
+      res.redirect('back');
+      return;
+    } 
+    // Save address.
+    else {
+      if (!req.params.userId) { return next(new Error('No userId to find user data.')); }
+      User.findById(req.params.userId, (err, user)=>{
+        if (err) { return next(err) };
+        if (!user) { return next(new Error('Not found user to save.')); }
+        // Verify password.
+        if (user.validPassword(req.body.password)) {
+          user.password = user.encryptPassword(req.body.passwordNew);
+          user.save(function(err) {
+            if (err) { return next(err); } 
+            res.redirect('/users/access');
+          });  
+        // Inválid password.
+        } else {
+          req.flash('error', 'Senha incorreta');
+          res.redirect('back');
+        }
+      });
+    }
+  });
+});
+
+// Edit CPF page.
+router.get('/access/cpf', (req, res, next)=>{
+  res.render('user/editCpf', req.flash());
+});
+// Edit CPF.
+router.post('/access/cpf/:userId', checkPermission, (req, res, next)=>{
+  // Validation.
+  req.checkBody('cpf', 'Campo CPF deve ser preenchido.').notEmpty();
+  req.checkBody('cpf', 'Cpf inválido.').isCpf();
+  req.getValidationResult().then(function(result) {
+    // Send validations errors to client.
+    if (!result.isEmpty()) {
+      let messages = [];
+      messages.push(result.array()[0].msg);
+      req.flash('error', messages);
+      res.redirect('back');
+      return;
+    } 
+    // Save address.
+    else {
+      if (!req.params.userId) { return next(new Error('No userId to find user data.')); }
+      User.findById(req.params.userId, (err, user)=>{
+        if (err) { return next(err) };
+        if (!user) { return next(new Error('Not found user to save.')); }
+        user.cpf = req.body.cpf;
         user.save(function(err) {
           if (err) { return next(err); } 
           res.redirect('/users/access');
@@ -334,9 +454,8 @@ router.get('/address', (req, res, next)=>{
 router.get('/address/add', (req, res, next)=>{
   res.render('user/addressAdd', req.flash());
 });
-
 // Add address.
-router.post('/address/add', (req, res, next)=>{
+router.post('/address/add', checkPermission, (req, res, next)=>{
   // Validation.
   req.checkBody('name', 'Campo NOME deve ser preenchido.').notEmpty();
   req.checkBody('cep', 'Campo CEP deve ser preenchido.').notEmpty();
@@ -345,7 +464,7 @@ router.post('/address/add', (req, res, next)=>{
   req.checkBody('district', 'Campo BAIRRO deve ser preenchido.').notEmpty();
   req.checkBody('city', 'Campo CIDADE deve ser preenchido.').notEmpty();
   req.checkBody('state', 'Campo ESTADO deve ser preenchido.').notEmpty();
-  req.checkBody('phone', 'Campo PHONE deve ser preenchido.').notEmpty();
+  req.checkBody('phone', 'Campo TELEFONE deve ser preenchido.').notEmpty();
   req.getValidationResult().then(function(result) {
     // Send validations errors to client.
     if (!result.isEmpty()) {
@@ -387,7 +506,7 @@ router.get('/address/edit', (req, res, next)=>{
 });
 
 // Edit address.
-router.post('/address/edit', (req, res, next)=>{
+router.post('/address/edit', checkPermission, (req, res, next)=>{
   // Validation.
   req.checkBody('name', 'Campo NOME deve ser preenchido.').notEmpty();
   req.checkBody('cep', 'Campo CEP deve ser preenchido.').notEmpty();
@@ -396,7 +515,7 @@ router.post('/address/edit', (req, res, next)=>{
   req.checkBody('district', 'Campo BAIRRO deve ser preenchido.').notEmpty();
   req.checkBody('city', 'Campo CIDADE deve ser preenchido.').notEmpty();
   req.checkBody('state', 'Campo ESTADO deve ser preenchido.').notEmpty();
-  req.checkBody('phone', 'Campo PHONE deve ser preenchido.').notEmpty();
+  req.checkBody('phone', 'Campo TELEFONE deve ser preenchido.').notEmpty();
   req.getValidationResult().then(function(result) {
     // Send validations errors to client.
     if (!result.isEmpty()) {
@@ -432,7 +551,7 @@ router.post('/address/edit', (req, res, next)=>{
 });
 
 // Set address as default.
-router.put('/address/default/:addressId', (req, res, next)=>{
+router.put('/address/default/:addressId', checkPermission, (req, res, next)=>{
   Address.findById(req.params.addressId, function(err, address){
     if (err) { next(err) };
     if (address) {
@@ -451,7 +570,7 @@ router.put('/address/default/:addressId', (req, res, next)=>{
 });
 
 // Remove user address.
-router.put('/address/remove/:addressId', (req, res, next)=>{
+router.put('/address/remove/:addressId', checkPermission, (req, res, next)=>{
   Address.remove({ _id: req.params.addressId}, (err)=>{
     if (err) { next(err) };
     res.json({success: true, msg: 'Address removed.' });  
@@ -464,7 +583,7 @@ router.get('/delete', (req, res, next)=>{
 });
 
 // Delete account.
-router.post('/delete', (req, res, next)=>{
+router.post('/delete', checkPermission, (req, res, next)=>{
   // Delete user.
   redis.del(`user:${req.user.email}`, (err)=>{
     if (err) {

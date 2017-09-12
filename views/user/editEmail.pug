@@ -46,17 +46,19 @@ html(lang="en")
               input.btn.btn-primary(type='submit' value='Salvar Alterações')               
         .col-md-3
     include ../components/jquery.js.pug
+    include ../components/jquery.validation.js.pug    
+    include ../components/jquery.validation.localization.js.pug    
     include ../components/bootstrap.js.pug
     script.
       jQuery(function($){
         // Form validation.
         $('#form-edit-email').validate({
           rules:{
-            eamil: {
+            email: {
               required: true,
               email: true
             },
-            eamilConfirm: {
+            emailConfirm: {
               required: true,
               equalTo: '#eamil'            
             },            

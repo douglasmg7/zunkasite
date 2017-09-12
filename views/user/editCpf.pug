@@ -16,8 +16,8 @@ html(lang="en")
               a(href='/users/account') Sua Conta
             li
               a(href='/users/access') Autenticação
-            li.active Altere Seu Nome
-          h2.text-left Altere Seu Nome
+            li.active Altere Seu CPF
+          h2.text-left Altere Seu CPF
           //- Flash erros.          
           if error
             each err in error
@@ -29,26 +29,29 @@ html(lang="en")
               .alert.alert-info(role='alert') 
                 p.text-center #{suc}    
           .z-panel
-            form(id='form-edit-name' method='post' action=`/users/access/name/${user._id}`)
+            form(id='form-edit-cpf' method='post' action=`/users/access/cpf/${user._id}`)
               input(type='hidden' name='_csrf' value=csrfToken)
               .form-group
-                label(for='name') Novo nome
-                input.form-control(type='text' name='name' id='name' value=user.name)
+                label(for='cpf') Novo CPF
+                input.form-control(type='text' name='cpf' id='cpf' value=user.cpf)
               input.btn.btn-primary(type='submit' value='Salvar Alterações')               
         .col-md-3
     include ../components/jquery.js.pug
+    include ../components/jquery.maskedinput.js.pug
     include ../components/jquery.validation.js.pug    
-    include ../components/jquery.validation.localization.js.pug        
+    include ../components/jquery.validation.localization.js.pug
     include ../components/bootstrap.js.pug
     script.
       jQuery(function($){
+        // Maskedinput.
+        $('#cpf').mask('999.999.999-99');
+        // Validator method for cpf.
+        $.validator.addMethod('cpf', function(value, element){ return CPF.validate(value); }, 'Por favor, forneça um CPF válido.');        
         // Form validation.
-        $('#form-edit-name').validate({
-          rules:{          
-            name: {
-              required: true,
-              minlength: 2,
-              maxlength: 40
+        $('#form-edit-cpf').validate({
+          rules:{
+            cpf: {
+              cpf: true,
             }
           },      
           messages: {
