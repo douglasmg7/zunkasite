@@ -29,7 +29,7 @@ html(lang="en")
               .alert.alert-info(role='alert') 
                 p.text-center #{suc}    
           .z-panel
-            form(id='form-edit-cpf' method='post' action=`/users/access/cpf/${user._id}`)
+            form(id='form-edit-cpf' method='post' action=`/users/access/edit-cpf/${user._id}`)
               input(type='hidden' name='_csrf' value=csrfToken)
               .form-group
                 label(for='cpf') Novo CPF
@@ -38,6 +38,7 @@ html(lang="en")
         .col-md-3
     include ../components/jquery.js.pug
     include ../components/jquery.maskedinput.js.pug
+    include ../components/cpf.js.pug
     include ../components/jquery.validation.js.pug    
     include ../components/jquery.validation.localization.js.pug
     include ../components/bootstrap.js.pug

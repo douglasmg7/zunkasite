@@ -29,7 +29,7 @@ html(lang="en")
               .alert.alert-info(role='alert') 
                 p.text-center #{suc}    
           .z-panel
-            form(id='form-edit-email' method='post' action=`/users/access/email/${user._id}`)
+            form(id='form-edit-email' method='post' action=`/users/access/edit-email/${user._id}`)
               input(type='hidden' name='_csrf' value=csrfToken)
               .form-group
                 label E-mail antigo
@@ -60,7 +60,7 @@ html(lang="en")
             },
             emailConfirm: {
               required: true,
-              equalTo: '#eamil'            
+              equalTo: '#email'            
             },            
             password: {
               required: true,

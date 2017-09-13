@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt-nodejs');
 // Schema.
 let schema = new mongoose.Schema({
   name: { type: String, required: true },
-  email: { type: String, index: { unique : true}, required: true },
+  email: { type: String, required: true },
   cpf: { type: String },
   cellPhone: { type: String },
   password: { type: String, required: true },
@@ -13,6 +13,7 @@ let schema = new mongoose.Schema({
   status: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   modifiedAt: { type: Date, default: Date.now },
+  removedAt: { type: Date, default: Date.now },
 });
 // Encrypt password.
 schema.methods.encryptPassword = function(password){
@@ -23,5 +24,5 @@ schema.methods.validPassword = function(password){
   return bcrypt.compareSync(password, this.password);
 };
 
-module.exports = mongoose.model('User', schema);
+module.exports = mongoose.model('RemovedUser', schema);
 

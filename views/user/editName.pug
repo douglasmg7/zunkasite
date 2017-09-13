@@ -29,7 +29,7 @@ html(lang="en")
               .alert.alert-info(role='alert') 
                 p.text-center #{suc}    
           .z-panel
-            form(id='form-edit-name' method='post' action=`/users/access/name/${user._id}`)
+            form(id='form-edit-name' method='post' action=`/users/access/edit-name/${user._id}`)
               input(type='hidden' name='_csrf' value=csrfToken)
               .form-group
                 label(for='name') Novo nome

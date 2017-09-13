@@ -30,26 +30,32 @@ html(lang="en")
             .z-panel-item
               p Nome completo
               p= user.name
-              a(href='access/name') Editar
+              a(href='access/edit-name') Editar
             .z-panel-item
               p E-mail
               p= user.email
-              a(href='access/email') Editar
+              a(href='access/edit-email') Editar
             .z-panel-item
               p Número de telefone celular
               if user.cellPhone
                 p= user.cellPhone
               else
-                p **********
-              a(href='access/cell-phone') Editar
+                p ********
+              a(href='access/edit-cell-phone') Editar
             .z-panel-item
               p Senha
-              p **********
-              a(href='access/password') Editar
+              p ********
+              a(href='access/edit-password') Editar
             .z-panel-item
               p CPF
-              p **********       
-              a(href='access/cpf') Editar
+              if user.cpf
+                p= user.cpf
+              else
+                p ********
+              a(href='access/edit-cpf') Editar
+            .z-panel-item
+              p Apagar conta
+              a(href='access/delete-account') Apagar
           p &nbsp
           a.btn.btn-primary(href='account') Concluído              
           p &nbsp
@@ -72,6 +78,6 @@ html(lang="en")
     .z-panel-item:last-child{
       border-bottom: 0px;
     }
-    .z-panel-item > p:nth-child(2){
+    .z-panel-item > p:nth-child(1){
       font-weight: bold;
     }

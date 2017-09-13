@@ -11,6 +11,7 @@ const nodemailer = require('nodemailer');
 // Personal modules.
 const log = require('../config/log');
 const User = require('../model/user');
+const RemovedUser = require('../model/removedUser');
 const EmailConfirmation = require('../model/emailConfirmation');
 const PasswordReset = require('../model/passwordReset');
 const Address = require('../model/address');
@@ -255,11 +256,11 @@ router.get('/orders', (req, res, next)=>{
 });
 
 // Edit name page.
-router.get('/access/name', (req, res, next)=>{
+router.get('/access/edit-name', (req, res, next)=>{
   res.render('user/editName', req.flash());
 });
 // Edit name.
-router.post('/access/name/:userId', checkPermission, (req, res, next)=>{
+router.post('/access/edit-name/:userId', checkPermission, (req, res, next)=>{
   // Validation.
   req.checkBody('name', 'Campo NOME deve ser preenchido.').notEmpty();
   req.getValidationResult().then(function(result) {
@@ -288,11 +289,11 @@ router.post('/access/name/:userId', checkPermission, (req, res, next)=>{
 });
 
 // Edit email page.
-router.get('/access/email', (req, res, next)=>{
+router.get('/access/edit-email', (req, res, next)=>{
   res.render('user/editEmail', req.flash());
 });
 // Edit email.
-router.post('/access/email/:userId', checkPermission, (req, res, next)=>{
+router.post('/access/edit-email/:userId', checkPermission, (req, res, next)=>{
   // Validation.
   req.checkBody('email', 'E-mail inválido.').isEmail();
   req.checkBody('emailConfirm', 'E-mail e Confirmação do e-mail devem ser iguais.').equals(req.body.email);
@@ -331,11 +332,11 @@ router.post('/access/email/:userId', checkPermission, (req, res, next)=>{
 });
 
 // Edit cell phone page.
-router.get('/access/cell-phone', (req, res, next)=>{
+router.get('/access/edit-cell-phone', (req, res, next)=>{
   res.render('user/editCellPhone', req.flash());
 });
 // Edit cell phone.
-router.post('/access/cell-phone/:userId', checkPermission, (req, res, next)=>{
+router.post('/access/edit-cell-phone/:userId', checkPermission, (req, res, next)=>{
   // Validation.
   req.checkBody('cellphone', 'Campo NÚMERO DE TELEFONE CELULAR deve ser preenchido.').notEmpty();
   req.getValidationResult().then(function(result) {
@@ -364,11 +365,11 @@ router.post('/access/cell-phone/:userId', checkPermission, (req, res, next)=>{
 });
 
 // Edit password page.
-router.get('/access/password', (req, res, next)=>{
+router.get('/access/edit-password', (req, res, next)=>{
   res.render('user/editPassword', req.flash());
 });
 // Edit password.
-router.post('/access/password/:userId', checkPermission, (req, res, next)=>{
+router.post('/access/edit-password/:userId', checkPermission, (req, res, next)=>{
   // Validation.
   req.checkBody('password', 'Senha inválida.').notEmpty();
   req.checkBody('passwordNew', 'Nova senha deve conter pelo menos 8 caracteres.').isLength({ min: 8});
@@ -407,14 +408,14 @@ router.post('/access/password/:userId', checkPermission, (req, res, next)=>{
 });
 
 // Edit CPF page.
-router.get('/access/cpf', (req, res, next)=>{
+router.get('/access/edit-cpf', (req, res, next)=>{
   res.render('user/editCpf', req.flash());
 });
 // Edit CPF.
-router.post('/access/cpf/:userId', checkPermission, (req, res, next)=>{
+router.post('/access/edit-cpf/:userId', checkPermission, (req, res, next)=>{
   // Validation.
   req.checkBody('cpf', 'Campo CPF deve ser preenchido.').notEmpty();
-  req.checkBody('cpf', 'Cpf inválido.').isCpf();
+  req.checkBody('cpf', 'CPF inválido.').isCpf();
   req.getValidationResult().then(function(result) {
     // Send validations errors to client.
     if (!result.isEmpty()) {
@@ -435,6 +436,72 @@ router.post('/access/cpf/:userId', checkPermission, (req, res, next)=>{
           if (err) { return next(err); } 
           res.redirect('/users/access');
         });  
+      });
+    }
+  });
+});
+
+// Delete account page.
+router.get('/access/delete-account', (req, res, next)=>{
+  res.render('user/deleteAccount', req.flash());
+});
+// Delete account.
+router.post('/access/delete-account/:userId', checkPermission, (req, res, next)=>{
+  // Validation.
+  req.checkBody('email', 'E-mail inválido.').isEmail();
+  req.checkBody('password', 'Senha inválida.').notEmpty();
+  req.sanitizeBody("email").normalizeEmail();
+  req.getValidationResult().then(function(result) {
+    // Send validations errors to client.
+    if (!result.isEmpty()) {
+      let messages = [];
+      messages.push(result.array()[0].msg);
+      req.flash('error', messages);
+      res.redirect('back');
+      return;
+    } 
+    // Save address.
+    else {
+      if (!req.params.userId) { return next(new Error('No userId to find user data.')); }
+      User.findById(req.params.userId, (err, user)=>{
+        if (err) { return next(err) };
+        if (!user) { return next(new Error('Not found user to save.')); }
+        // Verify e-mail.
+        if (user.email !== req.body.email) { 
+          req.flash('error', 'E-mail incorreto');
+          res.redirect('back');
+          return;
+        }
+        // Verify password.
+        if (user.validPassword(req.body.password)) {
+          let removedUser = new RemovedUser();
+          removedUser.name = user.name;
+          removedUser.email = user.email;
+          removedUser.cpf = user.cpf;
+          removedUser.cellPhone = user.cellPhone;
+          removedUser.password = user.password;
+          removedUser.group = user.group;
+          removedUser.status = user.status;
+          removedUser.createdAt = user.createdAt;
+          removedUser.modifiedAt = user.modifiedAt;
+          // Save user removed for security reasons.
+          removedUser.save(function(err) {
+            if (err) { return next(err); } 
+            req.logout();
+            // Remove user.
+            user.remove(err=>{
+              if (err) { return next(err); }
+              // Remove cart.
+              redis.del(`cart:${user.email}`); 
+              req.flash('success', 'Conta apagada com sucesso.');
+              res.redirect('/users/login/');               
+            });
+          });  
+        // Inválid password.
+        } else {
+          req.flash('error', 'Senha incorreta');
+          res.redirect('back');
+        }
       });
     }
   });
@@ -577,27 +644,6 @@ router.put('/address/remove/:addressId', checkPermission, (req, res, next)=>{
   });
 });
 
-// Delete account page.
-router.get('/delete', (req, res, next)=>{
-  res.render('user/delete', req.flash());
-});
-
-// Delete account.
-router.post('/delete', checkPermission, (req, res, next)=>{
-  // Delete user.
-  redis.del(`user:${req.user.email}`, (err)=>{
-    if (err) {
-      req.logout();
-      log.error(err, new Error().stack);
-      req.flash('error', 'Serviço indisponível.');
-      res.redirect('/users/login/');
-      return;
-    }
-    req.logout();
-    req.flash('success', 'Conta apagada com sucesso.');
-    res.redirect('/users/login/');
-  });      
-});
 // // Login page (no bootstrap).
 // router.get('/loginc', (req, res, next)=>{
 //   // Message from authentication, who set a flash message with erros.

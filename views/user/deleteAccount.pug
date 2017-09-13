@@ -16,8 +16,8 @@ html(lang="en")
               a(href='/users/account') Sua Conta
             li
               a(href='/users/access') Autenticação
-            li.active Altere Seu Número de Telefone Celular
-          h2.text-left Altere Seu Número de Telefone Celular
+            li.active Apagar Conta
+          h2.text-left Apagar Conta
           //- Flash erros.          
           if error
             each err in error
@@ -29,29 +29,33 @@ html(lang="en")
               .alert.alert-info(role='alert') 
                 p.text-center #{suc}    
           .z-panel
-            form(id='form-edit-cellphone' method='post' action=`/users/access/edit-cell-phone/${user._id}`)
+            form(id='form-delete-account' method='post' action=`/users/access/delete-account/${user._id}`)
               input(type='hidden' name='_csrf' value=csrfToken)
               .form-group
-                label(for='cellphone') Novo Número de Telefone Celular
-                input.form-control(type='text' name='cellphone' id='cellphone' value=user.cellPhone)
-              input.btn.btn-primary(type='submit' value='Salvar Alterações')               
+                label(for='email') E-mail
+                input.form-control(type='text' name='email' id='email')
+              .form-group
+                label(for='password') Senha
+                input.form-control(type='password' name='password' id='password')        
+              input.btn.btn-danger(type='submit' value='Apagar Conta')               
         .col-md-3
     include ../components/jquery.js.pug
-    include ../components/jquery.maskedinput.js.pug
     include ../components/jquery.validation.js.pug    
-    include ../components/jquery.validation.localization.js.pug
+    include ../components/jquery.validation.localization.js.pug    
     include ../components/bootstrap.js.pug
     script.
       jQuery(function($){
-        // Maskedinput.
-        $('#cellphone').mask('(99) 99999-9999');      
         // Form validation.
-        $('#form-edit-cellphone').validate({
+        $('#form-delete-account').validate({
           rules:{
-            cellPhone: {
+            email: {
               required: true,
-              minlength: 14,
-              maxlength: 16              
+              email: true
+            },          
+            password: {
+              required: true,
+              minlength: 8,
+              maxlength: 20
             }
           },      
           messages: {
@@ -64,11 +68,8 @@ html(lang="en")
             element.closest('.form-group').removeClass('has-error').addClass('has-success');
           }          
         });
-      });     
+      });    
   style.
-    a.not-decoration {
-      text-decoration: none;
-    }
     /* Panel */
     .z-panel{
       border: 1px solid lightgray;

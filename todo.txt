@@ -36,6 +36,7 @@ num of products to not commercialize must be in to a config, not harded coded
 - csrf = require('csurf')
 - express-validator - youtube - Building a Shopping Cart - #8 Validation
 - store: new MongoStore({ url: dbUrl }) - ttl, autoremove
+- update modifiedAt field from models.
 
 - madeira  -    Baliza               -       Oriental
                                                3,0 - R$  4,25
