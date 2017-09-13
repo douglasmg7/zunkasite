@@ -67,3 +67,6 @@ num of products to not commercialize must be in to a config, not harded coded
   remover connect-mongo
 
 https://www.npmjs.com/package/nodemailer-stub-transport
+
+strip node / mongoose / shopping cart
+https://www.youtube.com/watch?v=3meH2TK4KuI

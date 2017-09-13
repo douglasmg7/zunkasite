@@ -44,10 +44,10 @@
               span ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}}): 
               span {{ cart.totalPrice | currencyBr }}
             .buttons
-              a.btn.btn-primary(href='/cart') Carrinho
-              // button.btn.btn-success Finalizar compra
+              a.btn.btn-primary(href='/cart' style='display: inline') Carrinho
+              a.btn.btn-success(href='/checkout' style='display: inline; background-color: yellow; color: blue') Continuar ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
       .row(v-for='i in Math.ceil(products.length / colsByRow)')
-        // Must have title and price more than 0 to be show.
+        //- Must have title and price more than 0 to be show.
         .col-md-3(v-for='product in products.slice((i - 1) * colsByRow, i * colsByRow)')
           .thumbnail
             a.product(:href='"/product/" + product._id')
