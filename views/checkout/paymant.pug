@@ -1,0 +1,30 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Endereços.
+    include ../components/bootstrap.css.pug
+  body
+    include ../navbar.pug
+    .container
+      .row
+        .col-md-12
+          h2.text-left Selecionar uma forma de pagamento
+          hr
+          //- Flash erros.          
+          if error
+            each err in error
+              .alert.alert-danger(role='alert') 
+                p.text-center #{err} 
+          //- Flash success.
+          if success
+            each suc in success
+              .alert.alert-info(role='alert') 
+                p.text-center #{suc}    
+            p &nbsp
+            p &nbsp
+    include ../components/jquery.js.pug
+    include ../components/bootstrap.js.pug      
+    script.
+  style.

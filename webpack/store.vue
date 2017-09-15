@@ -44,8 +44,8 @@
               span ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}}): 
               span {{ cart.totalPrice | currencyBr }}
             .buttons
-              a.btn.btn-primary(href='/cart' style='display: inline') Carrinho
-              a.btn.btn-success(href='/checkout' style='display: inline; background-color: yellow; color: blue') Continuar ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
+              a.btn.btn-primary(href='/cart') Carrinho
+              a.btn.btn-success(href='/checkout/ship-address') Continuar ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
       .row(v-for='i in Math.ceil(products.length / colsByRow)')
         //- Must have title and price more than 0 to be show.
         .col-md-3(v-for='product in products.slice((i - 1) * colsByRow, i * colsByRow)')
@@ -194,7 +194,6 @@
   .cart > .item > img
     max-height: 4em
   .cart > .sub-total
-    width: 100%
   .cart > .sub-total > span:nth-child(2)
     font-weight: normal
   .cart > .sub-total > span:nth-child(3)
@@ -203,6 +202,8 @@
     text-align: right
   .cart > .buttons > button
     margin: .7em    
+  .cart > .buttons > a:nth-child(1)
+    margin-right: 1em    
   footer
     height: 50px    
 </style>

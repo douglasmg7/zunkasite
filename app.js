@@ -49,6 +49,7 @@ const app = express();
 // Routes.
 const routeUsers = require('./routes/routeUsers');
 const routeSite = require('./routes/routeSite');
+const routeCheckout = require('./routes/routeCheckout');
 const routeWsAllNations = require('./routes/routeWsAllNations');
 const routeWsStore = require('./routes/routeWsStore');
 const routeConfigProducts = require('./routes/routeConfigProducts');
@@ -152,6 +153,8 @@ app.use('/configProducts', routeConfigProducts);
 app.use('/test', routeTest);
 // Site.
 app.use('/', routeSite);
+// Checkout
+app.use('/checkout', routeCheckout);
 // CSRF error handler.
 app.use(function (err, req, res, next) {
   if (err.code !== 'EBADCSRFTOKEN') return next(err);

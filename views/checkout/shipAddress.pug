@@ -1,0 +1,223 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Endereços.
+    include ../components/bootstrap.css.pug
+  body
+    include ../navbar.pug
+    .container
+      .row
+        .col-md-12
+          h2.text-left Selecionar um endereço para envio
+          p Ou voçê pode 
+            a(href='#') adicionar um novo endereço para envio.
+          hr
+          //- Flash erros.          
+          if error
+            each err in error
+              .alert.alert-danger(role='alert') 
+                p.text-center #{err} 
+          //- Flash success.
+          if success
+            each suc in success
+              .alert.alert-info(role='alert') 
+                p.text-center #{suc}    
+      .row
+        //- Address list.
+        if addresss
+          each address in addresss
+            .col-md-4
+              .z-panel.address(data-address-id=address._id)
+                .z-panel-body             
+                  p.name #{address.name}                                                                                                
+                  p #{address.phone}                                                                                                
+                  p #{address.cep}                                                                                                
+                  p #{address.address}                                                                                                
+                  p #{address.addressNumber}                                                                                                
+                  p #{address.addressComplement}                                                                                                
+                  p #{address.district}                                                                                                
+                  p #{address.city}                                                                                                
+                  p #{address.state}
+                .z-panel-footer                                                                          
+                  span
+                    a.btn.btn-success(href=`ship-address-selected/${address._id}`) Enviar para este endereço 
+      .row
+        .col-md-12
+          hr
+      .row
+        .col-md-6
+          form(id='form-add-address' action='addAddress' method='post')
+            input(type='hidden' name='_csrf' value=csrfToken)       
+            h3.text-left
+              strong Cadastrar endereço para envio.                                  
+            .form-group
+              label(for='name') Nome
+              input.form-control(type='text' name='name' id='name')             
+            .form-group
+              label(for='cep') CEP
+              input.form-control(type='text' name='cep' id='cep')
+              a(href='http://m.correios.com.br/movel/buscaCepConfirma.do' target='_blank') Não sei meu CEP
+              p.loading.hide Buscando dados do cpf...
+              .alert.alert-warning.hide(role='alert')
+                p Não foi possível encontrar o CEP informado. Por favor confira os dados e tente novamente.
+            .form-group
+              label(for='address') Endereço
+              input.form-control(type='text' name='address' id='address')
+            .form-group
+              label(for='addressNumber') Número
+              input.form-control(type='text' name='addressNumber' id='addressNumber')
+            .form-group
+              label(for='addressComplement') Complemento
+              input.form-control(type='text' name='addressComplement' id='addressComplement')
+            .form-group
+              label(for='district') Bairro
+              input.form-control(type='text' name='district' id='district')       
+            .form-group
+              label(for='city') Cidade
+              input.form-control(type='text' name='city' id='city')  
+            .form-group
+              label(for='state') Estado
+              input.form-control(type='text' name='state' id='state')                     
+            .form-group
+              label(for='phone') Telefone
+              input.form-control(type='text' name='phone' id='phone')                                                                                        
+            input.btn.btn-success(type='submit' value='Enviar para este endereço')
+            p &nbsp
+            p &nbsp
+    include ../components/jquery.js.pug
+    include ../components/jquery.maskedinput.js.pug
+    include ../components/jquery.validation.js.pug
+    include ../components/bootstrap.js.pug
+    include ../components/cpf.js.pug
+    include ../components/jquery.validation.localization.js.pug            
+    script.
+      jQuery(function($){
+        // Maskedinput.
+        $('#cep').mask('99999-999');
+        $('#phone').mask('(99) 99999-9999');
+        // Validator method for cpf.
+        $.validator.addMethod('cep', function(value, element){ return value.match(/^\d{5}-\d{3}$/); }, 'Por favor, forneça um CEP válido.');
+        // Form validation.
+        $('#form-add-address').validate({
+          rules:{
+            name: {
+              required: true,
+              minlength: 2,
+              maxlength: 60
+            },
+            cep: {
+              cep: true
+            },            
+            address: {
+              required: true,
+              minlength: 2,
+              maxlength: 60
+            },            
+            addressNumber: {
+              required: true,
+              minlength: 1,
+              maxlength: 60
+            },
+            addressComplement: {
+              minlength: 1,
+              maxlength: 60
+            },            
+            district: {
+              required: true,
+              minlength: 1,
+              maxlength: 60
+            },   
+            city: {
+              required: true,
+              minlength: 1,
+              maxlength: 60
+            },         
+            state: {
+              required: true,
+              minlength: 1,
+              maxlength: 60
+            },                                
+            phone: {
+              required: true,
+              minlength: 14,
+              maxlength: 16              
+            }
+          },      
+          messages: {
+          },
+          highlight: function (element) {
+              $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+          },
+          success: function (element) {
+            // Remove erros.
+            element.closest('.form-group').removeClass('has-error').addClass('has-success');
+            // Get CEP information.
+            if (element.attr('for') == 'cep') {
+              // Show message loading cep data.
+              element.siblings('.loading').removeClass('hide');
+              // Get cep data.
+              let cep = $('#cep').val().replace(/\D/g, '');
+              $.ajax({
+                method: 'GET',
+                url: `https://viacep.com.br/ws/${cep}/json/`
+              })
+              .done(function(result){
+                // Remove message loading cep data.
+                element.siblings('.loading').addClass('hide');
+                // Not found CEP.
+                if (result.erro) {
+                  // State.
+                  $('#state').val('');
+                  // City.
+                  $('#city').val('');
+                  // District.
+                  $('#district').val('');
+                  // Address.
+                  $('#address').val('');
+                }
+                // Found CEP.
+                else {
+                  // State.
+                  if (result.uf) { $('#state').val(result.uf); } else { $('#state').val(''); }
+                  // City.
+                  if (result.localidade) { $('#city').val(result.localidade); } else { $('#city').val(''); }
+                  // District.
+                  if (result.bairro) { $('#district').val(result.bairro); } else { $('#district').val(''); }
+                  // Address.
+                  if (result.logradouro) { $('#address').val(result.logradouro); } else { $('#address').val(''); }
+                }
+              });
+            }
+          }            
+        });
+      });
+  style.
+    a.not-decoration {
+      text-decoration: none;
+    }
+    /* Panel */
+    .z-panel{
+      /* border: 1px solid lightgray;
+      border-radius: 5px; */
+      min-height: 300px;
+      padding: 1em;
+      margin-bottom: 1em;
+    }
+    .z-panel-body, 
+    .z-panel-footer{
+    }
+    .z-panel-body > p.name {
+      font-weight: bold;
+    }
+    .z-panel-footer{
+      position: absolute;
+      bottom: 1px;
+      height: 5em;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;    
+    }
+    p {
+      line-height: .8em;
+    }

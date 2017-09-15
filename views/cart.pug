@@ -17,7 +17,8 @@ html(lang="en")
       else
         .row
           .col-md-12
-            h3: strong Carrinho de compras
+            h3
+              strong Carrinho de compras
         .row
           .col-md-12
             table.table
@@ -56,6 +57,7 @@ html(lang="en")
             H4
               strong Subtotal (#{cart.totalQtd} #{cart.totalQtd > 1 ? 'itens): ' : 'item): '}
               span#subtotal-price #{formatMoney(cart.totalPrice)}
+              a.btn.btn-success.checkout(href='/checkout/ship-address') Continuar
         //- .row
           .col-md-12
             button.btn.btn-primary(type='button') Comprar
@@ -162,5 +164,8 @@ html(lang="en")
       }
       .product-removed {
         font-size: .9em;
+      }
+      a.checkout {
+        margin-left: 2em;
       }
 
