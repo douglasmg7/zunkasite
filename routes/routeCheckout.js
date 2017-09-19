@@ -33,36 +33,36 @@ router.get('/ship-address', (req, res, next)=>{
 
 // Ship address selected.
 router.get('/ship-address-selected/:address_id', (req, res, next)=>{
+  // Find selected address.
   Address.findById(req.params.address_id, (err, address)=>{
     if (err) return next(err);
-    let order = new Order();
-    order.user_id = req.user._id;
-    // order.status = 'shipAddressSelected';
-    // order.billAddress = {};
-    // order.shipAddress = {};
-    // order.shipAddress.name = address.name;
-    // order.shipAddress.phone = address.phone;
-    // order.shipAddress.cep = address.cep;
-    // order.shipAddress.address = address.address;
-    // order.shipAddress.addressNumber = address.addressNumber;
-    // order.shipAddress.addressComplement = address.addressComplement;
-    // order.shipAddress.district = address.district;
-    // order.shipAddress.city = address.city;
-    // order.shipAddress.state = address.state;
-    order.save(err=>{
+    // Find order with shipAddressSelected status.
+    Order.remove({user_id: req.user._id, status: 'shipAddressSelected'}, err=>{
       if (err) return next(err);
-      res.redirect('checkout/paymant', req.flash()); 
+      // Not found order.
+      let order = new Order();
+      order.user_id = req.user._id;
+      order.status = 'shipAddressSelected';
+      order.shipAddress = {};
+      order.shipAddress.name = address.name;
+      order.shipAddress.phone = address.phone;
+      order.shipAddress.cep = address.cep;
+      order.shipAddress.address = address.address;
+      order.shipAddress.addressNumber = address.addressNumber;
+      order.shipAddress.addressComplement = address.addressComplement;
+      order.shipAddress.district = address.district;
+      order.shipAddress.city = address.city;
+      order.shipAddress.state = address.state;
+      order.save(err=>{
+        if (err) return next(err);
+        res.redirect('/checkout/paymant'); 
+      });        
     });
   })
 });
 
-// Select paymant page.
-router.get('/paymant', (req, res, next)=>{
-  res.render('checkout/paymant'); 
-});
-
 // Add address.
-router.post('/address/add', checkPermission, (req, res, next)=>{
+router.post('/ship-address-add', checkPermission, (req, res, next)=>{
   // Validation.
   req.checkBody('name', 'Campo NOME deve ser preenchido.').notEmpty();
   req.checkBody('cep', 'Campo CEP deve ser preenchido.').notEmpty();
@@ -95,85 +95,36 @@ router.post('/address/add', checkPermission, (req, res, next)=>{
       address.state = req.body.state;
       address.phone = req.body.phone;
       address.save(function(err) {
-        if (err) { return next(err); } 
-        res.redirect('/users/address');
+        if (err) { return next(err); }
+        Order.remove({user_id: req.user._id, status: 'shipAddressSelected'}, err=>{
+          if (err) { return next(err); }
+          // Create order.
+          let order = new Order();
+          order.user_id = req.user._id;
+          order.status = 'shipAddressSelected';
+          order.shipAddress = {};
+          order.shipAddress.name = address.name;
+          order.shipAddress.phone = address.phone;
+          order.shipAddress.cep = address.cep;
+          order.shipAddress.address = address.address;
+          order.shipAddress.addressNumber = address.addressNumber;
+          order.shipAddress.addressComplement = address.addressComplement;
+          order.shipAddress.district = address.district;
+          order.shipAddress.city = address.city;
+          order.shipAddress.state = address.state;
+          order.save(err=>{
+            if (err) return next(err);
+            res.redirect('/checkout/paymant'); 
+          });
+        });
       });        
     }
   });
 });
 
-// Edit address page.
-router.get('/address/edit', (req, res, next)=>{
-  Address.findById(req.query.addressId, (err, address)=>{
-    if (err) return next(err);
-    let data = req.flash();
-    data.address = address;
-    res.render('user/addressEdit', data);
-  });
-});
-
-// Edit address.
-router.post('/address/edit', checkPermission, (req, res, next)=>{
-  // Validation.
-  req.checkBody('name', 'Campo NOME deve ser preenchido.').notEmpty();
-  req.checkBody('cep', 'Campo CEP deve ser preenchido.').notEmpty();
-  req.checkBody('address', 'Campo ENDEREÇO deve ser preenchido.').notEmpty();
-  req.checkBody('addressNumber', 'Campo NÚMERO deve ser preenchido.').notEmpty();
-  req.checkBody('district', 'Campo BAIRRO deve ser preenchido.').notEmpty();
-  req.checkBody('city', 'Campo CIDADE deve ser preenchido.').notEmpty();
-  req.checkBody('state', 'Campo ESTADO deve ser preenchido.').notEmpty();
-  req.checkBody('phone', 'Campo TELEFONE deve ser preenchido.').notEmpty();
-  req.getValidationResult().then(function(result) {
-    // Send validations errors to client.
-    if (!result.isEmpty()) {
-      let messages = [];
-      messages.push(result.array()[0].msg);
-      req.flash('error', messages);
-      res.redirect('back');
-      return;
-    } 
-    // Save address.
-    else {
-      if (!req.body.addressId) { return next(new Error('No addressId to find address data.')); }
-      Address.findById(req.body.addressId, (err, address)=>{
-        if (err) { return next(err) };
-        if (!address) { return next(new Error('Not found address to save.')); }
-        address.user_id = req.user._id;
-        address.name = req.body.name;
-        address.cep = req.body.cep;
-        address.address = req.body.address;
-        address.addressNumber = req.body.addressNumber;
-        address.addressComplement = req.body.addressComplement;
-        address.district = req.body.district;
-        address.city = req.body.city;
-        address.state = req.body.state;
-        address.phone = req.body.phone;
-        address.save(function(err) {
-          if (err) { return next(err); } 
-          res.redirect('/users/address');
-        });  
-      });
-    }
-  });
-});
-
-// Set address as default.
-router.put('/address/default/:addressId', checkPermission, (req, res, next)=>{
-  Address.findById(req.params.addressId, function(err, address){
-    if (err) { next(err) };
-    if (address) {
-      // Set all not default.
-      Address.where({ user_id: address.user_id }).updateMany({ default: false }, err=>{
-        if (err) { next(err) };
-        // Set default.
-        address.default = true;
-        address.save(err=>{
-          if (err) { next(err) };
-          res.json({success: true, msg: 'Address default changed.' });  
-        });
-      });    
-    }
-  })
+// Select paymant page.
+router.get('/paymant', (req, res, next)=>{
+  res.render('checkout/paymant'); 
 });
 
 // Check permission.

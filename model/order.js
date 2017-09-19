@@ -15,9 +15,9 @@ let address = new mongoose.Schema({
 // Schema.
 let schema = new mongoose.Schema({
   user_id: { type: mongoose.Schema.Types.ObjectId, required: true },
-  // status: { type: String, required: true },
-  // shipAddress: address,
-  // billAddress: address,
+  status: { type: String, required: true },
+  shipAddress: address,
+  billAddress: address,
   createdAt: { type: Date, default: Date.now },
   modifiedAt: { type: Date, default: Date.now }
 });
