@@ -4,6 +4,7 @@ html(lang="en")
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
     title Endereços.
+    include ../components/paypal.js.pug
     include ../components/bootstrap.css.pug
   body
     include ../navbar.pug
@@ -24,7 +25,44 @@ html(lang="en")
                 p.text-center #{suc}    
             p &nbsp
             p &nbsp
+          #paypal-button
+          //- form(method='post')
+            input(type='hidden' name='_csrf' value=csrfToken)       
+            input.btn.btn-success(type='submit' value= 'Paypal')
     include ../components/jquery.js.pug
     include ../components/bootstrap.js.pug      
     script.
+      paypal.Button.render({
+        env: 'sandbox', // production or sandbox,
+        client: {
+            sandbox:    'ASpmuFYrAVJcuEiBR5kP8lBdfEJqz4b8hsPQ0fKV7spzkiYFQc2BtA2q7M5vyXTPFuUELBiOpGmfhSZw',
+            production: 'xxxxxxxxx'
+        },
+        commit: true, // Show a 'Pay Now' button
+        payment: function(data, actions) {
+          return actions.payment.create({
+            payment: {
+              intent: "sale",
+              transactions: [
+                {
+                    amount: { total: '1.00', currency: 'BRL' }
+                }
+              ],
+              note_to_payer: "Contact us for any questions on your order.",
+              redirect_urls: {
+                return_url: "https://localhost:3088/checkout/return",
+                cancel_url: "https://localhost:3088/checkout/cancel"              
+              }
+            }
+          });
+        },
+        // Is called when the buyer approves the payment.
+        onAuthorize: function(data, actions) {
+
+            // Make a call to the REST api to execute the payment
+            return actions.payment.execute().then(function() {
+                window.alert('Payment Complete!');
+            });
+        }
+      }, '#paypal-button');
   style.
