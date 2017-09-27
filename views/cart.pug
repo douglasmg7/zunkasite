@@ -127,11 +127,6 @@ html(lang="en")
           $('#total-qtd').html(result.cart.totalQtd);
         });
       });
-
-      // Format number to currency.
-      function formatMoney(val){
-        return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-      }
     style.
       #subtotal-price{
         color: green;

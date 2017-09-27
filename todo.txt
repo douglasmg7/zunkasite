@@ -2,6 +2,9 @@ remover senhas do servidor
 
 implementar unit test
 
+trim fields.
+req.sanitize("city").trim();
+
 erros
   no descrescent sort for price and the others colums
 

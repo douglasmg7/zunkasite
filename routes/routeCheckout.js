@@ -14,6 +14,11 @@ const User = require('../model/user');
 const Address = require('../model/address');
 const Order = require('../model/order');
 
+// Format number to money format.
+function formatMoney(val){
+  return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
 // Transporter object using the default SMTP transport.
 let transporter = nodemailer.createTransport({
     host: 'smtps.dialhost.com.br',
@@ -59,7 +64,7 @@ router.get('/ship-address-selected/:address_id', (req, res, next)=>{
       order.shipAddress.state = address.state;
       order.save(err=>{
         if (err) return next(err);
-        res.redirect('/checkout/paymant'); 
+        res.redirect('/checkout/shipment'); 
       });        
     });
   })
@@ -68,6 +73,14 @@ router.get('/ship-address-selected/:address_id', (req, res, next)=>{
 // Add address.
 router.post('/ship-address-add', checkPermission, (req, res, next)=>{
   // Validation.
+  req.sanitize("name").trim();
+  req.sanitize("cep").trim();
+  req.sanitize("address").trim();
+  req.sanitize("addressNumber").trim();
+  req.sanitize("district").trim();
+  req.sanitize("city").trim();
+  req.sanitize("state").trim();
+  req.sanitize("phone").trim();
   req.checkBody('name', 'Campo NOME deve ser preenchido.').notEmpty();
   req.checkBody('cep', 'Campo CEP deve ser preenchido.').notEmpty();
   req.checkBody('address', 'Campo ENDEREÇO deve ser preenchido.').notEmpty();
@@ -118,12 +131,29 @@ router.post('/ship-address-add', checkPermission, (req, res, next)=>{
           order.shipAddress.state = address.state;
           order.save(err=>{
             if (err) return next(err);
-            res.redirect('/checkout/paymant'); 
+            res.redirect('/checkout/shipment'); 
           });
         });
       });        
     }
   });
+});
+
+// Select shipment page.
+router.get('/shipment', (req, res, next)=>{
+  Order.findOne({user_id: req.user._id}, (err, order)=>{
+    if (err) { return next(err); }
+    if (!order) {
+      return next(new Error('No order to continue checkout.')); }
+    else {
+      res.render('checkout/shipment', { shipAddress: order.shipAddress, formatMoney: formatMoney }); }
+  });
+});
+
+// Select shipment.
+router.post('/shipment', (req, res, next)=>{
+  console.log(req.body);
+  res.redirect('/checkout/paymant');
 });
 
 // Select paymant page.

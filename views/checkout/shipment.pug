@@ -1,0 +1,76 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Endereços.
+    include ../components/bootstrap.css.pug
+  body
+    include ../navbar.pug
+    .container
+      .row
+        .col-md-12
+          h2.text-left Selecionar uma forma de envio
+          hr
+          //- Flash erros.          
+          if error
+            each err in error
+              .alert.alert-danger(role='alert') 
+                p.text-center #{err} 
+          //- Flash success.
+          if success
+            each suc in success
+              .alert.alert-info(role='alert') 
+                p.text-center #{suc}    
+            p &nbsp
+            p &nbsp
+          if shipAddress.addressComplement !== ''
+            p.shipmentAddress
+              | Enviar para: #{shipAddress.name}, #{shipAddress.address} #{shipAddress.addressNumber}, #{shipAddress.addressComplement}
+              | - #{shipAddress.district}, #{shipAddress.city}, #{shipAddress.state}
+              | , #{shipAddress.cep} Brasil              
+          else
+            p.shipmentAddress
+              | Enviar para: #{shipAddress.name}, #{shipAddress.address} #{shipAddress.addressNumber}
+              | - #{shipAddress.district}, #{shipAddress.city}, #{shipAddress.state}
+              | , #{shipAddress.cep} Brasil     
+          each product in cart.products
+            ul
+              li 
+                p 
+                  strong #{product.title}
+                p 
+                  span.price #{formatMoney(product.price)} 
+                  span.quantity - Quantidade: #{product.qtd}
+                //- #{formatMoney(product.price)} - #{formatMoney(product.price * product.qtd)}
+          form(method='post')
+            input(type='hidden' name='_csrf' value=csrfToken)       
+            .radio
+              h3.shipmentOption Opção de entrega
+              label
+                input(type='radio' name='shipmentOption' id='default' value='default' checked)/ Envio padrão
+            input.btn.btn-success(type='submit' value='Continuar')
+    include ../components/jquery.js.pug
+    include ../components/bootstrap.js.pug
+    style.
+      ul, .shipmentAddress, .quantity {
+        color: #7D7D7D;
+      }
+      ul p {
+        color: black;
+      }
+      li > p:first-child {
+      margin-bottom: .2em;
+      }
+      .price {
+        color: #C45D43;
+      }
+      .shipmentAddress {
+        font-size: 1em;
+      }
+      .shipmentOption {
+        margin-top: 1.5em;
+      }
+      input[type='submit'] {
+        margin-top: 2em;
+      }
