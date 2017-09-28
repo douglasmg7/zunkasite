@@ -68,6 +68,10 @@ html(lang="en")
     include components/jquery.js.pug
     include components/bootstrap.js.pug
     script.
+      // Format number to money format.
+      function formatMoney(val){
+        return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      }      
       // Change product quantity.
       $('tr').find('.product-qtd').find('a').on('click', function(event){
         let $a = $(event.target);

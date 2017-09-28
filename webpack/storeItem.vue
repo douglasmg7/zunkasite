@@ -49,6 +49,16 @@
           ul.product-detail(v-if='productDetail.length > 0')
             li(v-for='detail in productDetail') {{detail}}
           button.btn.btn-success.add-cart(@click='addToCart') Adicionar ao carrinho
+          .estimateShip
+            p Estimar frete e prazo (Entre com o CEP)
+            form.form-inline(id='form-ship' action='EstimateShip')
+              input(type='hidden' name='_csrf' value=csrfToken)       
+              .input-group
+                input.form-control(type='text' id='cep' size='7' value='cep')
+                span.input-group-btn
+                  button.btn.btn-default Calcular
+                  
+                //- Label(type='text' for='cep') CEP
       .row(v-if='product.storeProductDescription.trim() !== ""')
         .col-md-10.col-md-offset-1
           //- Description.
@@ -84,6 +94,39 @@
           footer
 </template>
 <script>
+  jQuery(function($){
+    // Maskedinput.
+    $('#cep').mask('99999-999');
+    $('#form-ship').submit(function(e){
+      console.log('clicked preventDefault');
+      $.ajax({
+        method: 'GET',
+        url: '/checkout/ship-estimate/',
+        data: { _csrf: '#{csrfToken}', product: '9090909', cep: $('#cep').value}
+      })
+      .done(function(result){
+        console.log(result);
+        // // Update quantity selected.
+        // $a.closest('td').find('button').children().eq(0).html(productQtd);
+        // // Update product (price * quantity).
+        // let products = result.cart.products;
+        // for(let i = 0; i < result.cart.products.length; i++){
+        //   if (products[i]._id === productId) {
+        //     $tr.children().last().prev().children().html(formatMoney(products[i].price));
+        //     $tr.children().last().children().html(formatMoney(products[i].price * products[i].qtd));
+        //     break;
+        //   }
+        // }
+        // // Update total price and total quantity.
+        // $('#subtotal-price')
+        //   .html(formatMoney(result.cart.totalPrice))
+        //   .prev().html('Subtotal (' + result.cart.totalQtd + (result.cart.totalQtd > 1 ? ' itens):&nbsp' : ' item):&nbsp'));
+        // // Update quantity.
+        // $('#total-qtd').html(result.cart.totalQtd);
+      });        
+      return false;
+    })
+  });
   /* globals accounting */
   'use strict';
   import accounting from 'accounting';
@@ -210,4 +253,8 @@
   button.add-cart
     margin-top: 1em
     // margin-left: 1em
+  .estimateShip
+    margin-top: 2em;
+  .estimateShip > p 
+    font-weight: bold
 </style>

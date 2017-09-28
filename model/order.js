@@ -10,7 +10,7 @@ let address = new mongoose.Schema({
   addressComplement: { type: String, default: '' },
   district: { type: String, required: true },
   city: { type: String, required: true },
-  state: { type: String, required: true }
+  state: { type: String, required: true },
 });
 // Schema.
 let schema = new mongoose.Schema({
@@ -18,6 +18,7 @@ let schema = new mongoose.Schema({
   status: { type: String, required: true },
   shipAddress: address,
   billAddress: address,
+  shipMethod: { type: String },
   createdAt: { type: Date, default: Date.now },
   modifiedAt: { type: Date, default: Date.now }
 });

@@ -139,6 +139,19 @@ router.post('/ship-address-add', checkPermission, (req, res, next)=>{
   });
 });
 
+// Estimate shipment.
+router.get('/ship-estimate', (req, res, next)=>{
+  console.log('ship-estimate', req.body);
+
+  // Order.findOne({user_id: req.user._id}, (err, order)=>{
+  //   if (err) { return next(err); }
+  //   if (!order) {
+  //     return next(new Error('No order to continue checkout.')); }
+  //   else {
+  //     res.render('checkout/shipment', { shipAddress: order.shipAddress, formatMoney: formatMoney }); }
+  // });
+});
+
 // Select shipment page.
 router.get('/shipment', (req, res, next)=>{
   Order.findOne({user_id: req.user._id}, (err, order)=>{
@@ -153,7 +166,11 @@ router.get('/shipment', (req, res, next)=>{
 // Select shipment.
 router.post('/shipment', (req, res, next)=>{
   console.log(req.body);
-  res.redirect('/checkout/paymant');
+  // Set shipment methodall not default.
+  Order.update({ user_id: req.user._id }, { shipMethod: 'default'}, err=>{
+    if (err) { return next(err) };
+    res.redirect('/checkout/paymant');
+  });    
 });
 
 // Select paymant page.
