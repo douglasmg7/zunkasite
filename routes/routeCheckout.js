@@ -13,6 +13,7 @@ const log = require('../config/log');
 const User = require('../model/user');
 const Address = require('../model/address');
 const Order = require('../model/order');
+const Product = require('../model/product');
 
 // Format number to money format.
 function formatMoney(val){
@@ -141,15 +142,14 @@ router.post('/ship-address-add', checkPermission, (req, res, next)=>{
 
 // Estimate shipment.
 router.get('/ship-estimate', (req, res, next)=>{
-  console.log('ship-estimate', req.body);
-
-  // Order.findOne({user_id: req.user._id}, (err, order)=>{
-  //   if (err) { return next(err); }
-  //   if (!order) {
-  //     return next(new Error('No order to continue checkout.')); }
-  //   else {
-  //     res.render('checkout/shipment', { shipAddress: order.shipAddress, formatMoney: formatMoney }); }
-  // });
+  console.log('req.query', req.query);
+  Product.findById(req.query.productId, (err, product)=>{
+    if (err) { return next(err); }
+    if (!product) {  return next(new Error('Product not found.')); }
+    console.log('product: ', product);
+    res.json({result: 'success'});
+  });
+  // res.json({result: 'success'});
 });
 
 // Select shipment page.

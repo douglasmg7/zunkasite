@@ -102,7 +102,7 @@
       $.ajax({
         method: 'GET',
         url: '/checkout/ship-estimate/',
-        data: { _csrf: '#{csrfToken}', product: '9090909', cep: $('#cep').value}
+        data: { _csrf: '#{csrfToken}', productId: appVue.$refs.storeItem.product._id, cep: $('#cep').val()}
       })
       .done(function(result){
         console.log(result);
