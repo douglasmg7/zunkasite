@@ -33,6 +33,10 @@ let product = new mongoose.Schema({
   storeProductDescription: { type: String , required: true},
   storeProductTechnicalInformation: { type: String , required: true},
   storeProductAdditionalInformation: { type: String , required: true},
+  storeProductWeightG: { type: Number },   // Weight in grams.
+  storeProductWidthMm: { type: Number },   // Width in mm.
+  storeProductHeightMm: { type: Number },  // Height in mm.
+  storeProductLengthMm: { type: Number },    // Length in mm.  
   storeProductPrice: { type: Number , required: true},
   storeProductMarkup: { type: Number , required: true},
   storeProductDiscountEnable: { type: Boolean , required: true},

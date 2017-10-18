@@ -4,6 +4,7 @@ const router = express.Router();
 const dbConfig = require('../config/db');
 const passport = require('passport');
 const nodemailer = require('nodemailer');
+const soap = require('soap');
 // const https = require('https');
 // const request = require('request');
 // var paypal = require('paypal-rest-sdk');
@@ -146,10 +147,49 @@ router.get('/ship-estimate', (req, res, next)=>{
   Product.findById(req.query.productId, (err, product)=>{
     if (err) { return next(err); }
     if (!product) {  return next(new Error('Product not found.')); }
-    console.log('product: ', product);
-    res.json({result: 'success'});
+    // Create soap.
+    soap.createClient('http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?wsdl', (err, client)=>{
+      if (err) {
+        log.error(err, new Error().stack);
+        res.json({ success: false });
+        return;
+      }
+      // Argments.
+      let args = {
+        nCdEmpresa: '',  // Código administrativo junto à ECT (para clientes com contrato) .
+        sDsSenha: '',  
+        nCdServico: '04510',  // Para clientes sem contrato (04510 - PAC à vista).
+        sCepOrigem: '31030160',
+        sCepDestino: req.query.cepDestiny.replace('-', ''),
+        nVlPeso: product.storeProductWeightG ? (product.storeProductWeightG / 1000).toString() : '1.5',    // Weight in Kg.
+        nCdFormato: 1,    // 1 - caixa/pacote, 2 - rolo/prisma, 3 - Envelope.
+        nVlComprimento: product.storeProductLengthMm ? (product.storeProductLengthMm / 10) : 30,  // Lenght in cm.
+        nVlAltura: product.storeProductHeightMm ? (product.storeProductHeightMm / 10) : 10,  // Height in cm.
+        nVlLargura: product.storeProductWidthMm ? (product.storeProductWidthMm / 10) : 20,   // Width in cm.
+        nVlDiametro: 0,   // Diâmetro em cm.
+        sCdMaoPropria      : 'N',   // Se a encomenda será entregue com o serviço adicional mão própria.
+        nVlValorDeclarado  : 0,
+        sCdAvisoRecebimento: 'N'
+      };
+      // console.log('args', args);
+      // Call webservice.
+      client.CalcPrecoPrazo(args, (err, result)=>{
+        if (err) {
+          log.error(err, new Error().stack);
+          res.json({ success: false });
+          return;
+        }
+        // Result.
+        if (result.CalcPrecoPrazoResult.Servicos.cServico[0].Erro !== '0') {
+          log.error('WS Corrieos erro: ' + result.CalcPrecoPrazoResult.Servicos.cServico[0].msgErro, new Error().stack);
+          res.json({ success: false });
+          return;
+        }
+        res.json({ success: true, result: result.CalcPrecoPrazoResult.Servicos.cServico[0] });
+        console.log('correios result: ', result.CalcPrecoPrazoResult.Servicos.cServico[0]);
+      });
+    });
   });
-  // res.json({result: 'success'});
 });
 
 // Select shipment page.

@@ -57,7 +57,8 @@
                 input.form-control(type='text' id='cep' size='7' value='cep')
                 span.input-group-btn
                   button.btn.btn-default Calcular
-                  
+            p Frete
+            p Prazo
                 //- Label(type='text' for='cep') CEP
       .row(v-if='product.storeProductDescription.trim() !== ""')
         .col-md-10.col-md-offset-1
@@ -102,7 +103,7 @@
       $.ajax({
         method: 'GET',
         url: '/checkout/ship-estimate/',
-        data: { _csrf: '#{csrfToken}', productId: appVue.$refs.storeItem.product._id, cep: $('#cep').val()}
+        data: { _csrf: '#{csrfToken}', productId: appVue.$refs.storeItem.product._id, cepDestiny: $('#cep').val()}
       })
       .done(function(result){
         console.log(result);
