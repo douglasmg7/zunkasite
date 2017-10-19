@@ -57,8 +57,17 @@
                 input.form-control(type='text' id='cep' size='7' value='cep')
                 span.input-group-btn
                   button.btn.btn-default Calcular
-            p Frete
-            p Prazo
+            table.estimate-ship.hide
+              thead
+                tr
+                  th Entrega
+                  th Frete
+                  th Prazo
+              tbody
+                tr
+                  td Ecônomica
+                  td 12,06
+                  td 6 dias
                 //- Label(type='text' for='cep') CEP
       .row(v-if='product.storeProductDescription.trim() !== ""')
         .col-md-10.col-md-offset-1
@@ -76,7 +85,7 @@
             .col-md-6(v-if='productInformationTechnical.length > 0')
               h5 Detalhe técnico
               .table-responsive
-                table.table
+                table.table.information
                   tbody
                     tr(v-for='infoTech in productInformationTechnical')
                       td {{infoTech[0]}}
@@ -85,7 +94,7 @@
             .col-md-6(v-if='productInformationAdditional.length > 0')
               h5 Informações adicionais
               .table-responsive
-                table.table
+                table.table.information
                   tbody
                     tr(v-for='infoAdd in productInformationAdditional')
                       td {{infoAdd[0]}}
@@ -107,6 +116,10 @@
       })
       .done(function(result){
         console.log(result);
+        let $table = $('.estimate-ship');
+        $table.show();
+        let $td = $table.find('td');
+        $td[0].html('test');
         // // Update quantity selected.
         // $a.closest('td').find('button').children().eq(0).html(productQtd);
         // // Update product (price * quantity).
@@ -247,8 +260,16 @@
     padding-left: 1em
   img
     padding-top: 2em
-  td:nth-child(1)
+  table.information td:nth-child(1)
     background-color: #F3F3F3
+  table.estimate-ship
+    margin-top: 1em
+    border-radius: 4px
+    background-color: #F3F3F3
+  table.estimate-ship th
+    padding: .5em 1em 0 1em
+  table.estimate-ship td
+    padding: .5em 1em .5em 1em
   footer
     height: 50px
   button.add-cart
