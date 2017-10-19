@@ -56,8 +56,8 @@
               .input-group
                 input.form-control(type='text' id='cep' size='7' value='cep')
                 span.input-group-btn
-                  button.btn.btn-default Calcular
-            table.estimate-ship.hide
+                  button.btn.btn-default.cep(data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Calculando") Calcular
+            table.estimate-ship
               thead
                 tr
                   th Entrega
@@ -65,9 +65,9 @@
                   th Prazo
               tbody
                 tr
-                  td Ecônomica
-                  td 12,06
-                  td 6 dias
+                  td -
+                  td -
+                  td -
                 //- Label(type='text' for='cep') CEP
       .row(v-if='product.storeProductDescription.trim() !== ""')
         .col-md-10.col-md-offset-1
@@ -105,38 +105,31 @@
 </template>
 <script>
   jQuery(function($){
+    $('.estimate-ship').hide();
     // Maskedinput.
     $('#cep').mask('99999-999');
     $('#form-ship').submit(function(e){
-      console.log('clicked preventDefault');
+      let $table = $('.estimate-ship');
+      let $td = $table.find('td');
+      $td.eq(0).html('-');
+      $td.eq(1).html('-');
+      $td.eq(2).html('-');
+      let $btn = $(this).find('button');
+      $btn.button('loading');
       $.ajax({
         method: 'GET',
         url: '/checkout/ship-estimate/',
         data: { _csrf: '#{csrfToken}', productId: appVue.$refs.storeItem.product._id, cepDestiny: $('#cep').val()}
       })
       .done(function(result){
-        console.log(result);
-        let $table = $('.estimate-ship');
+        // console.log(result);
+        // console.log(result.correio);
+        // console.log(result.correio.Valor);
+        $td.eq(0).html('Ecônomica');
+        $td.eq(1).html(result.correio.Valor);
+        $td.eq(2).html(`${result.correio.PrazoEntrega} dia(s)`);
         $table.show();
-        let $td = $table.find('td');
-        $td[0].html('test');
-        // // Update quantity selected.
-        // $a.closest('td').find('button').children().eq(0).html(productQtd);
-        // // Update product (price * quantity).
-        // let products = result.cart.products;
-        // for(let i = 0; i < result.cart.products.length; i++){
-        //   if (products[i]._id === productId) {
-        //     $tr.children().last().prev().children().html(formatMoney(products[i].price));
-        //     $tr.children().last().children().html(formatMoney(products[i].price * products[i].qtd));
-        //     break;
-        //   }
-        // }
-        // // Update total price and total quantity.
-        // $('#subtotal-price')
-        //   .html(formatMoney(result.cart.totalPrice))
-        //   .prev().html('Subtotal (' + result.cart.totalQtd + (result.cart.totalQtd > 1 ? ' itens):&nbsp' : ' item):&nbsp'));
-        // // Update quantity.
-        // $('#total-qtd').html(result.cart.totalQtd);
+        $btn.button('reset');
       });        
       return false;
     })

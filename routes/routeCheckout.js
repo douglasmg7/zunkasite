@@ -181,11 +181,11 @@ router.get('/ship-estimate', (req, res, next)=>{
         }
         // Result.
         if (result.CalcPrecoPrazoResult.Servicos.cServico[0].Erro !== '0') {
-          log.error('WS Corrieos erro: ' + result.CalcPrecoPrazoResult.Servicos.cServico[0].msgErro, new Error().stack);
+          log.error('WS Corrieos erro: ' + result.CalcPrecoPrazoResult.Servicos.cServico[0].MsgErro, new Error().stack);
           res.json({ success: false });
           return;
         }
-        res.json({ success: true, result: result.CalcPrecoPrazoResult.Servicos.cServico[0] });
+        res.json({ success: true, correio: result.CalcPrecoPrazoResult.Servicos.cServico[0] });
         console.log('correios result: ', result.CalcPrecoPrazoResult.Servicos.cServico[0]);
       });
     });
