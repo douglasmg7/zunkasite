@@ -14,14 +14,19 @@ nav.navbar.navbar-inverse.navbar-static-top
         // Username.
         if user.name
           li
-            a(href='/users/account') #{user.name}
+            a(href='/users/account') 
+              img.cart(src='/icon/ic_account_circle_white_24px.svg' alt='user')
+              | &nbsp#{user.name}
         // Sign-in.
         if !user.name
           li
             a(href='/users/login') Entrar
         // Cart.
         li
-          a(href='/cart') Carrinho 
+          a(href='/cart')
+            img.cart(src='/icon/ic_shopping_cart_white_24px.svg' alt='cart')
+            | Carrinho
+            | &nbsp
             span#total-qtd.badge= cart.totalQtd
         // Admin.
         if user.group == 'admin'
@@ -33,3 +38,7 @@ nav.navbar.navbar-inverse.navbar-static-top
             a(href='/users/logout') Sair
       .navbar-form.navbar-right
         input.form-control(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
+//- style.
+//-   img.cart {
+//-     width: 2em;
+//-   }  
