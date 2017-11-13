@@ -8,37 +8,49 @@ nav.navbar.navbar-inverse.navbar-static-top
         span.icon-bar
         span.icon-bar     
       // Home.
-      a.navbar-brand(href='/') ZUNKA
+      a.navbar-brand(href='/') 
+        svg.icon: use(xlink:href='/icon/sprite.svg#ic_home_white_24px') 
+        | ZUNKA
     #navbar.navbar-collapse.collapse
       ul.nav.navbar-nav.navbar-right
         // Username.
         if user.name
           li
             a(href='/users/account') 
-              img.cart(src='/icon/ic_account_circle_white_24px.svg' alt='user')
-              | &nbsp#{user.name}
+              svg.icon: use(xlink:href='/icon/sprite.svg#ic_account_circle_white_24px') 
+              | #{user.name}
         // Sign-in.
         if !user.name
           li
-            a(href='/users/login') Entrar
+            a(href='/users/login') 
+              svg.icon: use(xlink:href='/icon/sprite.svg#ic_account_circle_white_24px')
+              | Entrar
         // Cart.
         li
           a(href='/cart')
-            img.cart(src='/icon/ic_shopping_cart_white_24px.svg' alt='cart')
+            //- img.cart(src='/icon/ic_shopping_cart_white_24px.svg' alt='cart')
+            svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px')
             | Carrinho
             | &nbsp
             span#total-qtd.badge= cart.totalQtd
         // Admin.
         if user.group == 'admin'
           li
-            a(href='/configProducts/store') Admin
+            a(href='/configProducts/store') 
+              svg.icon: use(xlink:href='/icon/sprite.svg#ic_supervisor_account_white_24px')
+              | Admin
         // Logout.
         if user.name
           li
-            a(href='/users/logout') Sair
+            a(href='/users/logout')
+              svg.icon: use(xlink:href='/icon/sprite.svg#ic_exit_to_app_white_24px')
+              | Sair
       .navbar-form.navbar-right
         input.form-control(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
-//- style.
-//-   img.cart {
-//-     width: 2em;
-//-   }  
+style.
+  .icon {
+    width: 1.5em;
+    height: 1.5em;
+    vertical-align: middle;
+    margin-right: .5em;
+  }  

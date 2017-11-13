@@ -11,7 +11,8 @@
     "test": "mocha test -u bdd -R spec -t 2000",
     "testCompile": "mocha test -u bdd --compilers js:babel-core/register",
     "insertMakers": "bin/insertProductMakers.js",
-    "insertCategories": "bin/insertProductCategories.js"
+    "insertCategories": "bin/insertProductCategories.js",
+    "icon": "svg-sprite --symbol --symbol-dest='' --symbol-sprite='dist/icon/sprite.svg' dist/icon/*.svg"
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
