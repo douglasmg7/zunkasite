@@ -46,7 +46,7 @@ nav.navbar.navbar-inverse.navbar-static-top
               svg.icon: use(xlink:href='/icon/sprite.svg#ic_exit_to_app_white_24px')
               | Sair
       .navbar-form.navbar-right
-        input.form-control(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
+        input.form-control(onkeypress='search(event)' placeholder='O que você procura?' type='text' size='40')
 style.
   .icon {
     width: 1.5em;
@@ -54,3 +54,12 @@ style.
     vertical-align: middle;
     margin-right: .5em;
   }  
+script.
+  function search(event){
+    console.log('uiuiu');
+    if (!event) event = window.event;
+    let keyCode = event.keyCode || event.which;
+    if (keyCode == '13'){
+      window.location.href = `/?page=1&search=${event.target.value}`;
+    }
+  }
