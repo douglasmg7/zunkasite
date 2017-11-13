@@ -10,25 +10,38 @@
             span.icon-bar
             span.icon-bar     
           // Home.
-          a.navbar-brand(href='/') ZUNKA
+          a.navbar-brand(href='/')
+            svg.icon: use(xlink:href='/icon/sprite.svg#ic_home_white_24px') 
+            | ZUNKA          
         #navbar.navbar-collapse.collapse
           ul.nav.navbar-nav.navbar-right
             li
-              // name.
-              a(href='/users/account' v-if="this.user.name") {{this.user.name}}
+              // Username.
+              a(href='/users/account' v-if="this.user.name") 
+                svg.icon: use(xlink:href='/icon/sprite.svg#ic_account_circle_white_24px')
+                | {{this.user.name}}
             li
               // Sign-in.
-              a(href='/users/login' v-if="!this.user.name") Entrar
+              a(href='/users/login' v-if="!this.user.name")
+                svg.icon: use(xlink:href='/icon/sprite.svg#ic_account_circle_white_24px')
+                | Entrar              
             li
               // Cart.
-              a(href='/cart') Carrinho&nbsp
+              a(href='/cart')
+                svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px')
+                | Carrinho
+                | &nbsp              
                 span.badge {{ cart.totalQtd }}
             li
               // Admin.
-              a(href='/configProducts/store' v-if="this.user.group == 'admin'") Admin
+              a(href='/configProducts/store' v-if="this.user.group == 'admin'")
+                svg.icon: use(xlink:href='/icon/sprite.svg#ic_supervisor_account_white_24px')
+                | Admin
             li
               // Exit.
-              a(href='/users/logout' v-if="this.user.name") Sair
+              a(href='/users/logout' v-if="this.user.name")
+                svg.icon: use(xlink:href='/icon/sprite.svg#ic_exit_to_app_white_24px')
+                | Sair                
           .navbar-form.navbar-right
             input.form-control(v-model='search' v-on:keyup.enter='getProducts()' placeholder='O que você procura?' type='text' size='40')
     .container
@@ -206,4 +219,9 @@
     margin-right: 1em    
   footer
     height: 50px    
+  .icon
+    width: 1.5em
+    height: 1.5em
+    vertical-align: middle
+    margin-right: .5em
 </style>
