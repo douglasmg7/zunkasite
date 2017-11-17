@@ -143,7 +143,7 @@ router.post('/ship-address-add', checkPermission, (req, res, next)=>{
 
 // Estimate shipment.
 router.get('/ship-estimate', (req, res, next)=>{
-  console.log('req.query', req.query);
+  // console.log('req.query', req.query);
   Product.findById(req.query.productId, (err, product)=>{
     if (err) { return next(err); }
     if (!product) {  return next(new Error('Product not found.')); }
@@ -176,17 +176,17 @@ router.get('/ship-estimate', (req, res, next)=>{
       client.CalcPrecoPrazo(args, (err, result)=>{
         if (err) {
           log.error(err, new Error().stack);
-          res.json({ success: false });
+          res.json({ success: false, errMsg: 'Serviço indisponível' });
           return;
         }
         // Result.
         if (result.CalcPrecoPrazoResult.Servicos.cServico[0].Erro !== '0') {
-          log.error('WS Corrieos erro: ' + result.CalcPrecoPrazoResult.Servicos.cServico[0].MsgErro, new Error().stack);
-          res.json({ success: false });
+          log.error('WS Correios erro: ' + result.CalcPrecoPrazoResult.Servicos.cServico[0].MsgErro, new Error().stack);
+          res.json({ success: false, errMsg: 'CEP inválido' });
           return;
         }
         res.json({ success: true, correio: result.CalcPrecoPrazoResult.Servicos.cServico[0] });
-        console.log('correios result: ', result.CalcPrecoPrazoResult.Servicos.cServico[0]);
+        // console.log('correios result: ', result.CalcPrecoPrazoResult.Servicos.cServico[0]);
       });
     });
   });

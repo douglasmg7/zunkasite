@@ -67,9 +67,12 @@
             form.form-inline(id='form-ship' action='EstimateShip')
               input(type='hidden' name='_csrf' value=csrfToken)       
               .input-group
-                input.form-control(type='text' id='cep' size='7' value='cep')
+                input.form-control(type='text' id='cep' size='7')
                 span.input-group-btn
-                  button.btn.btn-default.cep(data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Calculando") Calcular
+                  button.btn.btn-default.cep 
+                    span.loader
+                    span.loader-text Calcular
+              p.cep-error-msg
             table.estimate-ship
               thead
                 tr
@@ -118,31 +121,42 @@
 </template>
 <script>
   jQuery(function($){
+    $('button.cep').find('.loader').hide();
     $('.estimate-ship').hide();
+    $('#form-ship').find('.cep-error-msg').hide();
     // Maskedinput.
     $('#cep').mask('99999-999');
     $('#form-ship').submit(function(e){
       let $table = $('.estimate-ship');
       let $td = $table.find('td');
+      let $errMsg = $('.cep-error-msg');
+      $errMsg.hide();
       $td.eq(0).html('-');
       $td.eq(1).html('-');
       $td.eq(2).html('-');
       let $btn = $(this).find('button');
-      $btn.button('loading');
+      $btn.find('.loader').css('display', 'inline-block');
+      $btn.find('.loader-text').html('Calculando');
       $.ajax({
         method: 'GET',
         url: '/checkout/ship-estimate/',
         data: { _csrf: '#{csrfToken}', productId: appVue.$refs.storeItem.product._id, cepDestiny: $('#cep').val()}
       })
       .done(function(result){
-        // console.log(result);
+        console.log(result);
         // console.log(result.correio);
         // console.log(result.correio.Valor);
-        $td.eq(0).html('Ecônomica');
-        $td.eq(1).html(result.correio.Valor);
-        $td.eq(2).html(`${result.correio.PrazoEntrega} dia(s)`);
-        $table.show();
-        $btn.button('reset');
+        if (result.success) {
+          $errMsg.hide();
+          $td.eq(0).html('Ecônomica');
+          $td.eq(1).html(result.correio.Valor);
+          $td.eq(2).html(`${result.correio.PrazoEntrega} dia(s)`);
+          $table.show();
+        } else {
+          $errMsg.html(result.errMsg).show();
+        }
+        $btn.find('.loader').css('display', 'none');
+        $btn.find('.loader-text').html('Calcular');
       });        
       return false;
     })
@@ -285,9 +299,27 @@
     margin-top: 2em;
   .estimateShip > p 
     font-weight: bold
+  table.estimate-ship
+    display: none;
   .icon
     width: 1.5em
     height: 1.5em
     vertical-align: middle
     margin-right: .5em
+  .loader
+    display: none;
+    vertical-align: middle;
+    margin-right: .5em
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db
+    border-radius: 50%
+    width: 1.4em
+    height: 1.4em
+    animation: spin 2s linear infinite
+  @keyframes spin
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  .cep-error-msg
+    margin-top: .5em;
+    color: red;
 </style>
