@@ -114,7 +114,8 @@ html(lang="en")
         let product_id = $target.closest('tr').data('product_id');
         $.ajax({
           method: 'PUT',
-          url: 'cart/remove/' + product_id
+          url: 'cart/remove/' + product_id,
+          data: { _csrf: '#{csrfToken}'}
         })
         .done(function(result){
           // Update title.
