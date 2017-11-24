@@ -1,35 +1,26 @@
 <template lang='pug'>
-  .ui.menu
+  ul
+    li teste
+    li 
+      p teste2
     // Home.
-    a.ui.link.item(href='/')
-      h4 Site
-    a.item(href='store' v-bind:class='{"active": active === "store"}') 
-      h4 Zunka
-    a.item(href='allnations' v-bind:class='{"active": active === "allNations"}')  
-      h4 All Nations
-    .right.menu
-      .item(v-if='active == "store"')
-        button.ui.button(v-on:click='$emit("newProduct")') Criar Produto
-      .item
-        .ui.icon.input
-          input(v-on:input='$emit("input", $event.target.value)' v-on:keypress='emitSearch($event)' v-model='searchText' placeholder='Pesquisa')
-          i.search.link.icon(v-on:click='$emit("search")')
-          //- input(v-model='searchText' v-on:keypress='emitSearch($event)' placeholder='Pesquisa')
-          //- i.search.link.icon(v-on:click='$emit("search", searchText)')
+    li: a(href='/'): h4 Site
+    // Store.
+    li: a(href='store' v-bind:class='{"active": active === "store"}'): h4 Zunka
+    // Allnations.
+    li: a(href='allnations' v-bind:class='{"active": active === "allNations"}'): h4 All Nations
+    // Create product.
+    //- div(v-if='active == "store"')
+      button.ui.button(v-on:click='$emit("newProduct")') Criar Produto
+      input(v-on:input='$emit("input", $event.target.value)' v-on:keypress='emitSearch($event)' v-model='searchText' placeholder='Pesquisa')
+      i.search.link.icon(v-on:click='$emit("search")')
+    //- div
       // User name.
-      .ui.item
-      a.ui.item(href='/users/account' v-if="this.user.username")
-        i.large.user.icon
-        | {{this.user.username}}
+      a(href='/users/account' v-if="this.user.username"): i {{this.user.username}}
       // Sign-in.
-      a.ui.item(href='/users/login' v-if="!this.user.username")
-        i.large.icon.sign.in
-        | Entrar
+      a(href='/users/login' v-if="!this.user.username"): i Entrar
       // Exit.
-      //- a.ui.item(:href='host("/users/logout")' v-if="this.user.username")
-      a.ui.item(href='/users/logout' v-if="this.user.username")
-        i.large.sign.out.icon
-        | Sair            
+      a(href='/users/logout' v-if="this.user.username"): i Sair
 </template>
 
 <script>
@@ -60,5 +51,13 @@
 </script>
 
 <style lang='stylus'>
-
+  ul
+    list-style-type: none
+    margin: 0
+    padding: 0
+    border: 1px solid
+  li
+    display: block-inline
+    width: 80px
+    border: 1px solid red
 </style>
