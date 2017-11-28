@@ -2,15 +2,15 @@
   .menu
     ul
       // Home.
-      li: a(href='/'): h4 Site
+      li: a(href='/') Site
       // Store.
-      li: a(href='store' v-bind:class='{"active": active === "store"}'): h4 Zunka
+      li: a(href='store' v-bind:class='{"active": active === "store"}') h4
       // Allnations.
-      li: a(href='allnations' v-bind:class='{"active": active === "allNations"}'): h4 All Nations
-      // Create product.
-    .space
-    .search(v-if='active == "store"')
-      button.ui.button(v-on:click='$emit("newProduct")') Criar Produto
+      li: a(href='allnations' v-bind:class='{"active": active === "allNations"}') All Nations
+    // Create product.
+    button.ui.button(v-on:click='$emit("newProduct")') Criar Produto
+    .test
+    //- .search(v-if='active == "store"')
       input(v-on:input='$emit("input", $event.target.value)' v-on:keypress='emitSearch($event)' v-model='searchText' placeholder='Pesquisa')
       i.search.link.icon(v-on:click='$emit("search")')
       // User name.
@@ -52,28 +52,39 @@
   html, body, div, form, p
     margin: 0
     padding: 0
-  .menu h4
-    margin: .5em
+  .menu
+    background-color: black
+    border: 4px solid green
   .menu a
+    font-size: 3.5em
+    color: #ccc
     text-decoration: none
+    padding: .5em
+  .menu a:hover
+    color: #fff
+  .menu button
+    margin: auto
+    padding: 0
+    font-size: 1em
+    // display: inline-block
+    // vertical-align: middle
+    position: relative
+    // top: 50%
+    // transform: translateY(-10%)
+    color: red
+  .test
+    display: inline-block
+    width: 2em
+    height: 2em
+    background-color: blue
   ul
     display: inline-block
     list-style-type: none
     margin: 0
     padding: 0
-    border: 1px solid green
+    border: 4px solid yellow
   li
     display: inline-block
-    border: 1px solid red
+    border: 4px solid red
     padding: 0
-  .space
-    display: inline-block
-    border: 1px solid yellow
-  .search
-    float: right
-    border: 1px solid brown
-  .user
-    display: inline-block
-    border: 1px solid brown
-
 </style>
