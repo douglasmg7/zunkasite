@@ -7,19 +7,16 @@
       li: a(href='store' v-bind:class='{"active": active === "store"}') Loja
       // Allnations.
       li: a(href='allnations' v-bind:class='{"active": active === "allNations"}') All Nations      
-      li: button.create-product Criar produto
-
-      
-    //- button.search(v-on:click='$emit("newProduct")') Criar Produto
-  //- .search(v-if='active == "store"')
-    input(v-on:input='$emit("input", $event.target.value)' v-on:keypress='emitSearch($event)' v-model='searchText' placeholder='Pesquisa')
-    i.search.link.icon(v-on:click='$emit("search")')
-    // User name.
-    a(href='/users/account' v-if="this.user.username"): i {{this.user.username}}
-    // Sign-in.
-    a(href='/users/login' v-if="!this.user.username"): i Entrar
-    // Exit.
-    a(href='/users/logout' v-if="this.user.username"): i Sair
+    button.search(v-on:click='$emit("newProduct")') Criar Produto
+    .search(v-if='active == "store"')
+      input(v-on:input='$emit("input", $event.target.value)' v-on:keypress='emitSearch($event)' v-model='searchText' placeholder='Pesquisa')
+      i.search.link.icon(v-on:click='$emit("search")')
+      // User name.
+      a(href='/users/account' v-if="this.user.username"): i {{this.user.username}}
+      // Sign-in.
+      a(href='/users/login' v-if="!this.user.username"): i Entrar
+      // Exit.
+      a(href='/users/logout' v-if="this.user.username"): i Sair
 </template>
 
 <script>
@@ -54,6 +51,9 @@
     margin: 0
     padding: 0
   .menu
+    display: flex
+    flex-flow: row wrap
+    align-items: center
     background-color: black
   .menu a
     font-size: 1.2em
@@ -61,12 +61,13 @@
     text-decoration: none
   .menu a:hover
     color: #fff
-  button.create-product
-    margin: 0
-    padding: 0
-    font-size: 1em  
+  .menu button
+    margin: .2em
+  .menu input
+    font-size: 1em
+    height: 3em
+    margin: .4em
   ul
-    display: inline-block
     list-style-type: none
   li
     display: inline-block
