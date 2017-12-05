@@ -11,12 +11,15 @@
     .search(v-if='active == "store"')
       input(v-on:input='$emit("input", $event.target.value)' v-on:keypress='emitSearch($event)' v-model='searchText' placeholder='Pesquisa')
       i.search.link.icon(v-on:click='$emit("search")')
+    .account
       // User name.
-      a(href='/users/account' v-if="this.user.username"): i {{this.user.username}}
-      // Sign-in.
-      a(href='/users/login' v-if="!this.user.username"): i Entrar
+      a(href='/users/account' v-if="this.user.name")
+        svg.icon: use(xlink:href='/icon/sprite.svg#ic_account_circle_white_24px') 
+        | {{this.user.name}}
       // Exit.
-      a(href='/users/logout' v-if="this.user.username"): i Sair
+      a(href='/users/logout')
+        svg.icon: use(xlink:href='/icon/sprite.svg#ic_exit_to_app_white_24px')
+        | Sair
 </template>
 
 <script>
@@ -51,26 +54,30 @@
     margin: 0
     padding: 0
   .menu
+    font-size: 1em
     display: flex
     flex-flow: row wrap
     align-items: center
     background-color: black
   .menu a
-    font-size: 1.2em
     color: #ccc
     text-decoration: none
+    margin: .4em 1em .4em 1em
   .menu a:hover
     color: #fff
-  .menu button
-    margin: .2em
   .menu input
-    font-size: 1em
-    height: 3em
-    margin: .4em
+    margin: .2em 1em .2em 5em
+  .account
+    display: flex
+    flex-flow: row wrap
   ul
     list-style-type: none
   li
     display: inline-block
-    margin: .4em 1em .4em 1em
-    // border: 4px solid red
+  .icon {
+    width: 1.5em
+    height: 1.5em
+    vertical-align: middle
+    margin-right: .5em
+  }      
 </style>
