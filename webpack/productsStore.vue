@@ -183,6 +183,17 @@
   }
 </script>
 <style lang='stylus'>
+  table
+    margin: 0.5em 0 2em 0
+    // border-top: solid 1px black
+    border-bottom: solid 1px lightgray
+    border-spacing: 0
+    width: 100%
+  td
+    // border: solid 2px yellow
+    // border: none
+    border-top: solid 1px lightgray
+    margin: 0
   th.clickable, td.clickable
     cursor: pointer
   tr.product-commercialize
