@@ -27,6 +27,11 @@
           td.clickable(@click="showProduct(product)") {{product.storeProductPrice | currencyBr}}
     .pagination
       a.item(v-for='n in pageCount' @click='getProducts(n)' v-bind:class='{"active": n==page}') {{n}}
+      button.open-modal Open Modal
+    .my-modal
+      .modal-content
+        span.close-modal &times
+        H1 Hello world
     products-store-detail(
       ref='productStoreDetail'
       :$http='$http',
@@ -71,6 +76,22 @@
     created() {
       this.getProducts();
       this.getDropdown();
+    },
+    mounted() {
+      // Open modal.
+      let $modal = $('.my-modal');
+      $('.open-modal').click(()=>{
+        $modal.css('display', 'block');
+      });
+      // Close modal.
+      $('.close-modal').click(()=>{
+        $modal.css('display', 'none');
+      });      
+      $(document).click(event=>{
+        if ($(event.target).hasClass('my-modal')) {
+          $modal.css('display', 'none');
+        }        
+      });
     },
     methods: {
       // Get products page.
@@ -212,4 +233,30 @@
     cursor: pointer
   .pagination a.active
     color: black
+  .my-modal
+    display: none
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ 
+  .modal-content
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 1em;
+    // border: 2px solid #888;
+    width: 90%;
+  .close-modal
+    color: #aaa
+    float: right
+    font-size: 2em
+  .close-modal:hover,
+  .close-modal:focus
+    color: black
+    text-decoration: none
+    cursor: pointer
 </style>

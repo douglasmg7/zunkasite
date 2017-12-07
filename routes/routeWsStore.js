@@ -10,7 +10,7 @@ const log = require('../config/log');
 // File upload.
 const formidable = require('formidable');
 // Page size for admin pagination.
-const PAGE_SIZE_ADMIN = 3;
+const PAGE_SIZE_ADMIN = 50;
 // Page size for site pagination.
 const PAGE_SIZE_STORE = 10;
 
