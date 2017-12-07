@@ -3,6 +3,7 @@ html(lang="en")
   head
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
+    //- link(rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato")
     title Zunka - Produtos
     //- include components/semantic.css.pug
   body
@@ -16,3 +17,16 @@ html(lang="en")
     include components/vue.js.pug
     include components/vue-resource.js.pug
     script(src='/bundleProductsStore.js')
+    //- style.
+      @font-face {
+        font-family: 'Lato';
+        font-style: normal;
+        font-weight: 400;
+        src: url('../../dist/fonts/lato-v11-latin-regular.eot'); /* IE9 Compat Modes */
+        src: local('Lato Regular'), local('Lato-Regular'),
+             url('../../fonts/lato-v11-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+             url('../../fonts/lato-v11-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+             url('../../fonts/lato-v11-latin-regular.woff') format('woff'), /* Modern Browsers */
+             url('../../fonts/lato-v11-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+             url('../../fonts/lato-v11-latin-regular.svg#Lato') format('svg'); /* Legacy iOS */
+      }      

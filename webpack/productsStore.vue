@@ -1,10 +1,10 @@
 <template lang='pug'>
   div
     menu-products(active='store' v-bind:user='user' v-on:input='search=arguments[0]' v-on:search='getProducts()' v-on:newProduct='showNewProduct()')
-    table.ui.compact.table
+    table
       thead
         tr
-          // th.text-capitalize id
+          //- th.text-capitalize id
           th.clickable(@click="selectColOrder('code-store')") Código
           th.clickable(@click="selectColOrder('dealerCode')") Título
           th.clickable(@click="selectColOrder('dealerName')") Fornecedor
@@ -17,7 +17,7 @@
           v-for="product in products"
           v-bind:class='{"product-commercialize": product.storeProductCommercialize, "product-active": product.dealerProductActive && (product.dealerProductQtd > 5)}'
         )
-          // td {{$index + 1}}
+          //- td {{$index + 1}}
           td.clickable(@click="showProduct(product)" v-bind:data-code="product.code" v-bind:title='product.dealerProductTitle') {{product.storeProductId}}
           td.clickable(@click="showProduct(product)") {{product.storeProductTitle}}
           td.clickable(@click="showProduct(product)") {{product.dealerName}}
@@ -25,12 +25,8 @@
           td.clickable(@click="showProduct(product)") {{product.dealerProductLocation}}
           td.clickable(@click="showProduct(product)") {{product.dealerProductQtd}}
           td.clickable(@click="showProduct(product)") {{product.storeProductPrice | currencyBr}}
-    .ui.hidden.divider
-    .ui.center.aligned.container
-      .ui.pagination.menu
-        div(v-for='n in pageCount')
-          a.item(@click='getProducts(n)' v-bind:class='{"active": n==page}') {{n}}
-    .ui.hidden.divider
+    .pagination
+      a.item(v-for='n in pageCount' @click='getProducts(n)' v-bind:class='{"active": n==page}') {{n}}
     products-store-detail(
       ref='productStoreDetail'
       :$http='$http',
@@ -183,21 +179,37 @@
   }
 </script>
 <style lang='stylus'>
+  body
+    font-family: 'Arial'
   table
-    margin: 0.5em 0 2em 0
-    // border-top: solid 1px black
+    margin: 0
     border-bottom: solid 1px lightgray
     border-spacing: 0
     width: 100%
+    text-align: left
   td
-    // border: solid 2px yellow
-    // border: none
     border-top: solid 1px lightgray
     margin: 0
+    padding: .3em .2em .3em 0.2em
+  th
+    padding: .3em .2em .3em 0.2em
   th.clickable, td.clickable
     cursor: pointer
   tr.product-commercialize
     background-color: #F2DEDE
   tr.product-commercialize.product-active
     background-color: #bdffbd
+  .pagination
+    font-size: 1em
+    display: flex
+    flex-flow: row wrap
+    justify-content: center
+    align-items: center
+    margin-top: 1em
+  .pagination a
+    margin: 0 1em 0 1em
+    color: lightgray
+    cursor: pointer
+  .pagination a.active
+    color: black
 </style>
