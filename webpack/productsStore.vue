@@ -30,8 +30,138 @@
       button.open-modal Open Modal
     .my-modal
       .modal-content
+        //- h2 {{selectedProduct.storeProductTitle}}
         span.close-modal &times
-        H1 Hello world
+        .field
+          label Código
+          input(v-model='selectedProduct.storeProductId')
+        .field
+          label Título
+          input(v-model='selectedProduct.storeProductTitle')
+        .field
+          label Fornecedor
+          input.ui.input(v-model='selectedProduct.dealerName')      
+        .field
+          label Imagens
+          .images
+            .wrapper-image(v-if='selectedProduct.images.length > 0' v-for='(image, index) in selectedProduct.images', :class='{selected: image.selected}')
+              img.ui.small.image.product-image(:src='imageSrc(image.name)' @click='selectImage(index)')
+              .right-arrow(@click='moveImage("right", index)')
+              .left-arrow(@click='moveImage("left", index)')
+              p.delete-image(@click='deleteImage(index)') x
+            .upload-image
+              label(for='file-upload')
+                i.large.upload.icon
+                | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) local
+              input(type='file' id='file-upload' accept='image/*' style='display:none' multiple @change='uploadProductImage()')
+              //- label.ui.labeled.icon.button(@click='downloadDealerImages(product)')
+                i.large.upload.icon
+                | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) do fornecedor
+        .field
+          label Detalhes
+          textarea(v-model='selectedProduct.storeProductDetail' rows='8')
+        .field
+          label Descrição
+          textarea(v-model='selectedProduct.storeProductDescription' rows='8')
+        .field
+          label Informações técnicas
+          textarea(v-model='selectedProduct.storeProductTechnicalInformation' rows='8')
+        .field
+          label Informações adicionais
+          textarea(v-model='selectedProduct.storeProductAdditionalInformation' rows='8')
+        //- .two.fields
+          //- maker
+          .field
+            label Fabricante
+            select.ui.search.dropdown(v-model='selectedProduct.storeProductMaker')
+              input(v-model='selectedProduct.storeProductMaker' type='hidden')
+              option(v-for='maker in productMakers', :value='maker.name') {{maker.value}}
+          .field
+            label Categoria
+            select.ui.search.dropdown(v-model='selectedProduct.storeProductCategory')
+              input(v-model='selectedProduct.storeProductCategory' type='hidden')
+              option(v-for='category in productCategories', :value='category.name') {{category.value}}
+      //- warranty
+      //- .ui.segment
+        h3.ui.dividing.header Garantia
+        .fields
+          .four.wide.field
+            label Fornecedor
+            //- .ui.right.labeled.disabled.input
+            .ui.right.labeled.input
+              input.input-integer(v-model='selectedProduct.dealerProductWarrantyDays')
+              .ui.label.basic Dias
+          .four.wide.field
+            label Loja
+            .ui.right.labeled.input
+              input.input-integer(v-model='selectedProduct.storeProductWarrantyDays')
+              .ui.label.basic Dias
+          .eight.wide.field
+            label Observação
+            input(v-model='selectedProduct.storeProductWarrantyDetail')
+      //- price
+      //- .ui.segment
+        h3.ui.dividing.header Preço
+        .field
+          .ui.checkbox
+            input(type='checkbox' v-model='selectedProduct.storeProductDiscountEnable')
+            label Habilitar desconto
+        .fields
+          .four.wide.field
+            label Fornecedor
+            .ui.labeled.input
+              .ui.label.basic R$
+              input.input-money(v-model='inputDealerProductPrice')
+              //- input(v-model='selectedProduct.dealerProductPrice', @keypress='nopoint')
+          .four.wide.field
+            label Lucro
+            .ui.right.labeled.input
+              input.input-money(v-model='inputStoreProductMarkup')
+              .ui.label.basic %
+          .four.wide.field
+            label Desconto
+            .ui.action.input
+              input.input-money(v-model='inputStoreProductDiscountValue')
+              select.ui.compact.selection.dropdown(v-model='selectedProduct.storeProductDiscountType')
+                input(v-model='selectedProduct.storeProductDiscountType' type='hidden')
+                option(value='%') %
+                option(value='R$') R$
+          .four.wide.field
+            label Loja
+            .ui.labeled.disabled.input
+              .ui.label.basic R$
+              input(v-model='inputStoreProductPrice')
+      //- status
+      //- .ui.segment
+        h3.ui.dividing.header Status
+        .field
+          .ui.checkbox
+            input(type='checkbox' v-model='selectedProduct.storeProductCommercialize')
+            Label Comercializar produto
+        .field
+          .four.wide.field
+            label Estoque
+            .ui.right.labeled.input
+              input(v-model='selectedProduct.dealerProductQtd')
+              .ui.label.basic {{selectedProduct.dealerProductQtd > 1 ? 'Unidades': 'Unidade'}}           
+          .twelve.wide.field
+          //- .one.wide.field
+          //- .six.wide.field
+          //-   label Estoque
+          //-   .ui.small.visible.aligned.center.message(v-bind:class='{"warning": product.dealerProductQtd < 5}')
+          //-     .ui.center.aligned.container
+          //-       p {{product.dealerProductQtd}} {{product.dealerProductQtd > 1 ? 'unidades': 'unidade'}}
+          //- .two.wide.field
+          //- .six.wide.field
+          //-   label Status fornecedor
+          //-   .ui.small.visible.message(v-bind:class='{"warning": !product.dealerProductActive}')
+          //-     .ui.center.aligned.container
+          //-       p {{product.dealerProductActive == true ? 'Produto ativo' : 'Produto inativo'}}                    
+    //- .actions
+    //-   button.ui.positive.button(@click='saveProduct()') Salvar
+    //-   button.ui.red.deny.button(v-if='!product.isNewProduct') Remover
+    //-   button.ui.red.deny.button(v-if='product.isNewProduct') Descartar
+    //-   button.ui.black.deny.no-prompt.button(v-if='!product.isNewProduct') Fechar
     products-store-detail(
       ref='productStoreDetail'
       :$http='$http',
@@ -190,7 +320,82 @@
             this.productCategories = res.body.productCategories;
           })
           .catch((err)=>{ console.error(err); });
-      }
+      },
+      // Upload pictures to server.
+      uploadProductImage(){
+        let self = this;
+        let files = $('input:file')[0].files;
+        // no files
+        if (files.length === 0) {
+          alert('Nenhuma imagem para upload foi selecionada.');
+        // too many files
+        } else if (files.length > 8) {
+          alert('Selecione no máximo 8 imagens por vez.')
+        }
+        // it's ok
+        else {
+          let formData = new FormData();
+          for (var i = 0; i < files.length; i++) {
+            formData.append('pictures[]', files[i]);
+            // formData.append('photos[]', files[i], files[i].name);
+          }
+          this.$http.put(`/ws/store/upload-product-images/${this.product._id}`, formData, { headers: { 'csrf-token': this.csrfToken } })
+            .then((result)=>{
+              result.body.imageNames.forEach(function(imageName){
+                self.product.images.push({name: imageName, selected: false});
+              });
+              // this.getUploadedImageNames(this.product);
+            })
+            .catch((err)=>{ console.error(err); });
+        }
+      },
+      // Path to image src tag.
+      imageSrc(imageName) {
+        return '/img/' + this.selectedProduct._id + '/' + imageName;
+      },
+      moveImage(direction, index){
+        // Position to move.
+        let toIndex;
+        // To right.
+        if (direction === 'right') {
+          // Last element.
+          if ((index + 1) === this.selectedProduct.images.length) {
+            toIndex = 0;
+          // Not the last element.
+          } else  {
+            toIndex = index + 1;
+          }
+        // To left. 
+        } else {
+          // First element.
+          if (index === 0) {
+            toIndex = this.selectedProduct.images.length - 1;
+          // Not the last element.
+          } else  {
+            toIndex = index - 1;
+          } 
+        }
+        // Change elements.
+        let toIndexElement = this.selectedProduct.images[toIndex];
+        this.$set(this.selectedProduct.images, toIndex, this.selectedProduct.images[index]);
+        this.$set(this.selectedProduct.images, index, toIndexElement);
+      },
+      // Select a image from server to be used.
+      // Make the selection persistent just when the product be saved.
+      selectImage(index){
+        // Troggle selection.
+        // Remove selection.
+        if (this.selectedProduct.images[index].selected){
+          this.selectedProduct.images[index].selected = false;
+        // Add selection.
+        } else {
+          this.selectedProduct.images[index].selected = true;
+        }
+      },   
+      // Delete image from server.
+      deleteImage(index){
+        this.$delete(this.selectedProduct.images, index);
+      }   
     },
     filters: {
       currencyBr(value){
@@ -249,7 +454,8 @@
     margin: 10% auto;
     padding: 1em;
     // border: 2px solid #888;
-    width: 90%;
+    border-radius: .2em
+    width: 60%;
   .close-modal
     color: #aaa
     float: right
@@ -259,4 +465,70 @@
     color: black
     text-decoration: none
     cursor: pointer
+  .field label
+    margin-top: 1em
+    font-weight: bold
+    display: block
+  .modal-content .field:first-of-type
+    margin-top: 2em
+  .field input, .field textarea
+    width: 100%
+  .field textarea
+    padding .5em
+    border-radius: .2em
+    border: 1px solid #aaa
+  .images
+    border: 1px solid #aaa
+    border-radius: .2em
+    padding: .4em
+    display: flex
+    flex-wrap: wrap
+    // justify-content: center
+    // justify-content: space-around
+  .wrapper-image
+    position: relative
+    display: inline-block
+    margin: .4em
+    border: .5em solid transparent
+  .wrapper-image.selected
+    border: 4px solid green
+    border-radius: .2em
+  .wrapper-image:hover 
+    .left-arrow{display: block}
+    .right-arrow{display: block}
+    p.delete-image{display: block}
+  .left-arrow
+    position: absolute
+    bottom: 5px
+    left: 0
+    width: 0
+    height: 0
+    border-right: 15px solid orange
+    border-top: 15px solid transparent
+    border-bottom: 15px solid transparent
+    opacity: 1
+    cursor: pointer
+    display: none 
+  .right-arrow
+    position: absolute
+    bottom: 5px
+    right: 0
+    width: 0
+    height: 0
+    border-left: 15px solid orange
+    border-top: 15px solid transparent
+    border-bottom: 15px solid transparent
+    opacity: 1
+    cursor: pointer
+    display: none
+  p.delete-image
+    position: absolute
+    top: -8px
+    right: 4px
+    opacity: 1
+    color: orange
+    font-size: 1.5em
+    font-weight: bold
+    cursor: pointer
+    display: none    
 </style>
