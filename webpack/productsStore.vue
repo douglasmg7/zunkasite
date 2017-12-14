@@ -49,14 +49,16 @@
               .right-arrow(@click='moveImage("right", index)')
               .left-arrow(@click='moveImage("left", index)')
               p.delete-image(@click='deleteImage(index)') x
-            .upload-image
-              label(for='file-upload')
-                i.large.upload.icon
-                | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) local
-              input(type='file' id='file-upload' accept='image/*' style='display:none' multiple @change='uploadProductImage()')
-              //- label.ui.labeled.icon.button(@click='downloadDealerImages(product)')
-                i.large.upload.icon
-                | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) do fornecedor
+          .upload-image
+            //- | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) local
+            label(for='file-upload') 
+              svg.icon: use(xlink:href='/icon/sprite.svg#ic_file_upload_black_24px')
+              | Carregar imagem(s)
+            input(type='file' id='file-upload' accept='image/*' style='display:none' multiple @change='uploadProductImage()')
+            //- input(type='file' id='file-upload' accept='image/*' style='display:none' multiple @change='uploadProductImage()')
+            //- label.ui.labeled.icon.button(@click='downloadDealerImages(product)')
+              i.large.upload.icon
+              | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) do fornecedor
         .field
           label Detalhes
           textarea(v-model='selectedProduct.storeProductDetail' rows='8')
@@ -69,36 +71,31 @@
         .field
           label Informações adicionais
           textarea(v-model='selectedProduct.storeProductAdditionalInformation' rows='8')
-        //- .two.fields
+        .two.fields
           //- maker
           .field
             label Fabricante
-            select.ui.search.dropdown(v-model='selectedProduct.storeProductMaker')
+            select(v-model='selectedProduct.storeProductMaker')
               input(v-model='selectedProduct.storeProductMaker' type='hidden')
               option(v-for='maker in productMakers', :value='maker.name') {{maker.value}}
           .field
             label Categoria
-            select.ui.search.dropdown(v-model='selectedProduct.storeProductCategory')
+            select(v-model='selectedProduct.storeProductCategory')
               input(v-model='selectedProduct.storeProductCategory' type='hidden')
               option(v-for='category in productCategories', :value='category.name') {{category.value}}
-      //- warranty
-      //- .ui.segment
-        h3.ui.dividing.header Garantia
-        .fields
-          .four.wide.field
-            label Fornecedor
-            //- .ui.right.labeled.disabled.input
-            .ui.right.labeled.input
+        //- warranty
+        .field
+          Label Garantia
+          .warrant.fields
+            .warrant.field(style='flex-grow: 1; flex-basis: 10em')
+              label Fornecedor (dias)
               input.input-integer(v-model='selectedProduct.dealerProductWarrantyDays')
-              .ui.label.basic Dias
-          .four.wide.field
-            label Loja
-            .ui.right.labeled.input
+            .warrant.field(style='flex-grow: 1; flex-basis: 10em')
+              label Loja (dias)
               input.input-integer(v-model='selectedProduct.storeProductWarrantyDays')
-              .ui.label.basic Dias
-          .eight.wide.field
-            label Observação
-            input(v-model='selectedProduct.storeProductWarrantyDetail')
+            .warrant.field(style='flex-grow: 3; flex-basis: 10em')
+              label Observação
+              input(v-model='selectedProduct.storeProductWarrantyDetail')
       //- price
       //- .ui.segment
         h3.ui.dividing.header Preço
@@ -339,10 +336,10 @@
             formData.append('pictures[]', files[i]);
             // formData.append('photos[]', files[i], files[i].name);
           }
-          this.$http.put(`/ws/store/upload-product-images/${this.product._id}`, formData, { headers: { 'csrf-token': this.csrfToken } })
+          this.$http.put(`/ws/store/upload-product-images/${this.selectedProduct._id}`, formData, { headers: { 'csrf-token': this.csrfToken } })
             .then((result)=>{
               result.body.imageNames.forEach(function(imageName){
-                self.product.images.push({name: imageName, selected: false});
+                self.selectedProduct.images.push({name: imageName, selected: false});
               });
               // this.getUploadedImageNames(this.product);
             })
@@ -469,22 +466,42 @@
     margin-top: 1em
     font-weight: bold
     display: block
-  .modal-content .field:first-of-type
-    margin-top: 2em
+  .field .upload-image label
+    margin-top: .3em
+  // .modal-content .field:first-of-type
+  //   margin-top: 2em
   .field input, .field textarea
     width: 100%
   .field textarea
     padding .5em
     border-radius: .2em
     border: 1px solid #aaa
+  .fields
+    display: flex
+    flex-wrap: wrap 
+    // justify-content: space-evenly
+  .two.fields > .field
+    flex-grow: 1
+    flex-basis: 50%
+  select
+    width: 100%
+  .two.fields > .field:first-of-type
+    padding-right: 1em
+  .warrant.fields
+    display: flex
+    flex-wrap: wrap
+    border-radius: .2em
+    border: 1px solid #aaa
+  .warrant.field
+    margin: .5em
+  .warrant.field label
+    margin: 0
   .images
     border: 1px solid #aaa
     border-radius: .2em
     padding: .4em
     display: flex
     flex-wrap: wrap
-    // justify-content: center
-    // justify-content: space-around
   .wrapper-image
     position: relative
     display: inline-block
@@ -530,5 +547,7 @@
     font-size: 1.5em
     font-weight: bold
     cursor: pointer
-    display: none    
+    display: none
+  .upload-image label
+    cursor: pointer
 </style>
