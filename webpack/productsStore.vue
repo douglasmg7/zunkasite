@@ -86,7 +86,7 @@
         //- warranty
         .field
           Label Garantia
-          .warrant.fields
+          .warrant-fields
             .warrant.field(style='flex-grow: 1; flex-basis: 10em')
               label Fornecedor (dias)
               input.input-integer(v-model='selectedProduct.dealerProductWarrantyDays')
@@ -99,25 +99,25 @@
         //- price
         .field
           Label Preço
-          .price-fields
-            .price-field(style='flex-basis: 16em')
+          .price.fields
+            .price.field.checkbox
               input(type='checkbox' v-model='selectedProduct.storeProductDiscountEnable' id='enable-discount')
               label(for='enable-discount') Habilitar desconto
-            .price-field
+            .price.field(style='flex-grow: 1;')
               label Fornecedor (R$)
               input.input-money(v-model='inputDealerProductPrice')
                 //- input(v-model='selectedProduct.dealerProductPrice', @keypress='nopoint')
-            .price-field
+            .price.field(style='flex-grow: 1;')
               label Lucro (R$)
               input.input-money(v-model='inputStoreProductMarkup')
-            .price-field
+            .price.field.select(style='flex-grow: auto;')
               label Desconto
               input.input-money(v-model='inputStoreProductDiscountValue')
               select(v-model='selectedProduct.storeProductDiscountType')
-                input(v-model='selectedProduct.storeProductDiscountType' type='hidden')
+                input(v-model='selectedProduct.storeProductDiscountType')
                 option(value='%') %
                 option(value='R$') R$
-            .price-field
+            .price.field(style='flex-grow: 1;')
               label Loja (R$)
               input(v-model='inputStoreProductPrice')
       //- status
@@ -402,6 +402,17 @@
     border-spacing: 0
     width: 100%
     text-align: left
+  input, select
+    height: 2em
+  input[type=checkbox] 
+    height: 1em
+  input, textarea
+    border-radius: .2em
+    border: solid 1px #aaa
+    outline: none
+  input:focus, textarea:focus
+    box-shadow: 0 0 3px rgba(81, 203, 238, 1);
+    border: 1px solid rgba(81, 203, 238, 1);
   td
     border-top: solid 1px lightgray
     margin: 0
@@ -442,7 +453,6 @@
     background-color: #fefefe;
     margin: 10% auto;
     padding: 1em;
-    // border: 2px solid #888;
     border-radius: .2em
     width: 95%;
   .close-modal
@@ -454,6 +464,9 @@
     color: black
     text-decoration: none
     cursor: pointer
+  .fields
+    display: flex
+    flex-wrap: wrap 
   .field > label
     margin-top: 1em
     font-weight: bold
@@ -462,13 +475,13 @@
     margin-top: .3em
   .field > input, .field > textarea
     width: 100%
+  .field > input[type=checkbox]
+    width: auto
+  .field.checkbox label
+    display: inline-block  
+    margin-left: 0.3em 
   .field > textarea
     padding .5em
-    border-radius: .2em
-    border: 1px solid #aaa
-  .fields
-    display: flex
-    flex-wrap: wrap 
   .two.fields > .field
     flex-grow: 1
     flex-basis: 50%
@@ -476,32 +489,38 @@
     width: 100%
   .two.fields > .field:first-of-type
     padding-right: 1em
-  .warrant.fields
+  .warrant-fields
     display: flex
-    flex-wrap: wrap
+    flex-flow: wrap
     border-radius: .2em
     border: 1px solid #aaa
   .warrant.field
     margin: .5em
   .warrant.field label
     margin: 0
-  .price-fields
+  .price.fields
     display: flex
     flex-flow: row wrap
     border: solid 1px #aaa
-  .price-field
-    border: solid 2px blue
-  .price-field > label
-    font-weight: bold
-    display: block
-  .price-field > label[for=enable-discount]
-    display: inline-block
+    border-radius: .2em
+  .price.field
+    padding: 0.5em
+  .price.field label
+    margin-top: 0
+  .price.field.checkbox
+    flex-basis: 100%
+  .price.field.select input
+    width: auto
+  .price.field.checkbox input
+    position: relative
+    top: 2px
   .images
     border: 1px solid #aaa
     border-radius: .2em
     padding: .4em
     display: flex
     flex-wrap: wrap
+    min-height: 4em
   .wrapper-image
     position: relative
     display: inline-block
