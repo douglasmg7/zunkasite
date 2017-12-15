@@ -96,37 +96,29 @@
             .warrant.field(style='flex-grow: 3; flex-basis: 10em')
               label Observação
               input(v-model='selectedProduct.storeProductWarrantyDetail')
-      //- price
-      //- .ui.segment
-        h3.ui.dividing.header Preço
+        //- price
         .field
-          .ui.checkbox
-            input(type='checkbox' v-model='selectedProduct.storeProductDiscountEnable')
-            label Habilitar desconto
-        .fields
-          .four.wide.field
-            label Fornecedor
-            .ui.labeled.input
-              .ui.label.basic R$
+          Label Preço
+          .price-fields
+            .price-field(style='flex-basis: 16em')
+              input(type='checkbox' v-model='selectedProduct.storeProductDiscountEnable' id='enable-discount')
+              label(for='enable-discount') Habilitar desconto
+            .price-field
+              label Fornecedor (R$)
               input.input-money(v-model='inputDealerProductPrice')
-              //- input(v-model='selectedProduct.dealerProductPrice', @keypress='nopoint')
-          .four.wide.field
-            label Lucro
-            .ui.right.labeled.input
+                //- input(v-model='selectedProduct.dealerProductPrice', @keypress='nopoint')
+            .price-field
+              label Lucro (R$)
               input.input-money(v-model='inputStoreProductMarkup')
-              .ui.label.basic %
-          .four.wide.field
-            label Desconto
-            .ui.action.input
+            .price-field
+              label Desconto
               input.input-money(v-model='inputStoreProductDiscountValue')
-              select.ui.compact.selection.dropdown(v-model='selectedProduct.storeProductDiscountType')
+              select(v-model='selectedProduct.storeProductDiscountType')
                 input(v-model='selectedProduct.storeProductDiscountType' type='hidden')
                 option(value='%') %
                 option(value='R$') R$
-          .four.wide.field
-            label Loja
-            .ui.labeled.disabled.input
-              .ui.label.basic R$
+            .price-field
+              label Loja (R$)
               input(v-model='inputStoreProductPrice')
       //- status
       //- .ui.segment
@@ -452,7 +444,7 @@
     padding: 1em;
     // border: 2px solid #888;
     border-radius: .2em
-    width: 60%;
+    width: 95%;
   .close-modal
     color: #aaa
     float: right
@@ -462,28 +454,25 @@
     color: black
     text-decoration: none
     cursor: pointer
-  .field label
+  .field > label
     margin-top: 1em
     font-weight: bold
     display: block
-  .field .upload-image label
+  .field > .upload-image > label
     margin-top: .3em
-  // .modal-content .field:first-of-type
-  //   margin-top: 2em
-  .field input, .field textarea
+  .field > input, .field > textarea
     width: 100%
-  .field textarea
+  .field > textarea
     padding .5em
     border-radius: .2em
     border: 1px solid #aaa
   .fields
     display: flex
     flex-wrap: wrap 
-    // justify-content: space-evenly
   .two.fields > .field
     flex-grow: 1
     flex-basis: 50%
-  select
+  .two.fields select
     width: 100%
   .two.fields > .field:first-of-type
     padding-right: 1em
@@ -496,6 +485,17 @@
     margin: .5em
   .warrant.field label
     margin: 0
+  .price-fields
+    display: flex
+    flex-flow: row wrap
+    border: solid 1px #aaa
+  .price-field
+    border: solid 2px blue
+  .price-field > label
+    font-weight: bold
+    display: block
+  .price-field > label[for=enable-discount]
+    display: inline-block
   .images
     border: 1px solid #aaa
     border-radius: .2em
