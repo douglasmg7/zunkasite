@@ -74,6 +74,7 @@
         .two.fields
           //- maker
           .field
+            p {{selectedProduct.storeProductMaker}}
             label Fabricante
             select(v-model='selectedProduct.storeProductMaker')
               input(v-model='selectedProduct.storeProductMaker' type='hidden')
@@ -188,7 +189,12 @@
         // Number of pages for pagination.
         pageCount: 1,
         // Text for search products.
-        search: ''
+        search: '',
+        // Formatted data for input.
+        inputDealerProductPrice: 0,
+        inputStoreProductDiscountValue: 0,
+        inputStoreProductMarkup: 0,
+        inputStoreProductPrice: 0
       }
     },
     props: ['$http', 'user', 'csrfToken'],
