@@ -11,7 +11,6 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 // Stylus.
 const stylus = require('stylus');
-const nib = require('nib');
 // Validation.
 const validator = require('express-validator');
 const cpfValidator = require('gerador-validador-cpf');
@@ -74,16 +73,15 @@ if (app.get('env') === 'development') {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 // Stylus.
-function compile(str, path) {
-  return stylus(str)
-    .set('filename', path)
-    .use(nib());
-};
 // app.use(stylus.middleware(path.join(__dirname, 'dist/')));
 app.use(stylus.middleware({
-    src: __dirname,
-    compile: compile
-}));
+    src: __dirname + '/dist',
+    dst: __dirname + '/dist/css',
+    compile: function compile(str, path){
+      return stylus(str).set('filename', path);
+      }
+    })
+);
 // Statics.
 app.use(express.static(path.join(__dirname, 'dist/')));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components/')));
