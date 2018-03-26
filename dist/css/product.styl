@@ -1,0 +1,175 @@
+body
+  font-family: 'Arial'
+table
+  margin: 1
+  border-bottom: solid 1px lightgray
+  border-spacing: 0
+  width: 100%
+  text-align: left
+input, select 
+  height: 2em
+input[type=checkbox] 
+  height: 1em
+input, textarea 
+  border-radius: .2em
+  border: solid 1px #aaa
+  outline: none
+input:focus, textarea:focus
+  box-shadow: 0 0 3px rgba(81, 203, 238, 1);
+  border: 1px solid rgba(81, 203, 238, 1);
+td
+  border-top: solid 1px lightgray
+  margin: 0
+  padding: .3em .2em .3em 0.2em
+th
+  padding: .3em .2em .3em 0.2em
+th.clickable, td.clickable
+  cursor: pointer
+tr.product-commercialize
+  background-color: #F2DEDE
+tr.product-commercialize.product-active
+  background-color: #bdffbd
+.pagination
+  font-size: 1em
+  display: flex
+  flex-flow: row wrap
+  justify-content: center
+  align-items: center
+  margin-top: 1em
+.pagination a
+  margin: 0 1em 0 1em
+  color: lightgray
+  cursor: pointer
+.pagination a.active
+  color: black
+.my-modal
+  display: none
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ 
+.modal-content
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 1em;
+  border-radius: .2em
+  width: 95%;
+.close-modal
+  color: #aaa
+  float: right
+  font-size: 2em
+.close-modal:hover,
+.close-modal:focus
+  color: black
+  text-decoration: none
+  cursor: pointer
+.fields
+  display: flex
+  flex-wrap: wrap 
+.field > label
+  margin-top: 1em
+  font-weight: bold
+  display: block
+.field > .upload-image > label
+  margin-top: .3em
+.field > input, .field > textarea
+  width: 100%
+.field > input[type=checkbox]
+  width: auto
+.field.checkbox label
+  display: inline-block  
+  margin-left: 0.3em 
+.field > textarea
+  padding .5em
+.two.fields > .field
+  flex-grow: 1
+  flex-basis: 50%
+.two.fields select
+  width: 100%
+.two.fields > .field:first-of-type
+  padding-right: 1em
+.warrant-fields
+  display: flex
+  flex-flow: wrap
+  border-radius: .2em
+  border: 1px solid #aaa
+.warrant.field
+  margin: .5em
+.warrant.field label
+  margin: 0
+.price.fields
+  display: flex
+  flex-flow: row wrap
+  border: solid 1px #aaa
+  border-radius: .2em
+.price.field
+  padding: 0.5em
+.price.field label
+  margin-top: 0
+.price.field.checkbox
+  flex-basis: 100%
+.price.field.select input
+  width: auto
+.price.field.checkbox input
+  position: relative
+  top: 2px
+.images
+  border: 1px solid #aaa
+  border-radius: .2em
+  padding: .4em
+  display: flex
+  flex-wrap: wrap
+  min-height: 4em
+.wrapper-image
+  position: relative
+  display: inline-block
+  margin: .4em
+  border: .5em solid transparent
+.wrapper-image.selected
+  border: 4px solid green
+  border-radius: .2em
+.wrapper-image:hover 
+  .left-arrow{display: block}
+  .right-arrow{display: block}
+  p.delete-image{display: block}
+.left-arrow
+  position: absolute
+  bottom: 5px
+  left: 0
+  width: 0
+  height: 0
+  border-right: 15px solid orange
+  border-top: 15px solid transparent
+  border-bottom: 15px solid transparent
+  opacity: 1
+  cursor: pointer
+  display: none 
+.right-arrow
+  position: absolute
+  bottom: 5px
+  right: 0
+  width: 0
+  height: 0
+  border-left: 15px solid orange
+  border-top: 15px solid transparent
+  border-bottom: 15px solid transparent
+  opacity: 1
+  cursor: pointer
+  display: none
+p.delete-image
+  position: absolute
+  top: -8px
+  right: 4px
+  opacity: 1
+  color: orange
+  font-size: 1.5em
+  font-weight: bold
+  cursor: pointer
+  display: none
+.upload-image label
+  cursor: pointer    

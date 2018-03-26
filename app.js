@@ -9,6 +9,9 @@ const log = require('./config/log');
 const morgan = require('morgan');
 // Body.
 const bodyParser = require('body-parser');
+// Stylus.
+const stylus = require('stylus');
+const nib = require('nib');
 // Validation.
 const validator = require('express-validator');
 const cpfValidator = require('gerador-validador-cpf');
@@ -54,6 +57,7 @@ const routeWsAllNations = require('./routes/routeWsAllNations');
 const routeWsStore = require('./routes/routeWsStore');
 const routeConfigProducts = require('./routes/routeConfigProducts');
 const routeTest = require('./routes/routeTest');
+const routeAdmin = require('./routes/routeAdmin');
 // Node env.
 log.info(`NODE_ENV: ${process.env.NODE_ENV}`);
 // Transaction log - no log in test mode.
@@ -69,7 +73,18 @@ if (app.get('env') === 'development') {
 // View engine setup.
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-// Statics
+// Stylus.
+function compile(str, path) {
+  return stylus(str)
+    .set('filename', path)
+    .use(nib());
+};
+// app.use(stylus.middleware(path.join(__dirname, 'dist/')));
+app.use(stylus.middleware({
+    src: __dirname,
+    compile: compile
+}));
+// Statics.
 app.use(express.static(path.join(__dirname, 'dist/')));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components/')));
 app.use('/semantic', express.static(path.join(__dirname, 'semantic/')));
@@ -155,6 +170,8 @@ app.use('/test', routeTest);
 app.use('/', routeSite);
 // Checkout
 app.use('/checkout', routeCheckout);
+// Admin. 
+app.use('/admin', routeAdmin);
 // CSRF error handler.
 app.use(function (err, req, res, next) {
   if (err.code !== 'EBADCSRFTOKEN') return next(err);

@@ -1,0 +1,99 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    //- link(rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato")
+    title Zunka - Produto
+    link(rel="stylesheet" href="/css/product.css" charset="utf-8")
+  body
+    .field
+      label Código
+      input(value=product.storeProductId)
+    .field
+      label Título
+      input(value=product.storeProductTitle)
+    .field
+      label Fornecedor
+      input.ui.input(value=product.dealerName)      
+    .field
+      label Imagens
+      .images
+        .wrapper-image(v-if='product.images.length > 0' v-for='(image, index) in product.images', :class='{selected: image.selected}')
+          img.ui.small.image.product-image(:src='imageSrc(image.name)' @click='selectImage(index)')
+          .right-arrow(@click='moveImage("right", index)')
+          .left-arrow(@click='moveImage("left", index)')
+          p.delete-image(@click='deleteImage(index)') x
+      .upload-image
+        //- | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) local
+        label(for='file-upload') 
+          svg.icon: use(xlink:href='/icon/sprite.svg#ic_file_upload_black_24px')
+          | Carregar imagem(s)
+        input(type='file' id='file-upload' accept='image/*' style='display:none' multiple @change='uploadProductImage()')
+        //- input(type='file' id='file-upload' accept='image/*' style='display:none' multiple @change='uploadProductImage()')
+        //- label.ui.labeled.icon.button(@click='downloadDealerImages(product)')
+          i.large.upload.icon
+          | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) do fornecedor
+    .field
+      label Detalhes
+      textarea(rows='8') #{product.storeProductDetail}
+    .field
+      label Descrição
+      textarea(rows='8') #{product.storeProductDescription}
+    .field
+      label Informações técnicas
+      textarea(rows='8') #{product.storeProductTechnicalInformation}
+    .field
+      label Informações adicionais
+      textarea(rows='8') #{product.storeProductAdditionalInformation}
+    .two.fields
+      //- maker
+      .field
+        p #{product.storeProductMaker}
+        label Fabricante
+        select(value=product.storeProductMaker)
+          input(value=product.storeProductMaker type='hidden')
+          option(v-for='maker in productMakers', :value='maker.name') {{maker.value}}
+      .field
+        label Categoria
+        select(value=product.storeProductCategory)
+          input(value=product.storeProductCategory type='hidden')
+          option(v-for='category in productCategories', :value='category.name') {{category.value}}
+    //- warranty
+    .field
+      Label Garantia
+      .warrant-fields
+        .warrant.field(style='flex-grow: 1; flex-basis: 10em')
+          label Fornecedor (dias)
+          input.input-integer(value=product.dealerProductWarrantyDays)
+        .warrant.field(style='flex-grow: 1; flex-basis: 10em')
+          label Loja (dias)
+          input.input-integer(value=product.storeProductWarrantyDays)
+        .warrant.field(style='flex-grow: 3; flex-basis: 10em')
+          label Observação
+          input(value=product.storeProductWarrantyDetail)
+    //- price
+    .field
+      Label Preço
+      .price.fields
+        .price.field.checkbox
+          input(type='checkbox' value=product.storeProductDiscountEnable id='enable-discount')
+          label(for='enable-discount') Habilitar desconto
+        .price.field(style='flex-grow: 1;')
+          label Fornecedor (R$)
+          input.input-money(value='inputDealerProductPrice')
+            //- input(value='product.dealerProductPrice', @keypress='nopoint')
+        .price.field(style='flex-grow: 1;')
+          label Lucro (R$)
+          input.input-money(value='inputStoreProductMarkup')
+        .price.field.select(style='flex-grow: auto;')
+          label Desconto
+          input.input-money(value='inputStoreProductDiscountValue')
+          select(value=product.storeProductDiscountType)
+            input(value=product.storeProductDiscountType)
+            option(value='%') %
+            option(value='R$') R$
+        .price.field(style='flex-grow: 1;')
+          label Loja (R$)
+          input(value='inputStoreProductPrice')          
+  include ../components/jquery.js.pug   

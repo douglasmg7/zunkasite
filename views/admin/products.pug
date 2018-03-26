@@ -1,0 +1,35 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    //- link(rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato")
+    title Zunka - Produtos
+    if products
+      body
+        table
+          thead
+            tr
+              th Código
+              th Título
+              th Fornecedor
+              th Local
+              th Estoque
+              th Preço
+          tbody
+            each product in products
+              tr.product(data-code=product._id)
+                td #{product.storeProductId}
+                td #{product.storeProductTitle}
+                td #{product.dealerName}
+                td #{product.dealerProductLocation}
+                td #{product.dealerProductQtd}
+                td #{product.storeProductPrice}
+              //- td.clickable(@click="showProduct(product)") #{product.storeProductPrice | currencyBr}
+    //- Make pug data disponible to vue instance.
+    include ../components/jquery.js.pug
+    script.
+      $('.product').on('click', function(event){
+        //- console.log($(event.currentTarget).data('code'));
+        window.location.href = `product/${$(event.currentTarget).data('code')}`;
+      })         
