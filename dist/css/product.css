@@ -10,7 +10,7 @@ table {
 }
 input,
 select {
-  height: 2em;
+  height: 1em;
 }
 input[type=checkbox] {
   height: 1em;
