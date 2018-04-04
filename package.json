@@ -6,8 +6,6 @@
     "start": "cross-env NODE_ENV=production nodemon ./bin/www",
     "start-mlab": "cross-env NODE_ENV=production DB=mlab nodemon ./bin/www",
     "dev": "cross-env NODE_ENV=development DEBUG=server:server nodemon ./bin/www",
-    "devd": "npm run livereload & cross-env NODE_ENV=development DEBUG=express:* nodemon ./bin/www",
-    "livereload": "livereload ./views -e 'pug' -d",
     "test": "mocha test -u bdd -R spec -t 2000",
     "testCompile": "mocha test -u bdd --compilers js:babel-core/register",
     "insertMakers": "bin/insertProductMakers.js",
