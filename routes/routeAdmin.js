@@ -7,6 +7,8 @@ const ObjectId = require('mongodb').ObjectId;
 const log = require('../config/log');
 // Models.
 const Product = require('../model/product');
+const ProductMaker = require('../model/productMaker');
+const ProductCategorie = require('../model/productCategorie');
 // const stringify = require('js-stringify')
 
 // Format number to money format.
@@ -34,19 +36,37 @@ router.get('/products', function(req, res, next) {
 
 // Get a specific product.
 router.get('/product/:product_id', function(req, res, next) {
-  // Get product.
-  Product.findById(req.params.product_id, (err, product)=>{
-    // Internal error.
-    if (err) { return next(err); }
-    // Render.
-    else { 
-      console.log(product.storeProductId);
-      res.render('admin/product', {
-        user: req.isAuthenticated() ? req.user : { name: undefined, group: undefined },
-        product: product
-      });
-    }
-  }) 
+
+  let queryProduct = Product.findById(req.params.product_id);
+  let queryProductMaker = ProductMaker.find();
+  let queryProductCategorie = ProductCategorie.find();
+
+  Promise.all([queryProduct, queryProductMaker, queryProductCategorie])
+  .then(([product, productMakers, productCategories])=>{
+    // console.log(product.storeProductCategory);
+    res.render('admin/product', {
+      user: req.isAuthenticated() ? req.user : { name: undefined, group: undefined },
+      product: product,
+      productMakers: productMakers,
+      productCategories: productCategories
+    });
+  }).catch(err=>{
+    console.log(`Error getting data, err: ${err}`);
+  });
+
+  // // Get product.
+  // Product.findById(req.params.product_id, (err, product)=>{
+  //   // Internal error.
+  //   if (err) { return next(err); }
+  //   // Render.
+  //   else { 
+  //     res.render('admin/product', {
+  //       user: req.isAuthenticated() ? req.user : { name: undefined, group: undefined },
+  //       product: product
+  //     });
+  //   }
+  // }) 
+
 });
 
 module.exports = router;

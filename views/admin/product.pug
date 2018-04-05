@@ -14,9 +14,9 @@ html(lang="en")
       label Título
       input(value=product.storeProductTitle)
     .field
-      label Fornecedor
-      input.ui.input(value=product.dealerName)      
-    .field
+      label Fornecedor   
+      input(value=product.dealer)      
+    //- .field
       label Imagens
       .images
         .wrapper-image(v-if='product.images.length > 0' v-for='(image, index) in product.images', :class='{selected: image.selected}')
@@ -36,29 +36,28 @@ html(lang="en")
           | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) do fornecedor
     .field
       label Detalhes
-      textarea(rows='8') #{product.storeProductDetail}
+      textarea(rows='8')= product.storeProductDetail
     .field
       label Descrição
-      textarea(rows='8') #{product.storeProductDescription}
+      textarea(rows='8')= product.storeProductDescription
     .field
       label Informações técnicas
-      textarea(rows='8') #{product.storeProductTechnicalInformation}
+      textarea(rows='8')= product.storeProductTechnicalInformation
     .field
       label Informações adicionais
-      textarea(rows='8') #{product.storeProductAdditionalInformation}
+      textarea(rows='8')= product.storeProductAdditionalInformation
     .two.fields
-      //- maker
+      //- maker.
       .field
-        p #{product.storeProductMaker}
         label Fabricante
-        select(value=product.storeProductMaker)
-          input(value=product.storeProductMaker type='hidden')
-          option(v-for='maker in productMakers', :value='maker.name') {{maker.value}}
+        select(name='makers')
+          each productMaker in productMakers
+            option(value=productMaker.value, selected=productMaker.name === product.storeProductMaker ? true : false)= productMaker.name
       .field
         label Categoria
-        select(value=product.storeProductCategory)
-          input(value=product.storeProductCategory type='hidden')
-          option(v-for='category in productCategories', :value='category.name') {{category.value}}
+        select(name='categories')
+          each productCategory in productCategories
+            option(value=productCategory.value, selected=productCategory.name === product.storeProductCategory ? true : false)= productCategory.name
     //- warranty
     .field
       Label Garantia
@@ -77,12 +76,11 @@ html(lang="en")
       Label Preço
       .price.fields
         .price.field.checkbox
-          input(type='checkbox' value=product.storeProductDiscountEnable id='enable-discount')
-          label(for='enable-discount') Habilitar desconto
+          input(id='discount-enable' type='checkbox' name='discount-enable' value='asdfasdf_discount_enable' checked=product.storeProductDiscountEnable)
+          label(for='discount-enable') Habilitar desconto
         .price.field(style='flex-grow: 1;')
           label Fornecedor (R$)
-          input.input-money(value='inputDealerProductPrice')
-            //- input(value='product.dealerProductPrice', @keypress='nopoint')
+          input.input-money(value=product.dealerProductPrice)
         .price.field(style='flex-grow: 1;')
           label Lucro (R$)
           input.input-money(value='inputStoreProductMarkup')
@@ -96,7 +94,4 @@ html(lang="en")
         .price.field(style='flex-grow: 1;')
           label Loja (R$)
           input(value='inputStoreProductPrice')          
-  include ../components/jquery.js.pug   
-  //- script.
-  //-   document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
-  //-   ':35729/livereload.js?snipver=1"></' + 'script>')
+  //- include ../components/jquery.js.pug   

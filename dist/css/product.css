@@ -1,6 +1,6 @@
 body {
   font-family: 'Arial';
-  padding: 5em;
+  padding: 1em;
 }
 table {
   margin: 4;
@@ -12,6 +12,9 @@ table {
 input,
 select {
   height: 1em;
+}
+select {
+  height: 2em;
 }
 input[type=checkbox] {
   height: 1em;
@@ -60,36 +63,6 @@ tr.product-commercialize.product-active {
 }
 .pagination a.active {
   color: #000;
-}
-.my-modal {
-  display: none;
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: #000; /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-.modal-content {
-  background-color: #fefefe;
-  margin: 10% auto;
-  padding: 1em;
-  border-radius: 0.2em;
-  width: 95%;
-}
-.close-modal {
-  color: #aaa;
-  float: right;
-  font-size: 2em;
-}
-.close-modal:hover,
-.close-modal:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
 }
 .fields {
   display: flex;
