@@ -6,101 +6,136 @@ html(lang="en")
     //- link(rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato")
     title Zunka - Produto
     link(rel="stylesheet" href="/css/product.css" charset="utf-8")
+  //- body(onload='frmProduct.reset();')
   body
-    .field
-      label Código
-      input(value=product.storeProductId)
-    .field
-      label Título
-      input(value=product.storeProductTitle)
-    .field
-      label Fornecedor   
-      input(value=product.dealer)      
-    //- .field
-      label Imagens
-      .images
-        .wrapper-image(v-if='product.images.length > 0' v-for='(image, index) in product.images', :class='{selected: image.selected}')
-          img.ui.small.image.product-image(:src='imageSrc(image.name)' @click='selectImage(index)')
-          .right-arrow(@click='moveImage("right", index)')
-          .left-arrow(@click='moveImage("left", index)')
-          p.delete-image(@click='deleteImage(index)') x
-      .upload-image
-        //- | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) local
-        label(for='file-upload') 
-          svg.icon: use(xlink:href='/icon/sprite.svg#ic_file_upload_black_24px')
-          | Carregar imagem(s)
-        input(type='file' id='file-upload' accept='image/*' style='display:none' multiple @change='uploadProductImage()')
-        //- input(type='file' id='file-upload' accept='image/*' style='display:none' multiple @change='uploadProductImage()')
-        //- label.ui.labeled.icon.button(@click='downloadDealerImages(product)')
-          i.large.upload.icon
-          | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) do fornecedor
-    .field
-      label Detalhes
-      textarea(rows='8')= product.storeProductDetail
-    .field
-      label Descrição
-      textarea(rows='8')= product.storeProductDescription
-    .field
-      label Informações técnicas
-      textarea(rows='8')= product.storeProductTechnicalInformation
-    .field
-      label Informações adicionais
-      textarea(rows='8')= product.storeProductAdditionalInformation
-    .two.fields
-      //- maker.
+    form#frmProduct
       .field
-        label Fabricante
-        select(name='makers')
-          each productMaker in productMakers
-            option(value=productMaker.value, selected=productMaker.name === product.storeProductMaker ? true : false)= productMaker.name
+        label Código
+        input(value=product.storeProductId)
       .field
-        label Categoria
-        select(name='categories')
-          each productCategory in productCategories
-            option(value=productCategory.value, selected=productCategory.name === product.storeProductCategory ? true : false)= productCategory.name
-    //- warranty
-    .field
-      Label Garantia
-      .warrant-fields
-        .warrant.field(style='flex-grow: 1; flex-basis: 10em')
-          label Fornecedor (dias)
-          input.input-integer(value=product.dealerProductWarrantyDays)
-        .warrant.field(style='flex-grow: 1; flex-basis: 10em')
-          label Loja (dias)
-          input.input-integer(value=product.storeProductWarrantyDays)
-        .warrant.field(style='flex-grow: 3; flex-basis: 10em')
-          label Observação
-          input(value=product.storeProductWarrantyDetail)
-    //- price
-    .field
-      Label Preço
-      .price.fields
-        .price.field.checkbox
-          input#discount-enable(type='checkbox' name='discount-enable' checked=product.storeProductDiscountEnable)
-          label(for='discount-enable') Habilitar desconto
-        .price.field(style='flex-grow: 1;')
-          label Fornecedor (R$)
-          input.input-money(value=product.dealerProductPrice)
-        .price.field(style='flex-grow: 1;')
-          label Lucro (R$)
-          input.input-money(value=product.storeProductMarkup)
-        .price.field.select(style='flex-grow: auto;')
-          label Desconto
-          input.input-money(value=product.storeProductDiscountValue)
-          input#discount-percentage(type='radio' name='discount-type' value='percentage')
-          label(for='discount-percentage') %
-          input#dicsount-money(type='radio' name='discount-type' value='fafaf')
-          label(for='dicsount-money') R%
-          //- select(value=product.storeProductDiscountType)
-            input(value=product.storeProductDiscountType)
-            option(value='%') %
-            option(value='R$') R$
-        .price.field(style='flex-grow: 1;')
-          label Loja (R$)
-          input(value='inputStoreProductPrice')
-    script(src='/js/bib.js')
-    script.
-      ready(()=>{
-        console.log('Started.')
-      });
-  //- include ../components/jquery.js.pug   
+        label Título
+        input(value=product.storeProductTitle)
+      .field
+        label Fornecedor   
+        input(value=product.dealer)      
+      //- .field
+        label Imagens
+        .images
+          .wrapper-image(v-if='product.images.length > 0' v-for='(image, index) in product.images', :class='{selected: image.selected}')
+            img.ui.small.image.product-image(:src='imageSrc(image.name)' @click='selectImage(index)')
+            .right-arrow(@click='moveImage("right", index)')
+            .left-arrow(@click='moveImage("left", index)')
+            p.delete-image(@click='deleteImage(index)') x
+        .upload-image
+          //- | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) local
+          label(for='file-upload') 
+            svg.icon: use(xlink:href='/icon/sprite.svg#ic_file_upload_black_24px')
+            | Carregar imagem(s)
+          input(type='file' id='file-upload' accept='image/*' style='display:none' multiple @change='uploadProductImage()')
+          //- input(type='file' id='file-upload' accept='image/*' style='display:none' multiple @change='uploadProductImage()')
+          //- label.ui.labeled.icon.button(@click='downloadDealerImages(product)')
+            i.large.upload.icon
+            | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) do fornecedor
+      .field
+        label Detalhes
+        textarea(rows='8')= product.storeProductDetail
+      .field
+        label Descrição
+        textarea(rows='8')= product.storeProductDescription
+      .field
+        label Informações técnicas
+        textarea(rows='8')= product.storeProductTechnicalInformation
+      .field
+        label Informações adicionais
+        textarea(rows='8')= product.storeProductAdditionalInformation
+      .two.fields
+        //- maker.
+        .field
+          label Fabricante
+          select(name='makers')
+            each productMaker in productMakers
+              option(value=productMaker.value, selected=productMaker.name === product.storeProductMaker ? true : false)= productMaker.name
+        .field
+          label Categoria
+          select(name='categories')
+            each productCategory in productCategories
+              option(value=productCategory.value, selected=productCategory.name === product.storeProductCategory ? true : false)= productCategory.name
+      //- warranty
+      .field
+        Label Garantia
+        .warrant-fields
+          .warrant.field(style='flex-grow: 1; flex-basis: 10em')
+            label Fornecedor (dias)
+            input.input-integer(value=product.dealerProductWarrantyDays, readonly)
+          .warrant.field(style='flex-grow: 1; flex-basis: 10em')
+            label Loja (dias)
+            input.input-integer(value=product.storeProductWarrantyDays)
+          .warrant.field(style='flex-grow: 3; flex-basis: 10em')
+            label Observação
+            input(value=product.storeProductWarrantyDetail)
+      //- price
+      .field
+        Label Preço
+        .price.fields
+          //- Enable discount.
+          .price.field.checkbox
+            input#chbDiscountEnable(type='checkbox' name='chbDiscountEnable' onchange='calcFinalPrice()' checked=product.storeProductDiscountEnable)
+            label(for='chbDiscountEnable') Habilitar desconto
+          //- Dealer price.
+          .price.field(style='flex-grow: 1;')
+            label Fornecedor (R$)
+            input#txtDealerPrice.input-money(type='text' value=product.dealerProductPrice, readonly)
+          //- Markup.
+          .price.field(style='flex-grow: 1;')
+            label Lucro (%)
+            input#txtMarkup.input-money(type='text' value=product.storeProductMarkup, oninput='calcFinalPrice()')
+          //- Discount config.
+          .price.field.select(style='flex-grow: auto;')
+            label Desconto
+            //- Value
+            input#txtDiscount.input-money(type='text' value=product.storeProductDiscountValue, oninput='calcFinalPrice()')
+            //- Percentage.
+            input#rdoDiscountPercentage(type='radio' name='rdoDiscountType' onchange='calcFinalPrice()' checked=product.storeProductDiscountType==='%' ? true: false)
+            label(for='rdoDiscountPercentage') %
+            //- Monetary.
+            input#rdoDicsountMonetary(type='radio' name='rdoDiscountType' onchange='calcFinalPrice()' checked=product.storeProductDiscountType==='R$' ? true: false)
+            label(for='rdoDicsountMonetary') R%
+          //- Final price.
+          .price.field(style='flex-grow: 1;')
+            label Valor final (R$)
+            input#txtFinalPrice(type='text')
+      script(src='/js/bib.js')
+      script.
+        // Calculate final price with discount.
+        let calcFinalPrice = function(){
+          const txtDealerPrice = document.getElementById('txtDealerPrice');
+          const txtDiscount = document.getElementById('txtDiscount');
+          const txtFinalPrice = document.getElementById('txtFinalPrice');
+          const chbEnableDiscount = document.getElementById('chbDiscountEnable');
+          const rdoDiscountPercentage = document.getElementById('rdoDiscountPercentage');
+          return function(){
+            // Price with markup.
+            let priceWithMarkup = txtDealerPrice.value * (txtMarkup.value / 100 + 1)
+            // Use discount.
+            if(chbEnableDiscount.checked){
+              // Use percentage.
+              if(rdoDiscountPercentage.checked){
+                txtFinalPrice.value = priceWithMarkup -= txtDiscount.value / 100;
+              }
+              // Use monetary value.
+              else {
+                txtFinalPrice.value = priceWithMarkup - txtDiscount.value;
+              }
+            }
+            // No discount.
+            else {
+              txtFinalPrice.value = priceWithMarkup;
+            }
+          }
+        }();
+
+        ready(()=>{
+          document.getElementById('frmProduct').reset();
+          calcFinalPrice();
+        });
+    //- include ../components/jquery.js.pug   
