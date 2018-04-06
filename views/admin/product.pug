@@ -76,22 +76,31 @@ html(lang="en")
       Label Preço
       .price.fields
         .price.field.checkbox
-          input(id='discount-enable' type='checkbox' name='discount-enable' value='asdfasdf_discount_enable' checked=product.storeProductDiscountEnable)
+          input#discount-enable(type='checkbox' name='discount-enable' checked=product.storeProductDiscountEnable)
           label(for='discount-enable') Habilitar desconto
         .price.field(style='flex-grow: 1;')
           label Fornecedor (R$)
           input.input-money(value=product.dealerProductPrice)
         .price.field(style='flex-grow: 1;')
           label Lucro (R$)
-          input.input-money(value='inputStoreProductMarkup')
+          input.input-money(value=product.storeProductMarkup)
         .price.field.select(style='flex-grow: auto;')
           label Desconto
-          input.input-money(value='inputStoreProductDiscountValue')
-          select(value=product.storeProductDiscountType)
+          input.input-money(value=product.storeProductDiscountValue)
+          input#discount-percentage(type='radio' name='discount-type' value='percentage')
+          label(for='discount-percentage') %
+          input#dicsount-money(type='radio' name='discount-type' value='fafaf')
+          label(for='dicsount-money') R%
+          //- select(value=product.storeProductDiscountType)
             input(value=product.storeProductDiscountType)
             option(value='%') %
             option(value='R$') R$
         .price.field(style='flex-grow: 1;')
           label Loja (R$)
-          input(value='inputStoreProductPrice')          
+          input(value='inputStoreProductPrice')
+    script(src='/js/bib.js')
+    script.
+      ready(()=>{
+        console.log('Started.')
+      });
   //- include ../components/jquery.js.pug   
