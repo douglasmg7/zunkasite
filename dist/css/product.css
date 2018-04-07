@@ -148,10 +148,6 @@ tr.product-commercialize.product-active {
   margin: 0.4em;
   border: 0.5em solid transparent;
 }
-.wrapper-image.selected {
-  border: 4px solid #008000;
-  border-radius: 0.2em;
-}
 .wrapper-image:hover .left-arrow {
   display: block;
 }

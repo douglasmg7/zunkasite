@@ -6,7 +6,7 @@ html(lang="en")
     //- link(rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato")
     title Zunka - Produto
     link(rel="stylesheet" href="/css/product.css" charset="utf-8")
-  //- body(onload='frmProduct.reset();')
+    //- include ../../dist/icon/sprite2.svg
   body
     form#frmProduct
       .field
@@ -17,25 +17,23 @@ html(lang="en")
         input(value=product.storeProductTitle)
       .field
         label Fornecedor   
-        input(value=product.dealer)      
-      //- .field
+        input(value=product.dealer)   
+      .field
         label Imagens
         .images
-          .wrapper-image(v-if='product.images.length > 0' v-for='(image, index) in product.images', :class='{selected: image.selected}')
-            img.ui.small.image.product-image(:src='imageSrc(image.name)' @click='selectImage(index)')
-            .right-arrow(@click='moveImage("right", index)')
-            .left-arrow(@click='moveImage("left", index)')
-            p.delete-image(@click='deleteImage(index)') x
+          each image, index in product.images
+            .wrapper-image
+              img.ui.small.image.product-image(src=`/img/${product._id}/${image.name}`)
+              .right-arrow(onclick='swapOutImage(this, "right")')
+              .left-arrow(onclick='swapOutImage(this, "left")')
+              p.delete-image(onclick=`deleteImage(this)`) x             
         .upload-image
-          //- | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) local
-          label(for='file-upload') 
+          label(for='fleImageUpload') 
+            //- svg.icon: use(xlink:href='#ic_file_upload_black_24px')
             svg.icon: use(xlink:href='/icon/sprite.svg#ic_file_upload_black_24px')
             | Carregar imagem(s)
-          input(type='file' id='file-upload' accept='image/*' style='display:none' multiple @change='uploadProductImage()')
-          //- input(type='file' id='file-upload' accept='image/*' style='display:none' multiple @change='uploadProductImage()')
+          input#fleImageUpload(type='file' accept='image/*' style='display:none' multiple onchange=`uploadProductImage('${product._id}', '${csrfToken}')`)
           //- label.ui.labeled.icon.button(@click='downloadDealerImages(product)')
-            i.large.upload.icon
-            | &nbsp&nbsp&nbsp&nbspCarregar imagem(s) do fornecedor
       .field
         label Detalhes
         textarea(rows='8')= product.storeProductDetail
@@ -104,38 +102,5 @@ html(lang="en")
           .price.field(style='flex-grow: 1;')
             label Valor final (R$)
             input#txtFinalPrice(type='text')
-      script(src='/js/bib.js')
-      script.
-        // Calculate final price with discount.
-        let calcFinalPrice = function(){
-          const txtDealerPrice = document.getElementById('txtDealerPrice');
-          const txtDiscount = document.getElementById('txtDiscount');
-          const txtFinalPrice = document.getElementById('txtFinalPrice');
-          const chbEnableDiscount = document.getElementById('chbDiscountEnable');
-          const rdoDiscountPercentage = document.getElementById('rdoDiscountPercentage');
-          return function(){
-            // Price with markup.
-            let priceWithMarkup = txtDealerPrice.value * (txtMarkup.value / 100 + 1)
-            // Use discount.
-            if(chbEnableDiscount.checked){
-              // Use percentage.
-              if(rdoDiscountPercentage.checked){
-                txtFinalPrice.value = priceWithMarkup -= txtDiscount.value / 100;
-              }
-              // Use monetary value.
-              else {
-                txtFinalPrice.value = priceWithMarkup - txtDiscount.value;
-              }
-            }
-            // No discount.
-            else {
-              txtFinalPrice.value = priceWithMarkup;
-            }
-          }
-        }();
-
-        ready(()=>{
-          document.getElementById('frmProduct').reset();
-          calcFinalPrice();
-        });
-    //- include ../components/jquery.js.pug   
+    script(src='/js/bib.js')
+    script(src='/js/admin/product.js')

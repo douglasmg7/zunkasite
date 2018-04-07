@@ -85,8 +85,8 @@ app.use(stylus.middleware({
 // Livereload.
 if (app.get('env') === 'development') {
   const livereload = require('livereload');
-  let livereloadServer = livereload.createServer({debug: false, exts: ['pug', 'styl']});
-  livereloadServer.watch([__dirname + "/views", __dirname + "/dist/css"]);  
+  let livereloadServer = livereload.createServer({debug: false, exts: ['pug', 'styl', 'js']});
+  livereloadServer.watch([__dirname + "/views", __dirname + "/dist/css", __dirname + "/dist/js"]);  
 }
 // Statics.
 app.use(express.static(path.join(__dirname, 'dist/')));
