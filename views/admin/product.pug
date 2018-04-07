@@ -8,7 +8,7 @@ html(lang="en")
     link(rel="stylesheet" href="/css/product.css" charset="utf-8")
     //- include ../../dist/icon/sprite2.svg
   body
-    form#frmProduct
+    form#frmProduct(method='post')
       .field
         label Código
         input(value=product.storeProductId)
@@ -102,5 +102,7 @@ html(lang="en")
           .price.field(style='flex-grow: 1;')
             label Valor final (R$)
             input#txtFinalPrice(type='text')
+      .field
+        input(type='submit' value='Salvar')
     script(src='/js/bib.js')
     script(src='/js/admin/product.js')
