@@ -8,16 +8,18 @@ html(lang="en")
     link(rel="stylesheet" href="/css/product.css" charset="utf-8")
     //- include ../../dist/icon/sprite2.svg
   body
-    form#frmProduct(method='post')
+    form(method='post' id='frmProduct')
+      input(type='hidden' name='_csrf' value=csrfToken)                               
+      //- input(type='hidden' name='addressId' value=address._id)  
       .field
-        label Código
-        input(value=product.storeProductId)
+        label(for='id') Código
+        input(type='text' name='id', id='id' value=product.storeProductId)
       .field
-        label Título
-        input(value=product.storeProductTitle)
+        label(for='title') Título
+        input(type='text' name='title' id='title' value=product.storeProductTitle)
       .field
-        label Fornecedor   
-        input(value=product.dealer)   
+        label(for='dealer') Fornecedor   
+        input(type='text' name='dealer' id='dealer' value=product.dealer)   
       .field
         label Imagens
         .images
@@ -35,27 +37,27 @@ html(lang="en")
           input#fleImageUpload(type='file' accept='image/*' style='display:none' multiple onchange=`uploadProductImage('${product._id}', '${csrfToken}')`)
           //- label.ui.labeled.icon.button(@click='downloadDealerImages(product)')
       .field
-        label Detalhes
-        textarea(rows='8')= product.storeProductDetail
+        label(for='detail') Detalhes
+        textarea(name='detail' id='detail' rows='8')= product.storeProductDetail
       .field
-        label Descrição
-        textarea(rows='8')= product.storeProductDescription
+        label Descrição(for='description' )
+        textarea(name='description' id='description' rows='8')= product.storeProductDescription
       .field
-        label Informações técnicas
-        textarea(rows='8')= product.storeProductTechnicalInformation
+        label(for='tecInfo') Informações técnicas
+        textarea(name='tecInfo' id='tecInfo' rows='8')= product.storeProductTechnicalInformation
       .field
-        label Informações adicionais
-        textarea(rows='8')= product.storeProductAdditionalInformation
+        label(for='extraInfo') Informações adicionais
+        textarea(name='extraInfo' id='extraInfo' rows='8')= product.storeProductAdditionalInformation
       .two.fields
         //- maker.
         .field
-          label Fabricante
-          select(name='makers')
+          label(for='maker') Fabricante
+          select(name='maker' id='maker')
             each productMaker in productMakers
               option(value=productMaker.value, selected=productMaker.name === product.storeProductMaker ? true : false)= productMaker.name
         .field
-          label Categoria
-          select(name='categories')
+          label(for='category') Categoria
+          select(name='category' id='category')
             each productCategory in productCategories
               option(value=productCategory.value, selected=productCategory.name === product.storeProductCategory ? true : false)= productCategory.name
       //- warranty
@@ -63,45 +65,43 @@ html(lang="en")
         Label Garantia
         .warrant-fields
           .warrant.field(style='flex-grow: 1; flex-basis: 10em')
-            label Fornecedor (dias)
-            input.input-integer(value=product.dealerProductWarrantyDays, readonly)
+            label(for='dealerWarrantyDays') Fornecedor (dias)
+            input.input-integer(type='text' name='dealerWarrantyDays' id='dealerWarrantyDays' value=product.dealerProductWarrantyDays, readonly)
           .warrant.field(style='flex-grow: 1; flex-basis: 10em')
-            label Loja (dias)
-            input.input-integer(value=product.storeProductWarrantyDays)
+            label(for='storeWarrantyDays') Loja (dias)
+            input.input-integer(type='text' name='storeWarrantyDays' id='storeWarrantyDays' value=product.storeProductWarrantyDays)
           .warrant.field(style='flex-grow: 3; flex-basis: 10em')
-            label Observação
-            input(value=product.storeProductWarrantyDetail)
+            label(for='storeWarratyDetail') Observação
+            input(type='text' name='storeWarratyDetail' id='storeWarratyDetail' value=product.storeProductWarrantyDetail)
       //- price
       .field
         Label Preço
         .price.fields
           //- Enable discount.
           .price.field.checkbox
-            input#chbDiscountEnable(type='checkbox' name='chbDiscountEnable' onchange='calcFinalPrice()' checked=product.storeProductDiscountEnable)
-            label(for='chbDiscountEnable') Habilitar desconto
+            input(type='checkbox' name='discountEnable' id='discountEnable' onchange='calcFinalPrice()' checked=product.storeProductDiscountEnable)
+            label(for='discountEnable') Habilitar desconto
           //- Dealer price.
           .price.field(style='flex-grow: 1;')
-            label Fornecedor (R$)
-            input#txtDealerPrice.input-money(type='text' value=product.dealerProductPrice, readonly)
+            label(for='dealerPrice') Fornecedor (R$)
+            input.input-money(type='text' name='dealerPrice' id='dealerPrice' value=product.dealerProductPrice, readonly)
           //- Markup.
           .price.field(style='flex-grow: 1;')
-            label Lucro (%)
-            input#txtMarkup.input-money(type='text' value=product.storeProductMarkup, oninput='calcFinalPrice()')
+            label(for='markup') Lucro (%)
+            input.input-money(type='text' name='markup' id='markup' value=product.storeProductMarkup, oninput='calcFinalPrice()')
           //- Discount config.
           .price.field.select(style='flex-grow: auto;')
-            label Desconto
-            //- Value
-            input#txtDiscount.input-money(type='text' value=product.storeProductDiscountValue, oninput='calcFinalPrice()')
-            //- Percentage.
-            input#rdoDiscountPercentage(type='radio' name='rdoDiscountType' onchange='calcFinalPrice()' checked=product.storeProductDiscountType==='%' ? true: false)
-            label(for='rdoDiscountPercentage') %
-            //- Monetary.
-            input#rdoDicsountMonetary(type='radio' name='rdoDiscountType' onchange='calcFinalPrice()' checked=product.storeProductDiscountType==='R$' ? true: false)
-            label(for='rdoDicsountMonetary') R%
+            //- Discount value.
+            label(for='discount') Desconto
+            input.input-money(type='text' name='discount' id='discount' value=product.storeProductDiscountValue, oninput='calcFinalPrice()')
+            //- Discount mode.
+            select(name='discountType' id='discountType' onchange='calcFinalPrice()')
+              option(value='%', selected=product.storeProductDiscountType==='%' ? true: false) %
+              option(value='R$', selected=product.storeProductDiscountType==='R$' ? true: false) R$
           //- Final price.
           .price.field(style='flex-grow: 1;')
-            label Valor final (R$)
-            input#txtFinalPrice(type='text')
+            label(for='finalPrice') Valor final (R$)
+            input(type='text' name='finalPrice' id='finalPrice')
       .field
         input(type='submit' value='Salvar')
     script(src='/js/bib.js')

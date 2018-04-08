@@ -100,6 +100,51 @@ router.get('/product/:product_id', function(req, res, next) {
       }
     });
   });
+  // Save product.
+  router.post('/product/:product_id', checkPermission, (req, res, next)=>{
+    console.log(req.body);
+    // Validation.
+    req.checkBody('name', 'Campo NOME deve ser preenchido.').notEmpty();
+    req.checkBody('cep', 'Campo CEP deve ser preenchido.').notEmpty();
+    req.checkBody('address', 'Campo ENDEREÇO deve ser preenchido.').notEmpty();
+    req.checkBody('addressNumber', 'Campo NÚMERO deve ser preenchido.').notEmpty();
+    req.checkBody('district', 'Campo BAIRRO deve ser preenchido.').notEmpty();
+    req.checkBody('city', 'Campo CIDADE deve ser preenchido.').notEmpty();
+    req.checkBody('state', 'Campo ESTADO deve ser preenchido.').notEmpty();
+    req.checkBody('phone', 'Campo TELEFONE deve ser preenchido.').notEmpty();
+    req.getValidationResult().then(function(result) {
+    // Send validations errors to client.
+    if (!result.isEmpty()) {
+      let messages = [];
+      messages.push(result.array()[0].msg);
+      req.flash('error', messages);
+      res.redirect('back');
+      return;
+    } 
+    // // Save address.
+    // else {
+    //   if (!req.body.addressId) { return next(new Error('No addressId to find address data.')); }
+    //   Address.findById(req.body.addressId, (err, address)=>{
+    //     if (err) { return next(err) };
+    //     if (!address) { return next(new Error('Not found address to save.')); }
+    //     address.user_id = req.user._id;
+    //     address.name = req.body.name;
+    //     address.cep = req.body.cep;
+    //     address.address = req.body.address;
+    //     address.addressNumber = req.body.addressNumber;
+    //     address.addressComplement = req.body.addressComplement;
+    //     address.district = req.body.district;
+    //     address.city = req.body.city;
+    //     address.state = req.body.state;
+    //     address.phone = req.body.phone;
+    //     address.save(function(err) {
+    //       if (err) { return next(err); } 
+    //       res.redirect('/users/address');
+    //     });  
+    //   });
+    // }
+  });
+});
 
     // Check permission.
   function checkPermission (req, res, next) {

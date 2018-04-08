@@ -1,18 +1,19 @@
 // Calculate final price with discount.
 let calcFinalPrice = function(){
-  const txtDealerPrice = document.getElementById('txtDealerPrice');
-  const txtDiscount = document.getElementById('txtDiscount');
-  const txtFinalPrice = document.getElementById('txtFinalPrice');
-  const chbEnableDiscount = document.getElementById('chbDiscountEnable');
-  const rdoDiscountPercentage = document.getElementById('rdoDiscountPercentage');
+  const txtDealerPrice = document.getElementById('dealerPrice');
+  const txtMarkup = document.getElementById('markup');
+  const txtDiscount = document.getElementById('discount');
+  const txtFinalPrice = document.getElementById('finalPrice');
+  const chbEnableDiscount = document.getElementById('discountEnable');
+  const selDiscountType = document.getElementById('discountType');
   return function(){
     // Price with markup.
     let priceWithMarkup = txtDealerPrice.value * (txtMarkup.value / 100 + 1)
     // Use discount.
     if(chbEnableDiscount.checked){
       // Use percentage.
-      if(rdoDiscountPercentage.checked){
-        txtFinalPrice.value = priceWithMarkup -= txtDiscount.value / 100;
+      if(selDiscountType.value === '%'){
+        txtFinalPrice.value = priceWithMarkup * (1 - (txtDiscount.value / 100));
       }
       // Use monetary value.
       else {
