@@ -100,9 +100,17 @@ router.get('/product/:product_id', function(req, res, next) {
       }
     });
   });
+
   // Save product.
   router.post('/product/:product_id', checkPermission, (req, res, next)=>{
-    console.log(req.body);
+    // console.log(`req.body: ` + JSON.stringify(req.body));
+    console.log(`content-type: ${req.get('Content-Type')}`);
+    console.log(`req.body.id: ${req.body.id}`);
+    console.log(`req.body: ${req.body.id}`);
+    // res.redirect('back');
+    // res.redirect('../products');
+    res.json({success: true, msg: 'Product saved.'});
+    return;
     // Validation.
     req.checkBody('name', 'Campo NOME deve ser preenchido.').notEmpty();
     req.checkBody('cep', 'Campo CEP deve ser preenchido.').notEmpty();

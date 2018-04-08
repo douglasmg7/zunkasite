@@ -9,7 +9,7 @@ html(lang="en")
     //- include ../../dist/icon/sprite2.svg
   body
     form(method='post' id='frmProduct')
-      input(type='hidden' name='_csrf' value=csrfToken)                               
+      input(type='hidden' name='_csrf' id='_csrf' value=csrfToken)                               
       //- input(type='hidden' name='addressId' value=address._id)  
       .field
         label(for='id') Código
@@ -104,5 +104,6 @@ html(lang="en")
             input(type='text' name='finalPrice' id='finalPrice')
       .field
         input(type='submit' value='Salvar')
+    include ../components/jquery.js.pug
     script(src='/js/bib.js')
     script(src='/js/admin/product.js')

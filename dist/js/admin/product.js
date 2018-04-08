@@ -26,6 +26,7 @@ let calcFinalPrice = function(){
     }
   }
 }();
+
 // Swap out image to right or left.
 function swapOutImage(target, direction){
   // Origin position.
@@ -57,13 +58,15 @@ function swapOutImage(target, direction){
   elImgB.setAttribute('src', elImgA.getAttribute('src'));
   elImgA.setAttribute('src', imgSrcB);
 };
+
 // Delete image.
 function deleteImage(target){
   let el = target.parentNode;
   el.parentNode.removeChild(el);
 }
+
 // Upload pictures to server.
-function uploadProductImage(product_id, csrfToken){
+function uploadProductImage(productId, csrfToken){
   let self = this;
   let files = document.getElementById('fleImageUpload').files;
   // no files
@@ -82,7 +85,7 @@ function uploadProductImage(product_id, csrfToken){
     }
     // Send files.
     let xhr = new XMLHttpRequest();
-    xhr.open('PUT', `/ws/store/upload-product-images/${product_id}`, true);
+    xhr.open('PUT', `/ws/store/upload-product-images/${productId}`, true);
     xhr.setRequestHeader('csrf-token', csrfToken);   
     xhr.onload = function() {
       if (xhr.status === 200) {
@@ -95,7 +98,7 @@ function uploadProductImage(product_id, csrfToken){
           // Create a clone wrap image.
           let newWrapImage = lastWrapImage.cloneNode(true);
           // Update src.
-          newWrapImage.querySelectorAll('img')[0].setAttribute('src', `/img/${product_id}/${imagesName[i]}`)
+          newWrapImage.querySelectorAll('img')[0].setAttribute('src', `/img/${productId}/${imagesName[i]}`)
           // Insert at end.
           lastWrapImage.insertAdjacentElement('afterend', newWrapImage);
           // Update last elemente var.
@@ -111,8 +114,84 @@ function uploadProductImage(product_id, csrfToken){
     xhr.send(formData);
   }
 }     
+
+// // Save product (submit input).
+// function saveProduct(ev){
+//   ev.preventDefault();
+//   // User form formData.
+//   let formData = new FormData(frmProduct);
+//   formData.append('asdf', 1234);
+//   // Send formData.
+//   let xhr = new XMLHttpRequest();
+//   xhr.open('POST', window.location.pathname, true);
+//   // xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+//   // xhr.setRequestHeader('Accept', 'application/json, application/xml, text/plain, text/html, *.*');
+//   xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+//   xhr.setRequestHeader('csrf-token', document.getElementById('_csrf').value);   
+//   xhr.onload = function() {
+//     if (xhr.status === 200) {
+//       console.log(xhr.responseText);
+//     } else{
+//       console.error(`POST ${window.location.pathname}, status: ${xhr.status}, responseText: ${xhr.responseText}`);
+//     }
+//   };
+//   xhr.onerror = function(err){
+//     console.error(`POST ${window.location.pathname}: ${err}` );
+//   }
+//   console.log(formData.get('dealer'));
+//   // xhr.send(formData); 
+//   // let a = new FormData();
+//   // a.append('id', 1341341234);
+//   let csrf = document.getElementById('_csrf').value;
+//   data = { _csrf: csrf, id: 234-50845};
+//   xhr.send(JSON.stringify(data));  
+// }
+
+// // Save product (submit input).
+// function saveProduct(ev){
+//   ev.preventDefault();
+//   // User form formData.
+//   let formData = new FormData(frmProduct);
+//   formData.append('asdf', 1234);
+//   let csrf = document.getElementById('_csrf').value;
+
+//   $.ajax({
+//     method: 'POST',
+//     url: window.location.pathname,
+//     dataType: 'json',
+//     data: { _csrf: csrf, id: 1304198374}
+//   })
+//   .done(function(result){
+//     console.log(result);
+//   });   
+// }
+
+// Save product (submit input).
+function saveProduct(ev){
+  ev.preventDefault();
+  // User form formData.
+  let formData = new FormData(frmProduct);
+  let csrf = document.getElementById('_csrf').value;
+  formData.append('_csrf', csrf);
+
+  $.ajax({
+    method: 'POST',
+    url: window.location.pathname,
+    headers: {'csrf-token': csrf},
+    processData: false,
+    contentType: false,
+    data: formData
+  })
+  .done(function(result){
+    console.log(result);
+  });   
+}
+
 // Start scripts.
 ready(()=>{
-  document.getElementById('frmProduct').reset();
+  let frmProduct = document.getElementById('frmProduct');
+  frmProduct.reset();
+  frmProduct.addEventListener('submit', saveProduct, false);  
+
   calcFinalPrice();
 });
