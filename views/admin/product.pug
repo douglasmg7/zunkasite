@@ -10,6 +10,7 @@ html(lang="en")
   body
     form(method='post' id='frmProduct')
       input(type='hidden' name='_csrf' id='_csrf' value=csrfToken)                               
+      //- input(type='hidden' name='_csrf' id='_csrf' value=csrfToken)                               
       //- input(type='hidden' name='addressId' value=address._id)  
       .field
         label(for='id') Código
@@ -40,7 +41,7 @@ html(lang="en")
         label(for='detail') Detalhes
         textarea(name='detail' id='detail' rows='8')= product.storeProductDetail
       .field
-        label Descrição(for='description' )
+        label(for='description') Descrição
         textarea(name='description' id='description' rows='8')= product.storeProductDescription
       .field
         label(for='tecInfo') Informações técnicas
@@ -101,9 +102,10 @@ html(lang="en")
           //- Final price.
           .price.field(style='flex-grow: 1;')
             label(for='finalPrice') Valor final (R$)
-            input(type='text' name='finalPrice' id='finalPrice')
+            input(type='text' name='finalPrice' id='finalPrice' readonly)
       .field
         input(type='submit' value='Salvar')
+        p Campo DESCONTO deve ser preenchido
     include ../components/jquery.js.pug
     script(src='/js/bib.js')
     script(src='/js/admin/product.js')

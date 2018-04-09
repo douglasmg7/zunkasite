@@ -87,7 +87,7 @@ function uploadProductImage(productId, csrfToken){
     let xhr = new XMLHttpRequest();
     xhr.open('PUT', `/ws/store/upload-product-images/${productId}`, true);
     xhr.setRequestHeader('csrf-token', csrfToken);   
-    xhr.onload = function() {
+    xhr.addEventListener('load', function() {
       if (xhr.status === 200) {
         let imagesName = JSON.parse(xhr.responseText).imageNames;
         // Get all wrap images.
@@ -107,91 +107,52 @@ function uploadProductImage(productId, csrfToken){
       } else{
         console.error(`PUT /ws/store/upload-product-images, status: ${xhr.status}, responseText: ${xhr.responseText}`);
       }
-    };
-    xhr.onerror = function(err){
+    });
+    xhr.addEventListener('error', function(err){
       console.error(`PUT /ws/store/upload-product-images: ${err}` );
-    }
+    });
     xhr.send(formData);
   }
 }     
 
-// // Save product (submit input).
-// function saveProduct(ev){
-//   ev.preventDefault();
-//   // User form formData.
-//   let formData = new FormData(frmProduct);
-//   formData.append('asdf', 1234);
-//   // Send formData.
-//   let xhr = new XMLHttpRequest();
-//   xhr.open('POST', window.location.pathname, true);
-//   // xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-//   // xhr.setRequestHeader('Accept', 'application/json, application/xml, text/plain, text/html, *.*');
-//   xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-//   xhr.setRequestHeader('csrf-token', document.getElementById('_csrf').value);   
-//   xhr.onload = function() {
-//     if (xhr.status === 200) {
-//       console.log(xhr.responseText);
-//     } else{
-//       console.error(`POST ${window.location.pathname}, status: ${xhr.status}, responseText: ${xhr.responseText}`);
-//     }
-//   };
-//   xhr.onerror = function(err){
-//     console.error(`POST ${window.location.pathname}: ${err}` );
-//   }
-//   console.log(formData.get('dealer'));
-//   // xhr.send(formData); 
-//   // let a = new FormData();
-//   // a.append('id', 1341341234);
-//   let csrf = document.getElementById('_csrf').value;
-//   data = { _csrf: csrf, id: 234-50845};
-//   xhr.send(JSON.stringify(data));  
-// }
-
-// // Save product (submit input).
-// function saveProduct(ev){
-//   ev.preventDefault();
-//   // User form formData.
-//   let formData = new FormData(frmProduct);
-//   formData.append('asdf', 1234);
-//   let csrf = document.getElementById('_csrf').value;
-
-//   $.ajax({
-//     method: 'POST',
-//     url: window.location.pathname,
-//     dataType: 'json',
-//     data: { _csrf: csrf, id: 1304198374}
-//   })
-//   .done(function(result){
-//     console.log(result);
-//   });   
-// }
-
-// Save product (submit input).
-function saveProduct(ev){
+// Send form data.
+function sendFormData(ev){
   ev.preventDefault();
-  // User form formData.
-  let formData = new FormData(frmProduct);
-  let csrf = document.getElementById('_csrf').value;
-  formData.append('_csrf', csrf);
-
-  $.ajax({
-    method: 'POST',
-    url: window.location.pathname,
-    headers: {'csrf-token': csrf},
-    processData: false,
-    contentType: false,
-    data: formData
-  })
-  .done(function(result){
-    console.log(result);
-  });   
+  // Retrive data.
+  let data = {};
+  for (var i = 0; i < frmProduct.length; i++) {
+    if (frmProduct[i].name) {
+      data[frmProduct[i].name]=frmProduct[i].value;
+    }
+  }
+  // Send data.
+  let xhr = new XMLHttpRequest();
+  xhr.open('POST', window.location.pathname, true);
+  xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+  xhr.addEventListener('load', function() {
+    if (xhr.status === 200) {
+      console.log(xhr.responseText);
+      let result = JSON.parse(xhr.responseText);
+      if (result.success) {
+        console.log('success');
+      } else{
+        console.log('no success');
+        console.log(result.messages[0]);
+      }
+    } else{
+      console.error(`POST ${window.location.pathname}, status: ${xhr.status}, responseText: ${xhr.responseText}`);
+    }
+  });  
+  xhr.addEventListener('error', function(err){
+    console.error(`POST ${window.location.pathname}: ${err}` );
+  });
+  xhr.send(JSON.stringify(data));  
 }
 
 // Start scripts.
 ready(()=>{
   let frmProduct = document.getElementById('frmProduct');
   frmProduct.reset();
-  frmProduct.addEventListener('submit', saveProduct, false);  
-
+  frmProduct.addEventListener('submit', sendFormData, false);  
   calcFinalPrice();
 });

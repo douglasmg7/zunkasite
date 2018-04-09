@@ -47,16 +47,83 @@ router.get('/product/:product_id', function(req, res, next) {
 
   Promise.all([queryProduct, queryProductMaker, queryProductCategorie])
   .then(([product, productMakers, productCategories])=>{
-    // console.log(product.storeProductCategory);
-    res.render('admin/product', {
-      user: req.isAuthenticated() ? req.user : { name: undefined, group: undefined },
-      csrfToken: req.csrfToken(),
-      product: product,
-      productMakers: productMakers,
-      productCategories: productCategories
-    });
+    // Uset to render the page.
+    let data = req.flash();
+    data.user = req.isAuthenticated() ? req.user : { name: undefined, group: undefined };
+    data.csrfToken = req.csrfToken();
+    data.product = product;
+    data.productMakers = productMakers;
+    data.productCategories = productCategories;
+    res.render('admin/product', data);
+
+    // res.render('admin/product', {
+    //   user: req.isAuthenticated() ? req.user : { name: undefined, group: undefined },
+    //   csrfToken: req.csrfToken(),
+    //   product: product,
+    //   productMakers: productMakers,
+    //   productCategories: productCategories
+    // });    
   }).catch(err=>{
     console.log(`Error getting data, err: ${err}`);
+  });
+
+  
+  // Save product.
+  router.post('/product/:product_id', checkPermission, (req, res, next)=>{
+    // console.log(`content-type: ${req.get('Content-Type')}`);
+    // console.log(`req.body: ${JSON.stringify(req.body)}`);
+    console.log(`req.body: ${req.body.id}`);
+    // Validation.
+    req.checkBody('id', 'Campo CÓDIGO deve ser preenchido.').notEmpty();
+    req.checkBody('title', 'Campo TÍTULO deve ser preenchido.').notEmpty();
+    req.checkBody('dealer', 'Campo FORNECEDOR deve ser preenchido.').notEmpty();
+    req.checkBody('detail', 'Campo DETALHES deve ser preenchido.').notEmpty();
+    req.checkBody('description', 'Campo DESCRIÇÃO deve ser preenchido.').notEmpty();
+    req.checkBody('tecInfo', 'Campo INFORMAÇÕES TÉCNICAS deve ser preenchido.').notEmpty();
+    req.checkBody('extraInfo', 'Campo INFORMAÇÕES ADICIONAIS deve ser preenchido.').notEmpty();
+    req.checkBody('dealerWarrantyDays', 'Campo GARANTIA - FORNECEDOR deve ser preenchido.').notEmpty();
+    req.checkBody('storeWarrantyDays', 'Campo GARANTIA - LOJA deve ser preenchido.').notEmpty();
+    req.checkBody('storeWarratyDetail', 'Campo GARANTIA - OBSERVAÇÃO deve ser preenchido.').notEmpty();
+    req.checkBody('markup', 'Campo LUCRO deve ser preenchido.').notEmpty();
+    req.checkBody('discount', 'Campo DESCONTO deve ser preenchido.').notEmpty();
+    req.getValidationResult().then(function(result) {
+    // Send validations errors to client.
+    if (!result.isEmpty()) {
+      let messages = [];
+      messages.push(result.array()[0].msg);
+      res.json({success: false, messages})
+      console.log('redirected.');
+      return;
+    } 
+    else{
+      // res.redirect('back');
+      // res.redirect('../products');
+      res.json({success: true, msg: 'Product saved.'});
+      return;      
+    }
+    // // Save address.
+    // else {
+    //   if (!req.body.addressId) { return next(new Error('No addressId to find address data.')); }
+    //   Address.findById(req.body.addressId, (err, address)=>{
+    //     if (err) { return next(err) };
+    //     if (!address) { return next(new Error('Not found address to save.')); }
+    //     address.user_id = req.user._id;
+    //     address.name = req.body.name;
+    //     address.cep = req.body.cep;
+    //     address.address = req.body.address;
+    //     address.addressNumber = req.body.addressNumber;
+    //     address.addressComplement = req.body.addressComplement;
+    //     address.district = req.body.district;
+    //     address.city = req.body.city;
+    //     address.state = req.body.state;
+    //     address.phone = req.body.phone;
+    //     address.save(function(err) {
+    //       if (err) { return next(err); } 
+    //       res.redirect('/users/address');
+    //     });  
+    //   });
+    // }
+    });
   });
 
   // Upload product pictures.
@@ -100,59 +167,6 @@ router.get('/product/:product_id', function(req, res, next) {
       }
     });
   });
-
-  // Save product.
-  router.post('/product/:product_id', checkPermission, (req, res, next)=>{
-    // console.log(`req.body: ` + JSON.stringify(req.body));
-    console.log(`content-type: ${req.get('Content-Type')}`);
-    console.log(`req.body.id: ${req.body.id}`);
-    console.log(`req.body: ${req.body.id}`);
-    // res.redirect('back');
-    // res.redirect('../products');
-    res.json({success: true, msg: 'Product saved.'});
-    return;
-    // Validation.
-    req.checkBody('name', 'Campo NOME deve ser preenchido.').notEmpty();
-    req.checkBody('cep', 'Campo CEP deve ser preenchido.').notEmpty();
-    req.checkBody('address', 'Campo ENDEREÇO deve ser preenchido.').notEmpty();
-    req.checkBody('addressNumber', 'Campo NÚMERO deve ser preenchido.').notEmpty();
-    req.checkBody('district', 'Campo BAIRRO deve ser preenchido.').notEmpty();
-    req.checkBody('city', 'Campo CIDADE deve ser preenchido.').notEmpty();
-    req.checkBody('state', 'Campo ESTADO deve ser preenchido.').notEmpty();
-    req.checkBody('phone', 'Campo TELEFONE deve ser preenchido.').notEmpty();
-    req.getValidationResult().then(function(result) {
-    // Send validations errors to client.
-    if (!result.isEmpty()) {
-      let messages = [];
-      messages.push(result.array()[0].msg);
-      req.flash('error', messages);
-      res.redirect('back');
-      return;
-    } 
-    // // Save address.
-    // else {
-    //   if (!req.body.addressId) { return next(new Error('No addressId to find address data.')); }
-    //   Address.findById(req.body.addressId, (err, address)=>{
-    //     if (err) { return next(err) };
-    //     if (!address) { return next(new Error('Not found address to save.')); }
-    //     address.user_id = req.user._id;
-    //     address.name = req.body.name;
-    //     address.cep = req.body.cep;
-    //     address.address = req.body.address;
-    //     address.addressNumber = req.body.addressNumber;
-    //     address.addressComplement = req.body.addressComplement;
-    //     address.district = req.body.district;
-    //     address.city = req.body.city;
-    //     address.state = req.body.state;
-    //     address.phone = req.body.phone;
-    //     address.save(function(err) {
-    //       if (err) { return next(err); } 
-    //       res.redirect('/users/address');
-    //     });  
-    //   });
-    // }
-  });
-});
 
     // Check permission.
   function checkPermission (req, res, next) {
