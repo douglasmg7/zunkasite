@@ -137,14 +137,15 @@ function sendFormData(ev){
         console.log('success');
       } else{
         console.log('no success');
-        console.log(result.messages[0]);
+        console.log(result.messages);
       }
     } else{
       console.error(`POST ${window.location.pathname}, status: ${xhr.status}, responseText: ${xhr.responseText}`);
     }
   });  
   xhr.addEventListener('error', function(err){
-    console.error(`POST ${window.location.pathname}: ${err}` );
+    console.log('Error msg: ' + JSON.stringify(err));
+    // console.error(`POST ${window.location.pathname}: ${err}` );
   });
   xhr.send(JSON.stringify(data));  
 }

@@ -1,0 +1,49 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    //- link(rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato")
+    title Zunka - Produtos
+    if products
+      body
+        #app
+          table
+            thead
+              tr
+                th Código
+                th Título
+                th Fornecedor
+                th Local
+                th Estoque
+                th Preço
+            tbody
+              tr(v-for='product in products', @click='loadProductPage(product)')
+                td {{product.storeProductId}}
+                td {{product.storeProductTitle}}
+                td {{product.dealerName}}
+                td {{product.dealerProductLocation}}
+                td {{product.dealerProductQtd}}
+                td {{product.storeProductPrice}}              
+    // Dev version.
+    script(src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js")
+    //- // Production version.
+    //- script(src="https://cdn.jsdelivr.net/npm/vue")
+
+    //- // Default.      
+    //- script(src='https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.min.js')
+    script.
+      //- let vueProducts = !{JSON.stringify(products)}
+      var app = new Vue({
+        el: '#app',
+        data: {
+          products: !{JSON.stringify(products)}
+        },
+        methods: {
+          loadProductPage: function(product){
+            window.location.href = `/admin/product/${product._id}`;
+            //- console.log(product._id);
+          }
+        }
+      })
+

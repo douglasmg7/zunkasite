@@ -206,7 +206,7 @@ router.get('/shipment', (req, res, next)=>{
 // Select shipment.
 router.post('/shipment', (req, res, next)=>{
   console.log(req.body);
-  // Set shipment methodall not default.
+  // Set shipment method to default.
   Order.update({ user_id: req.user._id }, { shipMethod: 'default'}, err=>{
     if (err) { return next(err) };
     res.redirect('/checkout/paymant');

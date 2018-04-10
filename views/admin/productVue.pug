@@ -1,0 +1,120 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    //- link(rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato")
+    title Zunka - Produto
+    link(rel="stylesheet" href="/css/product.css" charset="utf-8")
+    //- include ../../dist/icon/sprite2.svg
+  body
+    #app
+      form(method='post' id='frmProduct')
+        input(type='hidden' name='_csrf' id='_csrf' value=csrfToken)                               
+        .field
+          label(for='id') Código
+          input(type='text' name='id' id='id' v-model='product.storeProductId')
+        .field
+          label(for='title') Título
+          input(type='text' name='title' id='title' v-model='product.storeProductTitle')
+        .field
+          label(for='dealer') Fornecedor   
+          input(type='text' name='dealer' id='dealer' v-model='product.dealer')   
+        .field
+          label Imagens 
+          .images 
+            .wrapper-image(v-for='image, index in product.images')
+              img.ui.small.image.product-image(:src='`/img/${product._id}/${image.name}`')
+              .right-arrow(onclick='swapOutImage(this, "right")')
+              .left-arrow(onclick='swapOutImage(this, "left")')
+              p.delete-image(onclick=`deleteImage(this)`) x             
+          .upload-image
+            label(for='fleImageUpload') 
+              //- svg.icon: use(xlink:href='#ic_file_upload_black_24px')
+              svg.icon: use(xlink:href='/icon/sprite.svg#ic_file_upload_black_24px')
+              | Carregar imagem(s)
+            input#fleImageUpload(type='file' accept='image/*' style='display:none' multiple onchange=`uploadProductImage('${product._id}', '${csrfToken}')`)
+            //- label.ui.labeled.icon.button(@click='downloadDealerImages(product)')
+        .field
+          label(for='detail') Detalhes
+          textarea(name='detail' id='detail' rows='8' v-model='product.storeProductDetail')
+        .field
+          label(for='description') Descrição
+          textarea(name='description' id='description' rows='8' v-model='product.storeProductDescription')
+        .field
+          label(for='tecInfo') Informações técnicas
+          textarea(name='tecInfo' id='tecInfo' rows='8' v-model='product.storeProductTechnicalInformation')
+        .field
+          label(for='extraInfo') Informações adicionais
+          textarea(name='extraInfo' id='extraInfo' rows='8' v-model='product.storeProductAdditionalInformation')
+        .two.fields
+          //- maker.
+          .field
+            label(for='maker') Fabricante
+            select(name='maker' id='maker')
+              option(v-for='maker in productMakers' value='maker.value', :selected='maker.name === product.storeProductMaker') {{maker.name}}
+          .field
+            label(for='category') Categoria
+            select(name='category' id='category')
+              option(v-for='category in productCategories' value='category.value', :selected='category.name === product.storeProductCategory') {{category.name}}
+        //- warranty
+        .field
+          Label Garantia
+          .warrant-fields
+            .warrant.field(style='flex-grow: 1; flex-basis: 10em')
+              label(for='dealerWarrantyDays') Fornecedor (dias)
+              input.input-integer(type='text' name='dealerWarrantyDays' id='dealerWarrantyDays' v-model='product.dealerProductWarrantyDays', readonly)
+            .warrant.field(style='flex-grow: 1; flex-basis: 10em')
+              label(for='storeWarrantyDays') Loja (dias)
+              input.input-integer(type='text' name='storeWarrantyDays' id='storeWarrantyDays' v-model='product.storeProductWarrantyDays')
+            .warrant.field(style='flex-grow: 3; flex-basis: 10em')
+              label(for='storeWarratyDetail') Observação
+              input(type='text' name='storeWarratyDetail' id='storeWarratyDetail' v-model='product.storeProductWarrantyDetail')
+        //- //- price
+        //- .field
+        //-   Label Preço
+        //-   .price.fields
+        //-     //- Enable discount.
+        //-     .price.field.checkbox
+        //-       input(type='checkbox' name='discountEnable' id='discountEnable' onchange='calcFinalPrice()' checked=product.storeProductDiscountEnable)
+        //-       label(for='discountEnable') Habilitar desconto
+        //-     //- Dealer price.
+        //-     .price.field(style='flex-grow: 1;')
+        //-       label(for='dealerPrice') Fornecedor (R$)
+        //-       input.input-money(type='text' name='dealerPrice' id='dealerPrice' value=product.dealerProductPrice, readonly)
+        //-     //- Markup.
+        //-     .price.field(style='flex-grow: 1;')
+        //-       label(for='markup') Lucro (%)
+        //-       input.input-money(type='text' name='markup' id='markup' value=product.storeProductMarkup, oninput='calcFinalPrice()')
+        //-     //- Discount config.
+        //-     .price.field.select(style='flex-grow: auto;')
+        //-       //- Discount value.
+        //-       label(for='discount') Desconto
+        //-       input.input-money(type='text' name='discount' id='discount' value=product.storeProductDiscountValue, oninput='calcFinalPrice()')
+        //-       //- Discount mode.
+        //-       select(name='discountType' id='discountType' onchange='calcFinalPrice()')
+        //-         option(value='%', selected=product.storeProductDiscountType==='%' ? true: false) %
+        //-         option(value='R$', selected=product.storeProductDiscountType==='R$' ? true: false) R$
+        //-     //- Final price.
+        //-     .price.field(style='flex-grow: 1;')
+        //-       label(for='finalPrice') Valor final (R$)
+        //-       input(type='text' name='finalPrice' id='finalPrice' readonly)
+        //- .field
+        //-   input(type='submit' value='Salvar')
+        //-   a(href='/admin/products') Sair
+      //- script(src='/js/bib.js')
+      //- Dev version.
+  script.
+    let product = !{JSON.stringify(product)};
+    let productMakers = !{JSON.stringify(productMakers)};
+    let productCategories = !{JSON.stringify(productCategories)};
+  //- // Vue dev version.
+  //- script(src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js")
+  // Production version.
+  script(src="https://cdn.jsdelivr.net/npm/vue")
+  //- // Default.      
+  //- script(src='https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.min.js')     
+  script(src='/js/admin/productVue.js')
+
+
+
