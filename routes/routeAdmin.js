@@ -129,6 +129,40 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
   });
 });
 
+// Save product.
+router.post('/productVue/:productId', checkPermission, (req, res, next)=>{
+  console.log(`req.body: `, req.body);
+  res.json({success: true, message: 'Product saved.'});
+  return;
+  // Validation.
+  if (isNaN(req.body.markup)) { req.body.markup = 0; }
+  if (isNaN(req.body.discount)) { req.body.discount = 0; }
+  // todo - Send validations errors to client.
+  // if (invalidFields) {
+  //   let message = { nameA: 'valueA'};
+  //   res.json({success: false, message});
+  //   return;
+  // } 
+  Product.findById(req.params.productId, (err, product)=>{
+    if (err) { return next(err) };
+    if (!product) { return next(new Error('Not found product to save.')); }
+    product.storeProductId = req.body.id;
+    product.storeProductTitle = req.body.title;
+    product.dealer = req.body.dealer;
+    product.storeProductDetail = req.body.detail;
+    product.storeProductDescription = req.body.description;
+    product.storeProductTechnicalInformation = req.body.tecInfo;
+    product.storeProductAdditionalInformation = req.body.extraInfo;
+    product.save(function(err) {
+      if (err) { 
+        res.json({success: false, message: 'Could not save on db.'});
+        return next(err); 
+      } 
+      res.json({success: true, message: 'Product saved.'});
+    });       
+  });
+});
+
 // Upload product pictures.
 router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
   const form = formidable.IncomingForm();

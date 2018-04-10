@@ -5,37 +5,44 @@ var app = new Vue({
     product: product,
     productMakers: productMakers,
     productCategories: productCategories
+  },
+  methods: {
+    // // Calculate final price with discount.
+    calcFinalPrice(){
+      // Price with markup.
+      let priceWithMarkup = product.dealerProductPrice * (product.storeProductMarkup / 100 + 1)
+      // Use discount.
+      if(product.storeProductDiscountEnable){
+        // Use percentage.
+        if(product.storeProductDiscountType === '%'){
+          product.storeProductPrice = priceWithMarkup * (1 - (product.storeProductDiscountValue / 100));
+        }
+        // Use monetary value.
+        else {
+          product.storeProductPrice = priceWithMarkup - product.storeProductDiscountValue;
+        }
+      }
+      // No discount.
+      else {
+        product.storeProductPrice = priceWithMarkup;
+      }
+    },
+    // Send form data.
+    saveProduct(){
+      console.log('saveProduct');
+      axios.post(window.location.pathname, {
+        body: product
+      })
+      .then(response => {
+        this.posts = response.data
+      })
+      .catch(e => {
+        console.log(e);
+        // this.errors.push(e)
+      })      
+    }
   }
 });
-
-// // Calculate final price with discount.
-// let calcFinalPrice = function(){
-//   const txtDealerPrice = document.getElementById('dealerPrice');
-//   const txtMarkup = document.getElementById('markup');
-//   const txtDiscount = document.getElementById('discount');
-//   const txtFinalPrice = document.getElementById('finalPrice');
-//   const chbEnableDiscount = document.getElementById('discountEnable');
-//   const selDiscountType = document.getElementById('discountType');
-//   return function(){
-//     // Price with markup.
-//     let priceWithMarkup = txtDealerPrice.value * (txtMarkup.value / 100 + 1)
-//     // Use discount.
-//     if(chbEnableDiscount.checked){
-//       // Use percentage.
-//       if(selDiscountType.value === '%'){
-//         txtFinalPrice.value = priceWithMarkup * (1 - (txtDiscount.value / 100));
-//       }
-//       // Use monetary value.
-//       else {
-//         txtFinalPrice.value = priceWithMarkup - txtDiscount.value;
-//       }
-//     }
-//     // No discount.
-//     else {
-//       txtFinalPrice.value = priceWithMarkup;
-//     }
-//   }
-// }();
 
 // // Swap out image to right or left.
 // function swapOutImage(target, direction){
@@ -125,45 +132,4 @@ var app = new Vue({
 //   }
 // }     
 
-// // Send form data.
-// function sendFormData(ev){
-//   ev.preventDefault();
-//   // Retrive data.
-//   let data = {};
-//   for (var i = 0; i < frmProduct.length; i++) {
-//     if (frmProduct[i].name) {
-//       data[frmProduct[i].name]=frmProduct[i].value;
-//     }
-//   }
-//   // Send data.
-//   let xhr = new XMLHttpRequest();
-//   xhr.open('POST', window.location.pathname, true);
-//   xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-//   xhr.addEventListener('load', function() {
-//     if (xhr.status === 200) {
-//       console.log(xhr.responseText);
-//       let result = JSON.parse(xhr.responseText);
-//       if (result.success) {
-//         console.log('success');
-//       } else{
-//         console.log('no success');
-//         console.log(result.messages);
-//       }
-//     } else{
-//       console.error(`POST ${window.location.pathname}, status: ${xhr.status}, responseText: ${xhr.responseText}`);
-//     }
-//   });  
-//   xhr.addEventListener('error', function(err){
-//     console.log('Error msg: ' + JSON.stringify(err));
-//     // console.error(`POST ${window.location.pathname}: ${err}` );
-//   });
-//   xhr.send(JSON.stringify(data));  
-// }
 
-// // Start scripts.
-// ready(()=>{
-//   let frmProduct = document.getElementById('frmProduct');
-//   frmProduct.reset();
-//   frmProduct.addEventListener('submit', sendFormData, false);  
-//   calcFinalPrice();
-// });

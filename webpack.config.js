@@ -11,14 +11,14 @@ const entry = DEVELOPMENT
   ? {
     bundleProductsStore: ['./webpack/productsStore.js', 'webpack-hot-middleware/client?reload=true'],
     // bundleProductsManual: ['./src/js/productsManual.js', 'webpack-hot-middleware/client?reload=true'],
-    bundleProductsAllNations: ['./webpack/productsAllNations.js', 'webpack-hot-middleware/client?reload=true'],
+    // bundleProductsAllNations: ['./webpack/productsAllNations.js', 'webpack-hot-middleware/client?reload=true'],
     bundleStore: ['./webpack/store.js', 'webpack-hot-middleware/client?reload=true'],
     bundleStoreItem: ['./webpack/storeItem.js', 'webpack-hot-middleware/client?reload=true']
   }
   : {
     bundleProductsStore: './webpack/productsStore.js',
     // bundleProductsManual: './src/js/productsManual.js',
-    bundleProductsAllNations: './webpack/productsAllNations.js',
+    // bundleProductsAllNations: './webpack/productsAllNations.js',
     bundleStore: './webpack/store.js',
     bundleStoreItem: './webpack/storeItem.js'
   };
