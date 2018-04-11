@@ -10,7 +10,7 @@ html(lang="en")
   body
     #app
       form(method='post' id='frmProduct')
-        input(type='hidden' id='_csrf' value=csrfToken)                               
+        //- input(type='hidden' id='_csrf' value=csrfToken)                               
         .field
           label(for='id') Código
           input(type='text' id='id' v-model='product.storeProductId')
@@ -107,6 +107,7 @@ html(lang="en")
     let product = !{JSON.stringify(product)};
     let productMakers = !{JSON.stringify(productMakers)};
     let productCategories = !{JSON.stringify(productCategories)};
+    let csrfToken = !{JSON.stringify(csrfToken)};
   //- script(src='https://cdn.jsdelivr.net/npm/axios@0.18.0/index.min.js')   
   script(src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.2/axios.js')
   //- Vue dev version.

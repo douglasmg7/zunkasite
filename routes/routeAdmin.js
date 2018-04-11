@@ -38,24 +38,6 @@ router.get('/products', function(req, res, next) {
   }) 
 });
 
-// Get all products.
-router.get('/productsVue', function(req, res, next) {
-  req.query.search = req.query.search || '';
-  // Get products.
-  Product.find({}, (err, products)=>{
-    // Internal error.
-    if (err) { return next(err); }
-    // Render.
-    else { 
-      res.render('admin/productsVue', {
-        user: req.isAuthenticated() ? req.user : { name: undefined, group: undefined },
-        initSearch: req.query.search,
-        products: products
-      });
-    }
-  }) 
-});
-
 // Get a specific product.
 router.get('/product/:product_id', checkPermission, function(req, res, next) {
   // Promise.
@@ -65,26 +47,6 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
   Promise.all([queryProduct, queryProductMaker, queryProductCategorie])
   .then(([product, productMakers, productCategories])=>{    
     res.render('admin/product', {
-      user: req.isAuthenticated() ? req.user : { name: undefined, group: undefined },
-      csrfToken: req.csrfToken(),
-      product: product,
-      productMakers: productMakers,
-      productCategories: productCategories
-    });    
-  }).catch(err=>{
-    console.log(`Error getting data, err: ${err}`);
-  });
-});
-
-// Get a specific product.
-router.get('/productVue/:product_id', checkPermission, function(req, res, next) {
-  // Promise.
-  let queryProduct = Product.findById(req.params.product_id);
-  let queryProductMaker = ProductMaker.find();
-  let queryProductCategorie = ProductCategorie.find();
-  Promise.all([queryProduct, queryProductMaker, queryProductCategorie])
-  .then(([product, productMakers, productCategories])=>{    
-    res.render('admin/productVue', {
       user: req.isAuthenticated() ? req.user : { name: undefined, group: undefined },
       csrfToken: req.csrfToken(),
       product: product,
@@ -129,37 +91,56 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
   });
 });
 
+// Get all products.
+router.get('/productsVue', function(req, res, next) {
+  req.query.search = req.query.search || '';
+  // Get products.
+  Product.find({}, (err, products)=>{
+    // Internal error.
+    if (err) { return next(err); }
+    // Render.
+    else { 
+      res.render('admin/productsVue', {
+        // user: req.isAuthenticated() ? req.user : { name: undefined, group: undefined },
+        initSearch: req.query.search,
+        products: products
+      });
+    }
+  }) 
+});
+
+// Get a specific product.
+router.get('/productVue/:product_id', checkPermission, function(req, res, next) {
+  // Promise.
+  let queryProduct = Product.findById(req.params.product_id);
+  let queryProductMaker = ProductMaker.find();
+  let queryProductCategorie = ProductCategorie.find();
+  Promise.all([queryProduct, queryProductMaker, queryProductCategorie])
+  .then(([product, productMakers, productCategories])=>{    
+    res.render('admin/productVue', {
+      product: product,
+      productMakers: productMakers,
+      productCategories: productCategories
+    });    
+  }).catch(err=>{
+    return next(err);
+  });
+});
+
 // Save product.
 router.post('/productVue/:productId', checkPermission, (req, res, next)=>{
-  console.log(`req.body: `, req.body);
-  res.json({success: true, message: 'Product saved.'});
-  return;
   // Validation.
-  if (isNaN(req.body.markup)) { req.body.markup = 0; }
-  if (isNaN(req.body.discount)) { req.body.discount = 0; }
-  // todo - Send validations errors to client.
-  // if (invalidFields) {
-  //   let message = { nameA: 'valueA'};
-  //   res.json({success: false, message});
-  //   return;
-  // } 
-  Product.findById(req.params.productId, (err, product)=>{
-    if (err) { return next(err) };
-    if (!product) { return next(new Error('Not found product to save.')); }
-    product.storeProductId = req.body.id;
-    product.storeProductTitle = req.body.title;
-    product.dealer = req.body.dealer;
-    product.storeProductDetail = req.body.detail;
-    product.storeProductDescription = req.body.description;
-    product.storeProductTechnicalInformation = req.body.tecInfo;
-    product.storeProductAdditionalInformation = req.body.extraInfo;
-    product.save(function(err) {
-      if (err) { 
-        res.json({success: false, message: 'Could not save on db.'});
-        return next(err); 
-      } 
-      res.json({success: true, message: 'Product saved.'});
-    });       
+  if (isNaN(req.body.product.storeProductMarkup)) { req.body.product.storeProductMarkup = 0; }
+  if (isNaN(req.body.product.storeProductDiscountValue)) { req.body.product.storeProductDiscountValue = 0; }  
+  // console.log(`req.body: ${JSON.stringify(req.body)}`);
+  Product.findOneAndUpdate({_id: req.body.product._id}, req.body.product, function(err, product){
+    if (err) { 
+      res.json({success: false, message: 'Erro ao salvar o produto.'});
+      return next(err); 
+    } else {
+      log.info(`Produto ${product._id} salvo.`);
+      res.json({success: true, message: 'Produto salvo.'});
+    }
   });
 });
 

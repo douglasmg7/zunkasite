@@ -29,17 +29,22 @@ var app = new Vue({
     },
     // Send form data.
     saveProduct(){
-      console.log('saveProduct');
-      axios.post(window.location.pathname, {
-        body: product
+      axios({
+        method: 'post',
+        url: window.location.pathname,
+        headers:{'csrf-token' : csrfToken},
+        data: { product: product }
       })
       .then(response => {
-        this.posts = response.data
+        // console.log(response.data);
+        if (!response.data.success) {
+          alert('Não foi possível salvar.');
+        }
       })
       .catch(e => {
-        console.log(e);
-        // this.errors.push(e)
-      })      
+        alert('Não foi possível salvar.');
+        console.error(e);
+      })       
     }
   }
 });
