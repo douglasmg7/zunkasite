@@ -1,10 +1,13 @@
-
 var app = new Vue({
   el: '#app',
   data: {
     product: product,
     productMakers: productMakers,
-    productCategories: productCategories
+    productCategories: productCategories,
+    validation: { 
+      discount: '',
+      markup: '' 
+    }
   },
   methods: {
     // // Calculate final price with discount.
@@ -37,7 +40,21 @@ var app = new Vue({
       })
       .then(response => {
         // console.log(response.data);
-        if (!response.data.success) {
+        // Validation error.
+        if (response.data.validation) {
+          // Save returned validation to vue data validation.
+          for (key in response.data.validation){
+            this.validation[key] = response.data.validation[key];
+          }
+        // No error validation.
+        } else {
+        // Clean error validation.
+          for (key in this.validation){
+            this.validation[key] = '';
+          }
+        }
+        // Server side error.
+        if (response.data.err) {
           alert('Não foi possível salvar.');
         }
       })

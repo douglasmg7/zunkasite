@@ -129,17 +129,31 @@ router.get('/productVue/:product_id', checkPermission, function(req, res, next) 
 
 // Save product.
 router.post('/productVue/:productId', checkPermission, (req, res, next)=>{
-  // Validation.
-  if (isNaN(req.body.product.storeProductMarkup)) { req.body.product.storeProductMarkup = 0; }
-  if (isNaN(req.body.product.storeProductDiscountValue)) { req.body.product.storeProductDiscountValue = 0; }  
+  // console.log('req.body.product: ' + JSON.stringify(req.body.product));
+  // Form validation.
+  let validation = {};
+  // Discount.
+  if (!(req.body.product.storeProductDiscountValue > 0)) { 
+    validation.discount = 'Entre com um valor válido.'; 
+  }  
+  // Markup.
+  if (!(req.body.product.storeProductMarkup > 0)) { 
+    validation.markup = 'Entre com um valor válido markup.'; 
+  }  
+  // Send validation erros.
+  if (Object.keys(validation).length) {
+    res.json({validation});
+    return;
+  }
   // console.log(`req.body: ${JSON.stringify(req.body)}`);
+  // Save product.
   Product.findOneAndUpdate({_id: req.body.product._id}, req.body.product, function(err, product){
     if (err) { 
-      res.json({success: false, message: 'Erro ao salvar o produto.'});
+      res.json({err});
       return next(err); 
     } else {
       log.info(`Produto ${product._id} salvo.`);
-      res.json({success: true, message: 'Produto salvo.'});
+      res.json({});
     }
   });
 });

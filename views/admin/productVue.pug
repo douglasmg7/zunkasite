@@ -91,6 +91,7 @@ html(lang="en")
               //- Discount value.
               label(for='discount') Desconto
               input.input-money(type='text' id='discount' v-model='product.storeProductDiscountValue', v-on:input='calcFinalPrice()')
+              p(v-if='validation.discount') {{validation.discount}}
               //- Discount mode.
               select(v-model='product.storeProductDiscountType' v-on:change='calcFinalPrice()')
                 //- input(v-model='product.storeProductDiscountType' type='hidden')
