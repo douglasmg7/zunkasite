@@ -104,21 +104,21 @@ html(lang="en")
               input(type='text' id='finalPrice', :value='product.storeProductPrice', readonly)
         .field
           button(type='button' v-on:click='saveProduct()') Save
-          button(type='button' onclick='window.location.href="/admin/productsVue"') Sair
+          button(type='button' onclick='window.location.href="/admin/products"') Sair
   script.
     let product = !{JSON.stringify(product)};
     let productMakers = !{JSON.stringify(productMakers)};
     let productCategories = !{JSON.stringify(productCategories)};
     let csrfToken = !{JSON.stringify(csrfToken)};
-  //- script(src='https://cdn.jsdelivr.net/npm/axios@0.18.0/index.min.js')   
+  //- Axios.
   script(src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.2/axios.js')
-  //- Vue dev version.
+  //- Vue development.
   script(src='https://cdn.jsdelivr.net/npm/vue/dist/vue.js')
-  //- // Production version.
+  //- Vue production.
   //- script(src="https://cdn.jsdelivr.net/npm/vue")
-  //- // Default.      
+  //- Vue default.      
   //- script(src='https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.min.js')
-  script(src='/js/admin/productVue.js')
+  script(src='/js/admin/product.js')
 
 
 

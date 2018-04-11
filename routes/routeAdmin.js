@@ -21,7 +21,7 @@ function formatMoney(val){
 }
 
 // Get all products.
-router.get('/productsVue', function(req, res, next) {
+router.get('/products', function(req, res, next) {
   req.query.search = req.query.search || '';
   // Get products.
   Product.find({}, (err, products)=>{
@@ -29,7 +29,7 @@ router.get('/productsVue', function(req, res, next) {
     if (err) { return next(err); }
     // Render.
     else { 
-      res.render('admin/productsVue', {
+      res.render('admin/products', {
         // user: req.isAuthenticated() ? req.user : { name: undefined, group: undefined },
         initSearch: req.query.search,
         products: products
@@ -39,14 +39,14 @@ router.get('/productsVue', function(req, res, next) {
 });
 
 // Get a specific product.
-router.get('/productVue/:product_id', checkPermission, function(req, res, next) {
+router.get('/product/:product_id', checkPermission, function(req, res, next) {
   // Promise.
   let queryProduct = Product.findById(req.params.product_id);
   let queryProductMaker = ProductMaker.find();
   let queryProductCategorie = ProductCategorie.find();
   Promise.all([queryProduct, queryProductMaker, queryProductCategorie])
   .then(([product, productMakers, productCategories])=>{    
-    res.render('admin/productVue', {
+    res.render('admin/product', {
       product: product,
       productMakers: productMakers,
       productCategories: productCategories
@@ -57,7 +57,7 @@ router.get('/productVue/:product_id', checkPermission, function(req, res, next) 
 });
 
 // Save product.
-router.post('/productVue/:productId', checkPermission, (req, res, next)=>{
+router.post('/product/:productId', checkPermission, (req, res, next)=>{
   // console.log('req.body.product: ' + JSON.stringify(req.body.product));
   // Form validation.
   let validation = {};
