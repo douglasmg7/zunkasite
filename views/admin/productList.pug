@@ -25,13 +25,7 @@ html(lang="en")
             td {{product.dealerProductLocation}}
             td {{product.dealerProductQtd}}
             td {{product.storeProductPrice}}              
-    // Dev version.
-    script(src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js")
-    //- // Production version.
-    //- script(src="https://cdn.jsdelivr.net/npm/vue")
-
-    //- // Default.      
-    //- script(src='https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.min.js')
+    include ../components/vue.js.pug
     script.
       //- let vueProducts = !{JSON.stringify(products)}
       var app = new Vue({

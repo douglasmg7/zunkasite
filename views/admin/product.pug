@@ -110,14 +110,8 @@ html(lang="en")
     let productMakers = !{JSON.stringify(productMakers)};
     let productCategories = !{JSON.stringify(productCategories)};
     let csrfToken = !{JSON.stringify(csrfToken)};
-  //- Axios.
-  script(src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.2/axios.js')
-  //- Vue development.
-  script(src='https://cdn.jsdelivr.net/npm/vue/dist/vue.js')
-  //- Vue production.
-  //- script(src="https://cdn.jsdelivr.net/npm/vue")
-  //- Vue default.      
-  //- script(src='https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.min.js')
+  include ../components/axios.js.pug
+  include ../components/vue.js.pug
   script(src='/js/admin/product.js')
 
 
