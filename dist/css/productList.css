@@ -1,0 +1,58 @@
+[v-cloak] {
+  display: none;
+}
+body {
+  font-family: 'Arial';
+  padding: 1em;
+}
+table {
+  margin: 4;
+  border-bottom: solid 1px #d3d3d3;
+  border-spacing: 0;
+  width: 100%;
+  text-align: left;
+}
+input {
+  border-radius: 0.2em;
+  border: solid 1px #aaa;
+  outline: none;
+}
+input:focus,
+textarea:focus {
+  box-shadow: 0 0 3px #51cbee;
+  border: 1px solid #51cbee;
+}
+td {
+  border-top: solid 1px #d3d3d3;
+  margin: 0;
+  padding: 0.3em 0.2em 0.3em 0.2em;
+}
+th {
+  padding: 0.3em 0.2em 0.3em 0.2em;
+}
+th.clickable,
+td.clickable {
+  cursor: pointer;
+}
+tr.product-commercialize {
+  background-color: #f2dede;
+}
+tr.product-commercialize.product-active {
+  background-color: #bdffbd;
+}
+.pagination {
+  font-size: 1em;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1em;
+}
+.pagination a {
+  margin: 0 1em 0 1em;
+  color: #d3d3d3;
+  cursor: pointer;
+}
+.pagination a.active {
+  color: #000;
+}

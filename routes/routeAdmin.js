@@ -21,7 +21,7 @@ function formatMoney(val){
 }
 
 // Get all products.
-router.get('/products', function(req, res, next) {
+router.get('/productList', function(req, res, next) {
   req.query.search = req.query.search || '';
   // Get products.
   Product.find({}, (err, products)=>{
@@ -29,7 +29,7 @@ router.get('/products', function(req, res, next) {
     if (err) { return next(err); }
     // Render.
     else { 
-      res.render('admin/products', {
+      res.render('admin/productList', {
         // user: req.isAuthenticated() ? req.user : { name: undefined, group: undefined },
         initSearch: req.query.search,
         products: products

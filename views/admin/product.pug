@@ -8,7 +8,7 @@ html(lang="en")
     link(rel="stylesheet" href="/css/product.css" charset="utf-8")
     //- include ../../dist/icon/sprite2.svg
   body
-    #app
+    #app(v-cloak)
       form(method='post' id='frmProduct')
         //- input(type='hidden' id='_csrf' value=csrfToken)                               
         .field
@@ -104,7 +104,7 @@ html(lang="en")
               input(type='text' id='finalPrice', :value='product.storeProductPrice', readonly)
         .field
           button(type='button' v-on:click='saveProduct()') Save
-          button(type='button' onclick='window.location.href="/admin/products"') Sair
+          button(type='button' onclick='window.location.href="/admin/productList"') Sair
   script.
     let product = !{JSON.stringify(product)};
     let productMakers = !{JSON.stringify(productMakers)};
