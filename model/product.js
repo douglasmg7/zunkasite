@@ -1,12 +1,6 @@
 'use strict';
 const mongoose = require('mongoose');
 
-// Image.
-let Image = new mongoose.Schema({
-  name: { type: String, required: true },
-  selected: { type: Boolean, required: true }
-});
-
 // Product.
 let product = new mongoose.Schema({
   // Dealer.
@@ -48,7 +42,7 @@ let product = new mongoose.Schema({
   storeProductDiscountValue: { type: Number , required: true},
   removeUploadedImage: { type: Boolean , required: true},
   isNewProduct: { type: Boolean , required: true},
-  images: [Image],
+  images: [String],
   // Default.
   createdAt: { type: Date, default: Date.now },
   modifiedAt: { type: Date, default: Date.now },

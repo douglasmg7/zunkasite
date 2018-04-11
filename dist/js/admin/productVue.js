@@ -109,25 +109,22 @@ var app = new Vue({
         let formData = new FormData();
         for (var i = 0; i < files.length; i++) {
           formData.append('pictures[]', files[i]);
-          // formData.append('photos[]', files[i], files[i].name);
         }
         // Send images.
         axios({
           method: 'put',
-          url: `/ws/store/upload-product-images/${this.product._id}`,
+          url: `/admin/upload-product-images/${this.product._id}`,
           headers:{'csrf-token' : csrfToken},
           data: formData
         })
         .then(response => {
           // Include images on client.
-          console.log(response.data);
-          response.data.imageNames.forEach(function(imageName){
-            self.product.images.push({name: imageName, selected: false});
+          response.data.images.forEach(function(image){
+            self.product.images.push(image);
           });
         })
         .catch(e => {
           alert('Não foi possível salvar.');
-
           console.error(e);
         }) 
       }

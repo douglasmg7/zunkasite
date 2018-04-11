@@ -24,7 +24,7 @@ html(lang="en")
           label Imagens 
           .images 
             .wrapper-image(v-for='image, index in product.images')
-              img.ui.small.image.product-image(:src='`/img/${product._id}/${image.name}`')
+              img.ui.small.image.product-image(:src='`/img/${product._id}/${image}`')
               .right-arrow(@click='moveImage(index, "r")')
               .left-arrow(@click='moveImage(index, "l")')
               p.delete-image(@click=`deleteImage(index)`) x             

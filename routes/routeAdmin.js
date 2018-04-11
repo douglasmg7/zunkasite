@@ -145,14 +145,13 @@ router.post('/productVue/:productId', checkPermission, (req, res, next)=>{
     res.json({validation});
     return;
   }
-  // console.log(`req.body: ${JSON.stringify(req.body)}`);
   // Save product.
   Product.findOneAndUpdate({_id: req.body.product._id}, req.body.product, function(err, product){
     if (err) { 
       res.json({err});
       return next(err); 
     } else {
-      log.info(`Produto ${product._id} salvo.`);
+      log.info(`Produto ${product._id} updated.`);
       res.json({});
       // Sync upladed images with product.images.
       // Get list of uploaded images.
@@ -166,7 +165,7 @@ router.post('/productVue/:productId', checkPermission, (req, res, next)=>{
           files.forEach(function(file) {
             exist = false;
             req.body.product.images.forEach(function(image) {
-              if (file === image.name) {
+              if (file === image) {
                 exist = true;
               }  
             });
@@ -193,7 +192,7 @@ router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
   form.uploadDir = DIR_IMG_PRODUCT;
   form.keepExtensions = true;
   form.multiples = true;
-  form.imageNames = [];
+  form.images = [];
   // Verifiy file size.
   form.on('fileBegin', function(name, file){
     if (form.bytesExpected > MAX_FILE_SIZE_UPLOAD) {
@@ -203,7 +202,7 @@ router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
   // Received name and file.
   form.on('file', function(name, file) {
     log.info(`"${file.name}" uploaded to "${file.path}"`);
-    form.imageNames.push(path.basename(file.path));
+    form.images.push(path.basename(file.path));
   });
   // Err.
   form.on('error', function(err) {
@@ -214,7 +213,7 @@ router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
   });
   // All files have been uploaded.
   form.on('end', function() {
-    res.json({imageNames: form.imageNames});
+    res.json({images: form.images});
   });
   // Create folder if not exist and start upload.
   fse.ensureDir(DIR_IMG_PRODUCT, err=>{
