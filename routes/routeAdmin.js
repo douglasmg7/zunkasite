@@ -154,6 +154,33 @@ router.post('/productVue/:productId', checkPermission, (req, res, next)=>{
     } else {
       log.info(`Produto ${product._id} salvo.`);
       res.json({});
+      // Sync upladed images with product.images.
+      // Get list of uploaded images.
+      fse.readdir(path.join(__dirname, '..', 'dist/img/', req.body.product._id), (err, files)=>{
+        if (err) {
+          log.error(err + '\n', new Error().stack);
+        } 
+        else {
+          // Remove uploaded images not in product images.
+          let exist;
+          files.forEach(function(file) {
+            exist = false;
+            req.body.product.images.forEach(function(image) {
+              if (file === image.name) {
+                exist = true;
+              }  
+            });
+            // Uploaded image not in product images.
+            if (!exist) {
+              // Remove uploaded image.
+              let fileToRemove = file;
+              fse.remove(path.join(__dirname, '..', 'dist/img/', req.body.product._id, fileToRemove), err=>{
+                if (err) { log.error(ERROR().stack, err); }
+              });
+            }
+          });
+        }
+      }); 
     }
   });
 });

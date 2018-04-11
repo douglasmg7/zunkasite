@@ -39,7 +39,6 @@ var app = new Vue({
         data: { product: product }
       })
       .then(response => {
-        // console.log(response.data);
         // Validation error.
         if (response.data.validation) {
           // Save returned validation to vue data validation.
@@ -62,96 +61,76 @@ var app = new Vue({
         alert('Não foi possível salvar.');
         console.error(e);
       })       
-    }
+    },
+    moveImage(index, direction){
+      // Position to move.
+      let toIndex;
+      // To right.
+      if (direction === 'r') {
+        // Last element.
+        if ((index + 1) === this.product.images.length) {
+          toIndex = 0;
+        // Not the last element.
+        } else  {
+          toIndex = index + 1;
+        }
+      // To left. 
+      } else {
+        // First element.
+        if (index === 0) {
+          toIndex = this.product.images.length - 1;
+        // Not the last element.
+        } else  {
+          toIndex = index - 1;
+        } 
+      }
+      // Change elements.
+      let toIndexElement = this.product.images[toIndex];
+      this.$set(this.product.images, toIndex, this.product.images[index]);
+      this.$set(this.product.images, index, toIndexElement);
+    },
+    // Delete image.
+    deleteImage(index){
+      this.$delete(this.product.images, index);
+    },
+    // Upload image to server.
+    uploadImage(){
+      let self = this;
+      let files = document.getElementById('uploadImage').files;
+      // no files
+      if (files.length === 0) {
+        alert('Nenhuma imagem para upload foi selecionada.');
+      // too many files
+      } else if (files.length > 8) {
+        alert('Selecione no máximo 8 imagens por vez.')
+      }
+      // it's ok
+      else {
+        let formData = new FormData();
+        for (var i = 0; i < files.length; i++) {
+          formData.append('pictures[]', files[i]);
+          // formData.append('photos[]', files[i], files[i].name);
+        }
+        // Send images.
+        axios({
+          method: 'put',
+          url: `/ws/store/upload-product-images/${this.product._id}`,
+          headers:{'csrf-token' : csrfToken},
+          data: formData
+        })
+        .then(response => {
+          // Include images on client.
+          console.log(response.data);
+          response.data.imageNames.forEach(function(imageName){
+            self.product.images.push({name: imageName, selected: false});
+          });
+        })
+        .catch(e => {
+          alert('Não foi possível salvar.');
+
+          console.error(e);
+        }) 
+      }
+    },
   }
 });
-
-// // Swap out image to right or left.
-// function swapOutImage(target, direction){
-//   // Origin position.
-//   let elWrapOrigin = target.parentNode;
-//   // Destination position.
-//   let elWrapDestination = null;
-//   // To right.
-//   if (direction === 'right') {
-//     // Get right side element or the first one.
-//     elWrapDestination = elWrapOrigin.nextElementSibling;
-//     // Last element, get the first one.
-//     if(elWrapDestination === null){
-//       elWrapDestination = elWrapOrigin.parentNode.children[0];
-//     }
-//   // To left. 
-//   } else {
-//     // Get left side element or the last one.
-//     elWrapDestination = elWrapOrigin.previousElementSibling;
-//     // First element, get the last one.
-//     if(elWrapDestination === null){
-//       let allWrap = elWrapOrigin.parentNode.children;
-//       elWrapDestination = allWrap[allWrap.length - 1];
-//     }
-//   }
-//   // Swap out image src.
-//   let elImgA = elWrapOrigin.querySelectorAll('img')[0];
-//   let elImgB = elWrapDestination.querySelectorAll('img')[0];
-//   let imgSrcB = elImgB.getAttribute('src');
-//   elImgB.setAttribute('src', elImgA.getAttribute('src'));
-//   elImgA.setAttribute('src', imgSrcB);
-// };
-
-// // Delete image.
-// function deleteImage(target){
-//   let el = target.parentNode;
-//   el.parentNode.removeChild(el);
-// }
-
-// // Upload pictures to server.
-// function uploadProductImage(productId, csrfToken){
-//   let self = this;
-//   let files = document.getElementById('fleImageUpload').files;
-//   // no files
-//   if (files.length === 0) {
-//     alert('Nenhuma imagem para upload foi selecionada.');
-//   // too many files
-//   } else if (files.length > 8) {
-//     alert('Selecione no máximo 8 imagens por vez.')
-//   }
-//   // it's ok
-//   else {
-//     let formData = new FormData();
-//     for (var i = 0; i < files.length; i++) {
-//       formData.append('pictures[]', files[i]);
-//       // formData.append('photos[]', files[i], files[i].name);
-//     }
-//     // Send files.
-//     let xhr = new XMLHttpRequest();
-//     xhr.open('PUT', `/ws/store/upload-product-images/${productId}`, true);
-//     xhr.setRequestHeader('csrf-token', csrfToken);   
-//     xhr.addEventListener('load', function() {
-//       if (xhr.status === 200) {
-//         let imagesName = JSON.parse(xhr.responseText).imageNames;
-//         // Get all wrap images.
-//         let wrapImages = document.getElementsByClassName('wrapper-image');
-//         // Get the last wrap image.
-//         let lastWrapImage = wrapImages[wrapImages.length - 1];
-//         for (var i = 0; i < imagesName.length; i++) {
-//           // Create a clone wrap image.
-//           let newWrapImage = lastWrapImage.cloneNode(true);
-//           // Update src.
-//           newWrapImage.querySelectorAll('img')[0].setAttribute('src', `/img/${productId}/${imagesName[i]}`)
-//           // Insert at end.
-//           lastWrapImage.insertAdjacentElement('afterend', newWrapImage);
-//           // Update last elemente var.
-//           lastWrapImage = newWrapImage;
-//         }
-//       } else{
-//         console.error(`PUT /ws/store/upload-product-images, status: ${xhr.status}, responseText: ${xhr.responseText}`);
-//       }
-//     });
-//     xhr.addEventListener('error', function(err){
-//       console.error(`PUT /ws/store/upload-product-images: ${err}` );
-//     });
-//     xhr.send(formData);
-//   }
-// }     
-
-

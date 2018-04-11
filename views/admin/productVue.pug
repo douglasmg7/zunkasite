@@ -25,15 +25,15 @@ html(lang="en")
           .images 
             .wrapper-image(v-for='image, index in product.images')
               img.ui.small.image.product-image(:src='`/img/${product._id}/${image.name}`')
-              .right-arrow(onclick='swapOutImage(this, "right")')
-              .left-arrow(onclick='swapOutImage(this, "left")')
-              p.delete-image(onclick=`deleteImage(this)`) x             
+              .right-arrow(@click='moveImage(index, "r")')
+              .left-arrow(@click='moveImage(index, "l")')
+              p.delete-image(@click=`deleteImage(index)`) x             
           .upload-image
-            label(for='fleImageUpload') 
+            label(for='uploadImage') 
               //- svg.icon: use(xlink:href='#ic_file_upload_black_24px')
               svg.icon: use(xlink:href='/icon/sprite.svg#ic_file_upload_black_24px')
               | Carregar imagem(s)
-            input#fleImageUpload(type='file' accept='image/*' style='display:none' multiple onchange=`uploadProductImage('${product._id}', '${csrfToken}')`)
+            input(type='file' id='uploadImage' accept='image/*' style='display:none' multiple v-on:change=`uploadImage()`)
             //- label.ui.labeled.icon.button(@click='downloadDealerImages(product)')
         .field
           label(for='detail') Detalhes
@@ -86,6 +86,7 @@ html(lang="en")
             .price.field(style='flex-grow: 1;')
               label(for='markup') Lucro (%)
               input.input-money(type='text' id='markup' v-model='product.storeProductMarkup', v-on:input='calcFinalPrice()')
+              p(v-if='validation.markup') {{validation.markup}}
             //- Discount config.
             .price.field.select(style='flex-grow: auto;')
               //- Discount value.
