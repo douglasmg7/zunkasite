@@ -1,0 +1,21 @@
+.menu
+  ul
+    //- Home.
+    li: a(href='/') Sites
+    //- Store.
+    li: a(href='productList') Produtos
+    //- Allnations.
+    li: a(href='allnations') All Nations      
+  button(@click='newProduct()') Criar Produto
+  .search(v-if='currentPage == "productList"')
+    input(v-model='search' placeholder='Pesquisa')
+    input
+  .account
+    //- User name.
+    a(href='/users/account' v-if="this.user.name")
+      svg.icon: use(xlink:href='/icon/sprite.svg#ic_account_circle_white_24px') 
+      | {{this.user.name}}
+    //- Exit.
+    a(href='/users/logout')
+      svg.icon: use(xlink:href='/icon/sprite.svg#ic_exit_to_app_white_24px')
+      | Sair

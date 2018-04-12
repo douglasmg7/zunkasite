@@ -67,16 +67,17 @@ if (app.get('env') !== 'test') {
 app.set('secret', 'd7ga8gat3kaz0m');
 // Pretty in development.
 if (app.get('env') === 'development') {
-  app.locals.pretty = true;
+  app.locals.pretty = false;  // Avoid extra whitespace on HTML rendered by pug.
 }
 // View engine setup.
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 // Stylus.
-// app.use(stylus.middleware(path.join(__dirname, 'dist/')));
+console.log('src: ' + __dirname + '/styl');
+console.log('dst: ' + __dirname + '/dist/css');
 app.use(stylus.middleware({
-    src: __dirname + '/dist',
-    dst: __dirname + '/dist/css',
+    src: __dirname + '/styl',
+    dest: __dirname + '/dist/css',
     compile: function compile(str, path){
       return stylus(str).set('filename', path);
       }
@@ -86,7 +87,7 @@ app.use(stylus.middleware({
 if (app.get('env') === 'development') {
   const livereload = require('livereload');
   let livereloadServer = livereload.createServer({debug: false, exts: ['pug', 'styl', 'js']});
-  livereloadServer.watch([__dirname + "/views", __dirname + "/dist/css", __dirname + "/dist/js"]);  
+  livereloadServer.watch([__dirname + "/views", __dirname + "/styl", __dirname + "/dist/js"]);  
 }
 // Statics.
 app.use(express.static(path.join(__dirname, 'dist/')));

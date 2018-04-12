@@ -1,44 +1,78 @@
 [v-cloak] {
   display: none;
 }
-body {
-  font-family: 'Arial';
-  padding: 1em;
-}
-table {
-  margin: 4;
-  border-bottom: solid 1px #d3d3d3;
-  border-spacing: 0;
-  width: 100%;
-  text-align: left;
-}
-input {
-  border-radius: 0.2em;
-  border: solid 1px #aaa;
-  outline: none;
-}
-input:focus,
-textarea:focus {
-  box-shadow: 0 0 3px #51cbee;
-  border: 1px solid #51cbee;
-}
-td {
-  border-top: solid 1px #d3d3d3;
+html,
+body,
+div,
+form,
+ul,
+li {
   margin: 0;
-  padding: 0.3em 0.2em 0.3em 0.2em;
+  padding: 0;
 }
-th {
-  padding: 0.3em 0.2em 0.3em 0.2em;
+body {
+  font-family: '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'sans-serif';
 }
-th.clickable,
-td.clickable {
+button,
+input {
+  box-sizing: border-box;
+}
+.menu {
+  font-size: 1em;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  background-color: #000;
+}
+.menu a {
+  color: #ccc;
+  text-decoration: none;
+  margin: 0.4em 1em 0.4em 1em;
+}
+.menu a:hover {
+  color: #fff;
+}
+.menu button {
+  height: 2em;
+  margin: 0.3em;
+}
+.menu .search input:first-child {
+  height: 2em;
+  min-width: 15em;
+  margin: 0.2em 0em 0.2em 5em;
+  border: none;
+  border-radius: 4px 0 0 4px;
+  padding-left: 0.5em;
+}
+.menu .search input:last-child {
+  height: 2em;
+  width: 2.2em;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  background-image: url("/icon/ic_search_black_24px.svg");
+  background-repeat: no-repeat;
+  background-color: #fff;
+  background-size: 1.8em 1.8em;
+  background-position: 65% 50%;
+}
+.menu .search input:last-child:hover {
+  background-color: #d3d3d3;
   cursor: pointer;
 }
-tr.product-commercialize {
-  background-color: #f2dede;
+.menu .account {
+  margin-left: auto;
 }
-tr.product-commercialize.product-active {
-  background-color: #bdffbd;
+.menu ul {
+  list-style-type: none;
+}
+.menu li {
+  display: inline-block;
+}
+.menu .icon {
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: middle;
+  margin-right: 0.5em;
 }
 .pagination {
   font-size: 1em;
@@ -55,4 +89,26 @@ tr.product-commercialize.product-active {
 }
 .pagination a.active {
   color: #000;
+}
+table {
+  border-bottom: solid 1px #d3d3d3;
+  border-spacing: 0;
+  width: 100%;
+  text-align: left;
+}
+td {
+  border-top: solid 1px #d3d3d3;
+}
+th,
+td {
+  padding: 0.3em 0.2em 0.3em 0.5em;
+}
+td {
+  cursor: pointer;
+}
+tr.product-commercialize {
+  background-color: #f2dede;
+}
+tr.product-commercialize.product-active {
+  background-color: #bdffbd;
 }

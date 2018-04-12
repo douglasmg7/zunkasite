@@ -103,6 +103,16 @@ html(lang="en")
               label(for='finalPrice') Valor final (R$)
               input(type='text' id='finalPrice', :value='product.storeProductPrice', readonly)
         .field
+          label Status
+            .fields
+              .field
+                label(for='commercialize') Comercializar produto
+                input(type='checkbox' id='commercialize' v-model:checked='product.storeProductCommercialize')
+              .field
+                label(for='stock') Estoque
+                  input(type='text' id='stock' v-model='product.dealerProductQtd')
+                  | {{product.dealerProductQtd > 1 ? 'Unidades': 'Unidade'}}                   
+        .field
           button(type='button' v-on:click='saveProduct()') Save
           button(type='button' onclick='window.location.href="/admin/productList"') Sair
   script.

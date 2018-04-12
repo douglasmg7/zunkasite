@@ -8,6 +8,7 @@ html(lang="en")
     link(rel="stylesheet" href="/css/productList.css" charset="utf-8")
   body
     #app(v-cloak)
+      include ../menu.pug
       table
         thead
           tr
@@ -18,20 +19,26 @@ html(lang="en")
             th Estoque
             th Preço
         tbody
-          tr(v-for='product in products', @click='loadProductPage(product)')
+          tr(
+            v-for='product in products', @click='loadProductPage(product)'
+            :class='{"product-commercialize": product.storeProductCommercialize, "product-active": product.dealerProductActive && (product.dealerProductQtd > 5)}'
+          )
             td {{product.storeProductId}}
             td {{product.storeProductTitle}}
             td {{product.dealerName}}
             td {{product.dealerProductLocation}}
             td {{product.dealerProductQtd}}
-            td {{product.storeProductPrice}}              
+            td {{product.storeProductPrice}}   
     include ../components/vue.js.pug
     script.
       //- let vueProducts = !{JSON.stringify(products)}
       var app = new Vue({
         el: '#app',
         data: {
-          products: !{JSON.stringify(products)}
+          currentPage: 'productList',
+          search: '',
+          products: !{JSON.stringify(products)},
+          user: !{JSON.stringify(user)}
         },
         methods: {
           loadProductPage: function(product){
