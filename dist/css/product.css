@@ -1,59 +1,86 @@
 [v-cloak] {
   display: none;
 }
-body {
-  font-family: 'Arial';
-  padding: 1em;
+[v-cloak] {
+  display: none;
 }
-table {
-  margin: 4;
-  border-bottom: solid 1px #d3d3d3;
-  border-spacing: 0;
-  width: 100%;
-  text-align: left;
-}
-input,
-select {
-  height: 1em;
-}
-select {
-  height: 2em;
-}
-input[type=checkbox] {
-  height: 1em;
-}
-input[type=submit] {
-  height: 2em;
-  margin: 1em;
-}
-input,
-textarea {
-  border-radius: 0.2em;
-  border: solid 1px #aaa;
-  outline: none;
-}
-input:focus,
-textarea:focus {
-  box-shadow: 0 0 3px #51cbee;
-  border: 1px solid #51cbee;
-}
-td {
-  border-top: solid 1px #d3d3d3;
+html,
+body,
+div,
+form,
+ul,
+li,
+h1,
+h2,
+h3,
+hr {
   margin: 0;
-  padding: 0.3em 0.2em 0.3em 0.2em;
+  padding: 0;
 }
-th {
-  padding: 0.3em 0.2em 0.3em 0.2em;
+body {
+  font-family: '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'sans-serif';
 }
-th.clickable,
-td.clickable {
+button,
+input {
+  box-sizing: border-box;
+}
+.menu {
+  font-size: 1em;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  background-color: #000;
+  height: 3em;
+}
+.menu a {
+  color: #ccc;
+  text-decoration: none;
+  margin: 0.4em 1em 0.4em 1em;
+}
+.menu a:hover {
+  color: #fff;
+}
+.menu .new-product button {
+  height: 2em;
+  margin: 0.3em 0.3em 0.3em 6em;
+}
+.menu .search input:first-child {
+  height: 2em;
+  min-width: 15em;
+  margin: 0.2em 0em 0.2em 5em;
+  border: none;
+  border-radius: 4px 0 0 4px;
+  padding-left: 0.5em;
+}
+.menu .search input:last-child {
+  height: 2em;
+  width: 2.2em;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  background-image: url("/icon/ic_search_black_24px.svg");
+  background-repeat: no-repeat;
+  background-color: #fff;
+  background-size: 1.8em 1.8em;
+  background-position: 65% 50%;
+}
+.menu .search input:last-child:hover {
+  background-color: #d3d3d3;
   cursor: pointer;
 }
-tr.product-commercialize {
-  background-color: #f2dede;
+.menu .account {
+  margin-left: auto;
 }
-tr.product-commercialize.product-active {
-  background-color: #bdffbd;
+.menu ul {
+  list-style-type: none;
+}
+.menu li {
+  display: inline-block;
+}
+.menu .icon {
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: middle;
+  margin-right: 0.5em;
 }
 .pagination {
   font-size: 1em;
@@ -70,6 +97,32 @@ tr.product-commercialize.product-active {
 }
 .pagination a.active {
   color: #000;
+}
+form {
+  margin: 0 5em 2em 5em;
+}
+h2,
+h3 {
+  margin-top: 2em;
+}
+input,
+textarea {
+  border-radius: 0.2em;
+  border: solid 1px #aaa;
+  outline: none;
+  padding-left: 0.5em;
+  margin-top: 0.2em;
+}
+input:focus,
+textarea:focus {
+  box-shadow: 0 0 3px #51cbee;
+  border: 1px solid #51cbee;
+}
+input {
+  height: 2em;
+}
+textarea {
+  height: 10em;
 }
 .fields {
   display: flex;
@@ -96,16 +149,6 @@ tr.product-commercialize.product-active {
 }
 .field > textarea {
   padding: 0.5em;
-}
-.two.fields > .field {
-  flex-grow: 1;
-  flex-basis: 50%;
-}
-.two.fields select {
-  width: 100%;
-}
-.two.fields > .field:first-of-type {
-  padding-right: 1em;
 }
 .warrant-fields {
   display: flex;

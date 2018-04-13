@@ -23,6 +23,7 @@ input {
   flex-flow: row wrap;
   align-items: center;
   background-color: #000;
+  height: 3em;
 }
 .menu a {
   color: #ccc;
@@ -32,9 +33,9 @@ input {
 .menu a:hover {
   color: #fff;
 }
-.menu button {
+.menu .new-product button {
   height: 2em;
-  margin: 0.3em;
+  margin: 0.3em 0.3em 0.3em 6em;
 }
 .menu .search input:first-child {
   height: 2em;

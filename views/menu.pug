@@ -5,11 +5,12 @@
     //- Store.
     li: a(href='productList') Produtos
     //- Allnations.
-    li: a(href='allnations') All Nations      
-  button(@click='newProduct()') Criar Produto
-  .search(v-if='currentPage == "productList"')
+    li: a(href='allnations') All Nations
+  .search
     input(v-model='search' placeholder='Pesquisa')
     input
+  .new-product(v-if='currentPage == "productList"')
+    button(@click='newProduct()') Criar Produto
   .account
     //- User name.
     a(href='/users/account' v-if="this.user.name")

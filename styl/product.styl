@@ -1,55 +1,30 @@
 [v-cloak]
   display: none;
-body
-  font-family: 'Arial'
-  padding: 1em
-table
-  margin: 4
-  border-bottom: solid 1px lightgray
-  border-spacing: 0
-  width: 100%
-  text-align: left
-input, select 
-  height: 1em
-select
-  height: 2em
-input[type=checkbox] 
-  height: 1em
-input[type=submit]
-  height: 2em
-  margin: 1em
-input, textarea 
+@import 'reset'
+@import 'menu'
+@import 'pagination'
+form
+  margin: 0 5em 2em 5em
+h2, h3
+  margin-top: 2em
+input, textarea
   border-radius: .2em
   border: solid 1px #aaa
   outline: none
-input:focus, textarea:focus
-  box-shadow: 0 0 3px rgba(81, 203, 238, 1);
-  border: 1px solid rgba(81, 203, 238, 1);
-td
-  border-top: solid 1px lightgray
-  margin: 0
-  padding: .3em .2em .3em 0.2em
-th
-  padding: .3em .2em .3em 0.2em
-th.clickable, td.clickable
-  cursor: pointer
-tr.product-commercialize
-  background-color: #F2DEDE
-tr.product-commercialize.product-active
-  background-color: #bdffbd
-.pagination
-  font-size: 1em
-  display: flex
-  flex-flow: row wrap
-  justify-content: center
-  align-items: center
-  margin-top: 1em
-.pagination a
-  margin: 0 1em 0 1em
-  color: lightgray
-  cursor: pointer
-.pagination a.active
-  color: black
+  padding-left: .5em
+  margin-top: .2em
+  &:focus
+    box-shadow: 0 0 3px rgba(81, 203, 238, 1);
+    border: 1px solid rgba(81, 203, 238, 1);    
+input
+  height 2em
+textarea
+  height 10em
+// input[type=checkbox] 
+  // height: 1em
+// input[type=submit]
+//   height: 2em
+//   margin: 1em
 .fields
   display: flex
   flex-wrap: wrap 
@@ -68,13 +43,6 @@ tr.product-commercialize.product-active
   margin-left: 0.3em 
 .field > textarea
   padding .5em
-.two.fields > .field
-  flex-grow: 1
-  flex-basis: 50%
-.two.fields select
-  width: 100%
-.two.fields > .field:first-of-type
-  padding-right: 1em
 .warrant-fields
   display: flex
   flex-flow: wrap

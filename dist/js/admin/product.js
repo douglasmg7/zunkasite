@@ -1,9 +1,12 @@
 var app = new Vue({
   el: '#app',
   data: {
+    currentPage: 'product',
     product: product,
     productMakers: productMakers,
     productCategories: productCategories,
+    user: user,
+    search: '',
     validation: { 
       discount: '',
       markup: '' 
