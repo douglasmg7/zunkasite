@@ -1,9 +1,6 @@
 [v-cloak] {
   display: none;
 }
-[v-cloak] {
-  display: none;
-}
 html,
 body,
 div,
@@ -104,6 +101,7 @@ form {
 h2,
 h3 {
   margin-top: 2em;
+  margin-bottom: 0.2em;
 }
 input,
 textarea {
@@ -124,65 +122,39 @@ input {
 textarea {
   height: 10em;
 }
-.fields {
+.field {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
 }
 .field > label {
   margin-top: 1em;
   font-weight: bold;
   display: block;
 }
-.field > .upload-image > label {
-  margin-top: 0.3em;
-}
 .field > input,
-.field > textarea {
+.field > textarea,
+.field > select {
   width: 100%;
+}
+.field > textarea {
+  padding: 0.5em;
 }
 .field > input[type=checkbox] {
   width: auto;
+}
+.field > .upload-image > label {
+  margin-top: 0.3em;
+}
+.field.checkbox {
+  flex-direction: row;
 }
 .field.checkbox label {
   display: inline-block;
   margin-left: 0.3em;
 }
-.field > textarea {
-  padding: 0.5em;
-}
-.warrant-fields {
-  display: flex;
-  flex-flow: wrap;
-  border-radius: 0.2em;
-  border: 1px solid #aaa;
-}
-.warrant.field {
-  margin: 0.5em;
-}
-.warrant.field label {
-  margin: 0;
-}
-.price.fields {
-  display: flex;
-  flex-flow: row wrap;
-  border: solid 1px #aaa;
-  border-radius: 0.2em;
-}
-.price.field {
-  padding: 0.5em;
-}
-.price.field label {
-  margin-top: 0;
-}
-.price.field.checkbox {
-  flex-basis: 100%;
-}
-.price.field.select input {
-  width: auto;
-}
-.price.field.checkbox input {
+.field.checkbox input {
   position: relative;
-  top: 2px;
+  top: 9px;
 }
 .images {
   border: 1px solid #aaa;
