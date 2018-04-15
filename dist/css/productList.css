@@ -6,7 +6,11 @@ body,
 div,
 form,
 ul,
-li {
+li,
+h1,
+h2,
+h3,
+hr {
   margin: 0;
   padding: 0;
 }

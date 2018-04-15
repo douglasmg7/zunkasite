@@ -64,7 +64,7 @@
         .col-md-3(v-for='product in products.slice((i - 1) * colsByRow, i * colsByRow)')
           .thumbnail
             a.product(:href='"/product/" + product._id')
-              img(:src='getImgUrl(product)' v-if='getImgUrl(product) !== ""')
+              img(:src='`/img/${product._id}/${product.images[0]}`', v-if='product.images[0]')
               h4.description {{ product.storeProductTitle }}
               h3.price
                 sup R$
@@ -134,20 +134,7 @@
           .catch((err)=>{
             console.log(`Error - logout(), err: ${err}`);
           });
-      },
-      getImgUrl(product){
-        let selImgName = '';
-        // console.log(JSON.stringify(product.images));
-        for (var i = 0; i < product.images.length; i++) {
-          if (product.images[i].selected) {
-            selImgName = product.images[i].name;
-            // console.info('filename: ' + product._id + '/' + selImgName);
-            break;
-          }          
-        }
-        if (selImgName === '') { return selImgName; }
-        return `/img/${product._id}/${selImgName}`;
-      },
+      }
     },
     filters: {
       currencyBr(value){

@@ -49,10 +49,10 @@
         .col-md-4.col-md-offset-1
           .row
             .col-md-12
-              img.img-responsive.center-block(:src='getImgUrl(selectedThumbnail)' v-if='imagesSelected.length > 0')
+              img.img-responsive.center-block(:src='`/img/${product._id}/${product.images[selectedThumbnail]}`' v-if='product.images.length > 0')
           .row(v-for='(r, index) in new Array(colsByRow)')
             .col-md-3(v-for='(i, index2) in imagesSelectedByRow[index]')
-              img.img-responsive(:src='getImgUrl(index * colsByRow + index2)' @click='selectedThumbnail=index * colsByRow + index2')
+              img.img-responsive(:src='`/img/${product._id}/${product.images[index * colsByRow + index2]}`' @click='selectedThumbnail=index * colsByRow + index2')
         .col-md-6
           // Title.
           h3.product-name {{product.storeProductTitle}}
@@ -177,14 +177,14 @@
     },
     props:['$http', 'user', 'product', 'cart', 'csrfToken'],
     created(){
-      let numRows = Math.ceil(this.imagesSelected.length / this.colsByRow);
+      let numRows = Math.ceil(this.product.images.length / this.colsByRow);
       // Create um array for each row.
       for (var i = 0; i < numRows; i++) {
         this.imagesSelectedByRow.push(new Array());
       }
       // Fill each array with images.
-      for (var i=0 ; i < this.imagesSelected.length; i++) {
-        this.imagesSelectedByRow[Math.floor(i/this.colsByRow)].push(this.imagesSelected[i]);
+      for (var i=0 ; i < this.product.images.length; i++) {
+        this.imagesSelectedByRow[Math.floor(i/this.colsByRow)].push(this.product.images[i]);
       }
     },
     methods: {
@@ -193,10 +193,6 @@
       // Retrive products page.
       getProducts(page=1){
         window.location.href = `/?page=1&search=${this.search}`;
-      },
-      // Get image url.
-      getImgUrl(index){
-        return `/img/${this.product._id}/${this.imagesSelected[index].name}`;
       },
       addToCart(){
         this.$http.put(`/cart/add/${this.product._id}`, { _csrf: this.csrfToken })
@@ -224,16 +220,6 @@
       }
     },
     computed:{
-      // Return array with only images marked as selected.
-      imagesSelected(){
-        let imgSel = [];
-        this.product.images.forEach(function(image) {
-          if (image.selected) {
-            imgSel.push(image);
-          }
-        });
-        return imgSel;
-      },
       // Each line of product detail become one array item.
       productDetail(){
         if (this.product.storeProductDetail.trim() === '') {
