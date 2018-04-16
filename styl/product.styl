@@ -1,6 +1,7 @@
 @import 'reset'
-@import 'menu'
+@import 'nav'
 @import 'pagination'
+padding-size = .5em
 form
   margin 0 5em 2em 5em
 h2
@@ -12,42 +13,38 @@ textarea
   border-radius .2em
   border solid 1px #aaa
   outline none
-  padding-left .5em
+  padding-left padding-size
   margin-top .2em
   &:focus
     box-shadow 0 0 3px rgba(81, 203, 238, 1)
     border 1px solid rgba(81, 203, 238, 1)   
+textarea
+  padding padding-size
 input
   height 2em
 textarea
   height 10em
 .field
   display flex
-  flex-direction column
+  flex-flow column nowrap
+  margin-top 1em
   // flex-wrap wrap
   > label
-    margin-top 1em
     font-weight bold
-    display block
-  > input
-  > textarea
-  > select
-    width 100%
-  > textarea
-    padding .5em
   > input[type=checkbox]
     width auto
   > .upload-image
     > label
       margin-top .3em    
   &.checkbox 
-    flex-direction row
-    label
-      display inline-block  
-      margin-left 0.3em
-    input
-      position relative
-      top 9px
+    background-color yellow
+    flex-flow row wrap
+    align-items flex-start
+    // label
+    //   margin-left 0.3em
+    // input
+    //   position relative
+    //   top 9px
   .discount  
     // flex-direction row
 .images
