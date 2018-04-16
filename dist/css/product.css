@@ -103,21 +103,26 @@ h3 {
   margin-top: 2em;
   margin-bottom: 0.2em;
 }
+button {
+  margin-top: 2em;
+  margin-left: 3em;
+}
 input,
 textarea {
   border-radius: 0.2em;
   border: solid 1px #aaa;
   outline: none;
-  padding-left: 0.5em;
+  padding: 0.5em;
   margin-top: 0.2em;
 }
-input:focus,
-textarea:focus {
+input:not([readonly]):focus,
+textarea:not([readonly]):focus {
   box-shadow: 0 0 3px #51cbee;
   border: 1px solid #51cbee;
 }
-textarea {
-  padding: 0.5em;
+input[readonly],
+textarea[readonly] {
+  background-color: #d3d3d3;
 }
 input {
   height: 2em;
@@ -127,22 +132,42 @@ textarea {
 }
 .field {
   display: flex;
-  flex-flow: column nowrap;
+  flex-flow: column wrap;
   margin-top: 1em;
 }
 .field > label {
   font-weight: bold;
 }
-.field > input[type=checkbox] {
-  width: auto;
-}
 .field > .upload-image > label {
   margin-top: 0.3em;
 }
 .field.checkbox {
-  background-color: #ff0;
   flex-flow: row wrap;
   align-items: flex-start;
+}
+.field.checkbox input[type='checkbox'] {
+  height: auto;
+}
+.field .discount {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: flex-end;
+}
+.field .discount input {
+  flex: 5 10 auto;
+  border-radius: 0.2em 0 0 0.2em;
+}
+.field .discount select {
+  flex: 1 1 auto;
+  height: 2em;
+  border: 1px solid #aaa;
+  border-radius: 0 0.2em 0.2em 0;
+  border-left: none;
+  text-align: center;
+}
+.field.buttons {
+  flex-flow: row wrap;
+  justify-content: flex-end;
 }
 .images {
   border: 1px solid #aaa;

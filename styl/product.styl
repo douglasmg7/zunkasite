@@ -1,52 +1,67 @@
 @import 'reset'
 @import 'nav'
 @import 'pagination'
-padding-size = .5em
 form
   margin 0 5em 2em 5em
 h2
 h3
   margin-top 2em
   margin-bottom .2em
+button
+  margin-top 2em
+  margin-left 3em
 input
 textarea
   border-radius .2em
   border solid 1px #aaa
   outline none
-  padding-left padding-size
+  padding .5em
   margin-top .2em
-  &:focus
+  &:not([readonly]):focus
     box-shadow 0 0 3px rgba(81, 203, 238, 1)
     border 1px solid rgba(81, 203, 238, 1)   
-textarea
-  padding padding-size
+    // border 2px solid #4A90D9    
+  &[readonly]
+    background-color lightgray
 input
   height 2em
 textarea
   height 10em
 .field
   display flex
-  flex-flow column nowrap
+  flex-flow column wrap
   margin-top 1em
   // flex-wrap wrap
   > label
     font-weight bold
-  > input[type=checkbox]
-    width auto
   > .upload-image
     > label
       margin-top .3em    
   &.checkbox 
-    background-color yellow
     flex-flow row wrap
     align-items flex-start
-    // label
-    //   margin-left 0.3em
-    // input
-    //   position relative
-    //   top 9px
-  .discount  
-    // flex-direction row
+    input[type='checkbox']
+      height: auto
+  .discount
+    flex 1 1 auto
+    display flex
+    align-items flex-end
+    input
+      flex 5 10 auto
+      border-radius .2em 0 0 .2em
+    select
+      flex 1 1 auto
+      height 2em
+      border 1px solid #aaaaaa
+      border-radius 0 .2em .2em 0
+      border-left none
+      // appearance none
+      // -moz-appearance none
+      // -webkit-appearance none
+      text-align center
+  &.buttons
+    flex-flow row wrap
+    justify-content flex-end
 .images
   border 1px solid #aaa
   border-radius .2em

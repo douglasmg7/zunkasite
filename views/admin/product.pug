@@ -89,12 +89,11 @@ html(lang="en")
           //- Discount config.
           .field
             label(for='discount') Desconto
-            //- Discount value.
             .discount
+              //- Discount value.
               input.input-money(type='text' id='discount' v-model='product.storeProductDiscountValue', v-on:input='calcFinalPrice()')
               //- Discount mode.
               select(v-model='product.storeProductDiscountType' v-on:change='calcFinalPrice()')
-                //- input(v-model='product.storeProductDiscountType' type='hidden')
                 option(value='%') %
                 option(value='R$') R$
             p(v-if='validation.discount') {{validation.discount}}
@@ -108,11 +107,10 @@ html(lang="en")
             input(type='checkbox' id='commercialize' v-model:checked='product.storeProductCommercialize')
             label(for='commercialize') Comercializar produto
           .field
-            label(for='stock') Estoque
+            label(for='stock') Estoque (Unidade)
             input(type='text' id='stock' v-model='product.dealerProductQtd')
-            | {{product.dealerProductQtd > 1 ? 'Unidades': 'Unidade'}}                   
-          .field
-            button(type='button' v-on:click='saveProduct()') Save
+          .field.buttons
+            button(type='button' v-on:click='saveProduct()') Salvar
             button(type='button' onclick='window.location.href="/admin/productList"') Sair
   script.
     let product = !{JSON.stringify(product)};
