@@ -30,7 +30,8 @@ router.get('/productList', function(req, res, next) {
     // Render.
     else { 
       res.render('admin/productList', {
-        // user: req.isAuthenticated() ? req.user : { name: undefined, group: undefined },
+        showSearchProductInput: true,
+        showNewProductButton: true,
         initSearch: req.query.search,
         products: products
       });
@@ -47,6 +48,7 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
   Promise.all([queryProduct, queryProductMaker, queryProductCategorie])
   .then(([product, productMakers, productCategories])=>{    
     res.render('admin/product', {
+      showSearchProductInput: true,
       product: product,
       productMakers: productMakers,
       productCategories: productCategories

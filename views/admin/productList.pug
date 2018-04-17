@@ -8,27 +8,29 @@ html(lang="en")
     link(rel="stylesheet" href="/css/productList.css" charset="utf-8")
   body
     #app(v-cloak)
-      include ../menu.pug
-      table
-        thead
-          tr
-            th Código
-            th Título
-            th Fornecedor
-            th Local
-            th Estoque
-            th Preço
-        tbody
-          tr(
-            v-for='product in products', @click='loadProductPage(product)'
-            :class='{"product-commercialize": product.storeProductCommercialize, "product-active": product.dealerProductActive && (product.dealerProductQtd > 5)}'
-          )
-            td {{product.storeProductId}}
-            td {{product.storeProductTitle}}
-            td {{product.dealerName}}
-            td {{product.dealerProductLocation}}
-            td {{product.dealerProductQtd}}
-            td {{product.storeProductPrice}}   
+      header
+        include ../nav.pug
+      main
+        table
+          thead
+            tr
+              th Código
+              th Título
+              th Fornecedor
+              th Local
+              th Estoque
+              th Preço
+          tbody
+            tr(
+              v-for='product in products', @click='loadProductPage(product)'
+              :class='{"product-commercialize": product.storeProductCommercialize, "product-active": product.dealerProductActive && (product.dealerProductQtd > 5)}'
+            )
+              td {{product.storeProductId}}
+              td {{product.storeProductTitle}}
+              td {{product.dealerName}}
+              td {{product.dealerProductLocation}}
+              td {{product.dealerProductQtd}}
+              td {{product.storeProductPrice}}   
     include ../components/vue.js.pug
     script.
       //- let vueProducts = !{JSON.stringify(products)}
