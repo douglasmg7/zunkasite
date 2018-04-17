@@ -21,16 +21,16 @@ var app = new Vue({
       if(product.storeProductDiscountEnable){
         // Use percentage.
         if(product.storeProductDiscountType === '%'){
-          product.storeProductPrice = priceWithMarkup * (1 - (product.storeProductDiscountValue / 100));
+          product.storeProductPrice = (priceWithMarkup * (1 - (product.storeProductDiscountValue / 100))).toFixed(2);
         }
         // Use monetary value.
         else {
-          product.storeProductPrice = priceWithMarkup - product.storeProductDiscountValue;
+          product.storeProductPrice = (priceWithMarkup - product.storeProductDiscountValue).toFixed(2);
         }
       }
       // No discount.
       else {
-        product.storeProductPrice = priceWithMarkup;
+        product.storeProductPrice = priceWithMarkup.toFixed(2);
       }
     },
     // Send form data.
