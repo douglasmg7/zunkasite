@@ -35,8 +35,16 @@ textarea
   > label
     font-weight bold
   > .upload-image
+    margin-top .3em
     > label
-      margin-top .3em    
+      cursor pointer   
+      > svg
+        vertical-align text-bottom
+    > input
+      display none  
+    .icon
+      width 1.5em
+      height 1.5em
   &.checkbox 
     flex-flow row wrap
     align-items flex-start
@@ -112,5 +120,3 @@ p.delete-image
   font-weight bold
   cursor pointer
   display none
-.upload-image label
-  cursor pointer    

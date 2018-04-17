@@ -35,7 +35,7 @@ html(lang="en")
                 //- svg.icon: use(xlink:href='#ic_file_upload_black_24px')
                 svg.icon: use(xlink:href='/icon/sprite.svg#ic_file_upload_black_24px')
                 | Carregar imagem(s)
-              input(type='file' id='uploadImage' accept='image/*' style='display:none' multiple v-on:change=`uploadImage()`)
+              input(type='file' id='uploadImage' accept='image/*' multiple v-on:change=`uploadImage()`)
               //- label.ui.labeled.icon.button(@click='downloadDealerImages(product)')
           .field
             label(for='detail') Detalhes

@@ -138,8 +138,21 @@ textarea {
 .field > label {
   font-weight: bold;
 }
-.field > .upload-image > label {
+.field > .upload-image {
   margin-top: 0.3em;
+}
+.field > .upload-image > label {
+  cursor: pointer;
+}
+.field > .upload-image > label > svg {
+  vertical-align: text-bottom;
+}
+.field > .upload-image > input {
+  display: none;
+}
+.field > .upload-image .icon {
+  width: 1.5em;
+  height: 1.5em;
 }
 .field.checkbox {
   flex-flow: row wrap;
@@ -228,7 +241,4 @@ p.delete-image {
   font-weight: bold;
   cursor: pointer;
   display: none;
-}
-.upload-image label {
-  cursor: pointer;
 }
