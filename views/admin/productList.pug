@@ -7,10 +7,10 @@ html(lang="en")
     title Zunka - Produtos
     link(rel="stylesheet" href="/css/productList.css" charset="utf-8")
   body
-    #app(v-cloak)
-      header
-        include ../nav.pug
-      main
+    header
+      include ../nav.pug
+    main
+      #app(v-cloak)
         table
           thead
             tr
@@ -48,4 +48,7 @@ html(lang="en")
             //- console.log(product._id);
           }
         }
-      })
+      });
+      //- function findProduct(){
+      //-   console.log('findProduct');
+      //- }

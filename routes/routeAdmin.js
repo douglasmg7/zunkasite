@@ -23,6 +23,7 @@ function formatMoney(val){
 // Get all products.
 router.get('/productList', function(req, res, next) {
   req.query.search = req.query.search || '';
+  console.log(`req.query.search: ${req.query.search}`);
   // Get products.
   Product.find({}, (err, products)=>{
     // Internal error.

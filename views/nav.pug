@@ -8,17 +8,25 @@ nav
     li: a(href='allnations') All Nations
   if showSearchProductInput
     .search
-      input(v-model='search' placeholder='Pesquisa')
-      input
+      input(id='search' onkeyup='findProduct(event)' placeholder='Pesquisa')
+      //- input(id='search' oninput='window.location="/admin/productList&search=" + getElementById("search").value' placeholder='Pesquisa')
+      input(onclick='findProduct()')
+    script.
+      function findProduct(event){
+        if (!event || event.key === 'Enter') {
+            console.log('findProduct');
+            window.location=`/admin/productList?search=${document.getElementById("search").value}`;
+          }
+      }
   if showNewProductButton
     .new-product
       button(@click='newProduct()') Criar Produto
   .account
     //- User name.
-    a(href='/users/account' v-if="this.user.name")
-      svg.icon: use(xlink:href='/icon/sprite.svg#ic_account_circle_white_24px') 
-      | {{this.user.name}}
-    //- Exit.
+    if user.name
+      a(href='/users/account')
+        svg.icon: use(xlink:href='/icon/sprite.svg#ic_account_circle_white_24px') 
+        | #{user.name}
     a(href='/users/logout')
       svg.icon: use(xlink:href='/icon/sprite.svg#ic_exit_to_app_white_24px')
       | Sair
