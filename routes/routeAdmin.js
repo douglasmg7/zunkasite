@@ -13,19 +13,27 @@ const formidable = require('formidable');
 const Product = require('../model/product');
 const ProductMaker = require('../model/productMaker');
 const ProductCategorie = require('../model/productCategorie');
-// const stringify = require('js-stringify')
+// Max product quantity by Page.
+const PRODUCT_QTD_BY_PAGE  = 50;
 
 // Format number to money format.
 function formatMoney(val){
   return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
+
 // Get all products.
 router.get('/productList', function(req, res, next) {
-  req.query.search = req.query.search || '';
-  console.log(`req.query.search: ${req.query.search}`);
+  const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
+  const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
+  const search = req.query.search
+    ? { $or: [
+        {'storeProductTitle': {$regex: req.query.search, $options: 'i'}}, 
+        {'storeProductId': {$regex: req.query.search, $options: 'i'}}
+        ]}
+    : {};
   // Get products.
-  Product.find({}, (err, products)=>{
+  Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec((err, products)=>{
     // Internal error.
     if (err) { return next(err); }
     // Render.
@@ -33,11 +41,11 @@ router.get('/productList', function(req, res, next) {
       res.render('admin/productList', {
         showSearchProductInput: true,
         showNewProductButton: true,
-        initSearch: req.query.search,
+        search: req.query.search,
         products: products
       });
     }
-  }) 
+  });
 });
 
 // Get a specific product.

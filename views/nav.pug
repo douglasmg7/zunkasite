@@ -8,7 +8,7 @@ nav
     li: a(href='allnations') All Nations
   if showSearchProductInput
     .search
-      input(id='search' onkeyup='findProduct(event)' placeholder='Pesquisa')
+      input(id='search' onkeyup='findProduct(event)' value=search ? search : '')
       //- input(id='search' oninput='window.location="/admin/productList&search=" + getElementById("search").value' placeholder='Pesquisa')
       input(onclick='findProduct()')
     script.
