@@ -8,10 +8,10 @@ html(lang="en")
     link(rel="stylesheet" href="/css/product.css" charset="utf-8")
     //- include ../../dist/icon/sprite2.svg
   body
-    #app(v-cloak)
-      header
-        include ../nav.pug
-      main
+    header
+      include ../nav.pug
+    main
+      #app(v-cloak)
         form(method='post' id='frmProduct')
           .field
             label(for='id') Código

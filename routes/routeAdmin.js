@@ -14,13 +14,12 @@ const Product = require('../model/product');
 const ProductMaker = require('../model/productMaker');
 const ProductCategorie = require('../model/productCategorie');
 // Max product quantity by Page.
-const PRODUCT_QTD_BY_PAGE  = 50;
+const PRODUCT_QTD_BY_PAGE  = 3;
 
 // Format number to money format.
 function formatMoney(val){
   return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
-
 
 // Get all products.
 router.get('/productList', function(req, res, next) {
@@ -32,20 +31,44 @@ router.get('/productList', function(req, res, next) {
         {'storeProductId': {$regex: req.query.search, $options: 'i'}}
         ]}
     : {};
-  // Get products.
-  Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec((err, products)=>{
-    // Internal error.
-    if (err) { return next(err); }
-    // Render.
-    else { 
-      res.render('admin/productList', {
-        showSearchProductInput: true,
-        showNewProductButton: true,
-        search: req.query.search,
-        products: products
-      });
-    }
+  // Promisse.
+  // Find products.
+  let queryProduct = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE);
+  // Product count.
+  let queryProductCount = Product.count({});
+  Promise.all([queryProduct, queryProductCount])
+  .then(([products, count])=>{    
+    console.log(`Product qty: ${count}`);
+    res.render('admin/productList', {
+      showSearchProductInput: true,
+      showNewProductButton: true,
+      search: req.query.search,
+      products: products,
+      page: page,
+      pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)
+    }); 
+  }).catch(err=>{
+    return next(err);
   });
+
+  // // Count.
+  // Product.count({}, (err, count)=>{
+  //   console.log(`Product qty: ${count}`);
+  // });
+  // // Get products.
+  // Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec((err, products)=>{
+  //   // Internal error.
+  //   if (err) { return next(err); }
+  //   // Render.
+  //   else { 
+  //     res.render('admin/productList', {
+  //       showSearchProductInput: true,
+  //       showNewProductButton: true,
+  //       search: req.query.search,
+  //       products: products
+  //     });
+  //   }
+  // });
 });
 
 // Get a specific product.

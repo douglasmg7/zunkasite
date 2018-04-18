@@ -73,8 +73,6 @@ if (app.get('env') === 'development') {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 // Stylus.
-console.log('src: ' + __dirname + '/styl');
-console.log('dst: ' + __dirname + '/dist/css');
 app.use(stylus.middleware({
     src: __dirname + '/styl',
     dest: __dirname + '/dist/css',
