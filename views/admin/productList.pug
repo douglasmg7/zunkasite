@@ -31,13 +31,12 @@ html(lang="en")
               td {{product.dealerProductLocation}}
               td {{product.dealerProductQtd}}
               td {{product.storeProductPrice}}   
-        .pagination
-          //- for n in pageCount
-          - var n = 0;
-          while n < pageCount
-            a.item #{++n}
-            //- a.item #{n}
-            //- a.item(v-for='n in pageCount' @click='getProducts(n)' v-bind:class='{"active": n==page}') {{n}}
+    footer
+      .pagination
+        //- for n in pageCount
+        - var n = 0;
+        while n < pageCount
+          a(onclick='loadPage(' + ++n + ')')= n
     include ../components/vue.js.pug
     script.
       //- let vueProducts = !{JSON.stringify(products)}
@@ -45,17 +44,16 @@ html(lang="en")
         el: '#app',
         data: {
           currentPage: 'productList',
-          search: '',
           products: !{JSON.stringify(products)},
           user: !{JSON.stringify(user)}
         },
         methods: {
           loadProductPage: function(product){
             window.location.href = `/admin/product/${product._id}`;
-            //- console.log(product._id);
           }
         }
       });
-      //- function findProduct(){
-      //-   console.log('findProduct');
-      //- }
+      // Load specific page (pagination).
+      function loadPage(n){
+        window.location.href = '/admin/productList?search=' + document.getElementById("search").value +'&page=' + n;
+      }
