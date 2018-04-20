@@ -1,9 +1,6 @@
 'use strict';
 const express = require('express');
 const router = express.Router();
-const mongo = require('../db/mongo');
-const dbConfig = mongo.config;
-const ObjectId = require('mongodb').ObjectId;
 const log = require('../config/log');
 const path = require('path');
 const fse = require('fs-extra');
@@ -33,12 +30,11 @@ router.get('/productList', function(req, res, next) {
     : {};
   // Promisse.
   // Find products.
-  let queryProduct = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE);
+  let productPromise = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
   // Product count.
-  let queryProductCount = Product.count(search);
-  Promise.all([queryProduct, queryProductCount])
+  let productCountPromise = Product.count(search).exec();
+  Promise.all([productPromise, productCountPromise])
   .then(([products, count])=>{    
-    console.log(`Product qty: ${count}`);
     res.render('admin/productList', {
       showSearchProductInput: true,
       showNewProductButton: true,
@@ -50,44 +46,54 @@ router.get('/productList', function(req, res, next) {
   }).catch(err=>{
     return next(err);
   });
-
-  // // Count.
-  // Product.count({}, (err, count)=>{
-  //   console.log(`Product qty: ${count}`);
-  // });
-  // // Get products.
-  // Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec((err, products)=>{
-  //   // Internal error.
-  //   if (err) { return next(err); }
-  //   // Render.
-  //   else { 
-  //     res.render('admin/productList', {
-  //       showSearchProductInput: true,
-  //       showNewProductButton: true,
-  //       search: req.query.search,
-  //       products: products
-  //     });
-  //   }
-  // });
 });
 
-// Get a specific product.
+// Get a specific product or create a new one.
 router.get('/product/:product_id', checkPermission, function(req, res, next) {
-  // Promise.
-  let queryProduct = Product.findById(req.params.product_id);
-  let queryProductMaker = ProductMaker.find();
-  let queryProductCategorie = ProductCategorie.find();
-  Promise.all([queryProduct, queryProductMaker, queryProductCategorie])
+  // Product promisse.
+  let productPromise = {};
+  // New product.
+  if (req.params.product_id === 'new') {
+    productPromise = new Promise(function(resolve, reject){
+      // Create a new product.
+      let product = new Product({
+        storeProductId: '',
+        storeProductTitle: '',
+        storeProductCommercialize: false,
+        storeProductDetail: '',
+        storeProductDescription: '',
+        storeProductTechnicalInformation: '',
+        storeProductAdditionalInformation: '',
+        storeProductMaker: '',
+        storeProductCategory: '',
+        storeProductPrice: 0,
+        storeProductMarkup: 0,
+        storeProductDiscountEnable: false,
+        storeProductDiscountType: '%',
+        storeProductDiscountValue: 0,
+        removeUploadedImage: false,
+        // 
+        isNewProduct: false,
+      });
+      resolve(product);
+    });      
+  }
+  // Existing product. 
+  else{
+    productPromise = Product.findById(req.params.product_id);
+  }
+  let productMakerPromise = ProductMaker.find().exec();
+  let productCategoriePromise = ProductCategorie.find().exec();
+  Promise.all([productPromise, productMakerPromise, productCategoriePromise])
   .then(([product, productMakers, productCategories])=>{    
     res.render('admin/product', {
-      showSearchProductInput: true,
       product: product,
       productMakers: productMakers,
       productCategories: productCategories
     });    
   }).catch(err=>{
     return next(err);
-  });
+  });  
 });
 
 // Save product.

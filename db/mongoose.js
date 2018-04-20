@@ -11,8 +11,10 @@ let options = {
   useMongoClient: true,
   socketTimeoutMS: 0,
   keepAlive: true,
-  reconnectTries: 30
+  reconnectTries: 30,
+  promiseLibrary: global.Promise  // Set promise for MongoDb Driver.
 };
+mongoose.Promise = global.Promise;  // Set promise for mongoose uses.
 // Mongoose.
 mongoose.connect(uri, options, function(err){
   if (err) {

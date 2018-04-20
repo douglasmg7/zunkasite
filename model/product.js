@@ -20,7 +20,8 @@ let product = new mongoose.Schema({
   dealerProductQtd: { type: Number },
   dealerProductPrice: { type: Number },
   // Store.
-  storeProductId: { type: String, index: { unique : true}, required: true },
+  storeProductId: { type: String },
+  // storeProductId: { type: String, index: { unique : true}, required: true },
   storeProductTitle: { type: String , required: true},
   storeProductCommercialize: { type: Boolean , required: true},
   storeProductDetail: { type: String , required: true},
@@ -41,11 +42,11 @@ let product = new mongoose.Schema({
   storeProductDiscountType: { type: String , required: true},
   storeProductDiscountValue: { type: Number , required: true},
   removeUploadedImage: { type: Boolean , required: true},
-  isNewProduct: { type: Boolean , required: true},
+  isNewProduct: { type: Boolean , required: true},  // To know if product need be include on db or just saved.
   images: [String],
   // Default.
   createdAt: { type: Date, default: Date.now },
   modifiedAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model('storeProduct', product, 'storeProducts');
+module.exports = mongoose.model('product', product, 'products');

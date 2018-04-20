@@ -63,7 +63,7 @@ html(lang="en")
           hr
           .field
             label(for='dealerWarrantyDays') Fornecedor (dias)
-            input.input-integer(type='text' id='dealerWarrantyDays' v-model='product.dealerProductWarrantyDays', readonly)
+            input.input-integer(type='text' id='dealerWarrantyDays' v-model='product.dealerProductWarrantyDays')
           .field
             label(for='storeWarrantyDays') Loja (dias)
             input.input-integer(type='text' id='storeWarrantyDays' v-model='product.storeProductWarrantyDays')
@@ -80,7 +80,7 @@ html(lang="en")
           //- Dealer price.
           .field
             label(for='dealerPrice') Fornecedor (R$)
-            input.input-money(type='text' id='dealerPrice' v-model='product.dealerProductPrice', readonly)
+            input.input-money(type='text' id='dealerPrice' v-model='product.dealerProductPrice' v-on:input='calcFinalPrice()')
           //- Markup.
           .field
             label(for='markup') Lucro (%)

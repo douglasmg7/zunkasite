@@ -3,9 +3,9 @@
     //- Home.
     li: a(href='/') Sites
     //- Store.
-    li: a(href='productList') Produtos
-    //- Allnations.
-    li: a(href='allnations') All Nations
+    li: a(href='/admin/productList') Produtos
+    //- //- Allnations.
+    //- li: a(href='allnations') All Nations
   if showSearchProductInput
     .search
       input(id='search' onkeyup='findProduct(event)' value=search ? search : '')
@@ -19,7 +19,7 @@
       }
   if showNewProductButton
     .new-product
-      button(@click='newProduct()') Criar Produto
+      button(onclick='window.location="/admin/product/new"') Criar Produto
   .account
     //- User name.
     if user.name
