@@ -1,4 +1,4 @@
-nav
+.main-nav
   ul
     //- Home.
     li: a(href='/') Sites
@@ -14,7 +14,6 @@ nav
     script.
       function findProduct(event){
         if (!event || event.key === 'Enter') {
-            console.log('findProduct');
             window.location=`/admin/productList?search=${document.getElementById("search").value}`;
           }
       }

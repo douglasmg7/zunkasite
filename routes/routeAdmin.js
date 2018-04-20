@@ -35,17 +35,17 @@ router.get('/productList', function(req, res, next) {
   // Find products.
   let queryProduct = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE);
   // Product count.
-  let queryProductCount = Product.count({});
+  let queryProductCount = Product.count(search);
   Promise.all([queryProduct, queryProductCount])
   .then(([products, count])=>{    
     console.log(`Product qty: ${count}`);
     res.render('admin/productList', {
       showSearchProductInput: true,
       showNewProductButton: true,
-      search: req.query.search,
       products: products,
-      page: page,
-      pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)
+      search: req.query.search,
+      page: page,   //  Page selected.
+      pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)   //  Number of pages.
     }); 
   }).catch(err=>{
     return next(err);

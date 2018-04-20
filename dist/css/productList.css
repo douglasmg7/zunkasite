@@ -21,7 +21,7 @@ button,
 input {
   box-sizing: border-box;
 }
-nav {
+.main-nav {
   font-size: 1em;
   display: flex;
   flex-flow: row wrap;
@@ -29,19 +29,19 @@ nav {
   background-color: #000;
   height: 3em;
 }
-nav a {
+.main-nav a {
   color: #ccc;
   text-decoration: none;
   margin: 0.4em 1em 0.4em 1em;
 }
-nav a:hover {
+.main-nav a:hover {
   color: #fff;
 }
-nav .new-product button {
+.main-nav .new-product button {
   height: 2em;
   margin: 0.3em 0.3em 0.3em 6em;
 }
-nav .search input:first-child {
+.main-nav .search input:first-child {
   height: 2em;
   min-width: 15em;
   margin: 0.2em 0em 0.2em 5em;
@@ -49,7 +49,7 @@ nav .search input:first-child {
   border-radius: 4px 0 0 4px;
   padding-left: 0.5em;
 }
-nav .search input:last-child {
+.main-nav .search input:last-child {
   height: 2em;
   width: 2.2em;
   border: none;
@@ -60,20 +60,20 @@ nav .search input:last-child {
   background-size: 1.8em 1.8em;
   background-position: 65% 50%;
 }
-nav .search input:last-child:hover {
+.main-nav .search input:last-child:hover {
   background-color: #d3d3d3;
   cursor: pointer;
 }
-nav .account {
+.main-nav .account {
   margin-left: auto;
 }
-nav ul {
+.main-nav ul {
   list-style-type: none;
 }
-nav li {
+.main-nav li {
   display: inline-block;
 }
-nav .icon {
+.main-nav .icon {
   width: 1.5em;
   height: 1.5em;
   vertical-align: middle;

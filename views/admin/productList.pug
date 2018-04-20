@@ -8,7 +8,8 @@ html(lang="en")
     link(rel="stylesheet" href="/css/productList.css" charset="utf-8")
   body
     header
-      include ../nav.pug
+      nav
+        include ../main-nav.pug
     main
       #app(v-cloak)
         table
@@ -31,12 +32,12 @@ html(lang="en")
               td {{product.dealerProductLocation}}
               td {{product.dealerProductQtd}}
               td {{product.storeProductPrice}}   
-    footer
-      .pagination
+      nav.pagination
         //- for n in pageCount
         - var n = 0;
         while n < pageCount
-          a(onclick='loadPage(' + ++n + ')')= n
+          - n++;
+          a(onclick=`loadPage(${n})` class={active: page==n})= n
     include ../components/vue.js.pug
     script.
       //- let vueProducts = !{JSON.stringify(products)}
