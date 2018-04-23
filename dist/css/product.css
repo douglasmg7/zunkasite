@@ -182,6 +182,11 @@ textarea {
   flex-flow: row wrap;
   justify-content: flex-end;
 }
+.validation {
+  margin-top: 0;
+  margin-bottom: 0;
+  color: #f00;
+}
 .images {
   border: 1px solid #aaa;
   border-radius: 0.2em;

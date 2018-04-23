@@ -21,32 +21,59 @@ let product = new mongoose.Schema({
   dealerProductPrice: { type: Number },
   // Store.
   storeProductId: { type: String },
-  // storeProductId: { type: String, index: { unique : true}, required: true },
-  storeProductTitle: { type: String , required: true},
-  storeProductCommercialize: { type: Boolean , required: true},
-  storeProductDetail: { type: String , required: true},
-  storeProductDescription: { type: String , required: true},
-  storeProductTechnicalInformation: { type: String , required: true},
-  storeProductAdditionalInformation: { type: String , required: true},
-  storeProductMaker: { type: String , required: true},
-  storeProductCategory: { type: String , required: true},
+  storeProductTitle: { type: String },
+  storeProductCommercialize: { type: Boolean },
+  storeProductDetail: { type: String },
+  storeProductDescription: { type: String },
+  storeProductTechnicalInformation: { type: String },
+  storeProductAdditionalInformation: { type: String },
+  storeProductMaker: { type: String },
+  storeProductCategory: { type: String },
   storeProductWarrantyDays: { type: Number},  // Warrant in days.
   storeProductWarrantyDetail: { type: String},
   storeProductWeightG: { type: Number },   // Weight in grams.
   storeProductWidthMm: { type: Number },   // Width in mm.
   storeProductHeightMm: { type: Number },  // Height in mm.
   storeProductLengthMm: { type: Number },    // Length in mm.  
-  storeProductPrice: { type: Number , required: true},
-  storeProductMarkup: { type: Number , required: true},
-  storeProductDiscountEnable: { type: Boolean , required: true},
-  storeProductDiscountType: { type: String , required: true},
-  storeProductDiscountValue: { type: Number , required: true},
-  removeUploadedImage: { type: Boolean , required: true},
-  isNewProduct: { type: Boolean , required: true},  // To know if product need be include on db or just saved.
+  storeProductPrice: { type: Number },
+  storeProductMarkup: { type: Number },
+  storeProductDiscountEnable: { type: Boolean },
+  storeProductDiscountType: { type: String },
+  storeProductDiscountValue: { type: Number },
+  // isNewProduct: { type: Boolean , required: true},  // To know if product need be include on db or just saved.
   images: [String],
   // Default.
   createdAt: { type: Date, default: Date.now },
   modifiedAt: { type: Date, default: Date.now },
 });
+
+product.pre('findOneAndUpdate', function(next){
+  // // The first letter of tittle must be upper case, to sort correctly.
+  console.log(`findOneAndUpdate - this.storeProductTitle: ${this.storeProductTitle}`);
+  console.log(`findOneAndUpdate - this: ${Object.keys(this)}`);
+  console.log(`findOneAndUpdate - model: ${JSON.stringify(this.model)}`);
+  if (this.storeProductTitle) {
+    this.storeProductTitle = this.storeProductTitle.charAt(0).toUpperCase() + this.storeProductTitle.slice(1);
+  }
+  next();
+});
+
+// product.pre('validate', function(next){
+//   // // The first letter of tittle must be upper case, to sort correctly.
+//   console.log(`validate - this.storeProductTitle: ${this.storeProductTitle}`);
+//   if (this.storeProductTitle) {
+//     this.storeProductTitle = this.storeProductTitle.charAt(0).toUpperCase() + this.storeProductTitle.slice(1);
+//   }
+//   next();
+// });
+
+// product.pre('update', function(next){
+//   // // The first letter of tittle must be upper case, to sort correctly.
+//   console.log(`update - this.storeProductTitle: ${this.storeProductTitle}`);
+//   if (this.storeProductTitle) {
+//     this.storeProductTitle = this.storeProductTitle.charAt(0).toUpperCase() + this.storeProductTitle.slice(1);
+//   }
+//   next();
+// });
 
 module.exports = mongoose.model('product', product, 'products');

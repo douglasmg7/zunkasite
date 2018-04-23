@@ -71,9 +71,9 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
         storeProductDiscountEnable: false,
         storeProductDiscountType: '%',
         storeProductDiscountValue: 0,
+        dealerProductQtd: 0,
+        dealerProductPrice: 0,
         removeUploadedImage: false,
-        // 
-        isNewProduct: false,
       });
       resolve(product);
     });      
@@ -98,59 +98,71 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
 
 // Save product.
 router.post('/product/:productId', checkPermission, (req, res, next)=>{
-  // console.log('req.body.product: ' + JSON.stringify(req.body.product));
   // Form validation.
   let validation = {};
-  // Discount.
-  if (!(req.body.product.storeProductDiscountValue > 0)) { 
-    validation.discount = 'Entre com um valor válido.'; 
-  }  
-  // Markup.
-  if (!(req.body.product.storeProductMarkup > 0)) { 
-    validation.markup = 'Entre com um valor válido markup.'; 
-  }  
+  validation.dealerProductPrice = req.body.product.dealerProductPrice >= 0 ? undefined : 'Entre com um valor válido para o preço do fornecedor.';
+  validation.storeProductMarkup = req.body.product.storeProductMarkup >= 0 ? undefined : 'Entre com um valor válido para o lucro.'; 
+  validation.storeProductDiscountValue = req.body.product.storeProductDiscountValue >= 0 ? undefined : 'Entre com um valor válido para o desconto.';   
+  validation.dealerProductQtd = req.body.product.dealerProductQtd >= 0 ? undefined : 'Entre com um valor válido para o estoque.';
   // Send validation erros.
-  if (Object.keys(validation).length) {
+  if (validation.length) {
     res.json({validation});
+    // console.log(`Validation: ${JSON.stringify(validation)}`);
     return;
   }
-  // Save product.
-  Product.findOneAndUpdate({_id: req.body.product._id}, req.body.product, function(err, product){
-    if (err) { 
-      res.json({err});
-      return next(err); 
-    } else {
-      log.info(`Produto ${product._id} updated.`);
-      res.json({});
-      // Sync upladed images with product.images.
-      // Get list of uploaded images.
-      fse.readdir(path.join(__dirname, '..', 'dist/img/', req.body.product._id), (err, files)=>{
-        if (err) {
-          log.error(err + '\n', new Error().stack);
-        } 
-        else {
-          // Remove uploaded images not in product images.
-          let exist;
-          files.forEach(function(file) {
-            exist = false;
-            req.body.product.images.forEach(function(image) {
-              if (file === image) {
-                exist = true;
-              }  
-            });
-            // Uploaded image not in product images.
-            if (!exist) {
-              // Remove uploaded image.
-              let fileToRemove = file;
-              fse.remove(path.join(__dirname, '..', 'dist/img/', req.body.product._id, fileToRemove), err=>{
-                if (err) { log.error(ERROR().stack, err); }
+  // New product.
+  if (req.params.productId === 'new') {
+    let product = new Product(req.body.product);
+    product.save((err, newProduct) => {
+      if (err) {
+        res.json({err});
+        return next(err); 
+      } else {
+        log.info(`Produto ${newProduct._id} saved.`);
+        res.json({});
+      }
+    });
+  }
+  // Existing product.
+  else {
+    // Save product.
+    Product.findOneAndUpdate({_id: req.body.product._id}, req.body.product, function(err, product){
+      if (err) { 
+        res.json({err});
+        return next(err); 
+      } else {
+        log.info(`Produto ${product._id} updated.`);
+        res.json({});
+        // Sync upladed images with product.images.
+        // Get list of uploaded images.
+        fse.readdir(path.join(__dirname, '..', 'dist/img/', req.body.product._id), (err, files)=>{
+          if (err) {
+            log.error(err + '\n', new Error().stack);
+          } 
+          else {
+            // Remove uploaded images not in product images.
+            let exist;
+            files.forEach(function(file) {
+              exist = false;
+              req.body.product.images.forEach(function(image) {
+                if (file === image) {
+                  exist = true;
+                }  
               });
-            }
-          });
-        }
-      }); 
-    }
-  });
+              // Uploaded image not in product images.
+              if (!exist) {
+                // Remove uploaded image.
+                let fileToRemove = file;
+                fse.remove(path.join(__dirname, '..', 'dist/img/', req.body.product._id, fileToRemove), err=>{
+                  if (err) { log.error(ERROR().stack, err); }
+                });
+              }
+            });
+          }
+        }); 
+      }
+    });    
+  }
 });
 
 // Upload product pictures.

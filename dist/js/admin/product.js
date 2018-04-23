@@ -8,8 +8,10 @@ var app = new Vue({
     user: user,
     search: '',
     validation: { 
-      discount: '',
-      markup: '' 
+      storeProductDiscountValue: '',
+      storeProductMarkup: '',
+      dealerProductPrice: '',
+      dealerProductQtd: ''
     }
   },
   methods: {

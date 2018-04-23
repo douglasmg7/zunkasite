@@ -81,11 +81,12 @@ html(lang="en")
           .field
             label(for='dealerPrice') Fornecedor (R$)
             input.input-money(type='text' id='dealerPrice' v-model='product.dealerProductPrice' v-on:input='calcFinalPrice()')
+            p.validation(v-if='validation.dealerProductPrice') {{validation.dealerProductPrice}}
           //- Markup.
           .field
             label(for='markup') Lucro (%)
             input.input-money(type='text' id='markup' v-model='product.storeProductMarkup', v-on:input='calcFinalPrice()')
-            p(v-if='validation.markup') {{validation.markup}}
+            p.validation(v-if='validation.storeProductMarkup') {{validation.storeProductMarkup}}
           //- Discount config.
           .field
             label(for='discount') Desconto
@@ -96,7 +97,7 @@ html(lang="en")
               select(v-model='product.storeProductDiscountType' v-on:change='calcFinalPrice()')
                 option(value='%') %
                 option(value='R$') R$
-            p(v-if='validation.discount') {{validation.discount}}
+            p.validation(v-if='validation.storeProductDiscountValue') {{validation.storeProductDiscountValue}}
           //- Final price.
           .field
             label(for='finalPrice') Valor final (R$)
@@ -109,6 +110,7 @@ html(lang="en")
           .field
             label(for='stock') Estoque (Unidade)
             input(type='text' id='stock' v-model='product.dealerProductQtd')
+            p.validation(v-if='validation.dealerProductQtd') {{validation.dealerProductQtd}}
           .field.buttons
             button(type='button' v-on:click='saveProduct()') Salvar
             button(type='button' onclick='window.location.href="/admin/productList"') Sair
