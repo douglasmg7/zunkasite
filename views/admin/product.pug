@@ -112,6 +112,7 @@ html(lang="en")
             input(type='text' id='stock' v-model='product.dealerProductQtd')
             p.validation(v-if='validation.dealerProductQtd') {{validation.dealerProductQtd}}
           .field.buttons
+            button(type='button' v-on:click='deleteProduct()') Apagar
             button(type='button' v-on:click='saveProduct()') Salvar
             button(type='button' onclick='window.location.href="/admin/productList"') Sair
   script.

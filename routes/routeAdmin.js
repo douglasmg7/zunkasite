@@ -11,7 +11,7 @@ const Product = require('../model/product');
 const ProductMaker = require('../model/productMaker');
 const ProductCategorie = require('../model/productCategorie');
 // Max product quantity by Page.
-const PRODUCT_QTD_BY_PAGE  = 3;
+const PRODUCT_QTD_BY_PAGE  = 10;
 
 // Format number to money format.
 function formatMoney(val){
@@ -163,6 +163,23 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
       }
     });    
   }
+});
+
+// Delete a product.
+router.delete('/product/:_id', checkPermission, function(req, res) {
+  Product.findByIdAndRemove(req.params._id)
+    .then(result=>{
+      // Delete images dir.
+      fse.remove(path.join(__dirname, '..', 'dist/img/', req.params._id), err=>{
+        if (err) { log.error(ERROR().stack, err); }
+        res.json({});
+        log.info(`Product ${req.params._id} deleted.`);
+      });
+    })
+    .catch(err=>{
+      log.error(new Error().stack, err);
+      res.json(err);
+    });
 });
 
 // Upload product pictures.

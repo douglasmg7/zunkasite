@@ -35,7 +35,7 @@ var app = new Vue({
         product.storeProductPrice = priceWithMarkup.toFixed(2);
       }
     },
-    // Send form data.
+    // Save product.
     saveProduct(){
       axios({
         method: 'post',
@@ -67,6 +67,30 @@ var app = new Vue({
         console.error(e);
       })       
     },
+    // Delete product.
+    deleteProduct(){
+      if(confirm('Confirma a remoção do produto?')){
+        axios({
+          method: 'delete',
+          url: window.location.pathname,
+          headers:{'csrf-token' : csrfToken},
+          data: { product_id: product._id }
+        })
+        .then(response => {
+          // Server side error.
+          if (response.data.err) {
+            alert('Não foi possível apagar o produto.');
+          }
+          else {
+            window.location.href = '/admin/productList';
+          }
+        })
+        .catch(e => {
+          alert('Não foi possível apagar o produto.');
+          console.error(e);
+        })            
+      }
+    },    
     moveImage(index, direction){
       // Position to move.
       let toIndex;

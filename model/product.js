@@ -48,32 +48,21 @@ let product = new mongoose.Schema({
 });
 
 product.pre('findOneAndUpdate', function(next){
+  // console.log(`findOneAndUpdate - this: ${Object.keys(this)}`);
+  // The first letter of tittle must be upper case, to sort correctly.
+  if (this._update) {
+    this._update.storeProductTitle = this._update.storeProductTitle.charAt(0).toUpperCase() + this._update.storeProductTitle.slice(1);
+  }
+  next();
+});
+
+// The first letter of tittle must be upper case, to sort correctly.
+product.pre('save', function(next){
   // // The first letter of tittle must be upper case, to sort correctly.
-  console.log(`findOneAndUpdate - this.storeProductTitle: ${this.storeProductTitle}`);
-  console.log(`findOneAndUpdate - this: ${Object.keys(this)}`);
-  console.log(`findOneAndUpdate - model: ${JSON.stringify(this.model)}`);
   if (this.storeProductTitle) {
     this.storeProductTitle = this.storeProductTitle.charAt(0).toUpperCase() + this.storeProductTitle.slice(1);
   }
   next();
 });
-
-// product.pre('validate', function(next){
-//   // // The first letter of tittle must be upper case, to sort correctly.
-//   console.log(`validate - this.storeProductTitle: ${this.storeProductTitle}`);
-//   if (this.storeProductTitle) {
-//     this.storeProductTitle = this.storeProductTitle.charAt(0).toUpperCase() + this.storeProductTitle.slice(1);
-//   }
-//   next();
-// });
-
-// product.pre('update', function(next){
-//   // // The first letter of tittle must be upper case, to sort correctly.
-//   console.log(`update - this.storeProductTitle: ${this.storeProductTitle}`);
-//   if (this.storeProductTitle) {
-//     this.storeProductTitle = this.storeProductTitle.charAt(0).toUpperCase() + this.storeProductTitle.slice(1);
-//   }
-//   next();
-// });
 
 module.exports = mongoose.model('product', product, 'products');
