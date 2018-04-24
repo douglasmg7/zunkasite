@@ -5,6 +5,10 @@ const mongo = require('../db/mongo');
 const dbConfig = mongo.config;
 const ObjectId = require('mongodb').ObjectId;
 const log = require('../config/log');
+// Models.
+const Product = require('../model/product');
+// Max product quantity by Page.
+const PRODUCT_QTD_BY_PAGE  = 10;
 // const stringify = require('js-stringify')
 
 // Format number to money format.
@@ -14,6 +18,38 @@ function formatMoney(val){
 
 // Index.
 router.get('/', function(req, res, next) {
+  const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
+  const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
+  const search = req.query.search
+    ? { $or: [
+        {'storeProductTitle': {$regex: req.query.search, $options: 'i'}}, 
+        {'storeProductId': {$regex: req.query.search, $options: 'i'}}
+        ]}
+    : {};
+  // Find products.
+  let productPromise = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
+  // Product count.
+  let productCountPromise = Product.count(search).exec();
+  Promise.all([productPromise, productCountPromise])
+  .then(([products, count])=>{    
+    res.render('productList', {
+      // user: req.isAuthenticated() ? req.user : { name: undefined, group: undefined },
+      // cart: req.cart,
+      // initSearch: req.query.search,
+      productAdded: null,
+      showSearchProductInput: true,
+      products: products,
+      search: req.query.search,
+      page: page,   //  Page selected.
+      pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)   //  Number of pages.
+    }); 
+  }).catch(err=>{
+    return next(err);
+  });
+});
+
+// Index.
+router.get('/old', function(req, res, next) {
   req.query.search = req.query.search || '';
   // Last product added to cart.
   // log.info('req.user: ', JSON.stringify(req.user));

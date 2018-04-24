@@ -26,6 +26,7 @@ router.get('/products-commercialize', function (req, res) {
     // ? {'storeProductCommercialize': true, 'storeProductTitle': {$regex: req.query.search, $options: 'i'}}
     // : {'storeProductCommercialize': true};
   const cursor = mongo.db.collection(dbConfig.collStoreProducts).find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PAGE_SIZE_STORE);
+  console.log(`search: ${JSON.stringify(search)}`);
   Promise.all([
     cursor.toArray(),
     cursor.count()

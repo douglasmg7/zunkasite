@@ -1,0 +1,26 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    //- link(rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato")
+    title Zunka - Produtos
+    link(rel="stylesheet" href="/css/productList.css" charset="utf-8")
+  body
+    header
+      nav
+        include main-nav.pug
+    main
+      for product in products
+        h4= product.storeProductTitle
+      nav.pagination
+        //- for n in pageCount
+        - var n = 0;
+        while n < pageCount
+          - n++;
+          a(onclick=`loadPage(${n})` class={active: page==n})= n
+    script.
+      // Load specific page (pagination).
+      function loadPage(n){
+        window.location.href = '/admin/productList?search=' + document.getElementById("search").value +'&page=' + n;
+      }

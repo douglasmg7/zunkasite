@@ -43,7 +43,7 @@ const dbConfig = {
   // Manual inserted products.
   collManualProducts: 'manualProducts',
   // Store products collections.
-  collStoreProducts: 'storeProducts',
+  collStoreProducts: 'products',
   // makers list, use in dropdown
   collProductMakers: 'productMakers',
   // product categories, use in dropdown

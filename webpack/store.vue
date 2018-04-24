@@ -120,7 +120,7 @@
             this.products = res.body.products;
             this.page = res.body.page;
             this.pageCount = res.body.pageCount;
-            // console.log('products count: ', this.products.length);
+            console.log('products count: ', this.products.length);
           })
           .catch((err)=>{
             console.log(`Error - getProducts(), err: ${err}`);
