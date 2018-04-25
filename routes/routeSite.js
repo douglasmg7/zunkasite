@@ -32,14 +32,14 @@ router.get('/', function(req, res, next) {
   let productCountPromise = Product.count(search).exec();
   Promise.all([productPromise, productCountPromise])
   .then(([products, count])=>{    
+    console.log(`Products: ${products.length}`);
     res.render('productList', {
       // user: req.isAuthenticated() ? req.user : { name: undefined, group: undefined },
       // cart: req.cart,
       // initSearch: req.query.search,
       productAdded: null,
-      showSearchProductInput: true,
       products: products,
-      search: req.query.search,
+      search: search,
       page: page,   //  Page selected.
       pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)   //  Number of pages.
     }); 
