@@ -18,31 +18,28 @@ function formatMoney(val){
 
 // Index.
 router.get('/', function(req, res, next) {
+  res.render('productList');   
+});
+
+// Get products..
+router.get('/products', function (req, res) {
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
   const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
+  console.log(`req.query.search: ${req.query.search}`);
   const search = req.query.search
-    ? { $or: [
-        {'storeProductTitle': {$regex: req.query.search, $options: 'i'}}, 
-        {'storeProductId': {$regex: req.query.search, $options: 'i'}}
-        ]}
-    : {};
+    ? {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$gt: 0}, 'storeProductTitle': {$regex: req.query.search, $options: 'i'}}
+    : {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$gt: 0}};    
   // Find products.
   let productPromise = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
+  // console.log(`search: ${JSON.stringify(search)}`);
+  // console.log(`skip: ${skip}`);
+  // console.log(`limit: ${PRODUCT_QTD_BY_PAGE}`);
   // Product count.
   let productCountPromise = Product.count(search).exec();
   Promise.all([productPromise, productCountPromise])
   .then(([products, count])=>{    
-    console.log(`Products: ${products.length}`);
-    res.render('productList', {
-      // user: req.isAuthenticated() ? req.user : { name: undefined, group: undefined },
-      // cart: req.cart,
-      // initSearch: req.query.search,
-      productAdded: null,
-      products: products,
-      search: search,
-      page: page,   //  Page selected.
-      pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)   //  Number of pages.
-    }); 
+    res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)});
+    // console.log(`Products count: ${products.length}`);
   }).catch(err=>{
     return next(err);
   });
@@ -51,10 +48,6 @@ router.get('/', function(req, res, next) {
 // Index.
 router.get('/old', function(req, res, next) {
   req.query.search = req.query.search || '';
-  // Last product added to cart.
-  // log.info('req.user: ', JSON.stringify(req.user));
-  // log.info('req.isAuthenticated(): ', JSON.stringify(req.isAuthenticated()));
-  // log.info('req.session', JSON.stringify(req.session));
   res.render('store', {
     user: req.isAuthenticated() ? req.user : { name: undefined, group: undefined },
     cart: req.cart,

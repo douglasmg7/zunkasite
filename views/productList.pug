@@ -12,24 +12,35 @@ html(lang="en")
         include main-nav.pug
     main
       #app(v-cloak)
+        //- div(v-for='product in products')
+        //-   a.product
+        //-   h4 {{product.storeProductTitle}}
+
         div(v-for='product in products')
-          h4 {{product.storeProductTitle}}
-      nav.pagination
-        //- for n in pageCount
-        - var n = 0;
-        while n < pageCount
-          - n++;
-          a(onclick=`loadPage(${n})` class={active: page==n})= n
+          a.product(:href='"/product/" + product._id')
+            img(:src='`/img/${product._id}/${product.images[0]}`', v-if='product.images[0]')
+            h4.description {{ product.storeProductTitle }}
+            h3.price
+              sup R$
+              | {{ product.storeProductPrice | currencyInt }}
+              sup {{ product.storeProductPrice | currencyCents }}
+      //- nav.pagination
+      //-   //- for n in pageCount
+      //-   - var n = 0;
+      //-   while n < pageCount
+      //-     - n++;
+      //-     a(onclick=`loadPage(${n})` class={active: page==n})= n
   script.
     // Make available for vue.
     let csrfToken = !{JSON.stringify(csrfToken)};
     let user = !{JSON.stringify(user)};
-    let products = !{JSON.stringify(products)};
-    let search = !{JSON.stringify(search)};
-    let page = !{JSON.stringify(page)};   //  Selected page.
-    let pageCount = !{JSON.stringify(pageCount)}; //  Number of pages.    
-    let productAdded = !{JSON.stringify(productAdded)};   // Message for product added on cart.
+    //- let products = !{JSON.stringify(products)};
+    //- let search = !{JSON.stringify(search)};
+    //- let page = !{JSON.stringify(page)};   //  Selected page.
+    //- let pageCount = !{JSON.stringify(pageCount)}; //  Number of pages.    
+    //- let productAdded = !{JSON.stringify(productAdded)};   // Message for product added on cart.
     //- console.log(`products lenght: ${products.lenght}`);
   include components/axios.js.pug
   include components/vue.js.pug
+  include components/accounting.js.pug
   script(src='/js/productList.js')
