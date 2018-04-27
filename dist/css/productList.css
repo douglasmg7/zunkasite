@@ -88,11 +88,12 @@ input {
   margin-top: 1em;
 }
 .pagination a {
+  text-decoration: none;
   margin: 0 1em 0 1em;
   color: #d3d3d3;
   cursor: pointer;
 }
-.pagination a.active {
+.pagination a[active] {
   color: #000;
 }
 table {

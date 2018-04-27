@@ -18,10 +18,13 @@ function formatMoney(val){
 
 // Index.
 router.get('/', function(req, res, next) {
-  res.render('productList');   
+  res.render('productList', {
+    nav: {
+    }
+  });   
 });
 
-// Get products..
+// Get products.
 router.get('/products', function (req, res) {
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
   const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;

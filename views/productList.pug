@@ -24,12 +24,6 @@ html(lang="en")
               sup R$
               | {{ product.storeProductPrice | currencyInt }}
               sup {{ product.storeProductPrice | currencyCents }}
-      //- nav.pagination
-      //-   //- for n in pageCount
-      //-   - var n = 0;
-      //-   while n < pageCount
-      //-     - n++;
-      //-     a(onclick=`loadPage(${n})` class={active: page==n})= n
   script.
     // Make available for vue.
     let csrfToken = !{JSON.stringify(csrfToken)};

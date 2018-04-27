@@ -11,15 +11,22 @@ const Product = require('../model/product');
 const ProductMaker = require('../model/productMaker');
 const ProductCategorie = require('../model/productCategorie');
 // Max product quantity by Page.
-const PRODUCT_QTD_BY_PAGE  = 10;
+const PRODUCT_QTD_BY_PAGE  = 5;
 
-// Format number to money format.
-function formatMoney(val){
-  return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-}
+// Get product list.
+router.get('/', function(req, res, next) {
+  res.render('admin/productList', {
+    page: req.query.page ? req.query.page : 1,
+    search: req.query.search ? req.query.search : '',  
+    nav: {
+      showAdminLinks: true,
+      showNewProductButton: true
+    }
+  });   
+});
 
-// Get all products.
-router.get('/productList', function(req, res, next) {
+// Get products.
+router.get('/products', function(req, res, next) {
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
   const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
   const search = req.query.search
@@ -35,14 +42,7 @@ router.get('/productList', function(req, res, next) {
   let productCountPromise = Product.count(search).exec();
   Promise.all([productPromise, productCountPromise])
   .then(([products, count])=>{    
-    res.render('admin/productList', {
-      showSearchProductInput: true,
-      showNewProductButton: true,
-      products: products,
-      search: req.query.search,
-      page: page,   //  Page selected.
-      pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)   //  Number of pages.
-    }); 
+    res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)});
   }).catch(err=>{
     return next(err);
   });
@@ -87,6 +87,9 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
   Promise.all([productPromise, productMakerPromise, productCategoriePromise])
   .then(([product, productMakers, productCategories])=>{    
     res.render('admin/product', {
+      nav: {
+        showAdminLinks: true
+      },
       product: product,
       productMakers: productMakers,
       productCategories: productCategories

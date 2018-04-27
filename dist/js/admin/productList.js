@@ -1,7 +1,7 @@
 // Search for products.
 function _search(text){
   app.search = text;
-  app.getProducts();
+  app.getProducts(1);
 }
 
 var app = new Vue({
@@ -10,11 +10,11 @@ var app = new Vue({
     products: [],
     // user: user,
     // Curret page for pagination.
-    page: 1,
+    page: page,
     // Number of pages for pagination.
     pageCount: 1,
     // Text for search products.
-    search: ''
+    search: search
   },
   created() {
     // On reload page use the query string for search, not the input search.
@@ -22,10 +22,10 @@ var app = new Vue({
   },
   methods: {
     // Get products.
-    getProducts(page=1){
+    getProducts(page=this.page){
       axios({
         method: 'get',
-        url: `/products/?page=${page}&search=${this.search}`,
+        url: `/admin/products?page=${page}&search=${this.search}`,
         headers:{'csrf-token' : csrfToken}
       })
       .then((res)=>{
@@ -38,20 +38,11 @@ var app = new Vue({
         console.log(`Error - getProducts(), err: ${err}`);
       });
     },
-  },  
+  },
   filters: {
     // Format number to money format.
     formatMoney(val){
       return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    },
-    currencyBr(value){
-      return accounting.formatMoney(value, 'R$ ', 2, '.', ',');
-    },
-    currencyInt(value){
-      return accounting.formatMoney(accounting.parse(value, ','), '', 2, '.', ',').split(',')[0];
-    },
-    currencyCents(value){
-      return accounting.formatMoney(accounting.parse(value, ','), '', 2, '.', ',').split(',')[1];
     }
-  },  
+  }
 });

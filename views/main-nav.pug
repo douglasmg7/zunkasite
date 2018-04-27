@@ -1,23 +1,25 @@
 .main-nav
   ul
     //- Home.
-    li: a(href='/') Sites
-    //- Store.
-    li: a(href='/admin/productList') Produtos
-    //- //- Allnations.
-    //- li: a(href='allnations') All Nations
-  if showSearchProductInput
-    .search
-      input(id='search' onkeyup='findProduct(event)' value=search ? search : '')
-      //- input(id='search' oninput='window.location="/admin/productList&search=" + getElementById("search").value' placeholder='Pesquisa')
-      input(onclick='findProduct()')
-    script.
-      function findProduct(event){
-        if (!event || event.key === 'Enter') {
-            window.location=`/admin/productList?search=${document.getElementById("search").value}`;
-          }
+    li: a(href='/') Zunka
+    //- Admin links.
+    if  nav.showAdminLinks
+      //- Store.
+      li: a(href='/admin/productList') Produtos
+      //- //- Allnations.
+      //- li: a(href='allnations') All Nations
+  .search
+    input(id='search' onkeyup='__search(event)' placeholder='O que você procura?')
+    //- input(id='search' oninput='window.location="/admin/productList&search=" + getElementById("search").value' placeholder='Pesquisa')
+    input(onclick='_search()')
+  script.
+    function __search(event){
+      if (!event || event.key === 'Enter') {
+        // Must be implemented on parent module.
+        _search(document.getElementById('search').value);
       }
-  if showNewProductButton
+    }
+  if nav.showNewProductButton
     .new-product
       button(onclick='window.location="/admin/product/new"') Criar Produto
   .account
