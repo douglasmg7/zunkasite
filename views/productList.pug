@@ -12,12 +12,8 @@ html(lang="en")
         include main-nav.pug
     main
       #app(v-cloak)
-        //- div(v-for='product in products')
-        //-   a.product
-        //-   h4 {{product.storeProductTitle}}
-
-        div(v-for='product in products')
-          a.product(:href='"/product/" + product._id')
+        .product(v-for='product in products')
+          a(:href='"/product/" + product._id')
             img(:src='`/img/${product._id}/${product.images[0]}`', v-if='product.images[0]')
             h4.description {{ product.storeProductTitle }}
             h3.price

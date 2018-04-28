@@ -114,7 +114,7 @@ html(lang="en")
           .field.buttons
             button(type='button' v-on:click='deleteProduct()') Apagar
             button(type='button' v-on:click='saveProduct()') Salvar
-            button(type='button' onclick='window.location.href="/admin/productList"') Sair
+            button(type='button' onclick='window.location.href="/admin"') Sair
   script.
     let product = !{JSON.stringify(product)};
     let productMakers = !{JSON.stringify(productMakers)};

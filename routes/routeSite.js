@@ -34,9 +34,6 @@ router.get('/products', function (req, res) {
     : {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$gt: 0}};    
   // Find products.
   let productPromise = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
-  // console.log(`search: ${JSON.stringify(search)}`);
-  // console.log(`skip: ${skip}`);
-  // console.log(`limit: ${PRODUCT_QTD_BY_PAGE}`);
   // Product count.
   let productCountPromise = Product.count(search).exec();
   Promise.all([productPromise, productCountPromise])

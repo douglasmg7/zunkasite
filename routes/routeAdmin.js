@@ -14,7 +14,7 @@ const ProductCategorie = require('../model/productCategorie');
 const PRODUCT_QTD_BY_PAGE  = 5;
 
 // Get product list.
-router.get('/', function(req, res, next) {
+router.get('/', checkPermission, function(req, res, next) {
   res.render('admin/productList', {
     page: req.query.page ? req.query.page : 1,
     search: req.query.search ? req.query.search : '',  
@@ -26,7 +26,7 @@ router.get('/', function(req, res, next) {
 });
 
 // Get products.
-router.get('/products', function(req, res, next) {
+router.get('/products', checkPermission, function(req, res, next) {
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
   const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
   const search = req.query.search
@@ -233,8 +233,9 @@ function checkPermission (req, res, next) {
   if (req.isAuthenticated() && req.user.group.includes('admin')) {
     return next();
   }
-  log.warn(req.method, req.originalUrl, ' - permission denied');
-  res.json('status: permission denied');
+  // log.warn(req.method, req.originalUrl, ' - permission denied');
+  // res.json('status: permission denied');
+  res.redirect('/users/login');
 };
 
 module.exports = router;

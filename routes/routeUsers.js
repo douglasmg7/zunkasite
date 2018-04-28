@@ -61,7 +61,8 @@ router.get('/login/:token', (req, res, next)=>{
       newUser.name = emailConfirmation.name;
       newUser.email = emailConfirmation.email;
       newUser.password = emailConfirmation.password;
-      newUser.group = ['admin'];
+      newUser.group = ['client'];
+      // newUser.group = ['admin'];
       newUser.status = 'active';
       // Save.
       newUser.save((err, result)=>{

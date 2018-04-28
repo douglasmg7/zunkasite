@@ -5,7 +5,7 @@
     //- Admin links.
     if  nav.showAdminLinks
       //- Store.
-      li: a(href='/admin/productList') Produtos
+      li: a(href='/admin') Produtos
       //- //- Allnations.
       //- li: a(href='allnations') All Nations
   .search
@@ -23,11 +23,36 @@
     .new-product
       button(onclick='window.location="/admin/product/new"') Criar Produto
   .account
-    //- User name.
+    //- Logged.
     if user.name
+      //- User name.
       a(href='/users/account')
         svg.icon: use(xlink:href='/icon/sprite.svg#ic_account_circle_white_24px') 
         | #{user.name}
-    a(href='/users/logout')
-      svg.icon: use(xlink:href='/icon/sprite.svg#ic_exit_to_app_white_24px')
-      | Sair
+      //- Cart.
+      a(href='/cart')
+        //- img.cart(src='/icon/ic_shopping_cart_white_24px.svg' alt='cart')
+        svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px')
+        | Carrinho
+        | &nbsp
+        span#cart-qtd= cart.totalQtd
+      //- Admin.
+      if user.group == 'admin'
+        a(href='/admin') 
+          svg.icon: use(xlink:href='/icon/sprite.svg#ic_supervisor_account_white_24px')
+          | Admin
+      a(href='/users/logout')
+        svg.icon: use(xlink:href='/icon/sprite.svg#ic_exit_to_app_white_24px')
+        | Sair  
+    //- Not logged.
+    else
+      a(href='/users/login') 
+        svg.icon: use(xlink:href='/icon/sprite.svg#ic_account_circle_white_24px')
+        | Entrar
+      //- Cart.
+      a(href='/cart')
+        //- img.cart(src='/icon/ic_shopping_cart_white_24px.svg' alt='cart')
+        svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px')
+        | Carrinho
+        | &nbsp
+        span#total-qtd.badge= cart.totalQtd
