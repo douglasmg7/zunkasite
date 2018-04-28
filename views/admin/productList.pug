@@ -38,12 +38,8 @@ html(lang="en")
     script.
       // Make available for vue.
       let csrfToken = !{JSON.stringify(csrfToken)};
-      //- let user = !{JSON.stringify(user)};
       let search = !{JSON.stringify(search)};
       let page = !{JSON.stringify(page)};   //  Selected page.
-      //- let pageCount = !{JSON.stringify(pageCount)}; //  Number of pages.    
-      //- let productAdded = !{JSON.stringify(productAdded)};   // Message for product added on cart.
-      //- console.log(`products lenght: ${products.lenght}`);
     include ../components/axios.js.pug
     include ../components/vue.js.pug
     script(src='/js/admin/productList.js')

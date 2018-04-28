@@ -109,3 +109,13 @@ input {
 .pagination a[active] {
   color: #000;
 }
+.product {
+  border: 1px solid #ddd;
+  border-radius: 0.4em;
+  margin: 1em;
+  padding: 1em;
+}
+a {
+  text-decoration: none;
+  color: #000;
+}
