@@ -34,18 +34,21 @@ const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt-nodejs');
 // Cart.
 const Cart = require('./model/cart');
+
 // Paypal.
 // const paypal = require('paypal-rest-sdk');
+
 // Webpack HMR - hot module reload.
-// const webpack = require('webpack');
-// const webpackConfig = require('./webpack.config');
-// const compiler = webpack(webpackConfig);
-// const webpackDevMiddleware = require('webpack-dev-middleware')(compiler, {
-//   noInfo: false, 
-//   publicPath: webpackConfig.output.publicPath, 
-//   stats: {colors: true, chunks: false}
-// });
-// const webpackHotMiddleware = require('webpack-hot-middleware')(compiler);
+const webpack = require('webpack');
+const webpackConfig = require('./webpack.config');
+const compiler = webpack(webpackConfig);
+const webpackDevMiddleware = require('webpack-dev-middleware')(compiler, {
+  noInfo: false, 
+  publicPath: webpackConfig.output.publicPath, 
+  stats: {colors: true, chunks: false}
+});
+const webpackHotMiddleware = require('webpack-hot-middleware')(compiler);
+
 // App must be before routes.
 const app = express();
 // Routes.
@@ -91,11 +94,14 @@ if (app.get('env') === 'development') {
 app.use(express.static(path.join(__dirname, 'dist/')));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components/')));
 app.use('/semantic', express.static(path.join(__dirname, 'semantic/')));
+
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+
 // webpack HMR
-// app.use(webpackDevMiddleware);
-// app.use(webpackHotMiddleware);
+app.use(webpackDevMiddleware);
+app.use(webpackHotMiddleware);
+
 // body.
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

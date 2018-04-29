@@ -10,6 +10,7 @@ li,
 h1,
 h2,
 h3,
+h4,
 hr {
   margin: 0;
   padding: 0;
@@ -67,6 +68,19 @@ input {
 .main-nav .account {
   margin-left: auto;
 }
+.main-nav #cart-qtd {
+  background: #6d9d69;
+  border-radius: 0.8em;
+  -moz-border-radius: 0.8em;
+  -webkit-border-radius: 0.8em;
+  color: #fff;
+  display: inline-block;
+  font-weight: bold;
+  line-height: 1.6em;
+  margin-right: 5px;
+  text-align: center;
+  width: 1.6em;
+}
 .main-nav ul {
   list-style-type: none;
 }
@@ -79,171 +93,100 @@ input {
   vertical-align: middle;
   margin-right: 0.5em;
 }
-.pagination {
-  font-size: 1em;
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
-  align-items: center;
-  margin-top: 1em;
+.title {
+  color: #008000;
+  font-weight: bold;
 }
-.pagination a {
-  margin: 0 1em 0 1em;
-  color: #d3d3d3;
-  cursor: pointer;
-}
-.pagination a.active {
+.product-name,
+.product-price {
   color: #000;
 }
-form {
-  margin: 0 5em 2em 5em;
+.product-detail {
+  padding-top: 1em;
+  padding-left: 1em;
 }
-h2,
-h3 {
-  margin-top: 2em;
-  margin-bottom: 0.2em;
+img {
+  padding-top: 2em;
 }
-button {
-  margin-top: 2em;
-  margin-left: 3em;
+table.information td:nth-child(1) {
+  background-color: #f3f3f3;
 }
-input,
-textarea {
-  border-radius: 0.2em;
-  border: solid 1px #aaa;
-  outline: none;
-  padding: 0.5em;
-  margin-top: 0.2em;
+table.estimate-ship {
+  margin-top: 1em;
+  border-radius: 4px;
+  background-color: #f3f3f3;
 }
-input:not([readonly]):focus,
-textarea:not([readonly]):focus {
-  box-shadow: 0 0 3px #51cbee;
-  border: 1px solid #51cbee;
+table.estimate-ship th {
+  padding: 0.5em 1em 0 1em;
 }
-input[readonly],
-textarea[readonly] {
-  background-color: #d3d3d3;
+table.estimate-ship td {
+  padding: 0.5em 1em 0.5em 1em;
 }
-input {
-  height: 2em;
+footer {
+  height: 50px;
 }
-textarea {
-  height: 10em;
-}
-.field {
-  display: flex;
-  flex-flow: column wrap;
+button.add-cart {
   margin-top: 1em;
 }
-.field > label {
+.estimateShip {
+  margin-top: 2em;
+}
+.estimateShip > p {
   font-weight: bold;
 }
-.field > .upload-image {
-  margin-top: 0.3em;
-}
-.field > .upload-image > label {
-  cursor: pointer;
-}
-.field > .upload-image > label > svg {
-  vertical-align: text-bottom;
-}
-.field > .upload-image > input {
+table.estimate-ship {
   display: none;
 }
-.field > .upload-image .icon {
+.icon {
   width: 1.5em;
   height: 1.5em;
+  vertical-align: middle;
+  margin-right: 0.5em;
 }
-.field.checkbox {
-  flex-flow: row wrap;
-  align-items: flex-start;
+.loader {
+  display: none;
+  vertical-align: middle;
+  margin-right: 0.5em;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 1.4em;
+  height: 1.4em;
+  animation: spin 2s linear infinite;
 }
-.field.checkbox input[type='checkbox'] {
-  height: auto;
-}
-.field .discount {
-  flex: 1 1 auto;
-  display: flex;
-  align-items: flex-end;
-}
-.field .discount input {
-  flex: 5 10 auto;
-  border-radius: 0.2em 0 0 0.2em;
-}
-.field .discount select {
-  flex: 1 1 auto;
-  height: 2em;
-  border: 1px solid #aaa;
-  border-radius: 0 0.2em 0.2em 0;
-  border-left: none;
-  text-align: center;
-}
-.field.buttons {
-  flex-flow: row wrap;
-  justify-content: flex-end;
-}
-.validation {
-  margin-top: 0;
-  margin-bottom: 0;
+.cep-error-msg {
+  margin-top: 0.5em;
   color: #f00;
 }
-.images {
-  border: 1px solid #aaa;
-  border-radius: 0.2em;
-  padding: 0.4em;
-  display: flex;
-  flex-wrap: wrap;
-  min-height: 4em;
+@-moz-keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
-.wrapper-image {
-  position: relative;
-  display: inline-block;
-  margin: 0.4em;
-  border: 0.5em solid transparent;
+@-webkit-keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
-.wrapper-image:hover .left-arrow {
-  display: block;
+@-o-keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
-.wrapper-image:hover .right-arrow {
-  display: block;
-}
-.wrapper-image:hover p.delete-image {
-  display: block;
-}
-.left-arrow {
-  position: absolute;
-  bottom: 5px;
-  left: 0;
-  width: 0;
-  height: 0;
-  border-right: 15px solid #ffa500;
-  border-top: 15px solid transparent;
-  border-bottom: 15px solid transparent;
-  opacity: 1;
-  cursor: pointer;
-  display: none;
-}
-.right-arrow {
-  position: absolute;
-  bottom: 5px;
-  right: 0;
-  width: 0;
-  height: 0;
-  border-left: 15px solid #ffa500;
-  border-top: 15px solid transparent;
-  border-bottom: 15px solid transparent;
-  opacity: 1;
-  cursor: pointer;
-  display: none;
-}
-p.delete-image {
-  position: absolute;
-  top: -8px;
-  right: 4px;
-  opacity: 1;
-  color: #ffa500;
-  font-size: 1.5em;
-  font-weight: bold;
-  cursor: pointer;
-  display: none;
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

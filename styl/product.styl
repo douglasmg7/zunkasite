@@ -1,0 +1,55 @@
+@import 'reset'
+@import 'main-nav'
+  .title
+    color: green
+    font-weight: bold
+  .product-name
+  .product-price
+    color: black
+  .product-detail
+    padding-top: 1em
+    padding-left: 1em
+  img
+    padding-top: 2em
+  table.information td:nth-child(1)
+    background-color: #F3F3F3
+  table.estimate-ship
+    margin-top: 1em
+    border-radius: 4px
+    background-color: #F3F3F3
+  table.estimate-ship th
+    padding: .5em 1em 0 1em
+  table.estimate-ship td
+    padding: .5em 1em .5em 1em
+  footer
+    height: 50px
+  button.add-cart
+    margin-top: 1em
+    // margin-left: 1em
+  .estimateShip
+    margin-top: 2em;
+  .estimateShip > p 
+    font-weight: bold
+  table.estimate-ship
+    display: none;
+  .icon
+    width: 1.5em
+    height: 1.5em
+    vertical-align: middle
+    margin-right: .5em
+  .loader
+    display: none;
+    vertical-align: middle;
+    margin-right: .5em
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db
+    border-radius: 50%
+    width: 1.4em
+    height: 1.4em
+    animation: spin 2s linear infinite
+  @keyframes spin
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  .cep-error-msg
+    margin-top: .5em;
+    color: red;

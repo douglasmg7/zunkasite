@@ -16,7 +16,7 @@ function formatMoney(val){
   return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
-// Index.
+// Get products page.
 router.get('/', function(req, res, next) {
   res.render('productList', {
     nav: {
@@ -42,6 +42,29 @@ router.get('/products', function (req, res) {
   }).catch(err=>{
     return next(err);
   });
+});
+
+// Get a specific product.
+router.get('/product/:_id', function(req, res, next) {
+  Product.findById(req.params._id)
+  .then(product=>{
+    if (product._id) {
+      // console.log(JSON.stringify(result));
+      res.render('product', {
+        nav: {
+        },
+        // user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
+        // cart: req.cart,
+        product
+        // csrfToken: req.csrfToken()
+      });
+    } else {
+      log.info(`product ${req.params._id} not found`);
+      res.status(404).send('Produto não encontrado.');      
+    }
+  }).catch(err=>{
+    return next(err);
+  });  
 });
 
 // Index.
@@ -99,7 +122,7 @@ router.get('/last-product-added-to-cart/:_id', function(req, res, next) {
 });
 
 // Get a specific product.
-router.get('/product/:_id', function(req, res, next) {
+router.get('/old/product/:_id', function(req, res, next) {
   // Mongodb formated _id product.
   let _id;
   try {
