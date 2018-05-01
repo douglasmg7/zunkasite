@@ -10,78 +10,72 @@ html(lang="en")
     header
       nav
         include main-nav.pug
-    main
-      #app(v-cloak)
-        .row
-          .col-md-4.col-md-offset-1
-            .row
-              .col-md-12
-                img.img-responsive.center-block(:src='`/img/${product._id}/${product.images[selectedThumbnail]}`' v-if='product.images.length > 0')
-            .row(v-for='(r, index) in new Array(colsByRow)')
-              .col-md-3(v-for='(i, index2) in imagesSelectedByRow[index]')
-                img.img-responsive(:src='`/img/${product._id}/${product.images[index * colsByRow + index2]}`' @click='selectedThumbnail=index * colsByRow + index2')
-          .col-md-6
-            // Title.
-            h3.product-name {{product.storeProductTitle}}
-            // Price
-            h3.product-price(v-if='accountingParse(this.product.storeProductPrice, ",") > 0') {{ product.storeProductPrice | currencyBr}}
-            // Detail.
-            ul.product-detail(v-if='productDetail.length > 0')
-              li(v-for='detail in productDetail') {{detail}}
-            button.btn.btn-success.add-cart(@click='addToCart') Adicionar ao carrinho
-            .estimateShip
-              p Estimar frete e prazo (Entre com o CEP)
-              form.form-inline(id='form-ship' action='EstimateShip')
-                input(type='hidden' name='_csrf' value=csrfToken)       
-                .input-group
-                  input.form-control(type='text' id='cep' size='7')
-                  span.input-group-btn
-                    button.btn.btn-default.cep 
-                      span.loader
-                      span.loader-text Calcular
-                p.cep-error-msg
-              table.estimate-ship
-                thead
-                  tr
-                    th Entrega
-                    th Frete
-                    th Prazo
+    main#app(v-cloak)
+      .product
+        .image
+          img(:src='`/img/${product._id}/${product.images[selectedThumbnail]}`' v-if='product.images.length > 0')
+          .thumbnail
+            img(v-for='image, index in product.images', :src='`/img/${product._id}/${product.images[index]}`' @click='selectedThumbnail=index')
+        .info
+          //- Title.
+          h3.product-name {{product.storeProductTitle}}
+          //- Price
+          h3.product-price(v-if='accountingParse(this.product.storeProductPrice, ",") > 0') {{ product.storeProductPrice | currencyBr}}
+          //- Detail.
+          ul.product-detail(v-if='productDetail.length > 0')
+            li(v-for='detail in productDetail') {{detail}}
+          button.btn.btn-success.add-cart(@click='addToCart') Adicionar ao carrinho
+          .estimateShip
+            p Estimar frete e prazo (Entre com o CEP)
+            form.form-inline(id='form-ship' action='EstimateShip')
+              input(type='hidden' name='_csrf' value=csrfToken)       
+              .input-group
+                input.form-control(type='text' id='cep' size='7')
+                span.input-group-btn
+                  button.btn.btn-default.cep 
+                    span.loader
+                    span.loader-text Calcular
+              p.cep-error-msg
+            table.estimate-ship
+              thead
+                tr
+                  th Entrega
+                  th Frete
+                  th Prazo
+              tbody
+                tr
+                  td -
+                  td -
+                  td -
+                //- Label(type='text' for='cep') CEP
+      .description(v-if='product.storeProductDescription.trim() !== ""')
+        //- Description.
+        hr
+        h5.title Descrição do produto
+        p {{product.storeProductDescription}}
+      .info(v-if='productInformationTechnical.length > 0 || productInformationAdditional.length > 0')
+        //- Informations.
+        hr
+        h5.title Informação do produto
+        //- Technical information.
+        .infos
+          .info-tech(v-if='productInformationTechnical.length > 0')
+            h5 Detalhe técnico
+            .table-responsive
+              table.table.information
                 tbody
-                  tr
-                    td -
-                    td -
-                    td -
-                  //- Label(type='text' for='cep') CEP
-        .row(v-if='product.storeProductDescription.trim() !== ""')
-          .col-md-10.col-md-offset-1
-            //- Description.
-            hr
-            h5.title Descrição do produto
-            p {{product.storeProductDescription}}
-        .row(v-if='productInformationTechnical.length > 0 || productInformationAdditional.length > 0')
-          .col-md-10.col-md-offset-1
-            //- Informations.
-            hr
-            h5.title Informação do produto
-            .row
-              //- Technical information.
-              .col-md-6(v-if='productInformationTechnical.length > 0')
-                h5 Detalhe técnico
-                .table-responsive
-                  table.table.information
-                    tbody
-                      tr(v-for='infoTech in productInformationTechnical')
-                        td {{infoTech[0]}}
-                        td {{infoTech[1]}}
-              //- Additional information.
-              .col-md-6(v-if='productInformationAdditional.length > 0')
-                h5 Informações adicionais
-                .table-responsive
-                  table.table.information
-                    tbody
-                      tr(v-for='infoAdd in productInformationAdditional')
-                        td {{infoAdd[0]}}
-                        td {{infoAdd[1]}}
+                  tr(v-for='infoTech in productInformationTechnical')
+                    td {{infoTech[0]}}
+                    td {{infoTech[1]}}
+          //- Additional information.
+          .info-add(v-if='productInformationAdditional.length > 0')
+            h5 Informações adicionais
+            .table-responsive
+              table.table.information
+                tbody
+                  tr(v-for='infoAdd in productInformationAdditional')
+                    td {{infoAdd[0]}}
+                    td {{infoAdd[1]}}
   script.
     // Make available for vue.
     let product = !{JSON.stringify(product)};

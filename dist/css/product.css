@@ -93,6 +93,53 @@ input {
   vertical-align: middle;
   margin-right: 0.5em;
 }
+main {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  margin: 2em auto;
+  max-width: 1000px;
+}
+main > .product {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  margin: 0 1em;
+}
+main > .product .image {
+  flex: 1 1 40%;
+}
+main > .product .image img {
+  display: block;
+  margin: 0 auto 2em auto;
+}
+main > .product .image .thumbnail {
+  display: flex;
+  flex-flow: row wrap;
+}
+main > .product .image .thumbnail img {
+  margin: 0.3em;
+  max-width: 80px;
+}
+main > .product .info {
+  flex: 1 1 58%;
+}
+main > .description {
+  margin: 0 1em;
+}
+main > .info {
+  margin: 0 1em;
+}
+.infos {
+  display: flex;
+  flex-flow: row wrap;
+}
+.infos .info-tech {
+  flex: 0 0 50%;
+}
+.infos .info-add {
+  flex: 0 0 50%;
+}
 .title {
   color: #008000;
   font-weight: bold;
@@ -104,9 +151,6 @@ input {
 .product-detail {
   padding-top: 1em;
   padding-left: 1em;
-}
-img {
-  padding-top: 2em;
 }
 table.information td:nth-child(1) {
   background-color: #f3f3f3;
