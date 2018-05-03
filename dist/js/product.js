@@ -20,17 +20,21 @@ var app = new Vue({
     accountingParse: accounting.parse,
     // Add product to cart.
     addToCart(){
-      this.$http.put(`/cart/add/${this.product._id}`, { _csrf: this.csrfToken })
-      .then((res)=>{
-        // Success.
-        if (res.body.success) {
+      axios({
+        method: 'put',
+        url:`/cart/add/${product._id}`,
+        headers:{'csrf-token' : csrfToken},
+        data: { product: product }
+      })
+      .then(response => {
+        // Product added to the cart.
+        if (response.data.success) {
           window.location.href = `/last-product-added-to-cart/${this.product._id}`;
         }
-        // console.log(res);
       })
-      .catch((err)=>{
+      .catch(err => {
         console.error(err);
-      });
+      }) 
     }    
   },
   computed:{
@@ -67,6 +71,12 @@ var app = new Vue({
     }
   },    
   filters: { 
-    currencyBr(value){ return accounting.formatMoney(value, "R$ ", 2, ".", ","); }
+    currencyBr(value){ return accounting.formatMoney(value, "R$ ", 2, ".", ","); },
+    // currencyInt(value){
+    //   return accounting.formatMoney(accounting.parse(value, ','), '', 2, '.', ',').split(',')[0];
+    // },
+    // currencyCents(value){
+    //   return accounting.formatMoney(accounting.parse(value, ','), '', 2, '.', ',').split(',')[1];
+    // }
   },
 });

@@ -62,9 +62,9 @@ var app = new Vue({
           alert('Não foi possível salvar.');
         }
       })
-      .catch(e => {
+      .catch(err => {
         alert('Não foi possível salvar.');
-        console.error(e);
+        console.error(err);
       })       
     },
     // Delete product.

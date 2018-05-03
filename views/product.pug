@@ -18,14 +18,14 @@ html(lang="en")
             img(v-for='image, index in product.images', :src='`/img/${product._id}/${product.images[index]}`' @click='selectedThumbnail=index')
         .info
           //- Title.
-          h3.product-name {{product.storeProductTitle}}
+          h2.product-title {{product.storeProductTitle}}
           //- Price
-          h3.product-price(v-if='accountingParse(this.product.storeProductPrice, ",") > 0') {{ product.storeProductPrice | currencyBr}}
+          h2.product-price(v-if='accountingParse(this.product.storeProductPrice, ",") > 0') {{ product.storeProductPrice | currencyBr}}
           //- Detail.
           ul.product-detail(v-if='productDetail.length > 0')
             li(v-for='detail in productDetail') {{detail}}
-          button.btn.btn-success.add-cart(@click='addToCart') Adicionar ao carrinho
-          .estimateShip
+          button(@click='addToCart') Adicionar ao carrinho
+          .estimate-ship
             p Estimar frete e prazo (Entre com o CEP)
             form.form-inline(id='form-ship' action='EstimateShip')
               input(type='hidden' name='_csrf' value=csrfToken)       
@@ -61,25 +61,23 @@ html(lang="en")
         .infos
           .info-tech(v-if='productInformationTechnical.length > 0')
             h5 Detalhe técnico
-            .table-responsive
-              table.table.information
-                tbody
-                  tr(v-for='infoTech in productInformationTechnical')
-                    td {{infoTech[0]}}
-                    td {{infoTech[1]}}
+            table
+              tbody
+                tr(v-for='infoTech in productInformationTechnical')
+                  td {{infoTech[0]}}
+                  td {{infoTech[1]}}
           //- Additional information.
           .info-add(v-if='productInformationAdditional.length > 0')
             h5 Informações adicionais
-            .table-responsive
-              table.table.information
-                tbody
-                  tr(v-for='infoAdd in productInformationAdditional')
-                    td {{infoAdd[0]}}
-                    td {{infoAdd[1]}}
+            table
+              tbody
+                tr(v-for='infoAdd in productInformationAdditional')
+                  td {{infoAdd[0]}}
+                  td {{infoAdd[1]}}
   script.
     // Make available for vue.
     let product = !{JSON.stringify(product)};
-  //-   let csrfToken = !{JSON.stringify(csrfToken)};
+    let csrfToken = !{JSON.stringify(csrfToken)};
   //-   let user = !{JSON.stringify(user)};
   include components/axios.js.pug
   include components/vue.js.pug
