@@ -148,7 +148,6 @@ main {
   font-weight: bold;
 }
 .product .info .estimate-ship table {
-  display: none;
   margin-top: 1em;
   border-radius: 4px;
   background-color: #f3f3f3;
@@ -159,7 +158,7 @@ main {
 .product .info .estimate-ship table td {
   padding: 0.5em 1em 0.5em 1em;
 }
-.product .info .estimate-ship .cep-error-msg {
+.product .info .estimate-ship p.errMsg {
   margin-top: 0.5em;
   color: #f00;
 }
@@ -177,4 +176,47 @@ main {
 h5.title {
   color: #008000;
   font-weight: bold;
+}
+.loader {
+  display: none;
+  vertical-align: middle;
+  margin-right: 0.5em;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 1.4em;
+  height: 1.4em;
+  animation: spin 2s linear infinite;
+}
+@-moz-keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

@@ -143,7 +143,7 @@ router.post('/ship-address-add', checkPermission, (req, res, next)=>{
 
 // Estimate shipment.
 router.get('/ship-estimate', (req, res, next)=>{
-  // console.log('req.query', req.query);
+  console.log('req.query', req.query);
   Product.findById(req.query.productId, (err, product)=>{
     if (err) { return next(err); }
     if (!product) {  return next(new Error('Product not found.')); }

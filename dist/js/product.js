@@ -11,20 +11,52 @@ var app = new Vue({
   data: {
     product: product,
     search: '',
-    selectedThumbnail: 0,
-    colsByRow: 4,
-    imagesSelectedByRow: []
+    selectedThumbnail: 0,   // Selected thumbnail image.
+    cepDestiny: '',
+    showEstimatedShipment: false,
+    loadingEstimateShipment: false,
+    cepErrMsg: '',
+    deliveryMethod: '',
+    deliveryPrice: 0,
+    deliveryTime: 0,   // Delivery time in days.
+    btnCaluculateShipmentValue: 'Calcular',
   },
   methods: {
     // Accaunting.
     accountingParse: accounting.parse,
+    // Get shimpment value from Correios.
+    estimateShipment(){
+      this.btnCaluculateShipmentValue = 'Calculando';
+      axios({
+        method: 'get',
+        url:`/checkout/ship-estimate?productId=${this.product._id}&cepDestiny=${this.cepDestiny}`,
+        headers:{'csrf-token' : csrfToken},
+        data: { productId: this.product._id, cepDestiny: this.cepDestiny }
+      })
+      .then(response => {
+        // Correio answer.
+        if (response.data.success) {
+          this.cepErrMsg = '';
+          this.deliveryMethod = 'Ecônomica';
+          this.deliveryPrice = response.data.correio.Valor;
+          this.deliveryTime =  `${response.data.correio.PrazoEntrega} dia(s)`;
+          this.showEstimatedShipment = true;
+        } else {
+          this.cepErrMsg = response.data.errMsg;
+        }
+        this.btnCaluculateShipmentValue = 'Calcular';
+      })
+      .catch(err => {
+        console.error(err);
+      }) 
+    },
     // Add product to cart.
     addToCart(){
       axios({
         method: 'put',
-        url:`/cart/add/${product._id}`,
+        url:`/cart/add/${this.product._id}`,
         headers:{'csrf-token' : csrfToken},
-        data: { product: product }
+        data: { product: this.product }
       })
       .then(response => {
         // Product added to the cart.
