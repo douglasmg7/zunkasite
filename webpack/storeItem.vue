@@ -121,7 +121,7 @@
 </template>
 <script>
   jQuery(function($){
-    $('button.cep').find('.loader').hide();
+    // $('button.cep').find('.loader').hide();
     $('.estimate-ship').hide();
     $('#form-ship').find('.cep-error-msg').hide();
     // Maskedinput.

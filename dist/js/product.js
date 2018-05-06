@@ -5,7 +5,11 @@
 // formatMoney(val){
 //   return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 // };
-
+// Mask for cep input.
+// VMasker(document.querySelector("input")).maskPattern("99999-999");
+console.log(document.getElementById('cep'));
+VMasker(document.getElementById('cep')).maskPattern("99999-999");
+// Vue.
 var app = new Vue({
   el: '#app',
   data: {
@@ -19,14 +23,13 @@ var app = new Vue({
     deliveryMethod: '',
     deliveryPrice: 0,
     deliveryTime: 0,   // Delivery time in days.
-    btnCaluculateShipmentValue: 'Calcular',
   },
   methods: {
     // Accaunting.
     accountingParse: accounting.parse,
     // Get shimpment value from Correios.
     estimateShipment(){
-      this.btnCaluculateShipmentValue = 'Calculando';
+      this.loadingEstimateShipment = true;
       axios({
         method: 'get',
         url:`/checkout/ship-estimate?productId=${this.product._id}&cepDestiny=${this.cepDestiny}`,
@@ -42,12 +45,15 @@ var app = new Vue({
           this.deliveryTime =  `${response.data.correio.PrazoEntrega} dia(s)`;
           this.showEstimatedShipment = true;
         } else {
+          this.showEstimatedShipment = false;
           this.cepErrMsg = response.data.errMsg;
         }
-        this.btnCaluculateShipmentValue = 'Calcular';
+        this.loadingEstimateShipment = false;
       })
       .catch(err => {
         console.error(err);
+        this.loadingEstimateShipment = false;
+        this.showEstimatedShipment = false;
       }) 
     },
     // Add product to cart.

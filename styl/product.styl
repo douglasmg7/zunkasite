@@ -36,9 +36,20 @@ main
     .estimate-ship
       margin-top: 2em;
       & > p 
-        font-weight: bold
+        margin 0
+        font-weight bold
+      input
+      button
+        height 2em
+        border 1px solid gray
+      input
+        border-right 0
+        border-radius 4px 0 0 4px
+        padding-left 1em
+        padding-right 1em
+      button
+        border-radius 0 4px 4px 0
       table
-        // display none
         margin-top 1em
         border-radius 4px
         background-color #F3F3F3
@@ -63,20 +74,24 @@ h5.title
   color green
   font-weight bold
 .loader
-  display none;
+  display inline-block;
+  width 3em
+  height 3em
+  position relative
+  left -4em
   vertical-align middle
-  margin-right .5em
   border 4px solid #f3f3f3
   border-top 4px solid #3498db
   border-radius 50%
-  width 1.4em
-  height 1.4em
-  animation spin 2s linear infinite
+  animation spin 1s linear infinite
 @keyframes spin
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0%
+    transform rotate(0deg)
+  100%
+    transform rotate(360deg)
+  // 100% { transform: rotate(360deg) }
 // .icon
-//   width: 1.5em
-//   height: 1.5em
+//   width 1.5em
+//   height 1.5em
 //   vertical-align middle
 //   margin-right .5em

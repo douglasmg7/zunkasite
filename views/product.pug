@@ -27,13 +27,10 @@ html(lang="en")
           button(@click='addToCart') Adicionar ao carrinho
           .estimate-ship
             p Estimar frete e prazo (Entre com o CEP)
-              .input-group
-                input(type='text' id='cep' size='7' v-model='cepDestiny')
-                span
-                  button(@click='estimateShipment')
-                    span.loader
-                    span {{btnCaluculateShipmentValue}}
-              p.errMsg {{cepErrMsg}}
+            input(type='text' id='cep' size='7' v-model='cepDestiny')
+            button(@click='estimateShipment') Calcular
+            span.loader(v-if='loadingEstimateShipment')
+            p.errMsg {{cepErrMsg}}
             table(v-if='showEstimatedShipment')
               thead
                 tr
@@ -80,4 +77,5 @@ html(lang="en")
   include components/axios.js.pug
   include components/vue.js.pug
   include components/accounting.js.pug
+  include components/vanilla-masker.js.pug
   script(src='/js/product.js')
