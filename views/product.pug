@@ -46,16 +46,16 @@ html(lang="en")
       .description(v-if='product.storeProductDescription.trim() !== ""')
         //- Description.
         hr
-        h5.title Descrição do produto
+        h4.title Descrição do produto
         p {{product.storeProductDescription}}
       .info(v-if='productInformationTechnical.length > 0 || productInformationAdditional.length > 0')
         //- Informations.
         hr
-        h5.title Informação do produto
+        h4.title Informação do produto
         //- Technical information.
         .infos
           .info-tech(v-if='productInformationTechnical.length > 0')
-            h5 Detalhe técnico
+            p Detalhe técnico
             table
               tbody
                 tr(v-for='infoTech in productInformationTechnical')
@@ -63,7 +63,7 @@ html(lang="en")
                   td {{infoTech[1]}}
           //- Additional information.
           .info-add(v-if='productInformationAdditional.length > 0')
-            h5 Informações adicionais
+            p Informações adicionais
             table
               tbody
                 tr(v-for='infoAdd in productInformationAdditional')
