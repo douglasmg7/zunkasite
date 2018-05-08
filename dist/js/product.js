@@ -5,10 +5,6 @@
 // formatMoney(val){
 //   return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 // };
-// Mask for cep input.
-// VMasker(document.querySelector("input")).maskPattern("99999-999");
-console.log(document.getElementById('cep'));
-VMasker(document.getElementById('cep')).maskPattern("99999-999");
 // Vue.
 var app = new Vue({
   el: '#app',

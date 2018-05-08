@@ -29,7 +29,7 @@ html(lang="en")
             p Estimar frete e prazo (Entre com o CEP)
             input(type='text' id='cep' size='7' v-model='cepDestiny')
             button(@click='estimateShipment') Calcular
-            span.loader(v-if='loadingEstimateShipment')
+            span.loader(v-show='loadingEstimateShipment')
             p.errMsg {{cepErrMsg}}
             table(v-if='showEstimatedShipment')
               thead

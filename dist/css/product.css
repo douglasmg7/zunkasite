@@ -152,6 +152,7 @@ main {
 .product .info .estimate-ship button {
   height: 2em;
   border: 1px solid #808080;
+  margin-bottom: 0.5em;
 }
 .product .info .estimate-ship input {
   border-right: 0;
@@ -194,8 +195,8 @@ h5.title {
 }
 .loader {
   display: inline-block;
-  width: 3em;
-  height: 3em;
+  width: 2em;
+  height: 2em;
   position: relative;
   left: -4em;
   vertical-align: middle;
