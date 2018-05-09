@@ -188,12 +188,25 @@ main {
   flex-flow: row wrap;
   margin-bottom: 3em;
 }
+.infos table {
+  width: 95%;
+  border-spacing: 0;
+}
+.infos table td {
+  padding: 8px;
+  border-top: 1px solid #ddd;
+}
 .infos table td:nth-child(1) {
-  background-color: #f3f3f3;
+  background-color: #eee;
 }
 .infos .info-tech,
 .infos .info-add {
-  flex: 0 0 50%;
+  flex: 1 1 50%;
+}
+.infos .info-tech p,
+.infos .info-add p {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
 }
 .title {
   color: #008000;
