@@ -1,13 +1,10 @@
 .main-nav
-  ul
-    //- Home.
-    li: a(href='/') Zunka
-    //- Admin links.
-    if  nav.showAdminLinks
-      //- Store.
-      li: a(href='/admin') Produtos
-      //- //- Allnations.
-      //- li: a(href='allnations') All Nations
+  //- Home.
+  a(href='/') Zunka
+  //- Admin links.
+  if  nav.showAdminLinks
+    //- Store.
+    a(href='/admin') Produtos
   .search
     input(id='search' onkeyup='__search(event)' placeholder='O que você procura?')
     //- input(id='search' oninput='window.location="/admin/productList&search=" + getElementById("search").value' placeholder='Pesquisa')
