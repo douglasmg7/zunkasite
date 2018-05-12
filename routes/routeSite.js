@@ -18,6 +18,8 @@ function formatMoney(val){
 
 // Get products page.
 router.get('/', function(req, res, next) {
+  console.log('get root');
+  console.log(`search: ${JSON.stringify(req.query.productAddedToCart)}`);
   res.render('productList', {
     nav: {
     }

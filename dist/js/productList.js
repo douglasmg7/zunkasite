@@ -19,6 +19,8 @@ var app = new Vue({
   created() {
     // On reload page use the query string for search, not the input search.
     this.getProducts();
+    // To show product added to cart.
+    this.getPrdouctAddedToCart();
   },
   methods: {
     // Get products.
@@ -38,6 +40,12 @@ var app = new Vue({
         console.log(`Error - getProducts(), err: ${err}`);
       });
     },
+    getPrdouctAddedToCart(){
+      let regExpResult = /[?&]productAddedToCart=([^&#]*)/.exec(window.location.href);
+      if (regExpResult) {
+        console.log(regExpResult[1]);
+      }
+    }
   },  
   filters: {
     // Format number to money format.
