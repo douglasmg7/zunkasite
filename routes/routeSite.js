@@ -18,35 +18,15 @@ function formatMoney(val){
 
 // Get products page.
 router.get('/', function(req, res, next) {
-  console.log('get root');
-  console.log(`search: ${JSON.stringify(req.query.productAddedToCart)}`);
+  // console.log('get root');
+  // console.log(`search: ${JSON.stringify(req.query.productAddedToCart)}`);
   res.render('productList', {
     nav: {
     }
   });   
 });
 
-// Get products.
-router.get('/products', function (req, res) {
-  const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
-  const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
-  const search = req.query.search
-    ? {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$gt: 0}, 'storeProductTitle': {$regex: req.query.search, $options: 'i'}}
-    : {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$gt: 0}};    
-  // Find products.
-  let productPromise = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
-  // Product count.
-  let productCountPromise = Product.count(search).exec();
-  Promise.all([productPromise, productCountPromise])
-  .then(([products, count])=>{    
-    res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)});
-    // console.log(`Products count: ${products.length}`);
-  }).catch(err=>{
-    return next(err);
-  });
-});
-
-// Get a specific product.
+// Get product page.
 router.get('/product/:_id', function(req, res, next) {
   Product.findById(req.params._id)
   .then(product=>{
@@ -68,6 +48,43 @@ router.get('/product/:_id', function(req, res, next) {
     return next(err);
   });  
 });
+
+// Get products.
+router.get('/api/products', function (req, res) {
+  const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
+  const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
+  const search = req.query.search
+    ? {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$gt: 0}, 'storeProductTitle': {$regex: req.query.search, $options: 'i'}}
+    : {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$gt: 0}};    
+  // Find products.
+  let productPromise = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
+  // Product count.
+  let productCountPromise = Product.count(search).exec();
+  Promise.all([productPromise, productCountPromise])
+  .then(([products, count])=>{    
+    res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)});
+    // console.log(`Products count: ${products.length}`);
+  }).catch(err=>{
+    return next(err);
+  });
+});
+
+// Get product.
+router.get('/api/product/:_id', function(req, res, next) {
+  Product.findById(req.params._id)
+  .then(product=>{
+    if (product._id) {
+      // console.log(`product: ${JSON.stringify(product)}`);
+      res.json({product});
+    } else {
+      log.info(`product ${req.params._id} not found`);
+      res.status(404).send('Produto não encontrado.');      
+    }
+  }).catch(err=>{
+    return next(err);
+  });  
+});
+
 
 // Index.
 router.get('/old', function(req, res, next) {

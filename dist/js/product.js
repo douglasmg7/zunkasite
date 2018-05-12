@@ -63,7 +63,7 @@ var app = new Vue({
       .then(response => {
         // Product added to the cart.
         if (response.data.success) {
-          window.location.href = `/last-product-added-to-cart/${this.product._id}`;
+          window.location.href = `/?productAddedToCart=${this.product._id}`;
         }
       })
       .catch(err => {

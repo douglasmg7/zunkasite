@@ -12,6 +12,17 @@ html(lang="en")
         include main-nav.pug
     main
       #app(v-cloak)
+        .cart(v-if='this.productAddedToCart._id')
+          .item
+            img(:src='"/img/" + this.productAddedToCart._id + "/" + this.productAddedToCart.images[0]')
+            span Adicionado ao carrinho
+          .sub-total
+            span  Subtotal 
+            span ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}}): 
+            span {{ cart.totalPrice | currencyBr }}
+          .buttons
+            a(href='/cart') Carrinho
+            a(href='/checkout/ship-address') Continuar ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
         .products
           .product(v-for='product in products')
             a(:href='"/product/" + product._id')
@@ -25,6 +36,7 @@ html(lang="en")
     // Make available for vue.
     let csrfToken = !{JSON.stringify(csrfToken)};
     let user = !{JSON.stringify(user)};
+    let cart = !{JSON.stringify(cart)};
   include components/axios.js.pug
   include components/vue.js.pug
   include components/accounting.js.pug

@@ -8,13 +8,16 @@ var app = new Vue({
   el: '#app',
   data: {
     products: [],
-    // user: user,
+    // Product added to cart.
+    productAddedToCart: {},
     // Curret page for pagination.
     page: 1,
     // Number of pages for pagination.
     pageCount: 1,
     // Text for search products.
-    search: ''
+    search: '',
+    // Cart.
+    cart: cart
   },
   created() {
     // On reload page use the query string for search, not the input search.
@@ -27,7 +30,7 @@ var app = new Vue({
     getProducts(page=1){
       axios({
         method: 'get',
-        url: `/products/?page=${page}&search=${this.search}`,
+        url: `/api/products/?page=${page}&search=${this.search}`,
         headers:{'csrf-token' : csrfToken}
       })
       .then((res)=>{
@@ -43,7 +46,19 @@ var app = new Vue({
     getPrdouctAddedToCart(){
       let regExpResult = /[?&]productAddedToCart=([^&#]*)/.exec(window.location.href);
       if (regExpResult) {
-        console.log(regExpResult[1]);
+        let product_id = regExpResult[1];
+        console.log(product_id);
+        axios({
+          method: 'get',
+          url: `/api/product/${product_id}`,
+          headers:{'csrf-token' : csrfToken}
+        })
+        .then((res)=>{
+          this.productAddedToCart = res.data.product;
+        })
+        .catch((err)=>{
+          console.log(`Error - getProducts(), err: ${err}`);
+        });
       }
     }
   },  
