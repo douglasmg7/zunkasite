@@ -1,0 +1,34 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Zunka - Produtos
+    link(rel="stylesheet" href="/css/admin/orderList.css" charset="utf-8")
+  body
+    header
+      nav
+        include ../main-nav.pug
+    main
+      #app(v-cloak)
+        table
+          thead
+            tr
+              th user_id
+              th status
+              th shipMethod
+          tbody
+            tr(v-for='order in orders')
+              td: a(:href='`/admin/orders`') {{order.user_id}}
+              td: a(:href='`/admin/orders`') {{order.status}}
+              td: a(:href='`/admin/orders`') {{order.shipMethod}}
+        nav.pagination
+          a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
+    script.
+      // Make available for vue.
+      let csrfToken = !{JSON.stringify(csrfToken)};
+      let search = !{JSON.stringify(search)};
+      let page = !{JSON.stringify(page)};   //  Selected page.
+    include ../components/axios.js.pug
+    include ../components/vue.js.pug
+    script(src='/js/admin/orderList.js')

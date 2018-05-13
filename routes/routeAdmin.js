@@ -10,8 +10,28 @@ const formidable = require('formidable');
 const Product = require('../model/product');
 const ProductMaker = require('../model/productMaker');
 const ProductCategorie = require('../model/productCategorie');
+const Order = require('../model/order');
 // Max product quantity by Page.
-const PRODUCT_QTD_BY_PAGE  = 5;
+const PRODUCT_QTD_BY_PAGE = 5;
+// Max order quantity by Page.
+const ORDER_QTD_BY_PAGE = 5;
+
+// Check permission.
+function checkPermission (req, res, next) {
+  // Should be admin.
+  if (req.isAuthenticated() && req.user.group.includes('admin')) {
+    return next();
+  }
+  // log.warn(req.method, req.originalUrl, ' - permission denied');
+  // res.json('status: permission denied');
+  res.redirect('/users/login');
+};
+
+module.exports = router;
+
+/****************************************************************************** 
+/  PRODUCTS
+******************************************************************************/
 
 // Get product list.
 router.get('/', checkPermission, function(req, res, next) {
@@ -227,15 +247,41 @@ router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
   });
 });
 
-// Check permission.
-function checkPermission (req, res, next) {
-  // Should be admin.
-  if (req.isAuthenticated() && req.user.group.includes('admin')) {
-    return next();
-  }
-  // log.warn(req.method, req.originalUrl, ' - permission denied');
-  // res.json('status: permission denied');
-  res.redirect('/users/login');
-};
 
-module.exports = router;
+
+/****************************************************************************** 
+/   ORDERS
+******************************************************************************/
+
+// Get orders page.
+router.get('/orders', checkPermission, function(req, res, next) {
+  res.render('admin/orderList', {
+    page: req.query.page ? req.query.page : 1,
+    search: req.query.search ? req.query.search : '',  
+    nav: {
+      showAdminLinks: true
+    }
+  });   
+});
+
+// Get orders.
+router.get('/api/orders', checkPermission, function(req, res, next) {
+  const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
+  const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
+  const search = req.query.search
+    ? { $or: [
+        {'user_id': {$regex: req.query.search, $options: 'i'}}, 
+        {'status': {$regex: req.query.search, $options: 'i'}}
+        ]}
+    : {};
+  // Find orders.
+  let orderPromise = Order.find(search).sort({'user_id': 1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
+  // Order count.
+  let orderCountPromise = Order.count(search).exec();
+  Promise.all([orderPromise, orderCountPromise])
+  .then(([orders, count])=>{    
+    res.json({orders, page, pageCount: Math.ceil(count / ORDER_QTD_BY_PAGE)});
+  }).catch(err=>{
+    return next(err);
+  });
+});

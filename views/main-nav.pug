@@ -3,8 +3,10 @@
   a(href='/') Zunka
   //- Admin links.
   if  nav.showAdminLinks
-    //- Store.
+    //- Porducts admin.
     a(href='/admin') Produtos
+    //- Orders admin.
+    a(href='/admin/orders') Pedidos
   .search
     input(id='search' onkeyup='__search(event)' placeholder='O que você procura?')
     //- input(id='search' oninput='window.location="/admin/productList&search=" + getElementById("search").value' placeholder='Pesquisa')
@@ -26,18 +28,19 @@
       a(href='/users/account')
         svg.icon: use(xlink:href='/icon/sprite.svg#ic_account_circle_white_24px') 
         | #{user.name}
-      //- Cart.
-      a(href='/cart')
-        //- img.cart(src='/icon/ic_shopping_cart_white_24px.svg' alt='cart')
-        svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px')
-        | Carrinho
-        | &nbsp
-        span#cart-qtd= cart.totalQtd
-      //- Admin.
-      if user.group == 'admin'
-        a(href='/admin') 
-          svg.icon: use(xlink:href='/icon/sprite.svg#ic_supervisor_account_white_24px')
-          | Admin
+      if !nav.showAdminLinks
+        //- Cart.
+        a(href='/cart')
+          //- img.cart(src='/icon/ic_shopping_cart_white_24px.svg' alt='cart')
+          svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px')
+          | Carrinho
+          | &nbsp
+          span#cart-qtd= cart.totalQtd
+        //- Admin.
+        if user.group == 'admin'
+          a(href='/admin') 
+            svg.icon: use(xlink:href='/icon/sprite.svg#ic_supervisor_account_white_24px')
+            | Admin
       a(href='/users/logout')
         svg.icon: use(xlink:href='/icon/sprite.svg#ic_exit_to_app_white_24px')
         | Sair  
