@@ -2,8 +2,6 @@
 const express = require('express');
 const redis = require('../db/redis');
 const router = express.Router();
-const mongo = require('../db/mongo');
-const dbConfig = require('../config/db');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 // Personal modules.

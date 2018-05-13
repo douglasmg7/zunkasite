@@ -37,17 +37,15 @@ var app = new Vue({
         this.products = res.data.products;
         this.page = res.data.page;
         this.pageCount = res.data.pageCount;
-        // console.log('products count: ', this.products.length);
       })
       .catch((err)=>{
-        console.log(`Error - getProducts(), err: ${err}`);
+        console.error(`Error - getProducts(), err: ${err}`);
       });
     },
     getPrdouctAddedToCart(){
       let regExpResult = /[?&]productAddedToCart=([^&#]*)/.exec(window.location.href);
       if (regExpResult) {
         let product_id = regExpResult[1];
-        console.log(product_id);
         axios({
           method: 'get',
           url: `/api/product/${product_id}`,
@@ -57,7 +55,7 @@ var app = new Vue({
           this.productAddedToCart = res.data.product;
         })
         .catch((err)=>{
-          console.log(`Error - getProducts(), err: ${err}`);
+          console.error(`Error - getProducts(), err: ${err}`);
         });
       }
     }

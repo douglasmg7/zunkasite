@@ -1,9 +1,6 @@
 'use strict';
 const express = require('express');
 const router = express.Router();
-const mongo = require('../db/mongo');
-const dbConfig = mongo.config;
-const ObjectId = require('mongodb').ObjectId;
 const log = require('../config/log');
 // Models.
 const Product = require('../model/product');
@@ -18,8 +15,6 @@ function formatMoney(val){
 
 // Get products page.
 router.get('/', function(req, res, next) {
-  // console.log('get root');
-  // console.log(`search: ${JSON.stringify(req.query.productAddedToCart)}`);
   res.render('productList', {
     nav: {
     }
@@ -35,10 +30,7 @@ router.get('/product/:_id', function(req, res, next) {
       res.render('product', {
         nav: {
         },
-        // user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
-        // cart: req.cart,
         product
-        // csrfToken: req.csrfToken()
       });
     } else {
       log.info(`product ${req.params._id} not found`);
@@ -63,7 +55,6 @@ router.get('/api/products', function (req, res) {
   Promise.all([productPromise, productCountPromise])
   .then(([products, count])=>{    
     res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)});
-    // console.log(`Products count: ${products.length}`);
   }).catch(err=>{
     return next(err);
   });
@@ -74,7 +65,6 @@ router.get('/api/product/:_id', function(req, res, next) {
   Product.findById(req.params._id)
   .then(product=>{
     if (product._id) {
-      // console.log(`product: ${JSON.stringify(product)}`);
       res.json({product});
     } else {
       log.info(`product ${req.params._id} not found`);
@@ -83,96 +73,6 @@ router.get('/api/product/:_id', function(req, res, next) {
   }).catch(err=>{
     return next(err);
   });  
-});
-
-
-// Index.
-router.get('/old', function(req, res, next) {
-  req.query.search = req.query.search || '';
-  res.render('store', {
-    user: req.isAuthenticated() ? req.user : { name: undefined, group: undefined },
-    cart: req.cart,
-    initSearch: req.query.search,
-    productAdded: null
-  });
-});
-
-// Index.
-router.get('/last-product-added-to-cart/:_id', function(req, res, next) {
-  req.query.search = req.query.search || '';
-  // Mongodb formated _id product.
-  let _id;
-  try {
-    _id = new ObjectId(req.params._id);
-  } catch (e) {
-    res.status(404).send('Produto não encontrado.');
-    console.log(`error creating mongo ObjectId, error: ${e}`);
-    return;
-  }
-  // Get last product added to from db.
-  mongo.db.collection(dbConfig.collStoreProducts).findOne({_id: _id})
-    .then(product=>{
-      // Product exist.
-      if (product._id) {
-        // First image selected to use.
-        let image;
-        for (var i = 0; i < product.images.length; i++) {
-          if (product.images[i].selected) {
-            image = product.images[i].name;
-            break;
-          }
-        }
-        res.render('store', {
-          user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
-          cart: req.cart,
-          initSearch: req.query.search,
-          productAdded: {image: `/img/${product._id}/${image}`}
-        });
-      // Not exist the product.
-      } else {
-        console.log(`product ${req.params._id} not found`);
-        res.status(404).send('Produto não encontrado.');
-      }
-    })
-    .catch((err)=>{
-      console.log(`error getting product from db, _id: ${req.params._id}, err: ${err}`);
-      res.status(404).send('Produto não encontrado.');
-  });
-});
-
-// Get a specific product.
-router.get('/old/product/:_id', function(req, res, next) {
-  // Mongodb formated _id product.
-  let _id;
-  try {
-    _id = new ObjectId(req.params._id);
-  } catch (e) {
-    res.status(404).send('Produto não encontrado.');
-    console.log(`error creating mongo ObjectId, error: ${e}`);
-    return;
-  }
-  // Get product from db.
-  mongo.db.collection(dbConfig.collStoreProducts).findOne({_id: _id})
-  .then(result=>{
-    // Product exist.
-    if (result._id) {
-      // console.log(JSON.stringify(result));
-      res.render('storeItem', {
-        user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
-        cart: req.cart,
-        product: result,
-        csrfToken: req.csrfToken()
-      });
-    // Not exist the product.
-    } else {
-      console.log(`product ${req.params._id} not found`);
-      res.status(404).send('Produto não encontrado.');
-    }
-  })
-  .catch((err)=>{
-    console.log(`error getting product from db, _id: ${req.params._id}, err: ${err}`);
-    res.status(404).send('Produto não encontrado.');
-  });
 });
 
 // Cart page.
@@ -189,10 +89,8 @@ router.get('/cart', (req, res, next)=>{
 // Add product to cart.
 router.put('/cart/add/:_id', (req, res, next)=>{
   // Get product from db.
-  let _id = new ObjectId(req.params._id);
-  mongo.db.collection(dbConfig.collStoreProducts).findOne({_id: _id})
+  Product.findById(req.params._id)
   .then(product=>{
-    // Product exist.
     if (product._id) {
       req.cart.addProduct(product);
       // console.log('user cart', JSON.stringify(user.cart));
@@ -200,13 +98,12 @@ router.put('/cart/add/:_id', (req, res, next)=>{
     // Not exist the product.
     } else {
       log.error(`product ${req.params._id} not found to add to cart.`);
-      res.status(404).send('Produto não encontrado na base de dados.');
+      res.status(404).send('Produto não encontrado na base de dados.');  
     }
-  })
-  .catch((err)=>{
+  }).catch(err=>{
     log.error(err, new Error().stack);
     res.status(404).send('Produto não encontrado na base de dados.');
-  });
+  });  
 })
 
 // Change product quantity from cart.
