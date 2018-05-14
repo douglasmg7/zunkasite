@@ -46,13 +46,17 @@ router.get('/ship-address', (req, res, next)=>{
 router.get('/ship-address-selected/:address_id', (req, res, next)=>{
   // Find selected address.
   Address.findById(req.params.address_id, (err, address)=>{
+    console.log(`req.user.email: ${req.user.email}`);
+    console.log(`req.user.name: ${req.user.name}`);
     if (err) return next(err);
-    // Find order with shipAddressSelected status.
+    // Remove order with ship address selected, to start from begin again.
     Order.remove({user_id: req.user._id, status: 'shipAddressSelected'}, err=>{
       if (err) return next(err);
-      // Not found order.
+      // Create a new order.
       let order = new Order();
       order.user_id = req.user._id;
+      order.name = req.user.name;
+      order.email = req.user.email;
       order.status = 'shipAddressSelected';
       order.shipAddress = {};
       order.shipAddress.name = address.name;

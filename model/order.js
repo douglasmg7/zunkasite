@@ -15,10 +15,17 @@ let address = new mongoose.Schema({
 // Schema.
 let schema = new mongoose.Schema({
   user_id: { type: mongoose.Schema.Types.ObjectId, required: true },
-  status: { type: String, required: true },
+  name: { type: String, required: true },    // If user change his name, it will keep the name used at order request.
+  email: { type: String, required: true },    // If user change his email, it will keep the email used at order request.
   shipAddress: address,
   billAddress: address,
+  status: { type: String, required: true},
   shipMethod: { type: String },
+  orderedTime: { type: Date },    // Order request time.
+  canceledTime: { type: Date },   // Paid confirmation time.
+  paidTime: { type: Date },   // Paid confirmation time.
+  shippedTime: { type: Date },    // Shipped time.
+  deliveredTime: { type: Date },    // Delivered time.
   createdAt: { type: Date, default: Date.now },
   modifiedAt: { type: Date, default: Date.now }
 });
