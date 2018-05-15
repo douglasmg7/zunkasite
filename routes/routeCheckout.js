@@ -16,9 +16,29 @@ const Address = require('../model/address');
 const Order = require('../model/order');
 const Product = require('../model/product');
 
+module.exports = router;
+
 // Format number to money format.
 function formatMoney(val){
   return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+// Check permission.
+function checkPermission (req, res, next) {
+  // Should be admin.
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/users/login');
+}
+
+// Check not logged.
+function checkNotLogged (req, res, next) {
+  // Should be admin.
+  if (!req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/');
 }
 
 // Transporter object using the default SMTP transport.
@@ -145,57 +165,6 @@ router.post('/ship-address-add', checkPermission, (req, res, next)=>{
   });
 });
 
-// Estimate shipment.
-router.get('/ship-estimate', (req, res, next)=>{
-  console.log('req.query', req.query);
-  Product.findById(req.query.productId, (err, product)=>{
-    if (err) { return next(err); }
-    if (!product) {  return next(new Error('Product not found.')); }
-    // Create soap.
-    soap.createClient('http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?wsdl', (err, client)=>{
-      if (err) {
-        log.error(err, new Error().stack);
-        res.json({ success: false });
-        return;
-      }
-      // Argments.
-      let args = {
-        nCdEmpresa: '',  // Código administrativo junto à ECT (para clientes com contrato) .
-        sDsSenha: '',  
-        nCdServico: '04510',  // Para clientes sem contrato (04510 - PAC à vista).
-        sCepOrigem: '31030160',
-        sCepDestino: req.query.cepDestiny.replace('-', ''),
-        nVlPeso: product.storeProductWeightG ? (product.storeProductWeightG / 1000).toString() : '1.5',    // Weight in Kg.
-        nCdFormato: 1,    // 1 - caixa/pacote, 2 - rolo/prisma, 3 - Envelope.
-        nVlComprimento: product.storeProductLengthMm ? (product.storeProductLengthMm / 10) : 30,  // Lenght in cm.
-        nVlAltura: product.storeProductHeightMm ? (product.storeProductHeightMm / 10) : 10,  // Height in cm.
-        nVlLargura: product.storeProductWidthMm ? (product.storeProductWidthMm / 10) : 20,   // Width in cm.
-        nVlDiametro: 0,   // Diâmetro em cm.
-        sCdMaoPropria      : 'N',   // Se a encomenda será entregue com o serviço adicional mão própria.
-        nVlValorDeclarado  : 0,
-        sCdAvisoRecebimento: 'N'
-      };
-      // console.log('args', args);
-      // Call webservice.
-      client.CalcPrecoPrazo(args, (err, result)=>{
-        if (err) {
-          log.error(err, new Error().stack);
-          res.json({ success: false, errMsg: 'Serviço indisponível' });
-          return;
-        }
-        // Result.
-        if (result.CalcPrecoPrazoResult.Servicos.cServico[0].Erro !== '0') {
-          log.error('WS Correios erro: ' + result.CalcPrecoPrazoResult.Servicos.cServico[0].MsgErro, new Error().stack);
-          res.json({ success: false, errMsg: 'CEP inválido' });
-          return;
-        }
-        res.json({ success: true, correio: result.CalcPrecoPrazoResult.Servicos.cServico[0] });
-        // console.log('correios result: ', result.CalcPrecoPrazoResult.Servicos.cServico[0]);
-      });
-    });
-  });
-});
-
 // Select shipment page.
 router.get('/shipment', (req, res, next)=>{
   Order.findOne({user_id: req.user._id}, (err, order)=>{
@@ -211,19 +180,30 @@ router.get('/shipment', (req, res, next)=>{
 router.post('/shipment', (req, res, next)=>{
   console.log(req.body);
   // Set shipment method to default.
-  Order.update({ user_id: req.user._id }, { shipMethod: 'default'}, err=>{
+  Order.update({ user_id: req.user._id }, { shipMethod: 'default', status: 'shipMethodSelected'}, err=>{
     if (err) { return next(err) };
-    res.redirect('/checkout/paymant');
+    res.redirect('/checkout/payment');
   });    
 });
 
-// Select paymant page.
-router.get('/paymant', (req, res, next)=>{
-  res.render('checkout/paymant'); 
+// Select payment page.
+router.get('/payment', (req, res, next)=>{
+  res.render('checkout/payment'); 
 });
 
-// Select paymant.
-router.post('/paymant', (req, res, next)=>{
+// Select payment page.
+router.get('/return', (req, res, next)=>{
+  console.log('Return called.');
+  res.render('/'); 
+});
+
+// Select payment page.
+router.get('/cancel', (req, res, next)=>{
+  console.log('Cancel called.');
+  res.render('/'); 
+});
+// // Select payment.
+// router.post('/payment', (req, res, next)=>{
   // // Configuration.
   // paypal.configure({
   //   'mode': 'sandbox', //sandbox or live
@@ -262,9 +242,8 @@ router.post('/paymant', (req, res, next)=>{
   // paypal.payment.create(paymentInfo, (err, payment)=>{
   //     if (err) return next(err);
   //     console.log("### Payment Response ###");
-  //     console.log(payment);
+  //     console.log(JSON.stringify(payment));
   // }); 
-
 
   // let nvpData = {
   //   USER: '',
@@ -319,24 +298,56 @@ router.post('/paymant', (req, res, next)=>{
   //   return next(err);
   // }).
   // end();
+// });
+
+// Estimate shipment.
+router.get('/ship-estimate', (req, res, next)=>{
+  console.log('req.query', req.query);
+  Product.findById(req.query.productId, (err, product)=>{
+    if (err) { return next(err); }
+    if (!product) {  return next(new Error('Product not found.')); }
+    // Create soap.
+    soap.createClient('http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?wsdl', (err, client)=>{
+      if (err) {
+        log.error(err, new Error().stack);
+        res.json({ success: false });
+        return;
+      }
+      // Argments.
+      let args = {
+        nCdEmpresa: '',  // Código administrativo junto à ECT (para clientes com contrato) .
+        sDsSenha: '',  
+        nCdServico: '04510',  // Para clientes sem contrato (04510 - PAC à vista).
+        sCepOrigem: '31030160',
+        sCepDestino: req.query.cepDestiny.replace('-', ''),
+        nVlPeso: product.storeProductWeightG ? (product.storeProductWeightG / 1000).toString() : '1.5',    // Weight in Kg.
+        nCdFormato: 1,    // 1 - caixa/pacote, 2 - rolo/prisma, 3 - Envelope.
+        nVlComprimento: product.storeProductLengthMm ? (product.storeProductLengthMm / 10) : 30,  // Lenght in cm.
+        nVlAltura: product.storeProductHeightMm ? (product.storeProductHeightMm / 10) : 10,  // Height in cm.
+        nVlLargura: product.storeProductWidthMm ? (product.storeProductWidthMm / 10) : 20,   // Width in cm.
+        nVlDiametro: 0,   // Diâmetro em cm.
+        sCdMaoPropria      : 'N',   // Se a encomenda será entregue com o serviço adicional mão própria.
+        nVlValorDeclarado  : 0,
+        sCdAvisoRecebimento: 'N'
+      };
+      // console.log('args', args);
+      // Call webservice.
+      client.CalcPrecoPrazo(args, (err, result)=>{
+        if (err) {
+          log.error(err, new Error().stack);
+          res.json({ success: false, errMsg: 'Serviço indisponível' });
+          return;
+        }
+        // Result.
+        if (result.CalcPrecoPrazoResult.Servicos.cServico[0].Erro !== '0') {
+          log.error('WS Correios erro: ' + result.CalcPrecoPrazoResult.Servicos.cServico[0].MsgErro, new Error().stack);
+          res.json({ success: false, errMsg: 'CEP inválido' });
+          return;
+        }
+        res.json({ success: true, correio: result.CalcPrecoPrazoResult.Servicos.cServico[0] });
+        // console.log('correios result: ', result.CalcPrecoPrazoResult.Servicos.cServico[0]);
+      });
+    });
+  });
 });
 
-// Check permission.
-function checkPermission (req, res, next) {
-  // Should be admin.
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/users/login');
-}
-
-// Check not logged.
-function checkNotLogged (req, res, next) {
-  // Should be admin.
-  if (!req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/');
-}
-
-module.exports = router;
