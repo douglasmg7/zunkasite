@@ -30,7 +30,7 @@ html(lang="en")
             input(type='hidden' name='_csrf' value=csrfToken)       
             input.btn.btn-success(type='submit' value= 'Paypal')
   script.
-    let cart = !{JSON.stringify(cart)};
+    let order = !{JSON.stringify(order)};
   include ../components/jquery.js.pug
   include ../components/bootstrap.js.pug
   script(src='/js/checkout/payment.js') 

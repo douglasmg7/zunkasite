@@ -70,7 +70,7 @@ router.get('/ship-address-selected/:address_id', (req, res, next)=>{
     console.log(`req.user.name: ${req.user.name}`);
     if (err) return next(err);
     // Remove order with ship address selected, to start from begin again.
-    Order.remove({user_id: req.user._id, status: 'shipAddressSelected'}, err=>{
+    Order.remove({user_id: req.user._id}, err=>{
       if (err) return next(err);
       // Create a new order.
       let order = new Order();
@@ -178,9 +178,20 @@ router.get('/shipment', (req, res, next)=>{
 
 // Select shipment.
 router.post('/shipment', (req, res, next)=>{
-  console.log(req.body);
+  // Get products itens.
+  let items = []
+  for (var i = 0; i < req.cart.products.length; i++) {
+    let item = {
+      _id: req.cart.products[i]._id,
+      name: req.cart.products[i].title,
+      quantity: req.cart.products[i].qtd,
+      price: req.cart.products[i].price 
+    }
+    items.push(item);
+  }
+  console.log(`Items: ${JSON.stringify(items)}`);
   // Set shipment method to default.
-  Order.update({ user_id: req.user._id }, { shipMethod: 'default', status: 'shipMethodSelected'}, err=>{
+  Order.update({ user_id: req.user._id }, { items: items, shipMethod: 'default', status: 'shipMethodSelected'}, err=>{
     if (err) { return next(err) };
     res.redirect('/checkout/payment');
   });    
@@ -188,7 +199,13 @@ router.post('/shipment', (req, res, next)=>{
 
 // Select payment page.
 router.get('/payment', (req, res, next)=>{
-  res.render('checkout/payment'); 
+  Order.findOne({user_id: req.user._id}, (err, order)=>{
+    if (err) { return next(err); }
+    if (!order) {
+      return next(new Error('No order to continue checkout.')); }
+    else {
+      res.render('checkout/payment', { order: order, formatMoney: formatMoney }); }
+  });  
 });
 
 // Select payment page.

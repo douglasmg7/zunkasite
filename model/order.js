@@ -12,11 +12,19 @@ let address = new mongoose.Schema({
   city: { type: String, required: true },
   state: { type: String, required: true },
 });
+// Schema - Item.
+let item = new mongoose.Schema({
+  _id: { type: String, required: true },
+  name: { type: String, required: true },       // Used by carrier for contact.
+  quantity: { type: Number, required: true },
+  price: { type: String, required: true },
+});
 // Schema.
 let schema = new mongoose.Schema({
   user_id: { type: mongoose.Schema.Types.ObjectId, required: true },
   name: { type: String, required: true },    // If user change his name, it will keep the name used at order request.
   email: { type: String, required: true },    // If user change his email, it will keep the email used at order request.
+  items: [item],   // Itens to be bought.
   shipAddress: address,
   billAddress: address,
   status: { type: String, required: true},

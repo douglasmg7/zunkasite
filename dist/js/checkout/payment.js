@@ -1,5 +1,22 @@
-console.log(cart);
-
+console.log(order);
+let items = [];
+let subtotal = 0;
+let shippingPrice = 100;
+// Get each product.
+for (var i = 0; i < order.items.length; i++) {
+  let item = {
+    name: order.items[i].name,
+    // item.description: '',
+    quantity: order.items[i].quantity,
+    price: order.items[i].price,
+    //- tax: "0.01",
+    sku: order.items[i]._id,
+    currency: "BRL"
+  };
+  subtotal += order.items[i].price;
+  items.push(item);
+}
+console.log(`itens: ${JSON.stringify(items)}`);
 // Paypal Express Checkout. 
 // https://developer.paypal.com/docs/api/payments/
 paypal.Button.render({
@@ -37,12 +54,12 @@ paypal.Button.render({
           {
             // reference_id: 'asdfasdfasdfasdf', // Optional - i will use order _id.
             amount: {
-              total: "0.04",
+              total: subtotal + shippingPrice,
               currency: "BRL",
               details: {
-                subtotal: "0.03",
+                subtotal: subtotal,
                 //- tax: "0.01",
-                shipping: "0.01",
+                shipping: shippingPrice,
                 //- handling_fee: "0.01",
                 //- shipping_discount: "-0.01",
                 //- insurance: "0.01"
