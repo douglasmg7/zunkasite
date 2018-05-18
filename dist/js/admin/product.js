@@ -11,7 +11,11 @@ var app = new Vue({
       storeProductDiscountValue: '',
       storeProductMarkup: '',
       dealerProductPrice: '',
-      dealerProductQtd: ''
+      dealerProductQtd: '',
+      storeProductHeight: '',
+      storeProductLength: '',
+      storeProductWeight: '',
+      storeProductWidth: ''
     }
   },
   methods: {
@@ -49,6 +53,7 @@ var app = new Vue({
           // Save returned validation to vue data validation.
           for (key in response.data.validation){
             this.validation[key] = response.data.validation[key];
+            console.log(this.validation[key]);
           }
         // No error validation.
         } else {

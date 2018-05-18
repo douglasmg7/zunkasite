@@ -132,13 +132,17 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
   // Quantity.
   validation.dealerProductQtd = req.body.product.dealerProductQtd >= 0 ? undefined : 'Entre com um valor válido para o estoque.';
   // Length.
-  validation.dealerProductLength = req.body.product.dealerProductLength >= 0 ? undefined : 'Entre com um valor válido para o comprimento.';
+  validation.storeProductLength = req.body.product.storeProductLength >= 0 ? undefined : 'Entre com um valor válido para o comprimento.';
   // Height.
-  validation.dealerProductHeight = req.body.product.dealerProductHeight >= 0 ? undefined : 'Entre com um valor válido para a altura.';
+  validation.storeProductHeight = req.body.product.storeProductHeight >= 0 ? undefined : 'Entre com um valor válido para a altura.';
   // Width.
-  validation.dealerProductWidth = req.body.product.dealerProductWidth >= 0 ? undefined : 'Entre com um valor válido para a largura.';
+  validation.storeProductWidth = req.body.product.storeProductWidth >= 0 ? undefined : 'Entre com um valor válido para a largura.';
+  // Weight.
+  validation.storeProductWeight = req.body.product.storeProductWeight >= 0 ? undefined : 'Entre com um valor válido para o peso.';
+  console.log(`validation.length: ${Object.keys(validation).length}`);
   // Send validation erros.
-  if (validation.length) {
+  if (Object.keys(validation).length) {
+    console.log('Send validation.');
     res.json({validation});
     // console.log(`Validation: ${JSON.stringify(validation)}`);
     return;
