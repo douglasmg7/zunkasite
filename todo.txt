@@ -1,5 +1,7 @@
 Remover senhas do servidor
 
+carrinho atualizar quando alterar o preço dos produtos.
+
 Não remover usuário quando ele pagar a conta, manter informações por questões de segurança.
 
 Num of products to not commercialize must be in to a config, not harded coded

@@ -25,15 +25,19 @@ let schema = new mongoose.Schema({
   name: { type: String, required: true },    // If user change his name, it will keep the name used at order request.
   email: { type: String, required: true },    // If user change his email, it will keep the email used at order request.
   items: [item],   // Itens to be bought.
+  subtotalPrice: { type: String },
+  shippingPrice: { type: String },
+  totalPrice: { type: String },
+  shippingMethod: { type: String },
+  deliveryTime: { type: Number },
   shipAddress: address,
   billAddress: address,
   status: { type: String, required: true},
-  shipMethod: { type: String },
-  orderedTime: { type: Date },    // Order request time.
-  canceledTime: { type: Date },   // Paid confirmation time.
-  paidTime: { type: Date },   // Paid confirmation time.
-  shippedTime: { type: Date },    // Shipped time.
-  deliveredTime: { type: Date },    // Delivered time.
+  orderedAt: { type: Date },    // Order request time.
+  canceledAt: { type: Date },   // Paid confirmation time.
+  paidAt: { type: Date },   // Paid confirmation time.
+  shippedAt: { type: Date },    // Shipped time.
+  deliveredAt: { type: Date },    // Delivered time.
   createdAt: { type: Date, default: Date.now },
   modifiedAt: { type: Date, default: Date.now }
 });

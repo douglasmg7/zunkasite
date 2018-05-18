@@ -1,8 +1,5 @@
-console.log(order);
+// Items.
 let items = [];
-let subtotal = 0;
-let shippingPrice = 100;
-// Get each product.
 for (var i = 0; i < order.items.length; i++) {
   let item = {
     name: order.items[i].name,
@@ -13,10 +10,20 @@ for (var i = 0; i < order.items.length; i++) {
     sku: order.items[i]._id,
     currency: "BRL"
   };
-  subtotal += order.items[i].price;
   items.push(item);
 }
-console.log(`itens: ${JSON.stringify(items)}`);
+// Shipping address.
+let shippingAddress = {
+  recipient_name: order.shipAddress.name,
+  line1: `${order.shipAddress.address}, ${order.shipAddress.addressNumber} - ${order.shipAddress.district}`,
+  line2: order.shipAddress.complement,
+  city: order.shipAddress.city,
+  country_code: 'BR',
+  postal_code: order.shipAddress.cep,
+  phone: order.shipAddress.phone,
+  state: order.shipAddress.state
+};
+// console.log(`shippingAddress: ${JSON.stringify(shippingAddress)}`);
 // Paypal Express Checkout. 
 // https://developer.paypal.com/docs/api/payments/
 paypal.Button.render({
@@ -54,12 +61,12 @@ paypal.Button.render({
           {
             // reference_id: 'asdfasdfasdfasdf', // Optional - i will use order _id.
             amount: {
-              total: subtotal + shippingPrice,
+              total: order.totalPrice,
               currency: "BRL",
               details: {
-                subtotal: subtotal,
+                subtotal: order.subtotalPrice,
                 //- tax: "0.01",
-                shipping: shippingPrice,
+                shipping: order.shippingPrice,
                 //- handling_fee: "0.01",
                 //- shipping_discount: "-0.01",
                 //- insurance: "0.01"
@@ -70,36 +77,8 @@ paypal.Button.render({
             soft_descriptor: 'ECHI5786786',
             purchase_order: 'asefeaf',
             item_list: {
-              items: [
-                {
-                  name: "hat",
-                  description: "Brown hat.",
-                  quantity: "1",
-                  price: "0.01",
-                  //- tax: "0.01",
-                  sku: "1",
-                  currency: "BRL"
-                },
-                {
-                  name: "handbag",
-                  description: "Black handbag.",
-                  quantity: "1",
-                  price: "0.02",
-                  //- tax: "0.02",
-                  sku: "product34",
-                  currency: "BRL"
-                }
-              ],
-              shipping_address: {
-                recipient_name: 'Brian Robinson',
-                line1: '4th Floor',
-                line2: 'Unit #34',
-                city: 'San Jose',
-                country_code: 'US',
-                postal_code: '95131',
-                phone: '011862212345678',
-                state: 'CA'
-              }
+              items: items,
+              shipping_address: shippingAddress
             }
           }
         ],

@@ -185,14 +185,22 @@ router.post('/shipment', (req, res, next)=>{
       _id: req.cart.products[i]._id,
       name: req.cart.products[i].title,
       quantity: req.cart.products[i].qtd,
-      price: req.cart.products[i].price 
+      price: req.cart.products[i].price.toFixed(2) 
     }
     items.push(item);
   }
-  console.log(`Items: ${JSON.stringify(items)}`);
+  console.log(`cart: ${JSON.stringify(req.cart)}`);
   // Set shipment method to default.
-  Order.update({ user_id: req.user._id }, { items: items, shipMethod: 'default', status: 'shipMethodSelected'}, err=>{
-    if (err) { return next(err) };
+  Order.update(
+    { user_id: req.user._id }, 
+    { 
+      items: items, 
+      subtotalPrice: req.cart.totalPrice.toFixed(2),
+      shippingPrice: '.33',
+      totalPrice: (.33 + req.cart.totalPrice).toFixed(2),
+      shipMethod: 'default', 
+      status: 'shipMethodSelected'
+    }, err=>{ if (err) { return next(err) };
     res.redirect('/checkout/payment');
   });    
 });
