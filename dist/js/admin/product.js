@@ -82,7 +82,7 @@ var app = new Vue({
             alert('Não foi possível apagar o produto.');
           }
           else {
-            window.location.href = '/admin/productList';
+            window.location.href = '/admin/';
           }
         })
         .catch(e => {

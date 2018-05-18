@@ -70,6 +70,25 @@ html(lang="en")
           .field
             label(for='storeWarratyDetail') Observação
             input(type='text' id='storeWarratyDetail' v-model='product.storeProductWarrantyDetail')        
+          //- Dimensions.
+          h2 Dimensões
+          hr
+          .field
+            label(for='length') Comprimento (cm)
+            input.input-integer(type='text' id='length' v-model='product.storeProductLength')
+            p.validation(v-if='validation.storeProductLength') {{validation.storeProductLength}}
+          .field
+            label(for='height') Altura (cm)
+            input.input-integer(type='text' id='height' v-model='product.storeProductHeight')
+            p.validation(v-if='validation.storeProductHeight') {{validation.storeProductHeight}}
+          .field
+            label(for='width') Largura (cm)
+            input(type='text' id='width' v-model='product.storeProductWidth')        
+            p.validation(v-if='validation.storeProductWidth') {{validation.storeProductWidth}}
+          .field
+            label(for='weight') Peso (gramas)
+            input(type='text' id='weight' v-model='product.storeProductWeight')        
+            p.validation(v-if='validation.storeProductWeight') {{validation.storeProductWeight}}
           //- Price.
           h2 Preço
           hr

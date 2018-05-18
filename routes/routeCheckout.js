@@ -345,11 +345,11 @@ router.get('/ship-estimate', (req, res, next)=>{
         nCdServico: '04510',  // Para clientes sem contrato (04510 - PAC à vista).
         sCepOrigem: '31030160',
         sCepDestino: req.query.cepDestiny.replace('-', ''),
-        nVlPeso: product.storeProductWeightG ? (product.storeProductWeightG / 1000).toString() : '1.5',    // Weight in Kg.
+        nVlPeso: (product.storeProductWeight / 1000).toString(),    // Weight in Kg.
         nCdFormato: 1,    // 1 - caixa/pacote, 2 - rolo/prisma, 3 - Envelope.
-        nVlComprimento: product.storeProductLengthMm ? (product.storeProductLengthMm / 10) : 30,  // Lenght in cm.
-        nVlAltura: product.storeProductHeightMm ? (product.storeProductHeightMm / 10) : 10,  // Height in cm.
-        nVlLargura: product.storeProductWidthMm ? (product.storeProductWidthMm / 10) : 20,   // Width in cm.
+        nVlComprimento: product.storeProductLength,  // Lenght in cm.
+        nVlAltura: product.storeProductHeight,  // Height in cm.
+        nVlLargura: product.storeProductWidth,   // Width in cm.
         nVlDiametro: 0,   // Diâmetro em cm.
         sCdMaoPropria      : 'N',   // Se a encomenda será entregue com o serviço adicional mão própria.
         nVlValorDeclarado  : 0,

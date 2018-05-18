@@ -24,14 +24,15 @@ html(lang="en")
           tbody
             tr(
               v-for='product in products', 
+              @click='goToProductPage(product._id)',
               :class='{"product-commercialize": product.storeProductCommercialize, "product-active": product.dealerProductActive && (product.dealerProductQtd > 5)}'
             )
-              td: a(:href='`/admin/product/${product._id}`') {{product.storeProductId}}
-              td: a(:href='`/admin/product/${product._id}`') {{product.storeProductTitle}}
-              td: a(:href='`/admin/product/${product._id}`') {{product.dealerName}}
-              td: a(:href='`/admin/product/${product._id}`') {{product.dealerProductLocation}}
-              td: a(:href='`/admin/product/${product._id}`') {{product.dealerProductQtd}}
-              td: a(:href='`/admin/product/${product._id}`') {{product.storeProductPrice | formatMoney}}   
+              td {{product.storeProductId}}
+              td {{product.storeProductTitle}}
+              td {{product.dealerName}}
+              td {{product.dealerProductLocation}}
+              td {{product.dealerProductQtd}}
+              td {{product.storeProductPrice | formatMoney}}    
         nav.pagination
           a(v-for='p in pageCount', @click='getProducts(p)', :page='page==p', :p='p', :active='page==p') {{p}}
           //- a(v-for='p in pageCount', :href='`/admin?page=${p}&search=${search}`', :page='page==p', :p='p', :active='page==p') {{p}}

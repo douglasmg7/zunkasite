@@ -38,6 +38,10 @@ var app = new Vue({
         console.log(`Error - getProducts(), err: ${err}`);
       });
     },
+    // Go to product page.
+    goToProductPage(product_id){
+      window.location.href=`/admin/product/${product_id}`;
+    }
   },
   filters: {
     // Format number to money format.

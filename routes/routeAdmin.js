@@ -123,10 +123,20 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
 router.post('/product/:productId', checkPermission, (req, res, next)=>{
   // Form validation.
   let validation = {};
+  // Price.
   validation.dealerProductPrice = req.body.product.dealerProductPrice >= 0 ? undefined : 'Entre com um valor válido para o preço do fornecedor.';
+  // Markup.
   validation.storeProductMarkup = req.body.product.storeProductMarkup >= 0 ? undefined : 'Entre com um valor válido para o lucro.'; 
+  // Discount.
   validation.storeProductDiscountValue = req.body.product.storeProductDiscountValue >= 0 ? undefined : 'Entre com um valor válido para o desconto.';   
+  // Quantity.
   validation.dealerProductQtd = req.body.product.dealerProductQtd >= 0 ? undefined : 'Entre com um valor válido para o estoque.';
+  // Length.
+  validation.dealerProductLength = req.body.product.dealerProductLength >= 0 ? undefined : 'Entre com um valor válido para o comprimento.';
+  // Height.
+  validation.dealerProductHeight = req.body.product.dealerProductHeight >= 0 ? undefined : 'Entre com um valor válido para a altura.';
+  // Width.
+  validation.dealerProductWidth = req.body.product.dealerProductWidth >= 0 ? undefined : 'Entre com um valor válido para a largura.';
   // Send validation erros.
   if (validation.length) {
     res.json({validation});

@@ -11,10 +11,10 @@ let product = new mongoose.Schema({
   dealerProductDesc: { type: String },
   dealerProductWarrantyDays: { type: Number },    // Warrant in days.
   dealerProductLocation: { type: String },  // Product location (ES, MG, RJ, etc...)
-  dealerProductWeightG: { type: Number },   // Weight in grams.
-  dealerProductWidthMm: { type: Number },   // Width in mm.
-  dealerProductHeightMm: { type: Number },  // Height in mm.
-  dealerProductDeepMm: { type: Number },    // Deep in mm.
+  dealerProductDeep: { type: Number },    // Deep (comprimento) in cm.
+  dealerProductHeight: { type: Number },  // Height in cm.
+  dealerProductWidth: { type: Number },   // Width in cm.
+  dealerProductWeight: { type: Number },   // Weight in grams.
   dealerProductActive: { type: Boolean },
   dealerProductCommercialize: { type: Boolean },
   dealerProductQtd: { type: Number },
@@ -31,10 +31,10 @@ let product = new mongoose.Schema({
   storeProductCategory: { type: String },
   storeProductWarrantyDays: { type: Number},  // Warrant in days.
   storeProductWarrantyDetail: { type: String},
-  storeProductWeightG: { type: Number },   // Weight in grams.
-  storeProductWidthMm: { type: Number },   // Width in mm.
-  storeProductHeightMm: { type: Number },  // Height in mm.
-  storeProductLengthMm: { type: Number },    // Length in mm.  
+  storeProductLength: { type: Number },    // Length in cm.  
+  storeProductHeight: { type: Number },  // Height in cm.
+  storeProductWidth: { type: Number },   // Width in cm.
+  storeProductWeight: { type: Number },   // Weight in grams.
   storeProductPrice: { type: Number },
   storeProductMarkup: { type: Number },
   storeProductDiscountEnable: { type: Boolean },
