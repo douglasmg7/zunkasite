@@ -43,15 +43,7 @@ module.exports = function Cart(cart) {
     }
     // Product not in the cart, add it.
     if (!prodctFound) {
-      // Find first image selected.
-      let image;
-      for (let i = 0; i < product.images.length; i++) {
-        if (product.images[i].selected) {
-          image = product.images[i].name;
-          break;
-        }
-      }
-      this.products.push({_id: product._id, qtd: 1, title: product.storeProductTitle, price: product.storeProductPrice, image: image});
+      this.products.push({_id: product._id, qtd: 1, title: product.storeProductTitle, price: product.storeProductPrice, image: product.images[0]});
     }
     // Re-caluculate total quantity and price.
     this.update();

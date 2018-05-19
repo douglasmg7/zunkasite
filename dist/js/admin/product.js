@@ -50,10 +50,8 @@ var app = new Vue({
       .then(response => {
         // Validation error.
         if (response.data.validation) {
-          // Save returned validation to vue data validation.
-          for (key in response.data.validation){
+          for (key in this.validation){
             this.validation[key] = response.data.validation[key];
-            console.log(this.validation[key]);
           }
         // No error validation.
         } else {

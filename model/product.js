@@ -31,10 +31,10 @@ let product = new mongoose.Schema({
   storeProductCategory: { type: String },
   storeProductWarrantyDays: { type: Number},  // Warrant in days.
   storeProductWarrantyDetail: { type: String},
-  storeProductLength: { type: Number },    // Length in cm.  
-  storeProductHeight: { type: Number },  // Height in cm.
-  storeProductWidth: { type: Number },   // Width in cm.
-  storeProductWeight: { type: Number },   // Weight in grams.
+  storeProductLength: { type: Number, required: true },    // Length in cm.  
+  storeProductHeight: { type: Number, required: true },  // Height in cm.
+  storeProductWidth: { type: Number, required: true },   // Width in cm.
+  storeProductWeight: { type: Number, required: true },   // Weight in grams.
   storeProductPrice: { type: Number },
   storeProductMarkup: { type: Number },
   storeProductDiscountEnable: { type: Boolean },
