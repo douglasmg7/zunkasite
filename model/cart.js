@@ -37,18 +37,24 @@ module.exports = function Cart(cart) {
         this.products[i].qtd++;
         // Update price.
         this.products[i].price = product.storeProductPrice;
-        // Dimensions.
-        this.product[i].length = product.storeProductLength;
-        this.product[i].height = product.storeProductHeight;
-        this.product[i].width = product.storeProductWidth;
-        this.product[i].weight = product.storeProductWeight;
         prodctFound = true;
         break;
       }        
     }
     // Product not in the cart, add it.
     if (!prodctFound) {
-      this.products.push({_id: product._id, qtd: 1, title: product.storeProductTitle, price: product.storeProductPrice, image: product.images[0]});
+      this.products.push({
+        _id: product._id, 
+        qtd: 1, 
+        title: product.storeProductTitle, 
+        price: product.storeProductPrice, 
+        image: product.images[0],
+        // Dimensions.
+        length: product.storeProductLength,
+        height: product.storeProductHeight,
+        width: product.storeProductWidth,
+        weight: product.storeProductWeight
+      });
     }
     // Re-caluculate total quantity and price.
     this.update();

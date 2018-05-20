@@ -18,6 +18,10 @@ let item = new mongoose.Schema({
   name: { type: String, required: true },       // Used by carrier for contact.
   quantity: { type: Number, required: true },
   price: { type: String, required: true },
+  length: { type: Number, required: true },
+  height: { type: Number, required: true },
+  width: { type: Number, required: true },
+  weight: { type: Number, required: true },
 });
 // Schema.
 let schema = new mongoose.Schema({

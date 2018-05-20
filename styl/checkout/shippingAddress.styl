@@ -4,22 +4,29 @@ main
   display flex
   flex-flow column nowrap
   justify-content center
-  margin 2em auto
+  margin 0 auto 3em auto
   max-width 1000px
-& > .addresss
-  // background-color red
-  display flex
-  flex-flow row wrap
-  // justify-content center
-  // justify-content space-between
-  // justify-content space-around
-  // justify-content 
-  // margin 0 1em
-  & > .address
-    flex 0 1 18em
-    // background-color yellow
-    // border 1px solid black
-    // margin .5em
-    padding 1.5em .5em
+  .addresss
+    // background-color red
+    display flex
+    flex-flow row wrap
+    .address
+      flex 0 1 18em
+      padding 1.5em .5em
+      button
+        margin-top 1em
+  .form
     button
+      margin-top 1em    
+    .field
+      display flex
+      flex-flow column wrap
       margin-top 1em
+      label
+        font-weight bold
+      input
+        height 2em
+      textarea
+        height 10em
+      .validation
+        color red

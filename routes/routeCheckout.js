@@ -56,14 +56,118 @@ let transporter = nodemailer.createTransport({
 router.get('/shipping-address', (req, res, next)=>{
   Address.find({ user_id: req.user._id }, (err, addresss)=>{
     if (err) return next(err);
+    let newAddress = new Address();
     res.render('checkout/shippingAddress', {
       nav: {
-        showAdminLinks: true,
-        showNewProductButton: true
       },
-      addresss
+      addresss,
+      newAddress
     });
   });
+});
+
+// Ship address selected.
+router.post('/shipping-address', (req, res, next)=>{
+  // Existing address selected.
+  if (req.body.address_id) {
+    // Create order.
+    createOrder(req.body.address_id); 
+  }
+  // New address selected.
+  else {
+    // Validation.
+    req.sanitize("newAddress.name").trim();
+    req.sanitize("newAddress.cep").trim();
+    req.sanitize("newAddress.address").trim();
+    req.sanitize("newAddress.addressNumber").trim();
+    req.sanitize("newAddress.district").trim();
+    req.sanitize("newAddress.city").trim();
+    req.sanitize("newAddress.state").trim();
+    req.sanitize("newAddress.phone").trim();
+    req.checkBody('newAddress.name', 'Campo deve ser preenchido.').notEmpty();
+    req.checkBody('newAddress.cep', 'Campo deve ser preenchido.').notEmpty();
+    req.checkBody('newAddress.address', 'Campo deve ser preenchido.').notEmpty();
+    req.checkBody('newAddress.addressNumber', 'Campo deve ser preenchido.').notEmpty();
+    req.checkBody('newAddress.district', 'Campo deve ser preenchido.').notEmpty();
+    req.checkBody('newAddress.city', 'Campo deve ser preenchido.').notEmpty();
+    req.checkBody('newAddress.state', 'Campo deve ser preenchido.').notEmpty();
+    req.checkBody('newAddress.phone', 'Campo deve ser preenchido.').notEmpty();
+    req.getValidationResult().then(function(result) {
+      // Send validations errors to client.
+      if (!result.isEmpty()) {
+        res.json({validation: result.array()});
+        return;
+      } 
+      // Save address.
+      else {
+        let address = new Address(req.body.newAddress);
+        address.user_id = req.user._id;
+        address.save((err, newAddress) => {
+          if (err) {
+            res.json({err});
+            return next(err); 
+          } else {
+            log.info(`Address ${newAddress._id} saved.`);
+            // Create order.
+            createOrder(address._id);
+          }
+        });
+      }    
+    });
+  }
+
+  // Create order.
+  function createOrder(address_id){
+    // Find selected address.
+    Address.findById(address_id, (err, address)=>{
+      if (err) return next(err);
+      // Remove order with ship address selected, to start from begin again.
+      Order.remove({user_id: req.user._id}, err=>{
+        if (err) return next(err);
+        // Get products itens.
+        let items = []
+        for (var i = 0; i < req.cart.products.length; i++) {
+          let item = {
+            _id: req.cart.products[i]._id,
+            name: req.cart.products[i].title,
+            quantity: req.cart.products[i].qtd,
+            price: req.cart.products[i].price.toFixed(2),
+            length: req.cart.products[i].length,
+            height: req.cart.products[i].height,
+            width: req.cart.products[i].width,
+            weight: req.cart.products[i].weight
+          }
+          items.push(item);
+        }
+        // console.log(`cart: ${JSON.stringify(req.cart)}`);
+        // Create a new order.
+        let order = new Order();
+        order.items = items;
+        order.user_id = req.user._id;
+        order.name = req.user.name;
+        order.email = req.user.email;
+        order.status = 'shipAddressSelected';
+        order.shipAddress = {};
+        order.shipAddress.name = address.name;
+        order.shipAddress.cep = address.cep;
+        order.shipAddress.phone = address.phone;
+        order.shipAddress.address = address.address;
+        order.shipAddress.addressNumber = address.addressNumber;
+        order.shipAddress.addressComplement = address.addressComplement;
+        order.shipAddress.district = address.district;
+        order.shipAddress.city = address.city;
+        order.shipAddress.state = address.state;
+        order.save(err=>{
+          if (err) {
+            res.json({ err: err })
+          } else {
+            res.json({});
+          }
+        });        
+      });
+    })
+  };
+
 });
 
 // Ship address page old.

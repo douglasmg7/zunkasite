@@ -22,7 +22,7 @@ html(lang="en")
               span {{ cart.totalPrice | currencyBr }}
             .buttons
               a(href='/cart') Carrinho
-              a(href='/checkout/ship-address') Continuar ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
+              a(href='/checkout/shipping-address') Continuar ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
           .products
             .product(v-for='product in products')
               a(:href='"/product/" + product._id')

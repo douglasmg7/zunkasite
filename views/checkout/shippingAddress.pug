@@ -10,65 +10,84 @@ html(lang="en")
       nav
         include ../main-nav.pug    
     main#app(v-cloak)
-      .address-add
-        h2.text-left Selecionar um endereço para envio
-        p Ou voçê pode 
-          a(href='#') adicionar um novo endereço para envio.
-        hr
-      //- Address list.
-      .addresss
-        .address(v-if='address' v-for='address in addresss' data-address-id='this.address._id')
-          p.name {{address.name}}
-          p {{address.phone}}
-          p {{address.cep}}
-          p {{address.address}}
-          p {{address.addressNumber}}
-          p {{address.addressComplement}}
-          p {{address.district}}
-          p {{address.city}}
-          p {{address.state}}
-          button(@click='') Enviar para este endereço 
-      .form
-        hr
-        form(id='form-add-address' action='ship-address-add' method='post')
-          input(type='hidden' name='_csrf' value=csrfToken)       
-          h3.text-left
-            strong Cadastrar endereço para envio.                                  
-          .form-group
+      .container
+        .address-add
+          h2.text-left Selecionar um endereço para envio
+          p Ou voçê pode 
+            a(href='#') adicionar um novo endereço para envio.
+          hr
+        //- Address list.
+        .addresss
+          .address(v-if='address' v-for='address in addresss' data-address-id='this.address._id')
+            p.name {{address.name}}
+            p {{address.phone}}
+            p {{address.cep}}
+            p {{address.address}}
+            p {{address.addressNumber}}
+            p {{address.addressComplement}}
+            p {{address.district}}
+            p {{address.city}}
+            p {{address.state}}
+            button(@click='selectAddress(address._id)') Enviar para este endereço
+        .form
+          hr
+          .field
+            //- input(type='hidden' name='_csrf' value=csrfToken)       
+            h3.text-left
+              strong Cadastrar novo endereço para envio.    
+          //- Name.                              
+          .field
             label(for='name') Nome
-            input.form-control(type='text' name='name' id='name')             
-          .form-group
+            input.form-control(type='text' name='name' id='name' v-model='newAddress.name')
+            p.validation(v-if='validation.name') {{validation.name}}    
+          //- Cep.      
+          .field
             label(for='cep') CEP
-            input.form-control(type='text' name='cep' id='cep')
-            a(href='http://m.correios.com.br/movel/buscaCepConfirma.do' target='_blank') Não sei meu CEP
-            p.loading.hide Buscando dados do cpf...
-            .alert.alert-warning.hide(role='alert')
-              p Não foi possível encontrar o CEP informado. Por favor confira os dados e tente novamente.
-          .form-group
+            input.form-control(type='text' name='cep' id='cep' v-model='newAddress.cep')
+            p.validation(v-if='validation.cep') {{validation.cep}}          
+            a(href='http://www.buscacep.correios.com.br' target='_blank') Não sei meu CEP
+            p.loadingCep(v-if='loadingCep') Buscando dados do CEP...
+            p.validation(v-if='cepErr') Não foi possível encontrar o CEP informado. Por favor confira os dados e tente novamente.
+          //- Address.
+          .field
             label(for='address') Endereço
-            input.form-control(type='text' name='address' id='address')
-          .form-group
+            input.form-control(type='text' name='address' id='address' v-model='newAddress.address')
+            p.validation(v-if='validation.address') {{validation.address}} 
+          //- Adress number.
+          .field
             label(for='addressNumber') Número
-            input.form-control(type='text' name='addressNumber' id='addressNumber')
-          .form-group
+            input.form-control(type='text' name='addressNumber' id='addressNumber' v-model='newAddress.addressNumber')
+            p.validation(v-if='validation.addressNumber') {{validation.addressNumber}} 
+          //- Address complement.
+          .field
             label(for='addressComplement') Complemento
-            input.form-control(type='text' name='addressComplement' id='addressComplement')
-          .form-group
+            input.form-control(type='text' name='addressComplement' id='addressComplement' v-model='newAddress.addressComplement')
+            p.validation(v-if='validation.addressComplement') {{validation.addressComplement}} 
+          //- District.
+          .field
             label(for='district') Bairro
-            input.form-control(type='text' name='district' id='district')       
-          .form-group
+            input.form-control(type='text' name='district' id='district' v-model='newAddress.district')   
+            p.validation(v-if='validation.district') {{validation.district}} 
+          //- City.    
+          .field
             label(for='city') Cidade
-            input.form-control(type='text' name='city' id='city')  
-          .form-group
+            input.form-control(type='text' name='city' id='city' v-model='newAddress.city')  
+            p.validation(v-if='validation.city') {{validation.city}} 
+          //- State.
+          .field
             label(for='state') Estado
-            input.form-control(type='text' name='state' id='state')                     
-          .form-group
+            input.form-control(type='text' name='state' id='state' v-model='newAddress.state')  
+            p.validation(v-if='validation.state') {{validation.state}} 
+          //- Phone.                   
+          .field
             label(for='phone') Telefone
-            input.form-control(type='text' name='phone' id='phone')                                                                                        
-          input.btn.btn-success(type='submit' value='Enviar para este endereço')
+            input.form-control(type='text' name='phone' id='phone' v-model='newAddress.phone')                                                                                        
+            p.validation(v-if='validation.phone') {{validation.phone}} 
+          button(@click='newAddressSelected()') Enviar para este endereço
   //- Make available for vue.
   script.
     let addresss = !{JSON.stringify(addresss)};
+    let newAddress = !{JSON.stringify(newAddress)};
     let csrfToken = !{JSON.stringify(csrfToken)};
   //-   let user = !{JSON.stringify(user)};
   include ../components/vue.js.pug

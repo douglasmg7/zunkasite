@@ -57,7 +57,7 @@ html(lang="en")
             H4
               strong Subtotal (#{cart.totalQtd} #{cart.totalQtd > 1 ? 'itens): ' : 'item): '}
               span#subtotal-price #{formatMoney(cart.totalPrice)}
-              a.btn.btn-success.checkout(href='/checkout/ship-address') Continuar
+              a.btn.btn-success.checkout(href='/checkout/shipping-address') Continuar
         //- .row
           .col-md-12
             button.btn.btn-primary(type='button') Comprar

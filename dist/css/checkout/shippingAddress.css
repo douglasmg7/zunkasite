@@ -35,7 +35,7 @@ body {
 }
 body .container {
   width: 95%;
-  margin: auto;
+  margin: 0 auto;
 }
 button,
 input {
@@ -113,17 +113,37 @@ main {
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
-  margin: 2em auto;
+  margin: 0 auto 3em auto;
   max-width: 1000px;
 }
-.addresss {
+main .addresss {
   display: flex;
   flex-flow: row wrap;
 }
-.addresss > .address {
+main .addresss .address {
   flex: 0 1 18em;
   padding: 1.5em 0.5em;
 }
-.addresss > .address button {
+main .addresss .address button {
   margin-top: 1em;
+}
+main .form button {
+  margin-top: 1em;
+}
+main .form .field {
+  display: flex;
+  flex-flow: column wrap;
+  margin-top: 1em;
+}
+main .form .field label {
+  font-weight: bold;
+}
+main .form .field input {
+  height: 2em;
+}
+main .form .field textarea {
+  height: 10em;
+}
+main .form .field .validation {
+  color: #f00;
 }
