@@ -52,13 +52,27 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-// Ship address page.
+// Shipping address page.
+router.get('/shipping-address', (req, res, next)=>{
+  Address.find({ user_id: req.user._id }, (err, addresss)=>{
+    if (err) return next(err);
+    res.render('checkout/shippingAddress', {
+      nav: {
+        showAdminLinks: true,
+        showNewProductButton: true
+      },
+      addresss
+    });
+  });
+});
+
+// Ship address page old.
 router.get('/ship-address', (req, res, next)=>{
   Address.find({ user_id: req.user._id }, (err, addresss)=>{
     if (err) return next(err);
     let data = req.flash();
     data.addresss = addresss;
-    res.render('checkout/shipAddress', data); 
+    res.render('checkout/shipAddress_old', data); 
   })
 });
 
@@ -66,8 +80,8 @@ router.get('/ship-address', (req, res, next)=>{
 router.get('/ship-address-selected/:address_id', (req, res, next)=>{
   // Find selected address.
   Address.findById(req.params.address_id, (err, address)=>{
-    console.log(`req.user.email: ${req.user.email}`);
-    console.log(`req.user.name: ${req.user.name}`);
+    // console.log(`req.user.email: ${req.user.email}`);
+    // console.log(`req.user.name: ${req.user.name}`);
     if (err) return next(err);
     // Remove order with ship address selected, to start from begin again.
     Order.remove({user_id: req.user._id}, err=>{
@@ -80,8 +94,8 @@ router.get('/ship-address-selected/:address_id', (req, res, next)=>{
       order.status = 'shipAddressSelected';
       order.shipAddress = {};
       order.shipAddress.name = address.name;
-      order.shipAddress.phone = address.phone;
       order.shipAddress.cep = address.cep;
+      order.shipAddress.phone = address.phone;
       order.shipAddress.address = address.address;
       order.shipAddress.addressNumber = address.addressNumber;
       order.shipAddress.addressComplement = address.addressComplement;
@@ -130,16 +144,16 @@ router.post('/ship-address-add', checkPermission, (req, res, next)=>{
       address.user_id = req.user._id;
       address.name = req.body.name;
       address.cep = req.body.cep;
+      address.phone = req.body.phone;
       address.address = req.body.address;
       address.addressNumber = req.body.addressNumber;
       address.addressComplement = req.body.addressComplement;
       address.district = req.body.district;
       address.city = req.body.city;
       address.state = req.body.state;
-      address.phone = req.body.phone;
       address.save(function(err) {
         if (err) { return next(err); }
-        Order.remove({user_id: req.user._id, status: 'shipAddressSelected'}, err=>{
+        Order.remove({user_id: req.user._id}, err=>{
           if (err) { return next(err); }
           // Create order.
           let order = new Order();
@@ -147,8 +161,8 @@ router.post('/ship-address-add', checkPermission, (req, res, next)=>{
           order.status = 'shipAddressSelected';
           order.shipAddress = {};
           order.shipAddress.name = address.name;
-          order.shipAddress.phone = address.phone;
           order.shipAddress.cep = address.cep;
+          order.shipAddress.phone = address.phone;
           order.shipAddress.address = address.address;
           order.shipAddress.addressNumber = address.addressNumber;
           order.shipAddress.addressComplement = address.addressComplement;

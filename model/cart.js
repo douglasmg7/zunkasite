@@ -37,6 +37,11 @@ module.exports = function Cart(cart) {
         this.products[i].qtd++;
         // Update price.
         this.products[i].price = product.storeProductPrice;
+        // Dimensions.
+        this.product[i].length = product.storeProductLength;
+        this.product[i].height = product.storeProductHeight;
+        this.product[i].width = product.storeProductWidth;
+        this.product[i].weight = product.storeProductWeight;
         prodctFound = true;
         break;
       }        

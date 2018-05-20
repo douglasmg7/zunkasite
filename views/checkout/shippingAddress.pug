@@ -1,0 +1,78 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Endereços.
+    link(rel="stylesheet" href="/css/checkout/shippingAddress.css" charset="utf-8")
+  body
+    header
+      nav
+        include ../main-nav.pug    
+    main#app(v-cloak)
+      .address-add
+        h2.text-left Selecionar um endereço para envio
+        p Ou voçê pode 
+          a(href='#') adicionar um novo endereço para envio.
+        hr
+      //- Address list.
+      .addresss
+        .address(v-if='address' v-for='address in addresss' data-address-id='this.address._id')
+          p.name {{address.name}}
+          p {{address.phone}}
+          p {{address.cep}}
+          p {{address.address}}
+          p {{address.addressNumber}}
+          p {{address.addressComplement}}
+          p {{address.district}}
+          p {{address.city}}
+          p {{address.state}}
+          button(@click='') Enviar para este endereço 
+      .form
+        hr
+        form(id='form-add-address' action='ship-address-add' method='post')
+          input(type='hidden' name='_csrf' value=csrfToken)       
+          h3.text-left
+            strong Cadastrar endereço para envio.                                  
+          .form-group
+            label(for='name') Nome
+            input.form-control(type='text' name='name' id='name')             
+          .form-group
+            label(for='cep') CEP
+            input.form-control(type='text' name='cep' id='cep')
+            a(href='http://m.correios.com.br/movel/buscaCepConfirma.do' target='_blank') Não sei meu CEP
+            p.loading.hide Buscando dados do cpf...
+            .alert.alert-warning.hide(role='alert')
+              p Não foi possível encontrar o CEP informado. Por favor confira os dados e tente novamente.
+          .form-group
+            label(for='address') Endereço
+            input.form-control(type='text' name='address' id='address')
+          .form-group
+            label(for='addressNumber') Número
+            input.form-control(type='text' name='addressNumber' id='addressNumber')
+          .form-group
+            label(for='addressComplement') Complemento
+            input.form-control(type='text' name='addressComplement' id='addressComplement')
+          .form-group
+            label(for='district') Bairro
+            input.form-control(type='text' name='district' id='district')       
+          .form-group
+            label(for='city') Cidade
+            input.form-control(type='text' name='city' id='city')  
+          .form-group
+            label(for='state') Estado
+            input.form-control(type='text' name='state' id='state')                     
+          .form-group
+            label(for='phone') Telefone
+            input.form-control(type='text' name='phone' id='phone')                                                                                        
+          input.btn.btn-success(type='submit' value='Enviar para este endereço')
+  //- Make available for vue.
+  script.
+    let addresss = !{JSON.stringify(addresss)};
+    let csrfToken = !{JSON.stringify(csrfToken)};
+  //-   let user = !{JSON.stringify(user)};
+  include ../components/vue.js.pug
+  include ../components/axios.js.pug
+    //- include ../components/cpf.js.pug
+  //- include components/accounting.js.pug
+  script(src='/js/checkout/shippingAddress.js')
