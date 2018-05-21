@@ -38,12 +38,14 @@ html(lang="en")
           //- Name.                              
           .field
             label(for='name') Nome
-            input.form-control(type='text' name='name' id='name' v-model='newAddress.name')
+            input(type='text' name='name' id='name' v-model='newAddress.name')
             p.validation(v-if='validation.name') {{validation.name}}    
           //- Cep.      
           .field
             label(for='cep') CEP
-            input.form-control(type='text' name='cep' id='cep' v-model='newAddress.cep')
+            input(@blur='getCepInfo' type='text' name='cep' id='cep' v-model.lazy='newAddress.cep')
+            //- input(@focusout='getCepInfo' type='text' name='cep' id='cep' v-model='newAddress.cep')
+            //- the-mask(@keydown='getCepInfo' mask="['###.###.###-##', '##.###.###/####-##']" type='text' name='cep' id='cep' v-model='newAddress.cep')
             p.validation(v-if='validation.cep') {{validation.cep}}          
             a(href='http://www.buscacep.correios.com.br' target='_blank') Não sei meu CEP
             p.loadingCep(v-if='loadingCep') Buscando dados do CEP...
@@ -51,37 +53,37 @@ html(lang="en")
           //- Address.
           .field
             label(for='address') Endereço
-            input.form-control(type='text' name='address' id='address' v-model='newAddress.address')
+            input(type='text' name='address' id='address' v-model='newAddress.address')
             p.validation(v-if='validation.address') {{validation.address}} 
           //- Adress number.
           .field
             label(for='addressNumber') Número
-            input.form-control(type='text' name='addressNumber' id='addressNumber' v-model='newAddress.addressNumber')
+            input(type='text' name='addressNumber' id='addressNumber' v-model='newAddress.addressNumber')
             p.validation(v-if='validation.addressNumber') {{validation.addressNumber}} 
           //- Address complement.
           .field
             label(for='addressComplement') Complemento
-            input.form-control(type='text' name='addressComplement' id='addressComplement' v-model='newAddress.addressComplement')
+            input(type='text' name='addressComplement' id='addressComplement' v-model='newAddress.addressComplement')
             p.validation(v-if='validation.addressComplement') {{validation.addressComplement}} 
           //- District.
           .field
             label(for='district') Bairro
-            input.form-control(type='text' name='district' id='district' v-model='newAddress.district')   
+            input(type='text' name='district' id='district' v-model='newAddress.district')   
             p.validation(v-if='validation.district') {{validation.district}} 
           //- City.    
           .field
             label(for='city') Cidade
-            input.form-control(type='text' name='city' id='city' v-model='newAddress.city')  
+            input(type='text' name='city' id='city' v-model='newAddress.city')  
             p.validation(v-if='validation.city') {{validation.city}} 
           //- State.
           .field
             label(for='state') Estado
-            input.form-control(type='text' name='state' id='state' v-model='newAddress.state')  
+            input(type='text' name='state' id='state' v-model.lazy='newAddress.state')  
             p.validation(v-if='validation.state') {{validation.state}} 
           //- Phone.                   
           .field
             label(for='phone') Telefone
-            input.form-control(type='text' name='phone' id='phone' v-model='newAddress.phone')                                                                                        
+            input(type='text' name='phone' id='phone' v-model='newAddress.phone')                                                                                        
             p.validation(v-if='validation.phone') {{validation.phone}} 
           button(@click='newAddressSelected()') Enviar para este endereço
   //- Make available for vue.
@@ -90,8 +92,9 @@ html(lang="en")
     let newAddress = !{JSON.stringify(newAddress)};
     let csrfToken = !{JSON.stringify(csrfToken)};
   //-   let user = !{JSON.stringify(user)};
-  include ../components/vue.js.pug
+  include ../components/vue-the-mask.js.pug
   include ../components/axios.js.pug
+  include ../components/vue.js.pug
     //- include ../components/cpf.js.pug
   //- include components/accounting.js.pug
   script(src='/js/checkout/shippingAddress.js')

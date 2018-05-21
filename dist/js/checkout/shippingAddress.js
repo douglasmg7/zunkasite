@@ -66,6 +66,36 @@ var app = new Vue({
         alert('Não foi possível selecionar o endereço');
         console.error(err);
       })       
-    },    
+    },
+    // Get CEP information.
+    getCepInfo() {
+      console.log('begin');
+      this.newAddress.cep = this.newAddress.cep.replace(/\D/g, '');
+      axios({
+        method: 'get',
+        url: `https://viacep.com.br/ws/${this.newAddress.cep}/json/`,
+      })
+      .then(response => {
+        // Validation error.
+        if (response.data.erro) {
+          alert('CEP inválido.');
+        } else{
+          console.log(response.data.uf);
+          // this.newAddress.cep = '65656';
+          // State.
+          this.newAddress.state = response.data.uf;
+          // City.
+          this.newAddress.city = response.data.localidade;
+          // District.
+          this.newAddress.district = response.data.bairro;
+          // Address.
+          this.newAddress.address = response.data.logradouro;
+          console.log('end');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+      })  
+    }    
   }
 });

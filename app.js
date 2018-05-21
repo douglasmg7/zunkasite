@@ -104,6 +104,7 @@ if (app.get('env') === 'development') {
 // Statics files.
 app.use(express.static(path.join(__dirname, 'dist/')));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components/')));
+app.use('/node_modules', express.static(path.join(__dirname, 'node_modules/')));
 app.use('/semantic', express.static(path.join(__dirname, 'semantic/')));
 
 // uncomment after placing your favicon in /public
