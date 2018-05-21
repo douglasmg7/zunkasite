@@ -14,7 +14,7 @@ html(lang="en")
         .address-add
           h2.text-left Selecionar um endereço para envio
           p Ou voçê pode 
-            a(href='#') adicionar um novo endereço para envio.
+            a(href='#name') adicionar um novo endereço para envio.
           hr
         //- Address list.
         .addresss
@@ -43,13 +43,9 @@ html(lang="en")
           //- Cep.      
           .field
             label(for='cep') CEP
-            input(@blur='getCepInfo' type='text' name='cep' id='cep' v-model.lazy='newAddress.cep')
-            //- input(@focusout='getCepInfo' type='text' name='cep' id='cep' v-model='newAddress.cep')
-            //- the-mask(@keydown='getCepInfo' mask="['###.###.###-##', '##.###.###/####-##']" type='text' name='cep' id='cep' v-model='newAddress.cep')
+            input(@blur='getCepInfo' type='text' name='cep' id='cep' v-model='newAddress.cep')
             p.validation(v-if='validation.cep') {{validation.cep}}          
             a(href='http://www.buscacep.correios.com.br' target='_blank') Não sei meu CEP
-            p.loadingCep(v-if='loadingCep') Buscando dados do CEP...
-            p.validation(v-if='cepErr') Não foi possível encontrar o CEP informado. Por favor confira os dados e tente novamente.
           //- Address.
           .field
             label(for='address') Endereço
@@ -78,7 +74,7 @@ html(lang="en")
           //- State.
           .field
             label(for='state') Estado
-            input(type='text' name='state' id='state' v-model.lazy='newAddress.state')  
+            input(type='text' name='state' id='state' v-model='newAddress.state')  
             p.validation(v-if='validation.state') {{validation.state}} 
           //- Phone.                   
           .field
@@ -89,7 +85,7 @@ html(lang="en")
   //- Make available for vue.
   script.
     let addresss = !{JSON.stringify(addresss)};
-    let newAddress = !{JSON.stringify(newAddress)};
+    //- let newAddress = !{JSON.stringify(newAddress)};
     let csrfToken = !{JSON.stringify(csrfToken)};
   //-   let user = !{JSON.stringify(user)};
   include ../components/vue-the-mask.js.pug

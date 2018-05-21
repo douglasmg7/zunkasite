@@ -3,8 +3,28 @@ var app = new Vue({
   el: '#app',
   data: {
     addresss: addresss,
-    newAddress: newAddress,
-    validation: {},
+    newAddress: {
+      name: '',
+      cep: '',
+      address: '',
+      addressNumber: '',
+      addressComplement: '',
+      district: '',
+      city: '',
+      state: '',
+      phone: ''
+    },
+    validation: {
+      name: '',
+      cep: '',
+      address: '',
+      addressNumber: '',
+      addressComplement: '',
+      district: '',
+      city: '',
+      state: '',
+      phone: ''      
+    },
     loadingCep: false,
     cepFound: false,
     cepErr: false 
@@ -37,7 +57,7 @@ var app = new Vue({
         method: 'post',
         url: window.location.pathname,
         headers:{'csrf-token' : csrfToken},
-        data: { newAddress: newAddress }
+        data: { newAddress: this.newAddress }
       })
       .then(response => {
         // Validation erros.
@@ -45,11 +65,13 @@ var app = new Vue({
           let validationErros = response.data.validation;
           // Clean validation erros.
           for (let key in this.validation){
-            Vue.set(this.validation, key, '') 
+            // Vue.set(this.validation, key, ''); 
+            this.validation[key] = '';
           }
           // Set new validation erros.
           for (var i = 0; i < validationErros.length; i++) {
-            Vue.set(this.validation, validationErros[i].param.split('.')[1], validationErros[i].msg) 
+            this.validation[validationErros[i].param.split('.')[1]] = validationErros[i].msg;
+            // Vue.set(this.validation, validationErros[i].param.split('.')[1], validationErros[i].msg);
           }          
         }
         // Other errors.
@@ -69,33 +91,39 @@ var app = new Vue({
     },
     // Get CEP information.
     getCepInfo() {
-      console.log('begin');
+      // Only digits.
       this.newAddress.cep = this.newAddress.cep.replace(/\D/g, '');
-      axios({
-        method: 'get',
-        url: `https://viacep.com.br/ws/${this.newAddress.cep}/json/`,
-      })
-      .then(response => {
-        // Validation error.
-        if (response.data.erro) {
-          alert('CEP inválido.');
-        } else{
-          console.log(response.data.uf);
-          // this.newAddress.cep = '65656';
-          // State.
-          this.newAddress.state = response.data.uf;
-          // City.
-          this.newAddress.city = response.data.localidade;
-          // District.
-          this.newAddress.district = response.data.bairro;
-          // Address.
-          this.newAddress.address = response.data.logradouro;
-          console.log('end');
-        }
-      })
-      .catch(err => {
-        console.error(err);
-      })  
+      // Correct size.
+      if (this.newAddress.cep.length === 8){      
+        axios({
+          method: 'get',
+          url: `https://viacep.com.br/ws/${this.newAddress.cep}/json/`,
+        })
+        .then(response => {
+          // Validation error.
+          if (response.data.erro) {
+            this.validation.cep = 'CEP inválido.';
+          } else{
+            this.validation.cep = '';
+            // State.
+            this.newAddress.state = response.data.uf;
+            // City.
+            this.newAddress.city = response.data.localidade;
+            // District.
+            this.newAddress.district = response.data.bairro;
+            // Address.
+            this.newAddress.address = response.data.logradouro;
+          }
+        })
+        .catch(err => {
+          this.validation.cep = 'CEP inválido.';
+          console.error(err);
+        })  
+      } 
+      // Wrong size.
+      else if(this.newAddress.cep.length > 0) {
+        this.validation.cep = 'CEP inválido.';
+      }
     }    
   }
 });

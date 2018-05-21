@@ -127,6 +127,9 @@ main .addresss .address {
 main .addresss .address button {
   margin-top: 1em;
 }
+main .addresss .address p.name {
+  font-weight: bold;
+}
 main .form button {
   margin-top: 1em;
 }
