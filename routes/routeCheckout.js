@@ -167,16 +167,6 @@ router.post('/shipping-address', (req, res, next)=>{
   };
 });
 
-// Ship address page old.
-router.get('/ship-address', (req, res, next)=>{
-  Address.find({ user_id: req.user._id }, (err, addresss)=>{
-    if (err) return next(err);
-    let data = req.flash();
-    data.addresss = addresss;
-    res.render('checkout/shipAddress_old', data); 
-  })
-});
-
 // Add address.
 router.post('/ship-address-add', checkPermission, (req, res, next)=>{
   // Validation.
@@ -253,7 +243,24 @@ router.get('/shipment', (req, res, next)=>{
     if (!order) {
       return next(new Error('No order to continue checkout.')); }
     else {
-      res.render('checkout/shipment', { shipAddress: order.shipAddress, formatMoney: formatMoney }); }
+      res.render('checkout/shipment', { 
+        nav: {
+        },
+        order,
+        formatMoney 
+      }); 
+    }
+  });
+});
+
+// Select shipment page.
+router.get('/shipment_old', (req, res, next)=>{
+  Order.findOne({user_id: req.user._id}, (err, order)=>{
+    if (err) { return next(err); }
+    if (!order) {
+      return next(new Error('No order to continue checkout.')); }
+    else {
+      res.render('checkout/shipment_old', { shipAddress: order.shipAddress, formatMoney: formatMoney }); }
   });
 });
 
