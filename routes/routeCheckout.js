@@ -16,6 +16,9 @@ const Address = require('../model/address');
 const Order = require('../model/order');
 const Product = require('../model/product');
 
+// CEP origin, Rua Bicas - 31030160.
+const CEP_ORIGIN = '31030160';
+
 module.exports = router;
 
 // Format number to money format.
@@ -243,12 +246,48 @@ router.get('/shipment', (req, res, next)=>{
     if (!order) {
       return next(new Error('No order to continue checkout.')); }
     else {
-      res.render('checkout/shipment', { 
-        nav: {
-        },
-        order,
-        formatMoney 
-      }); 
+      // Calculate box size shipment approximately.
+      let shipmentBox = { cepOrigin: CEP_ORIGIN, cepDestiny: order.shipAddress.cep, length: 0, height: 0, width: 0, weight: 0 };
+      // For each item.
+      for (let i = 0; i < order.items.length; i++) {
+        // Get dimensions.
+        let dimemsions = [order.items[i].length, order.items[i].height, order.items[i].width];
+        // Sort dimensions.
+        dimemsions = dimemsions.sort(function (a,b){
+            if (a < b) { return -1 }
+            if (a > b) { return 1 }
+            return 0;
+          });
+        // Get the big dimension for the box.
+        if (dimemsions[2] > shipmentBox.length) { shipmentBox.length = dimemsions[2]; }
+        if (dimemsions[1] > shipmentBox.height) { shipmentBox.height = dimemsions[1]; }
+        shipmentBox.width += dimemsions[0];
+        shipmentBox.weight += order.items[i].weight;
+      }
+      // console.log(`shipmentBox: ${JSON.stringify(shipmentBox)}`);
+      estimateShipping(shipmentBox, (err, result)=>{
+        if (err) {
+          order.shippingPrice = '50,00';
+          order.shippingMethod = 'Correio não respondeu, usando valor padrão.'
+        } else {
+          order.correioResult = result;
+          // console.log(`Correio result: ${JSON.stringify(result)}`);
+          // Save correio result.
+          order.save((err, newAddress) => {
+            if (err) {
+              res.json({err});
+              return next(err); 
+            } else {
+              res.render('checkout/shipment', { 
+                nav: {
+                },
+                order,
+                formatMoney 
+              });  
+            }
+          });
+        }
+      })
     }
   });
 });
@@ -277,7 +316,7 @@ router.post('/shipment', (req, res, next)=>{
     }
     items.push(item);
   }
-  console.log(`cart: ${JSON.stringify(req.cart)}`);
+  // console.log(`cart: ${JSON.stringify(req.cart)}`);
   // Set shipment method to default.
   Order.update(
     { user_id: req.user._id }, 
@@ -315,6 +354,80 @@ router.get('/cancel', (req, res, next)=>{
   console.log('Cancel called.');
   res.render('/'); 
 });
+
+// Estimate shipment.
+router.get('/ship-estimate', (req, res, next)=>{
+  // console.log('req.query', req.query);
+  Product.findById(req.query.productId, (err, product)=>{
+    if (err) { return next(err); }
+    if (!product) {  return next(new Error('Product not found.')); }
+    let box = { 
+      cepOrigin: CEP_ORIGIN, 
+      cepDestiny: req.query.cepDestiny.replace(/\D/g, ''),
+      length: product.length,
+      height: product.height,
+      width: product.width,
+      weight: product.weight 
+    }
+    estimateShipping(box, (err, result)=>{
+      if (err) {
+        log.error(err, new Error().stack);
+        res.json({ err: err });
+        return;
+      }
+      res.json({correio: result});
+    });
+  });
+});
+
+// Estimate shipment.
+// box = {lenght, height, wdith, weight}
+// length, height, width in cm.
+// weight in grams.
+function estimateShipping(box, cb) {
+  // Length can not be less tha 16cm (correio error);
+  // if (box.length < 16) { box.length = 16 };
+  // console.log(`args: ${JSON.stringify(arguments)}`);
+  // Create soap.
+  soap.createClient('http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?wsdl', (err, client)=>{
+    if (err) {
+      log.error(err, new Error().stack);
+      return cb(err);
+    }
+    // Argments.
+    let args = {
+      nCdEmpresa: '',  // Código administrativo junto à ECT (para clientes com contrato) .
+      sDsSenha: '',  
+      nCdServico: '04510',  // Para clientes sem contrato (04510 - PAC à vista).
+      sCepOrigem: box.cepOrigin.replace(/\D/g, ''),   
+      sCepDestino: box.cepDestiny.replace(/\D/g, ''),
+      nVlPeso: (box.weight / 1000).toString(),    // Weight in Kg.
+      nCdFormato: 1,    // 1 - caixa/pacote, 2 - rolo/prisma, 3 - Envelope.
+      nVlComprimento: box.length,  // Lenght in cm.
+      nVlAltura: box.height,  // Height in cm.
+      nVlLargura: box.width,   // Width in cm.
+      nVlDiametro: 0,   // Diâmetro em cm.
+      sCdMaoPropria      : 'N',   // Se a encomenda será entregue com o serviço adicional mão própria.
+      nVlValorDeclarado  : 0,
+      sCdAvisoRecebimento: 'N'
+    };
+    // console.log('args', args);
+    // Call webservice.
+    client.CalcPrecoPrazo(args, (err, result)=>{
+      if (err) {
+        log.error(err, new Error().stack);
+        return cb('Serviço indisponível');
+      }
+      // Result.
+      if (result.CalcPrecoPrazoResult.Servicos.cServico[0].Erro !== '0') {
+        log.error('WS Correios erro: ' + result.CalcPrecoPrazoResult.Servicos.cServico[0].MsgErro, new Error().stack);
+        return cb('CEP inválido');
+      }
+      return cb(null, result.CalcPrecoPrazoResult.Servicos.cServico[0]);
+    });
+  });
+};
+
 // // Select payment.
 // router.post('/payment', (req, res, next)=>{
   // // Configuration.
@@ -412,55 +525,3 @@ router.get('/cancel', (req, res, next)=>{
   // }).
   // end();
 // });
-
-// Estimate shipment.
-router.get('/ship-estimate', (req, res, next)=>{
-  console.log('req.query', req.query);
-  Product.findById(req.query.productId, (err, product)=>{
-    if (err) { return next(err); }
-    if (!product) {  return next(new Error('Product not found.')); }
-    // Create soap.
-    soap.createClient('http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?wsdl', (err, client)=>{
-      if (err) {
-        log.error(err, new Error().stack);
-        res.json({ success: false });
-        return;
-      }
-      // Argments.
-      let args = {
-        nCdEmpresa: '',  // Código administrativo junto à ECT (para clientes com contrato) .
-        sDsSenha: '',  
-        nCdServico: '04510',  // Para clientes sem contrato (04510 - PAC à vista).
-        sCepOrigem: '31030160',
-        sCepDestino: req.query.cepDestiny.replace('-', ''),
-        nVlPeso: (product.storeProductWeight / 1000).toString(),    // Weight in Kg.
-        nCdFormato: 1,    // 1 - caixa/pacote, 2 - rolo/prisma, 3 - Envelope.
-        nVlComprimento: product.storeProductLength,  // Lenght in cm.
-        nVlAltura: product.storeProductHeight,  // Height in cm.
-        nVlLargura: product.storeProductWidth,   // Width in cm.
-        nVlDiametro: 0,   // Diâmetro em cm.
-        sCdMaoPropria      : 'N',   // Se a encomenda será entregue com o serviço adicional mão própria.
-        nVlValorDeclarado  : 0,
-        sCdAvisoRecebimento: 'N'
-      };
-      // console.log('args', args);
-      // Call webservice.
-      client.CalcPrecoPrazo(args, (err, result)=>{
-        if (err) {
-          log.error(err, new Error().stack);
-          res.json({ success: false, errMsg: 'Serviço indisponível' });
-          return;
-        }
-        // Result.
-        if (result.CalcPrecoPrazoResult.Servicos.cServico[0].Erro !== '0') {
-          log.error('WS Correios erro: ' + result.CalcPrecoPrazoResult.Servicos.cServico[0].MsgErro, new Error().stack);
-          res.json({ success: false, errMsg: 'CEP inválido' });
-          return;
-        }
-        res.json({ success: true, correio: result.CalcPrecoPrazoResult.Servicos.cServico[0] });
-        // console.log('correios result: ', result.CalcPrecoPrazoResult.Servicos.cServico[0]);
-      });
-    });
-  });
-});
-

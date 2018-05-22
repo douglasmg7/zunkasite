@@ -23,6 +23,30 @@ let item = new mongoose.Schema({
   width: { type: Number, required: true },
   weight: { type: Number, required: true },
 });
+// Schema - Correio result.
+let correioResult = new mongoose.Schema({
+  Codigo: { type: Number },
+  Valor: { type: String },
+  PrazoEntrega: { type: String },
+  ValorMaoPropria: { type: String },
+  ValorAvisoRecebimento: { type: String },
+  ValorValorDeclarado: { type: String },
+  EntregaDomiciliar: { type: String },
+  EntregaSabado: { type: String },
+  Erro: { type: String },
+  MsgErro: { type: String },
+  ValorSemAdicionais: { type: String },
+  obsFim: { type: String },
+});
+// Schema - Shipment box.
+let shipmentBox = new mongoose.Schema({
+  length: { type: Number, required: true },
+  height: { type: String, required: true },
+  width: { type: String, required: true },
+  weight: { type: String, required: true },
+  cepOrigin: { type: String, required: true },
+  cepDestiny: { type: String, required: true },
+});
 // Schema.
 let schema = new mongoose.Schema({
   user_id: { type: mongoose.Schema.Types.ObjectId, required: true },
@@ -36,6 +60,8 @@ let schema = new mongoose.Schema({
   deliveryTime: { type: Number },
   shipAddress: address,
   billAddress: address,
+  shipmentBox: shipmentBox,
+  correioResult: correioResult,
   status: { type: String, required: true},
   orderedAt: { type: Date },    // Order request time.
   canceledAt: { type: Date },   // Paid confirmation time.

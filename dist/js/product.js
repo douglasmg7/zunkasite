@@ -34,15 +34,15 @@ var app = new Vue({
       })
       .then(response => {
         // Correio answer.
-        if (response.data.success) {
+        if (response.data.err) {
+          this.showEstimatedShipment = false;
+          this.cepErrMsg = response.data.errMsg;
+        } else {
           this.cepErrMsg = '';
-          this.deliveryMethod = 'Ecônomica';
+          this.deliveryMethod = 'Padrão';
           this.deliveryPrice = response.data.correio.Valor;
           this.deliveryTime =  `${response.data.correio.PrazoEntrega} dia(s)`;
           this.showEstimatedShipment = true;
-        } else {
-          this.showEstimatedShipment = false;
-          this.cepErrMsg = response.data.errMsg;
         }
         this.loadingEstimateShipment = false;
       })

@@ -11,7 +11,7 @@ html(lang="en")
         include ../main-nav.pug
     main#app(v-cloak)
       .container
-        h2 Selecionar uma forma de envio
+        h2 Forma de envio
         hr
         //- Address complement exist.
         .address(v-if='order.shipAddress.addressComplement')
@@ -32,9 +32,10 @@ html(lang="en")
               //- {{formatMoney(item.price)}} - {{formatMoney(item.price * item.qtd)}}
         .form
           .radio
-            h3.shipmentOption Opção de entrega
+            h3.shipmentOption Tipo de entrega
             label
-              input(type='radio' name='shipmentOption' id='default' value='default' checked)/ Envio padrão
+              input(type='radio' name='shipmentOption' id='default' value='default' checked)/ {{shipmentOption}}
+
           button(@click='selectShipmentMethod()') Continuar
   script.
     let order = !{JSON.stringify(order)};
