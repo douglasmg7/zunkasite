@@ -116,37 +116,43 @@ main {
   margin: 0 auto 3em auto;
   max-width: 1000px;
 }
-main .addresss {
-  display: flex;
-  flex-flow: row wrap;
+main span.price {
+  color: #c45d43;
 }
-main .addresss .address {
-  flex: 0 1 18em;
-  padding: 1.5em 0.5em;
+main span.quantity {
+  color: #7d7d7d;
 }
-main .addresss .address button {
+main span.deadline {
+  font-weight: bold;
+}
+main p.shippingAddress {
+  color: #7d7d7d;
   margin-top: 1em;
 }
-main .addresss .address p.name {
-  font-weight: bold;
+main .items {
+  margin-top: 1em;
+  margin-left: 2em;
+}
+main .items ul {
+  margin-top: 0.5em;
+}
+main .items ul li {
+  color: #7d7d7d;
+}
+main .items ul p {
+  margin-top: 0.2em;
+  color: #000;
+}
+main .form .radio label {
+  margin-left: 1em;
+}
+main .form .radio label input[type='radio'] {
+  vertical-align: top;
+  margin-right: 0.5em;
+}
+main .form .radio label p {
+  margin-left: 3.1em;
 }
 main .form button {
-  margin-top: 1em;
-}
-main .form .field {
-  display: flex;
-  flex-flow: column wrap;
-  margin-top: 1em;
-}
-main .form .field label {
-  font-weight: bold;
-}
-main .form .field input {
-  height: 2em;
-}
-main .form .field textarea {
-  height: 10em;
-}
-main .form .field .validation {
-  color: #f00;
+  margin-top: 2em;
 }

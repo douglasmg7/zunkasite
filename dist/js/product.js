@@ -35,8 +35,9 @@ var app = new Vue({
       .then(response => {
         // Correio answer.
         if (response.data.err) {
+          console.log(response.data.err);
           this.showEstimatedShipment = false;
-          this.cepErrMsg = response.data.errMsg;
+          this.cepErrMsg = response.data.err;
         } else {
           this.cepErrMsg = '';
           this.deliveryMethod = 'Padrão';
@@ -47,6 +48,7 @@ var app = new Vue({
         this.loadingEstimateShipment = false;
       })
       .catch(err => {
+        console.log('inside error.');
         console.error(err);
         this.loadingEstimateShipment = false;
         this.showEstimatedShipment = false;

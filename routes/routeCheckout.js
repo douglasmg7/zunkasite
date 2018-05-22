@@ -266,27 +266,25 @@ router.get('/shipment', (req, res, next)=>{
       }
       // console.log(`shipmentBox: ${JSON.stringify(shipmentBox)}`);
       estimateShipping(shipmentBox, (err, result)=>{
+        // No Correio info.
         if (err) {
-          order.shippingPrice = '50,00';
-          order.shippingMethod = 'Correio não respondeu, usando valor padrão.'
+          order.correioResult = {};
         } else {
           order.correioResult = result;
-          // console.log(`Correio result: ${JSON.stringify(result)}`);
-          // Save correio result.
-          order.save((err, newAddress) => {
-            if (err) {
-              res.json({err});
-              return next(err); 
-            } else {
-              res.render('checkout/shipment', { 
-                nav: {
-                },
-                order,
-                formatMoney 
-              });  
-            }
-          });
         }
+        // Save correio result.
+        order.save((err, newAddress) => {
+          if (err) {
+            res.json({err});
+            return next(err); 
+          } else {
+            res.render('checkout/shipment', { 
+              nav: {
+              },
+              order
+            });  
+          }
+        });
       })
     }
   });
@@ -299,7 +297,7 @@ router.get('/shipment_old', (req, res, next)=>{
     if (!order) {
       return next(new Error('No order to continue checkout.')); }
     else {
-      res.render('checkout/shipment_old', { shipAddress: order.shipAddress, formatMoney: formatMoney }); }
+      res.render('checkout/shipment_old', { shipAddress: order.shipAddress, formatMoney }); }
   });
 });
 
@@ -364,14 +362,14 @@ router.get('/ship-estimate', (req, res, next)=>{
     let box = { 
       cepOrigin: CEP_ORIGIN, 
       cepDestiny: req.query.cepDestiny.replace(/\D/g, ''),
-      length: product.length,
-      height: product.height,
-      width: product.width,
-      weight: product.weight 
+      length: product.storeProductLength,
+      height: product.storeProductHeight,
+      width: product.storeProductWidth,
+      weight: product.storeProductWeight 
     }
+    console.log(`box: ${JSON.stringify(box)}`);
     estimateShipping(box, (err, result)=>{
       if (err) {
-        log.error(err, new Error().stack);
         res.json({ err: err });
         return;
       }
@@ -385,9 +383,12 @@ router.get('/ship-estimate', (req, res, next)=>{
 // length, height, width in cm.
 // weight in grams.
 function estimateShipping(box, cb) {
-  // Length can not be less tha 16cm (correio error);
-  // if (box.length < 16) { box.length = 16 };
-  // console.log(`args: ${JSON.stringify(arguments)}`);
+  // Length can not be less than 16cm (correio error);
+  if (box.length < 16) { box.length = 16 };
+  // Height can not be less than 2cm (correio error);
+  if (box.height < 2) { box.height = 2 };
+  // Width can not be less than 2cm (correio error);
+  if (box.width < 11) { box.width = 11 };
   // Create soap.
   soap.createClient('http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?wsdl', (err, client)=>{
     if (err) {
@@ -420,8 +421,8 @@ function estimateShipping(box, cb) {
       }
       // Result.
       if (result.CalcPrecoPrazoResult.Servicos.cServico[0].Erro !== '0') {
-        log.error('WS Correios erro: ' + result.CalcPrecoPrazoResult.Servicos.cServico[0].MsgErro, new Error().stack);
-        return cb('CEP inválido');
+        log.error('WS Correios: ' + result.CalcPrecoPrazoResult.Servicos.cServico[0].MsgErro, new Error().stack);
+        return cb(result.CalcPrecoPrazoResult.Servicos.cServico[0].MsgErro);
       }
       return cb(null, result.CalcPrecoPrazoResult.Servicos.cServico[0]);
     });

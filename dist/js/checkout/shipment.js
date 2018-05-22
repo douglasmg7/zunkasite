@@ -1,3 +1,5 @@
+const STANDARD_DELIVERY_DEADLINE = 10;
+const STANDARD_DELIVERY_PRICE = '30,00';
 // Vue.
 var app = new Vue({
   el: '#app',
@@ -17,6 +19,27 @@ var app = new Vue({
       else {
         return `Envio padrão - Prazo de entrega: 5 dia(s) - Valor: R$30,00`;
       }
+    },
+    deliveryDeadline: function(){
+      if (order.correioResult.PrazoEntrega) {
+        return order.correioResult.PrazoEntrega;
+      } 
+      else {
+        return STANDARD_DELIVERY_DEADLINE;
+      }
+    },
+    deliveryPrice: function(){
+      if (order.correioResult.Valor) {
+        return order.correioResult.Valor;
+      } 
+      else {
+        return STANDARD_DELIVERY_PRICE;
+      }
+    }
+  },
+  filters: {
+    formatMoney: function(val){
+      return 'R$ ' + val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
   }
 });

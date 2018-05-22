@@ -1,34 +1,38 @@
 @import '../reset'
 @import '../main-nav'
 main
+  span.price
+    color $RED_PRICE
+  span.quantity
+    color $GRAY_TITLE
+  span.deadline
+    font-weight bold
   display flex
   flex-flow column nowrap
   justify-content center
   margin 0 auto 3em auto
   max-width 1000px
-  .addresss
-    // background-color red
-    display flex
-    flex-flow row wrap
-    .address
-      flex 0 1 18em
-      padding 1.5em .5em
-      button
-        margin-top 1em
-      p.name
-        font-weight bold
+  p.shippingAddress
+    color $GRAY_TITLE
+    margin-top 1em
+  .items
+    margin-top 1em
+    margin-left 2em
+    ul
+      li
+        color $GRAY_TITLE
+      margin-top .5em
+      p
+        margin-top .2em
+        color black
   .form
-    button
-      margin-top 1em    
-    .field
-      display flex
-      flex-flow column wrap
-      margin-top 1em
+    .radio
       label
-        font-weight bold
-      input
-        height 2em
-      textarea
-        height 10em
-      .validation
-        color red
+        margin-left 1em
+        input[type='radio']
+          vertical-align top
+          margin-right .5em
+        p 
+          margin-left 3.1em
+    button
+      margin-top 2em

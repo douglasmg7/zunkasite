@@ -15,32 +15,32 @@ html(lang="en")
         hr
         //- Address complement exist.
         .address(v-if='order.shipAddress.addressComplement')
-          p.shipAddress Enviar para: {{order.shipAddress.name}}, {{order.shipAddress.address}} {{order.shipAddress.addressNumber}}, {{order.shipAddress.addressComplement}} - {{order.shipAddress.district}}, {{order.shipAddress.city}}, {{order.shipAddress.state}}, {{order.shipAddress.cep}} Brasil   
+          p.shippingAddress Enviar para: {{order.shipAddress.name}}, {{order.shipAddress.address}} {{order.shipAddress.addressNumber}}, {{order.shipAddress.addressComplement}} - {{order.shipAddress.district}}, {{order.shipAddress.city}}, {{order.shipAddress.state}}, {{order.shipAddress.cep}} Brasil   
         //- Addres complement not exist.
         .address(v-if='!order.shipAddress.addressComplement')
-          p.shipAddress Enviar para: {{order.shipAddress.name}}, {{order.shipAddress.address}} {{order.shipAddress.addressNumber}} - {{order.shipAddress.district}}, {{order.shipAddress.city}}, {{order.shipAddress.state}}, {{order.shipAddress.cep}} Brasil   
+          p.shippingAddress Enviar para: {{order.shipAddress.name}}, {{order.shipAddress.address}} {{order.shipAddress.addressNumber}} - {{order.shipAddress.district}}, {{order.shipAddress.city}}, {{order.shipAddress.state}}, {{order.shipAddress.cep}} Brasil   
         .items(v-if='order.items.length > 0')
           ul
             li(v-for='item in order.items')
               p 
-                  strong {{item.name}}
+                strong {{item.name}}
               p 
-                span.price {{item.price}} 
-                //- span.price {{formatMoney(item.price)}} 
+                span.price {{item.price | formatMoney}} 
                 span.quantity - Quantidade: {{item.quantity}}
-              //- {{item.price}} - {{(item.price * item.qtd)}}
-              //- {{formatMoney(item.price)}} - {{formatMoney(item.price * item.qtd)}}
         .form
           .radio
             h3.shipmentOption Tipo de entrega
             label
-              input(type='radio' name='shipmentOption' id='default' value='default' checked)/ {{shipmentOption}}
-
+              input(type='radio' name='shipmentOption' id='default' value='default' checked)/ 
+              span Envio padrão 
+              p Prazo de entrega: 
+                span.deadline {{deliveryDeadline}} dia(s)
+              p Valor: 
+                span.price R${{deliveryPrice}}
           button(@click='selectShipmentMethod()') Continuar
   script.
-    let order = !{JSON.stringify(order)};
     let csrfToken = !{JSON.stringify(csrfToken)};
+    let order = !{JSON.stringify(order)};
   include ../components/axios.js.pug
   include ../components/vue.js.pug
-  //- include components/accounting.js.pug
   script(src='/js/checkout/shipment.js')            
