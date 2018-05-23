@@ -14,11 +14,11 @@ html(lang="en")
         h2 Forma de envio
         hr
         //- Address complement exist.
-        .address(v-if='order.shipAddress.addressComplement')
-          p.shippingAddress Enviar para: {{order.shipAddress.name}}, {{order.shipAddress.address}} {{order.shipAddress.addressNumber}}, {{order.shipAddress.addressComplement}} - {{order.shipAddress.district}}, {{order.shipAddress.city}}, {{order.shipAddress.state}}, {{order.shipAddress.cep}} Brasil   
+        .address(v-if='order.shipping.address.addressComplement')
+          p.shipping.address Enviar para: {{order.shipping.address.name}}, {{order.shipping.address.address}} {{order.shipping.address.addressNumber}}, {{order.shipping.address.addressComplement}} - {{order.shipping.address.district}}, {{order.shipping.address.city}}, {{order.shipping.address.state}}, {{order.shipping.address.cep}} Brasil   
         //- Addres complement not exist.
-        .address(v-if='!order.shipAddress.addressComplement')
-          p.shippingAddress Enviar para: {{order.shipAddress.name}}, {{order.shipAddress.address}} {{order.shipAddress.addressNumber}} - {{order.shipAddress.district}}, {{order.shipAddress.city}}, {{order.shipAddress.state}}, {{order.shipAddress.cep}} Brasil   
+        .address(v-if='!order.shipping.address.addressComplement')
+          p.shipping.address Enviar para: {{order.shipping.address.name}}, {{order.shipping.address.address}} {{order.shipping.address.addressNumber}} - {{order.shipping.address.district}}, {{order.shipping.address.city}}, {{order.shipping.address.state}}, {{order.shipping.address.cep}} Brasil   
         .items(v-if='order.items.length > 0')
           ul
             li(v-for='item in order.items')

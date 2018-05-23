@@ -38,8 +38,8 @@ let correioResult = new mongoose.Schema({
   ValorSemAdicionais: { type: String },
   obsFim: { type: String },
 });
-// Schema - Shipment box.
-let shipmentBox = new mongoose.Schema({
+// Schema - Shipping box dimensions.
+let boxDimensions = new mongoose.Schema({
   length: { type: Number, required: true },
   height: { type: String, required: true },
   width: { type: String, required: true },
@@ -47,27 +47,40 @@ let shipmentBox = new mongoose.Schema({
   cepOrigin: { type: String, required: true },
   cepDestiny: { type: String, required: true },
 });
+// Schema - Shipping.
+let shipping = new mongoose.Schema({
+  box: boxDimensions, // Approximately dimensions for box shipping.
+  carrier: { type: String }, // Identify the shipping carrier.
+  method: { type: String }, // Identify the shipping method.
+  price: { type: String },  // Price for shipment.
+  address: address,
+  deadline: { type: Number },
+  correioResult: correioResult, // Result from correio search ws for shipment price and deadline.
+});
 // Schema.
 let schema = new mongoose.Schema({
   user_id: { type: mongoose.Schema.Types.ObjectId, required: true },
   name: { type: String, required: true },    // If user change his name, it will keep the name used at order request.
   email: { type: String, required: true },    // If user change his email, it will keep the email used at order request.
   items: [item],   // Itens to be bought.
-  subtotalPrice: { type: String },
-  shippingPrice: { type: String },
-  totalPrice: { type: String },
-  shippingMethod: { type: String },
-  deliveryTime: { type: Number },
-  shipAddress: address,
+  shipping: shipping,   // Shipping information.
+  // shippingBox: shippingBox, // Approximately dimensions for shipment.
+  // shippingCarrier: { type: String }, // Identify the shipping carrier.
+  // shippingMethod: { type: String }, // Identify the shipping method.
+  // shippingPrice: { type: String },  // Price for shipment.
+  // shippingAddress: address,
+  // shippingDeadline: { type: Number },
   billAddress: address,
-  shipmentBox: shipmentBox,
-  correioResult: correioResult,
-  status: { type: String, required: true},
-  orderedAt: { type: Date },    // Order request time.
-  canceledAt: { type: Date },   // Paid confirmation time.
-  paidAt: { type: Date },   // Paid confirmation time.
-  shippedAt: { type: Date },    // Shipped time.
-  deliveredAt: { type: Date },    // Delivered time.
+  subtotalPrice: { type: String },  // Items price without shipping price.
+  totalPrice: { type: String }, // Items price plus shipping price.
+  // correioResult: correioResult, // Result from correio search ws for shipment price and deadline.
+  isShippingAddressSelected: { type: Date }, // When the user select the shipping address.
+  isShippingMethodSelected: { type: Date }, // When the user select the shipping method.
+  isClosed: { type: Date }, // When the user post the order (final process), it goes to closed.
+  isPaid: { type: Date },   // When receive payment confirmation.
+  isCanceled: { type: Date }, // When the user cancel the order after it was posted (clesed order).
+  isShipped: { type: Date },    // Order was shipped.
+  isDelivered: { type: Date },  // Receive delivered confirmation.
   createdAt: { type: Date, default: Date.now },
   modifiedAt: { type: Date, default: Date.now }
 });

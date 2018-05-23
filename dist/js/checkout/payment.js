@@ -14,14 +14,14 @@ for (var i = 0; i < order.items.length; i++) {
 }
 // Shipping address.
 let shippingAddress = {
-  recipient_name: order.shipAddress.name,
-  line1: `${order.shipAddress.address}, ${order.shipAddress.addressNumber} - ${order.shipAddress.district}`,
-  line2: order.shipAddress.complement,
-  city: order.shipAddress.city,
+  recipient_name: order.shippingAddress.name,
+  line1: `${order.shippingAddress.address}, ${order.shippingAddress.addressNumber} - ${order.shippingAddress.district}`,
+  line2: order.shippingAddress.complement,
+  city: order.shippingAddress.city,
   country_code: 'BR',
-  postal_code: order.shipAddress.cep,
-  phone: order.shipAddress.phone,
-  state: order.shipAddress.state
+  postal_code: order.shippingAddress.cep,
+  phone: order.shippingAddress.phone,
+  state: order.shippingAddress.state
 };
 // console.log(`shippingAddress: ${JSON.stringify(shippingAddress)}`);
 // Paypal Express Checkout. 

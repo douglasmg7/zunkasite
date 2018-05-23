@@ -122,8 +122,8 @@ router.post('/shipping-address', (req, res, next)=>{
     // Find selected address.
     Address.findById(address_id, (err, address)=>{
       if (err) return next(err);
-      // Remove order with ship address selected, to start from begin again.
-      Order.remove({user_id: req.user._id}, err=>{
+      // Remove order not closed yet, to start from begin again.
+      Order.remove({user_id: req.user._id, isClosed: {$exists: false}}, err=>{
         if (err) return next(err);
         // Get products itens.
         let items = []
@@ -147,17 +147,17 @@ router.post('/shipping-address', (req, res, next)=>{
         order.user_id = req.user._id;
         order.name = req.user.name;
         order.email = req.user.email;
-        order.status = 'shipAddressSelected';
-        order.shipAddress = {};
-        order.shipAddress.name = address.name;
-        order.shipAddress.cep = address.cep;
-        order.shipAddress.phone = address.phone;
-        order.shipAddress.address = address.address;
-        order.shipAddress.addressNumber = address.addressNumber;
-        order.shipAddress.addressComplement = address.addressComplement;
-        order.shipAddress.district = address.district;
-        order.shipAddress.city = address.city;
-        order.shipAddress.state = address.state;
+        order.isShippingAddressSelected = Date.now();
+        order.shipping = { address: {} };
+        order.shipping.address.name = address.name;
+        order.shipping.address.cep = address.cep;
+        order.shipping.address.phone = address.phone;
+        order.shipping.address.address = address.address;
+        order.shipping.address.addressNumber = address.addressNumber;
+        order.shipping.address.addressComplement = address.addressComplement;
+        order.shipping.address.district = address.district;
+        order.shipping.address.city = address.city;
+        order.shipping.address.state = address.state;
         order.save(err=>{
           if (err) {
             res.json({ err: err })
@@ -170,84 +170,16 @@ router.post('/shipping-address', (req, res, next)=>{
   };
 });
 
-// Add address.
-router.post('/ship-address-add', checkPermission, (req, res, next)=>{
-  // Validation.
-  req.sanitize("name").trim();
-  req.sanitize("cep").trim();
-  req.sanitize("address").trim();
-  req.sanitize("addressNumber").trim();
-  req.sanitize("district").trim();
-  req.sanitize("city").trim();
-  req.sanitize("state").trim();
-  req.sanitize("phone").trim();
-  req.checkBody('name', 'Campo NOME deve ser preenchido.').notEmpty();
-  req.checkBody('cep', 'Campo CEP deve ser preenchido.').notEmpty();
-  req.checkBody('address', 'Campo ENDEREÇO deve ser preenchido.').notEmpty();
-  req.checkBody('addressNumber', 'Campo NÚMERO deve ser preenchido.').notEmpty();
-  req.checkBody('district', 'Campo BAIRRO deve ser preenchido.').notEmpty();
-  req.checkBody('city', 'Campo CIDADE deve ser preenchido.').notEmpty();
-  req.checkBody('state', 'Campo ESTADO deve ser preenchido.').notEmpty();
-  req.checkBody('phone', 'Campo TELEFONE deve ser preenchido.').notEmpty();
-  req.getValidationResult().then(function(result) {
-    // Send validations errors to client.
-    if (!result.isEmpty()) {
-      let messages = [];
-      messages.push(result.array()[0].msg);
-      req.flash('error', messages);
-      res.redirect('back');
-      return;
-    } 
-    // Save address.
-    else {
-      let address = new Address();
-      address.user_id = req.user._id;
-      address.name = req.body.name;
-      address.cep = req.body.cep;
-      address.phone = req.body.phone;
-      address.address = req.body.address;
-      address.addressNumber = req.body.addressNumber;
-      address.addressComplement = req.body.addressComplement;
-      address.district = req.body.district;
-      address.city = req.body.city;
-      address.state = req.body.state;
-      address.save(function(err) {
-        if (err) { return next(err); }
-        Order.remove({user_id: req.user._id}, err=>{
-          if (err) { return next(err); }
-          // Create order.
-          let order = new Order();
-          order.user_id = req.user._id;
-          order.status = 'shipAddressSelected';
-          order.shipAddress = {};
-          order.shipAddress.name = address.name;
-          order.shipAddress.cep = address.cep;
-          order.shipAddress.phone = address.phone;
-          order.shipAddress.address = address.address;
-          order.shipAddress.addressNumber = address.addressNumber;
-          order.shipAddress.addressComplement = address.addressComplement;
-          order.shipAddress.district = address.district;
-          order.shipAddress.city = address.city;
-          order.shipAddress.state = address.state;
-          order.save(err=>{
-            if (err) return next(err);
-            res.redirect('/checkout/shipment'); 
-          });
-        });
-      });        
-    }
-  });
-});
-
 // Select shipment page.
 router.get('/shipment', (req, res, next)=>{
-  Order.findOne({user_id: req.user._id}, (err, order)=>{
+  // Find order not closed yet.
+  Order.findOne({user_id: req.user._id, isClosed: {$exists: false}}, (err, order)=>{
     if (err) { return next(err); }
     if (!order) {
       return next(new Error('No order to continue checkout.')); }
     else {
       // Calculate box size shipment approximately.
-      let shipmentBox = { cepOrigin: CEP_ORIGIN, cepDestiny: order.shipAddress.cep, length: 0, height: 0, width: 0, weight: 0 };
+      let shippingBox = { cepOrigin: CEP_ORIGIN, cepDestiny: order.shipping.address.cep, length: 0, height: 0, width: 0, weight: 0 };
       // For each item.
       for (let i = 0; i < order.items.length; i++) {
         // Get dimensions.
@@ -259,18 +191,18 @@ router.get('/shipment', (req, res, next)=>{
             return 0;
           });
         // Get the big dimension for the box.
-        if (dimemsions[2] > shipmentBox.length) { shipmentBox.length = dimemsions[2]; }
-        if (dimemsions[1] > shipmentBox.height) { shipmentBox.height = dimemsions[1]; }
-        shipmentBox.width += dimemsions[0];
-        shipmentBox.weight += order.items[i].weight;
+        if (dimemsions[2] > shippingBox.length) { shippingBox.length = dimemsions[2]; }
+        if (dimemsions[1] > shippingBox.height) { shippingBox.height = dimemsions[1]; }
+        shippingBox.width += dimemsions[0];
+        shippingBox.weight += order.items[i].weight;
       }
-      // console.log(`shipmentBox: ${JSON.stringify(shipmentBox)}`);
-      estimateShipping(shipmentBox, (err, result)=>{
+      // console.log(`shippingBox: ${JSON.stringify(shippingBox)}`);
+      estimateShipping(shippingBox, (err, result)=>{
         // No Correio info.
         if (err) {
-          order.correioResult = {};
+          order.shipping.correioResult = {};
         } else {
-          order.correioResult = result;
+          order.shipping.correioResult = result;
         }
         // Save correio result.
         order.save((err, newAddress) => {
@@ -290,46 +222,53 @@ router.get('/shipment', (req, res, next)=>{
   });
 });
 
-// Select shipment page.
-router.get('/shipment_old', (req, res, next)=>{
-  Order.findOne({user_id: req.user._id}, (err, order)=>{
-    if (err) { return next(err); }
-    if (!order) {
-      return next(new Error('No order to continue checkout.')); }
-    else {
-      res.render('checkout/shipment_old', { shipAddress: order.shipAddress, formatMoney }); }
-  });
-});
-
 // Select shipment.
 router.post('/shipment', (req, res, next)=>{
-  // Get products itens.
-  let items = []
-  for (var i = 0; i < req.cart.products.length; i++) {
-    let item = {
-      _id: req.cart.products[i]._id,
-      name: req.cart.products[i].title,
-      quantity: req.cart.products[i].qtd,
-      price: req.cart.products[i].price.toFixed(2) 
-    }
-    items.push(item);
-  }
-  // console.log(`cart: ${JSON.stringify(req.cart)}`);
   // Set shipment method to default.
   Order.update(
     { user_id: req.user._id }, 
     { 
-      items: items, 
       subtotalPrice: req.cart.totalPrice.toFixed(2),
       shippingPrice: '.33',
       totalPrice: (.33 + req.cart.totalPrice).toFixed(2),
       shipMethod: 'default', 
       status: 'shipMethodSelected'
-    }, err=>{ if (err) { return next(err) };
-    res.redirect('/checkout/payment');
-  });    
+    }, 
+    err=>{ 
+      if (err) { return next(err) };
+      res.redirect('/checkout/payment');
+    }
+  );    
 });
 
+// // Select shipment.
+// router.post('/shipment', (req, res, next)=>{
+//   // Get products itens.
+//   let items = []
+//   for (var i = 0; i < req.cart.products.length; i++) {
+//     let item = {
+//       _id: req.cart.products[i]._id,
+//       name: req.cart.products[i].title,
+//       quantity: req.cart.products[i].qtd,
+//       price: req.cart.products[i].price.toFixed(2) 
+//     }
+//     items.push(item);
+//   }
+//   // console.log(`cart: ${JSON.stringify(req.cart)}`);
+//   // Set shipment method to default.
+//   Order.update(
+//     { user_id: req.user._id }, 
+//     { 
+//       items: items, 
+//       subtotalPrice: req.cart.totalPrice.toFixed(2),
+//       shippingPrice: '.33',
+//       totalPrice: (.33 + req.cart.totalPrice).toFixed(2),
+//       shipMethod: 'default', 
+//       status: 'shipMethodSelected'
+//     }, err=>{ if (err) { return next(err) };
+//     res.redirect('/checkout/payment');
+//   });    
+// });
 // Select payment page.
 router.get('/payment', (req, res, next)=>{
   Order.findOne({user_id: req.user._id}, (err, order)=>{
