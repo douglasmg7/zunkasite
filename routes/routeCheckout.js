@@ -19,7 +19,7 @@ const Product = require('../model/product');
 // CEP origin, Rua Bicas - 31030160.
 const CEP_ORIGIN = '31030160';
 const STANDARD_DELIVERY_DEADLINE = 10;
-const STANDARD_DELIVERY_PRICE = '30,00';
+const STANDARD_DELIVERY_PRICE = '30.00';
 
 module.exports = router;
 
@@ -174,7 +174,7 @@ router.post('/shipping-address', (req, res, next)=>{
 });
 
 // Select shipment - page.
-router.get('/shipment', (req, res, next)=>{
+router.get('/shipping-method', (req, res, next)=>{
   // Find order not closed yet.
   Order.findOne({user_id: req.user._id, isClosed: {$exists: false}}, (err, order)=>{
     if (err) { return next(err); }
@@ -213,7 +213,8 @@ router.get('/shipment', (req, res, next)=>{
           order.shipping.correioResult = result;
           // Shipping price.
           if (order.shipping.correioResult.Valor) {
-            order.shipping.price = order.shipping.correioResult.Valor;
+            // Correio using ',' as decimal point.
+            order.shipping.price = order.shipping.correioResult.Valor.replace('.', '').replace(',', '.');
           } else {
             order.shipping.price = STANDARD_DELIVERY_PRICE;
           }
@@ -230,7 +231,7 @@ router.get('/shipment', (req, res, next)=>{
             res.json({err});
             return next(err); 
           } else {
-            res.render('checkout/shipment', { 
+            res.render('checkout/shippingMethod', { 
               nav: {
               },
               order
@@ -243,7 +244,7 @@ router.get('/shipment', (req, res, next)=>{
 });
 
 // Select shipment.
-router.post('/shipment', (req, res, next)=>{
+router.post('/shipping-method', (req, res, next)=>{
   // Set shipment method to default.
   Order.findOne({ user_id: req.user._id, isClosed: {$exists: false} }, (err, order)=>{
     // Only one option yet. Alredy set on get shippment.
@@ -251,29 +252,13 @@ router.post('/shipment', (req, res, next)=>{
     // shipping.daedline: 
     order.shipping.method = 'standard',
     order.shipping.carrier = 'correios'
-    order.totalPrice = (parseInt(order.subtotalPrice) + parseInt(order.shipping.price)).toFixed(2);
-    isShippingMethodSelected = Date.now();
+    order.totalPrice = (parseFloat(order.subtotalPrice) + parseFloat(order.shipping.price)).toFixed(2);
+    order.isShippingMethodSelected = Date.now();
     order.save(err=>{
       if (err) { return next(err) };
       res.redirect('/checkout/payment');
     });
-  });
-  // Order.update(
-  //   { user_id: req.user._id, isClosed: {$exists: false} }, 
-  //   { 
-  //     // Only one option yet. Alredy set on get shippment.
-  //     // shipping.price: 
-  //     // shipping.daedline: 
-  //     shipping.method: 'standard',
-  //     shipping.carrier: 'correios'
-  //     totalPrice: parseInt(subtotalPrice) + parseInt(shipping.price);
-  //     isShippingMethodSelected: Date.now();
-  //   }, 
-  //   err=>{ 
-  //     if (err) { return next(err) };
-  //     res.redirect('/checkout/payment');
-  //   }
-  // );    
+  });  
 });
 
 // Select payment page.
@@ -284,6 +269,17 @@ router.get('/payment', (req, res, next)=>{
       return next(new Error('No order to continue checkout.')); }
     else {
       res.render('checkout/payment', { order: order, formatMoney: formatMoney }); }
+  });  
+});
+
+// Select payment page.
+router.get('/payment_old', (req, res, next)=>{
+  Order.findOne({user_id: req.user._id}, (err, order)=>{
+    if (err) { return next(err); }
+    if (!order) {
+      return next(new Error('No order to continue checkout.')); }
+    else {
+      res.render('checkout/payment_old', { order: order, formatMoney: formatMoney }); }
   });  
 });
 

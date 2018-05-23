@@ -115,11 +115,6 @@ main {
   justify-content: center;
   margin: 0 auto 3em auto;
   max-width: 1000px;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
-  margin: 0 auto 3em auto;
-  max-width: 1000px;
 }
 main span.price {
   color: #c45d43;

@@ -4,7 +4,7 @@ html(lang="en")
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
     title Envio
-    link(rel="stylesheet" href="/css/checkout/shipment.css" charset="utf-8")
+    link(rel="stylesheet" href="/css/checkout/shippingMethod.css" charset="utf-8")
   body
     header
       nav
@@ -37,10 +37,10 @@ html(lang="en")
                 span.deadline {{deliveryDeadline}} dia(s)
               p Valor: 
                 span.price R${{deliveryPrice}}
-          button(@click='selectShipmentMethod()') Continuar
+          button(@click='shipmentSelected()') Continuar
   script.
     let csrfToken = !{JSON.stringify(csrfToken)};
     let order = !{JSON.stringify(order)};
   include ../components/axios.js.pug
   include ../components/vue.js.pug
-  script(src='/js/checkout/shipment.js')            
+  script(src='/js/checkout/shippingMethod.js')            

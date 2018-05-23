@@ -5,6 +5,25 @@ var app = new Vue({
     order: order
   },
   methods: { 
+    shipmentSelected: function(){
+      axios({
+        method: 'post',
+        url: window.location.pathname,
+        headers:{'csrf-token' : csrfToken}
+      })
+      .then(response => {
+        // Validation error.
+        if (response.data.err) {
+          alert('Não foi possível selecionar a forma de envio.');
+        } else{
+          window.location.href='/checkout/payment';
+        }
+      })
+      .catch(err => {
+        alert('Não foi possível selecionar a forma de envio.');
+        console.error(err);
+      })  
+    }
   },
   computed: {
     deliveryDeadline: function(){

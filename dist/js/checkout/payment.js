@@ -14,14 +14,14 @@ for (var i = 0; i < order.items.length; i++) {
 }
 // Shipping address.
 let shippingAddress = {
-  recipient_name: order.shippingAddress.name,
-  line1: `${order.shippingAddress.address}, ${order.shippingAddress.addressNumber} - ${order.shippingAddress.district}`,
-  line2: order.shippingAddress.complement,
-  city: order.shippingAddress.city,
+  recipient_name: order.shipping.address.name,
+  line1: `${order.shipping.address.address}, ${order.shipping.address.addressNumber} - ${order.shipping.address.district}`,
+  line2: order.shipping.address.complement,
+  city: order.shipping.address.city,
   country_code: 'BR',
-  postal_code: order.shippingAddress.cep,
-  phone: order.shippingAddress.phone,
-  state: order.shippingAddress.state
+  postal_code: order.shipping.address.cep,
+  phone: order.shipping.address.phone,
+  state: order.shipping.address.state
 };
 // console.log(`shippingAddress: ${JSON.stringify(shippingAddress)}`);
 // Paypal Express Checkout. 
@@ -66,16 +66,16 @@ paypal.Button.render({
               details: {
                 subtotal: order.subtotalPrice,
                 //- tax: "0.01",
-                shipping: order.shippingPrice,
+                shipping: order.shipping.price,
                 //- handling_fee: "0.01",
                 //- shipping_discount: "-0.01",
                 //- insurance: "0.01"
               }
             },
             description: 'Itens do carrinho.',
-            custom: 'EBAY_EMS_90048630024435',
-            soft_descriptor: 'ECHI5786786',
-            purchase_order: 'asefeaf',
+            // custom: 'EBAY_EMS_90048630024435',
+            // soft_descriptor: 'ECHI5786786',
+            // purchase_order: 'asefeaf',
             item_list: {
               items: items,
               shipping_address: shippingAddress
