@@ -3,34 +3,21 @@ html(lang="en")
   head
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Pagamento.
+    title Pagamento
+    link(rel="stylesheet" href="/css/checkout/payment.css" charset="utf-8")
     include ../components/paypal.js.pug
-    include ../components/bootstrap.css.pug
   body
-    include ../navbar.pug
-    .container
-      .row
-        .col-md-12
-          h2.text-left Selecionar uma forma de pagamento
-          hr
-          //- Flash erros.          
-          if error
-            each err in error
-              .alert.alert-danger(role='alert') 
-                p.text-center #{err} 
-          //- Flash success.
-          if success
-            each suc in success
-              .alert.alert-info(role='alert') 
-                p.text-center #{suc}    
-            p &nbsp
-            p &nbsp
-          #paypal-button
-          //- form(method='post')
-            input(type='hidden' name='_csrf' value=csrfToken)       
-            input.btn.btn-success(type='submit' value= 'Paypal')
+    header
+      nav
+        include ../main-nav.pug    
+    main#app(v-cloak)
+      .container
+        h2 Selecione a forma de pagamento
+        hr
+        #paypal-button
+        p.paymentCanceledByUser(v-show='showCanceledMsg') Pagamento cancelado pelo cliente.
+        p.err(v-show='showErrMsg') {{errMsg}}
   script.
     let order = !{JSON.stringify(order)};
-  include ../components/jquery.js.pug
-  include ../components/bootstrap.js.pug
+  include ../components/vue.js.pug
   script(src='/js/checkout/payment.js') 
