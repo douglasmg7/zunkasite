@@ -18,6 +18,8 @@ const Product = require('../model/product');
 
 // CEP origin, Rua Bicas - 31030160.
 const CEP_ORIGIN = '31030160';
+const STANDARD_DELIVERY_DEADLINE = 10;
+const STANDARD_DELIVERY_PRICE = '30,00';
 
 module.exports = router;
 
@@ -144,6 +146,7 @@ router.post('/shipping-address', (req, res, next)=>{
         // Create a new order.
         let order = new Order();
         order.items = items;
+        order.subtotalPrice = req.cart.totalPrice.toFixed(2);
         order.user_id = req.user._id;
         order.name = req.user.name;
         order.email = req.user.email;
@@ -170,7 +173,7 @@ router.post('/shipping-address', (req, res, next)=>{
   };
 });
 
-// Select shipment page.
+// Select shipment - page.
 router.get('/shipment', (req, res, next)=>{
   // Find order not closed yet.
   Order.findOne({user_id: req.user._id, isClosed: {$exists: false}}, (err, order)=>{
@@ -195,14 +198,31 @@ router.get('/shipment', (req, res, next)=>{
         if (dimemsions[1] > shippingBox.height) { shippingBox.height = dimemsions[1]; }
         shippingBox.width += dimemsions[0];
         shippingBox.weight += order.items[i].weight;
+        // Box shipping dimensions.
+        order.shipping.box = shippingBox;
       }
-      // console.log(`shippingBox: ${JSON.stringify(shippingBox)}`);
       estimateShipping(shippingBox, (err, result)=>{
         // No Correio info.
         if (err) {
           order.shipping.correioResult = {};
-        } else {
+          order.shipping.price = STANDARD_DELIVERY_PRICE;
+          order.shipping.deadline = STANDARD_DELIVERY_DEADLINE;
+        }
+        // Got correio info. 
+        else {
           order.shipping.correioResult = result;
+          // Shipping price.
+          if (order.shipping.correioResult.Valor) {
+            order.shipping.price = order.shipping.correioResult.Valor;
+          } else {
+            order.shipping.price = STANDARD_DELIVERY_PRICE;
+          }
+          // Shipping deadline.
+          if (order.shipping.correioResult.PrazoEntrega) {
+            order.shipping.deadline = parseInt(order.shipping.correioResult.PrazoEntrega);
+          } else {
+            order.shipping.deadline = STANDARD_DELIVERY_DEADLINE;
+          }
         }
         // Save correio result.
         order.save((err, newAddress) => {
@@ -225,50 +245,37 @@ router.get('/shipment', (req, res, next)=>{
 // Select shipment.
 router.post('/shipment', (req, res, next)=>{
   // Set shipment method to default.
-  Order.update(
-    { user_id: req.user._id }, 
-    { 
-      subtotalPrice: req.cart.totalPrice.toFixed(2),
-      shippingPrice: '.33',
-      totalPrice: (.33 + req.cart.totalPrice).toFixed(2),
-      shipMethod: 'default', 
-      status: 'shipMethodSelected'
-    }, 
-    err=>{ 
+  Order.findOne({ user_id: req.user._id, isClosed: {$exists: false} }, (err, order)=>{
+    // Only one option yet. Alredy set on get shippment.
+    // shipping.price: 
+    // shipping.daedline: 
+    order.shipping.method = 'standard',
+    order.shipping.carrier = 'correios'
+    order.totalPrice = (parseInt(order.subtotalPrice) + parseInt(order.shipping.price)).toFixed(2);
+    isShippingMethodSelected = Date.now();
+    order.save(err=>{
       if (err) { return next(err) };
       res.redirect('/checkout/payment');
-    }
-  );    
+    });
+  });
+  // Order.update(
+  //   { user_id: req.user._id, isClosed: {$exists: false} }, 
+  //   { 
+  //     // Only one option yet. Alredy set on get shippment.
+  //     // shipping.price: 
+  //     // shipping.daedline: 
+  //     shipping.method: 'standard',
+  //     shipping.carrier: 'correios'
+  //     totalPrice: parseInt(subtotalPrice) + parseInt(shipping.price);
+  //     isShippingMethodSelected: Date.now();
+  //   }, 
+  //   err=>{ 
+  //     if (err) { return next(err) };
+  //     res.redirect('/checkout/payment');
+  //   }
+  // );    
 });
 
-// // Select shipment.
-// router.post('/shipment', (req, res, next)=>{
-//   // Get products itens.
-//   let items = []
-//   for (var i = 0; i < req.cart.products.length; i++) {
-//     let item = {
-//       _id: req.cart.products[i]._id,
-//       name: req.cart.products[i].title,
-//       quantity: req.cart.products[i].qtd,
-//       price: req.cart.products[i].price.toFixed(2) 
-//     }
-//     items.push(item);
-//   }
-//   // console.log(`cart: ${JSON.stringify(req.cart)}`);
-//   // Set shipment method to default.
-//   Order.update(
-//     { user_id: req.user._id }, 
-//     { 
-//       items: items, 
-//       subtotalPrice: req.cart.totalPrice.toFixed(2),
-//       shippingPrice: '.33',
-//       totalPrice: (.33 + req.cart.totalPrice).toFixed(2),
-//       shipMethod: 'default', 
-//       status: 'shipMethodSelected'
-//     }, err=>{ if (err) { return next(err) };
-//     res.redirect('/checkout/payment');
-//   });    
-// });
 // Select payment page.
 router.get('/payment', (req, res, next)=>{
   Order.findOne({user_id: req.user._id}, (err, order)=>{

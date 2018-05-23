@@ -1,5 +1,3 @@
-const STANDARD_DELIVERY_DEADLINE = 10;
-const STANDARD_DELIVERY_PRICE = '30,00';
 // Vue.
 var app = new Vue({
   el: '#app',
@@ -9,23 +7,12 @@ var app = new Vue({
   methods: { 
   },
   computed: {
-    // a computed getter
-    // shipmentOption: function () {
-    //   // Correio response.
-    //   if (this.order.correioResult) {
-    //     return `Envio padrão - Prazo de entrega: ${this.order.correioResult.PrazoEntrega} dia(s) - Valor: R$${this.order.correioResult.Valor}`;
-    //   } 
-    //   // No Correio response.
-    //   else {
-    //     return `Envio padrão - Prazo de entrega: 5 dia(s) - Valor: R$30,00`;
-    //   }
-    // },
     deliveryDeadline: function(){
       if (order.shipping.correioResult.PrazoEntrega) {
         return order.shipping.correioResult.PrazoEntrega;
       } 
       else {
-        return STANDARD_DELIVERY_DEADLINE;
+        return order.shipping.deadline;
       }
     },
     deliveryPrice: function(){
@@ -33,7 +20,7 @@ var app = new Vue({
         return order.shipping.correioResult.Valor;
       } 
       else {
-        return STANDARD_DELIVERY_PRICE;
+        return order.shipping.price;
       }
     }
   },

@@ -64,12 +64,6 @@ let schema = new mongoose.Schema({
   email: { type: String, required: true },    // If user change his email, it will keep the email used at order request.
   items: [item],   // Itens to be bought.
   shipping: shipping,   // Shipping information.
-  // shippingBox: shippingBox, // Approximately dimensions for shipment.
-  // shippingCarrier: { type: String }, // Identify the shipping carrier.
-  // shippingMethod: { type: String }, // Identify the shipping method.
-  // shippingPrice: { type: String },  // Price for shipment.
-  // shippingAddress: address,
-  // shippingDeadline: { type: Number },
   billAddress: address,
   subtotalPrice: { type: String },  // Items price without shipping price.
   totalPrice: { type: String }, // Items price plus shipping price.
