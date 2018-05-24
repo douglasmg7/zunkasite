@@ -123,7 +123,3 @@ main .container {
 main .container hr {
   margin-bottom: 1em;
 }
-main .container p.paymentCanceledByUser,
-main .container p.err {
-  color: #f00;
-}

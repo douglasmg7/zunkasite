@@ -4,8 +4,7 @@ html(lang="en")
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
     title Pagamento
-    link(rel="stylesheet" href="/css/checkout/payment.css" charset="utf-8")
-    include ../components/paypal.js.pug
+    link(rel="stylesheet" href="/css/checkout/orderRequest.css" charset="utf-8")
   body
     header
       nav
@@ -18,4 +17,4 @@ html(lang="en")
   script.
     let order = !{JSON.stringify(order)};
   include ../components/vue.js.pug
-  script(src='/js/checkout/payment.js') 
+  script(src='/js/checkout/orderRequest.js') 

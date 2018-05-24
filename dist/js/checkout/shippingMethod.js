@@ -9,14 +9,15 @@ var app = new Vue({
       axios({
         method: 'post',
         url: window.location.pathname,
-        headers:{'csrf-token' : csrfToken}
+        headers: {'csrf-token' : csrfToken},
+        data: { shippingMethod: 'correios'}
       })
       .then(response => {
         // Validation error.
         if (response.data.err) {
           alert('Não foi possível selecionar a forma de envio.');
         } else{
-          window.location.href='/checkout/payment';
+          window.location.href=`/checkout/payment/${this.order._id}`;
         }
       })
       .catch(err => {

@@ -165,7 +165,7 @@ router.post('/shipping-address', (req, res, next)=>{
           if (err) {
             res.json({ err: err })
           } else {
-            res.json({});
+            res.json({ order_id: order._id });
           }
         });        
       });
@@ -174,9 +174,9 @@ router.post('/shipping-address', (req, res, next)=>{
 });
 
 // Select shipment - page.
-router.get('/shipping-method', (req, res, next)=>{
+router.get('/shipping-method/:order_id', (req, res, next)=>{
   // Find order not closed yet.
-  Order.findOne({user_id: req.user._id, isClosed: {$exists: false}}, (err, order)=>{
+  Order.findById(req.params.order_id, (err, order)=>{
     if (err) { return next(err); }
     if (!order) {
       return next(new Error('No order to continue checkout.')); }
@@ -244,25 +244,62 @@ router.get('/shipping-method', (req, res, next)=>{
 });
 
 // Select shipment.
-router.post('/shipping-method', (req, res, next)=>{
+router.post('/shipping-method/:order_id', (req, res, next)=>{
   // Set shipment method to default.
-  Order.findOne({ user_id: req.user._id, isClosed: {$exists: false} }, (err, order)=>{
+  Order.findById(req.params.order_id, (err, order)=>{
     // Only one option yet. Alredy set on get shippment.
     // shipping.price: 
     // shipping.daedline: 
-    order.shipping.method = 'standard',
-    order.shipping.carrier = 'correios'
+    order.shipping.method = 'standard';
+    // console.log(`req.body: ${JSON.stringify(req.body)}`);
+    if (req.body.shippingMethod == 'correios') { order.shipping.carrier = 'correios'; }
     order.totalPrice = (parseFloat(order.subtotalPrice) + parseFloat(order.shipping.price)).toFixed(2);
     order.isShippingMethodSelected = Date.now();
     order.save(err=>{
       if (err) { return next(err) };
-      res.redirect('/checkout/payment');
+      res.json({});
     });
   });  
 });
 
 // Select payment page.
-router.get('/payment', (req, res, next)=>{
+router.get('/payment/:order_id', (req, res, next)=>{
+  Order.findById(req.params.order_id, (err, order)=>{
+    if (err) { return next(err); }
+    if (!order) {
+      return next(new Error('No order to continue checkout.')); }
+    else {
+      res.render('checkout/payment', 
+        { 
+          order: order, 
+          nav: {
+          }
+        }
+      ); 
+    }
+  });  
+});
+
+// Close order.
+router.get('/close-order/:order_id', (req, res, next)=>{
+  Order.findOne({user_id: req.user._id}, (err, order)=>{
+    if (err) { return next(err); }
+    if (!order) {
+      return next(new Error('No order to continue checkout.')); }
+    else {
+      res.render('checkout/payment', 
+        { 
+          order: order, 
+          nav: {
+          }
+        }
+      ); 
+    }
+  });  
+});
+
+// Select payment page.
+router.get('/order-request', (req, res, next)=>{
   Order.findOne({user_id: req.user._id}, (err, order)=>{
     if (err) { return next(err); }
     if (!order) {

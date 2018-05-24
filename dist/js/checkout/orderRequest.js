@@ -3,38 +3,6 @@ var app = new Vue({
   el: '#app',
   data: {
   },
-  methods: {
-    // Close de order.
-    closeOrder(payment){
-      axios({
-        method: 'post',
-        url:`/checkout/close-order/${this.order._id}`,
-        headers:{'csrf-token' : csrfToken},
-        data: { payment: payment }
-      })
-      .then(response => {
-        // Correio answer.
-        if (response.data.err) {
-          console.log(response.data.err);
-          this.showEstimatedShipment = false;
-          this.cepErrMsg = response.data.err;
-        } else {
-          this.cepErrMsg = '';
-          this.deliveryMethod = 'Padrão';
-          this.deliveryPrice = response.data.correio.Valor;
-          this.deliveryTime =  `${response.data.correio.PrazoEntrega} dia(s)`;
-          this.showEstimatedShipment = true;
-        }
-        this.loadingEstimateShipment = false;
-      })
-      .catch(err => {
-        console.log('inside error.');
-        console.error(err);
-        this.loadingEstimateShipment = false;
-        this.showEstimatedShipment = false;
-      }) 
-    },
-  }
 });
 
 // Items.

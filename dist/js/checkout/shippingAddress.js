@@ -43,7 +43,7 @@ var app = new Vue({
         if (response.data.err) {
           alert('Não foi possível selecionar o endereço.');
         } else{
-          window.location.href='/checkout/shipping-method';
+          window.location.href=`/checkout/shipping-method/${response.data.order_id}`;
         }
       })
       .catch(err => {
