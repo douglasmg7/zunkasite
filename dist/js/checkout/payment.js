@@ -1,14 +1,15 @@
 // Vue.
-var app = new Vue({
+let app = new Vue({
   el: '#app',
   data: {
+    order: order
   },
   methods: {
     // Close de order.
-    closeOrder(payment){
+    confirmPayment(payment){
       axios({
         method: 'post',
-        url:`/checkout/close-order/${this.order._id}`,
+        url: window.location.href,
         headers:{'csrf-token' : csrfToken},
         data: { payment: payment }
       })
@@ -16,27 +17,40 @@ var app = new Vue({
         // Correio answer.
         if (response.data.err) {
           console.log(response.data.err);
-          this.showEstimatedShipment = false;
-          this.cepErrMsg = response.data.err;
         } else {
-          this.cepErrMsg = '';
-          this.deliveryMethod = 'Padrão';
-          this.deliveryPrice = response.data.correio.Valor;
-          this.deliveryTime =  `${response.data.correio.PrazoEntrega} dia(s)`;
-          this.showEstimatedShipment = true;
+          window.location.href = `/checkout/order-confirmation/${order._id}`
         }
-        this.loadingEstimateShipment = false;
       })
       .catch(err => {
-        console.log('inside error.');
         console.error(err);
-        this.loadingEstimateShipment = false;
-        this.showEstimatedShipment = false;
       }) 
     },
-  }
+  },
+  computed: {
+    deliveryDeadline: function(){
+      if (order.shipping.correioResult.PrazoEntrega) {
+        return order.shipping.correioResult.PrazoEntrega;
+      } 
+      else {
+        return order.shipping.deadline;
+      }
+    },
+    deliveryPrice: function(){
+      if (order.shipping.correioResult.Valor) {
+        return order.shipping.correioResult.Valor;
+      } 
+      else {
+        return order.shipping.price;
+      }
+    }
+  },
+  filters: {
+    formatMoney: function(val){
+      return 'R$ ' + val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+  }  
 });
-
+// app.test();
 // Items.
 let items = [];
 for (var i = 0; i < order.items.length; i++) {
@@ -126,19 +140,12 @@ paypal.Button.render({
   },
   // Execute the payment.
   onAuthorize: function(data, actions) {
-    // Hide end clean messages.
-    console.log('onAuthorize');
-    this.showCanceledMsg = false;
-    this.showErrMsg = false;
-    this.errMsg = '';
     // Make a call to the REST api to execute the payment
     return actions.payment.execute()
       .then(function(payment) {
         // The payment is complete!
         // You can now show a confirmation message to the customer.
-        console.log('Payment: ', JSON.stringify(payment));
-        window.alert('Payment Complete!');
-        window.location.href='/';
+        app.confirmPayment(payment);
       }).catch(err=>{
         return next(err);
       });

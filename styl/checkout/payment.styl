@@ -9,5 +9,31 @@ main
   .container
     display flex
     flex-flow column nowrap
+    p
+      margin-bottom .5em
     hr
+      margin-bottom 1em
+    .price
+      color $RED_PRICE
+    .quantity
+      color $GRAY_TITLE
+    .shipment
+      display flex
+      flex-flow row wrap
+      span.deadline
+        font-weight bold
+    .items
+      // margin-top 1em
+      margin-left 2em
+      ul
+        li
+          color $GRAY_TITLE
+        margin-top .5em
+        p
+          margin-top .2em
+          color black
+      button
+        margin-top 2em
+    .total
+      margin-top .5em
       margin-bottom 1em

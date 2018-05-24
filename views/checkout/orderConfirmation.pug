@@ -4,17 +4,16 @@ html(lang="en")
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
     title Pagamento
-    link(rel="stylesheet" href="/css/checkout/orderRequest.css" charset="utf-8")
+    link(rel="stylesheet" href="/css/checkout/orderConfirmation.css" charset="utf-8")
   body
     header
       nav
         include ../main-nav.pug    
     main#app(v-cloak)
       .container
-        h2 Selecione a forma de pagamento
+        h2 Peido realizado com sucesso.
         hr
-        #paypal-button
   script.
     let order = !{JSON.stringify(order)};
   include ../components/vue.js.pug
-  script(src='/js/checkout/orderRequest.js') 
+  script(src='/js/checkout/orderConfirmation.js') 

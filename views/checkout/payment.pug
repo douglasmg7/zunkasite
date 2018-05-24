@@ -14,8 +14,32 @@ html(lang="en")
       .container
         h2 Selecione a forma de pagamento
         hr
+        //- Address complement exist.
+        .address(v-if='order.shipping.address.addressComplement')
+          p Enviar para: {{order.shipping.address.name}}, {{order.shipping.address.address}} {{order.shipping.address.addressNumber}}, {{order.shipping.address.addressComplement}} - {{order.shipping.address.district}}, {{order.shipping.address.city}}, {{order.shipping.address.state}}, {{order.shipping.address.cep}} Brasil   
+        //- Addres complement not exist.
+        .address(v-if='!order.shipping.address.addressComplement')
+          p Enviar para: {{order.shipping.address.name}}, {{order.shipping.address.address}} {{order.shipping.address.addressNumber}} - {{order.shipping.address.district}}, {{order.shipping.address.city}}, {{order.shipping.address.state}}, {{order.shipping.address.cep}} Brasil   
+        .shipment
+          p Envio padrão, entrega em&nbsp 
+          span.deadline {{deliveryDeadline}} dia(s)
+          span ,&nbspvalor do frete:&nbsp 
+          span.price R${{deliveryPrice}}
+        .items(v-if='order.items.length > 0')
+          ul
+            li(v-for='item in order.items')
+              p 
+                strong {{item.name}}
+              p 
+                span.price {{item.price | formatMoney}} 
+                span.quantity - Quantidade: {{item.quantity}}
+        .total
+          span Valor total com frete: 
+          span.price {{ order.totalPrice | formatMoney }}
         #paypal-button
   script.
+    let csrfToken = !{JSON.stringify(csrfToken)};
     let order = !{JSON.stringify(order)};
   include ../components/vue.js.pug
+  include ../components/axios.js.pug
   script(src='/js/checkout/payment.js') 

@@ -57,6 +57,10 @@ let shipping = new mongoose.Schema({
   deadline: { type: Number },
   correioResult: correioResult, // Result from correio search ws for shipment price and deadline.
 });
+// Schema - payment.
+let payment = new mongoose.Schema({
+  paypal: { type: Object },
+});
 // Schema.
 let schema = new mongoose.Schema({
   user_id: { type: mongoose.Schema.Types.ObjectId, required: true },
@@ -65,9 +69,9 @@ let schema = new mongoose.Schema({
   items: [item],   // Itens to be bought.
   shipping: shipping,   // Shipping information.
   billAddress: address,
+  payment: payment,
   subtotalPrice: { type: String },  // Items price without shipping price.
   totalPrice: { type: String }, // Items price plus shipping price.
-  // correioResult: correioResult, // Result from correio search ws for shipment price and deadline.
   isShippingAddressSelected: { type: Date }, // When the user select the shipping address.
   isShippingMethodSelected: { type: Date }, // When the user select the shipping method.
   isClosed: { type: Date }, // When the user post the order (final process), it goes to closed.

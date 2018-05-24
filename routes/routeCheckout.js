@@ -179,7 +179,7 @@ router.get('/shipping-method/:order_id', (req, res, next)=>{
   Order.findById(req.params.order_id, (err, order)=>{
     if (err) { return next(err); }
     if (!order) {
-      return next(new Error('No order to continue checkout.')); }
+      return next(new Error('No order to continue with shipping method selection.')); }
     else {
       // Calculate box size shipment approximately.
       let shippingBox = { cepOrigin: CEP_ORIGIN, cepDestiny: order.shipping.address.cep, length: 0, height: 0, width: 0, weight: 0 };
@@ -262,30 +262,12 @@ router.post('/shipping-method/:order_id', (req, res, next)=>{
   });  
 });
 
-// Select payment page.
+// Payment - page.
 router.get('/payment/:order_id', (req, res, next)=>{
   Order.findById(req.params.order_id, (err, order)=>{
     if (err) { return next(err); }
     if (!order) {
-      return next(new Error('No order to continue checkout.')); }
-    else {
-      res.render('checkout/payment', 
-        { 
-          order: order, 
-          nav: {
-          }
-        }
-      ); 
-    }
-  });  
-});
-
-// Close order.
-router.get('/close-order/:order_id', (req, res, next)=>{
-  Order.findOne({user_id: req.user._id}, (err, order)=>{
-    if (err) { return next(err); }
-    if (!order) {
-      return next(new Error('No order to continue checkout.')); }
+      return next(new Error('No order to continue with payment.')); }
     else {
       res.render('checkout/payment', 
         { 
@@ -299,13 +281,38 @@ router.get('/close-order/:order_id', (req, res, next)=>{
 });
 
 // Select payment page.
-router.get('/order-request', (req, res, next)=>{
-  Order.findOne({user_id: req.user._id}, (err, order)=>{
+router.post('/payment/:order_id', (req, res, next)=>{
+  Order.findById(req.params.order_id, (err, order)=>{
     if (err) { return next(err); }
     if (!order) {
-      return next(new Error('No order to continue checkout.')); }
+      return next(new Error('No order to continue with payment.')); }
     else {
-      res.render('checkout/payment', 
+      console.log(`paypal payment: ${JSON.stringify(req.body.payment)}`);
+      order.isClosed = Date.now();
+      order.isPaid = Date.now();
+      order.payment = {
+        paypal: req.body.payment
+      };
+      order.save(err=>{
+        if (err) {
+          res.json({err});
+          return next(err); 
+        } else {
+          res.json({});
+        }
+      })
+    }
+  });  
+});
+
+// Order confirmation - page.
+router.get('/order-confirmation/:order_id', (req, res, next)=>{
+  Order.findById(req.params.order_id, (err, order)=>{
+    if (err) { return next(err); }
+    if (!order) {
+      return next(new Error('No order to confirm.')); }
+    else {
+      res.render('checkout/orderConfirmation', 
         { 
           order: order, 
           nav: {

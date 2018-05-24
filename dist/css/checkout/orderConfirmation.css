@@ -120,42 +120,6 @@ main .container {
   display: flex;
   flex-flow: column nowrap;
 }
-main .container p {
-  margin-bottom: 0.5em;
-}
 main .container hr {
-  margin-bottom: 1em;
-}
-main .container .price {
-  color: #c45d43;
-}
-main .container .quantity {
-  color: #7d7d7d;
-}
-main .container .shipment {
-  display: flex;
-  flex-flow: row wrap;
-}
-main .container .shipment span.deadline {
-  font-weight: bold;
-}
-main .container .items {
-  margin-left: 2em;
-}
-main .container .items ul {
-  margin-top: 0.5em;
-}
-main .container .items ul li {
-  color: #7d7d7d;
-}
-main .container .items ul p {
-  margin-top: 0.2em;
-  color: #000;
-}
-main .container .items button {
-  margin-top: 2em;
-}
-main .container .total {
-  margin-top: 0.5em;
   margin-bottom: 1em;
 }
