@@ -122,7 +122,7 @@ router.post('/shipping-address', (req, res, next)=>{
   // Create order.
   function createOrder(address_id){
     // Find selected address.
-    Address.findById(address_id, (err, address)=>{
+    Address.findOne({ _id: address_id}, (err, address)=>{
       if (err) return next(err);
       // Remove order not closed yet, to start from begin again.
       Order.remove({user_id: req.user._id, isClosed: {$exists: false}}, err=>{
@@ -287,6 +287,7 @@ router.post('/payment/:order_id', (req, res, next)=>{
     if (!order) {
       return next(new Error('No order to continue with payment.')); }
     else {
+      // Send a e-mail.
       console.log(`paypal payment: ${JSON.stringify(req.body.payment)}`);
       order.isClosed = Date.now();
       order.isPaid = Date.now();

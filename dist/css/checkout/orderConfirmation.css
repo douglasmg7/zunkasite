@@ -123,3 +123,39 @@ main .container {
 main .container hr {
   margin-bottom: 1em;
 }
+main .container h4 {
+  margin-top: 0.8em;
+  margin-bottom: 0.2em;
+  font-weight: bold;
+}
+main .container .price {
+  color: #c45d43;
+}
+main .container .quantity {
+  color: #7d7d7d;
+}
+main .container .title {
+  font-weight: bold;
+  margin-top: 0.5em;
+}
+main .container .deadline {
+  font-weight: bold;
+}
+main .container .items ul {
+  margin-left: 2em;
+  margin-top: 0.5em;
+}
+main .container .items ul li {
+  color: #7d7d7d;
+}
+main .container .items ul p {
+  margin-top: 0.2em;
+  color: #000;
+}
+main .container .items button {
+  margin-top: 2em;
+}
+main .container .total {
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+}

@@ -11,8 +11,45 @@ html(lang="en")
         include ../main-nav.pug    
     main#app(v-cloak)
       .container
-        h2 Peido realizado com sucesso.
+        h2 Obrigado pelo seu Pedido.
+        p Seu pedido foi recebido e já será processado. Os detalhes do seu pedido são exibidos a baixo para sua referência.
+        p Um e-mail com os delahes do pedido será enviado para {{order.email}}.
         hr
+        .pedido
+          p.title Número do pedido
+          P {{order._id}}
+        .clientdetail
+          p.title Cliente.
+          p Nome: {{order.name}}
+          p Email: {{order.email}}
+        .address
+          p.title Endereço de entrega.
+          p Nome: {{order.shipping.address.name}}
+          p Telefone: {{order.shipping.address.phone}}
+          p {{order.shipping.address.address}},  {{order.shipping.address.addressNumber}} {{order.shipping.address.addressComplement}}
+          p {{order.shipping.address.district}}
+          p {{order.shipping.address.city}} - {{order.shipping.address.state}} - Brasil
+          p {{order.shipping.address.cep}} 
+        .shipment
+          p.title Frete
+          p Envio padrão
+          span Prazo: 
+          span.deadline {{deliveryDeadline}} dia(s)
+          br
+          span Valor do frete: 
+          span.price R${{deliveryPrice}}
+        .items(v-if='order.items.length > 0')
+          p.title Itens
+          ul
+            li(v-for='item in order.items')
+              p 
+                strong {{item.name}}
+              p 
+                span.price {{item.price | formatMoney}} 
+                span.quantity - Quantidade: {{item.quantity}}
+        .total
+          p.title Valor total com frete
+          p.price {{ order.totalPrice | formatMoney }}
   script.
     let order = !{JSON.stringify(order)};
   include ../components/vue.js.pug
