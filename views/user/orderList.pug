@@ -3,7 +3,7 @@ html(lang="en")
   head
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Zunka - Produtos
+    title Zunka - Pedidos
     link(rel="stylesheet" href="/css/user/orderList.css" charset="utf-8")
   body
     header
@@ -14,12 +14,16 @@ html(lang="en")
         table
           thead
             tr
-              th order_id
-              th shipMethod
+              th Data do pedido
+              th Total
+              th Enviado para
+              th Número
           tbody
             tr(v-for='order in orders')
-              td: a(:href='`/admin/orders`') {{order.user_id}}
-              td: a(:href='`/admin/orders`') {{order.shipping.method}}
+              td: a(:href='`/admin/orders`') {{order.isShippingAddressSelected | formatDate}}
+              td: a(:href='`/admin/orders`') {{order.totalPrice | formatMoney}}
+              td: a(:href='`/admin/orders`') {{order.shipping.address.name}}
+              td: a(:href='`/admin/orders`') {{order._id}}
         nav.pagination
           a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
     script.

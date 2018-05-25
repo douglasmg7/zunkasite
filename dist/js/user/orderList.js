@@ -25,7 +25,7 @@ var app = new Vue({
     getOrders(page=this.page){
       axios({
         method: 'get',
-        url: `/users/api/orders/${this.order._id}?page=${page}&search=${this.search}`,
+        url: `/users/api/orders?page=${page}&search=${this.search}`,
         headers:{'csrf-token' : csrfToken}
       })
       .then((res)=>{
@@ -33,6 +33,8 @@ var app = new Vue({
         this.page = res.data.page;
         this.pageCount = res.data.pageCount;
         console.log('orders count: ', this.orders.length);
+        console.log(`date: ${typeof this.orders[0].isShippingAddressSelected}`);
+        console.log(`date.now: ${typeof Date.now()}`);
       })
       .catch((err)=>{
         console.log(`Error - getOrders(), err: ${err}`);
@@ -42,7 +44,16 @@ var app = new Vue({
   filters: {
     // Format number to money format.
     formatMoney(val){
-      return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      return 'R$ ' + val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
+    // Format number to money format.
+    formatDate(val){
+      console.log(val);
+      let date = Date(val)
+      console.log(date.toString());
+      console.log(typeof date);
+      return 1;
+      // return date.getDay.toString(), + date.getYear.toString();
     }
   }
 });

@@ -150,7 +150,7 @@ router.post('/shipping-address', (req, res, next)=>{
         order.user_id = req.user._id;
         order.name = req.user.name;
         order.email = req.user.email;
-        order.isShippingAddressSelected = Date.now();
+        order.isShippingAddressSelected = new Date();
         order.shipping = { address: {} };
         order.shipping.address.name = address.name;
         order.shipping.address.cep = address.cep;
@@ -254,7 +254,7 @@ router.post('/shipping-method/:order_id', (req, res, next)=>{
     // console.log(`req.body: ${JSON.stringify(req.body)}`);
     if (req.body.shippingMethod == 'correios') { order.shipping.carrier = 'correios'; }
     order.totalPrice = (parseFloat(order.subtotalPrice) + parseFloat(order.shipping.price)).toFixed(2);
-    order.isShippingMethodSelected = Date.now();
+    order.isShippingMethodSelected = new Date();
     order.save(err=>{
       if (err) { return next(err) };
       res.json({});
@@ -287,8 +287,8 @@ router.post('/payment/:order_id', (req, res, next)=>{
     if (!order) {
       return next(new Error('No order to continue with payment.')); }
     else {
-      order.isClosed = Date.now();
-      order.isPaid = Date.now();
+      order.isClosed = new Date();
+      order.isPaid = new Date();
       order.payment = {
         paypal: req.body.payment
       };

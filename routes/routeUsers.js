@@ -13,9 +13,10 @@ const RemovedUser = require('../model/removedUser');
 const EmailConfirmation = require('../model/emailConfirmation');
 const PasswordReset = require('../model/passwordReset');
 const Address = require('../model/address');
+const Order = require('../model/order');
 
 // Quantity of orders per page.
-const ORDER_QTD_BY_PAGE = 3;
+const ORDER_QTD_BY_PAGE = 10;
 
 // Transporter object using the default SMTP transport.
 let transporter = nodemailer.createTransport({
@@ -669,19 +670,24 @@ router.get('/', checkPermission, function(req, res, next) {
 });
 
 // Get orders.
-router.get('/api/orders/:user_id', checkPermission, function(req, res, next) {
+router.get('/api/orders', checkPermission, function(req, res, next) {
   const user_id = req.params.user_id;
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
-  const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
+  const skip = (page - 1) * ORDER_QTD_BY_PAGE;
   const search = req.query.search
-    ? { user_id: user_id, isClosed: {$exists: true}, _id: {$regex: req.query.search, $options: 'i'} }
-    : { user_id: user_id, isClosed: {$exists: true} };
+    ? { user_id: req.user._id, isClosed: {$exists: true}, _id: {$regex: req.query.search, $options: 'i'} }
+    : { user_id: req.user._id, isClosed: {$exists: true} };
   // Find orders.
   let orderPromise = Order.find(search).sort({'isClosed': 1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
   // Order count.
   let orderCountPromise = Order.find({ user_id: user_id, isClosed: {$exists: true} }).count(search).exec();
   Promise.all([orderPromise, orderCountPromise])
   .then(([orders, count])=>{    
+    // for (var i = orders.length - 1; i >= 0; i--) {
+    //   console.log(`id: ${orders[i]._id}`);
+    // }
+    console.log(`date: ${orders[0].isClosed}`);
+    console.log(`date: ${orders[0].isClosed.toDate()}`);
     res.json({orders, page, pageCount: Math.ceil(count / ORDER_QTD_BY_PAGE)});
   }).catch(err=>{
     return next(err);

@@ -280,7 +280,7 @@ router.get('/orders', checkPermission, function(req, res, next) {
 // Get orders.
 router.get('/api/orders', checkPermission, function(req, res, next) {
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
-  const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
+  const skip = (page - 1) * ORDER_QTD_BY_PAGE;
   const search = req.query.search
     ? { $or: [
         {'user_id': {$regex: req.query.search, $options: 'i'}}, 
