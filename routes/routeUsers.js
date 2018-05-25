@@ -14,6 +14,9 @@ const EmailConfirmation = require('../model/emailConfirmation');
 const PasswordReset = require('../model/passwordReset');
 const Address = require('../model/address');
 
+// Quantity of orders per page.
+const ORDER_QTD_BY_PAGE = 3;
+
 // Transporter object using the default SMTP transport.
 let transporter = nodemailer.createTransport({
     host: 'smtps.dialhost.com.br',
@@ -648,6 +651,47 @@ router.put('/address/remove/:addressId', checkPermission, (req, res, next)=>{
 //   // Message from authentication, who set a flash message with erros.
 //   res.render('loginC', { message: req.flash('error') });
 // });
+
+
+/****************************************************************************** 
+/   ORDERS
+******************************************************************************/
+
+// Get orders page.
+router.get('/', checkPermission, function(req, res, next) {
+  res.render('user/orderList', {
+    page: req.query.page ? req.query.page : 1,
+    search: req.query.search ? req.query.search : '',  
+    nav: {
+      showAdminLinks: true
+    }
+  });   
+});
+
+// Get orders.
+router.get('/api/orders/:user_id', checkPermission, function(req, res, next) {
+  const user_id = req.params.user_id;
+  const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
+  const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
+  const search = req.query.search
+    ? { user_id: user_id, isClosed: {$exists: true}, _id: {$regex: req.query.search, $options: 'i'} }
+    : { user_id: user_id, isClosed: {$exists: true} };
+  // Find orders.
+  let orderPromise = Order.find(search).sort({'isClosed': 1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
+  // Order count.
+  let orderCountPromise = Order.find({ user_id: user_id, isClosed: {$exists: true} }).count(search).exec();
+  Promise.all([orderPromise, orderCountPromise])
+  .then(([orders, count])=>{    
+    res.json({orders, page, pageCount: Math.ceil(count / ORDER_QTD_BY_PAGE)});
+  }).catch(err=>{
+    return next(err);
+  });
+});
+
+
+/****************************************************************************** 
+/   PERMISSIONS
+******************************************************************************/
 
 // Check permission.
 function checkPermission (req, res, next) {
