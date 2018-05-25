@@ -176,7 +176,7 @@ router.post('/shipping-address', (req, res, next)=>{
 // Select shipment - page.
 router.get('/shipping-method/:order_id', (req, res, next)=>{
   // Find order not closed yet.
-  Order.findById(req.params.order_id, (err, order)=>{
+  Order.findOne({ _id: req.params.order_id, isClosed: { $exists: false }}, (err, order)=>{
     if (err) { return next(err); }
     if (!order) {
       return next(new Error('No order to continue with shipping method selection.')); }
@@ -246,7 +246,7 @@ router.get('/shipping-method/:order_id', (req, res, next)=>{
 // Select shipment.
 router.post('/shipping-method/:order_id', (req, res, next)=>{
   // Set shipment method to default.
-  Order.findById(req.params.order_id, (err, order)=>{
+  Order.findOne({ _id: req.params.order_id, isClosed: { $exists: false }}, (err, order)=>{
     // Only one option yet. Alredy set on get shippment.
     // shipping.price: 
     // shipping.daedline: 
@@ -264,7 +264,7 @@ router.post('/shipping-method/:order_id', (req, res, next)=>{
 
 // Payment - page.
 router.get('/payment/:order_id', (req, res, next)=>{
-  Order.findById(req.params.order_id, (err, order)=>{
+  Order.findOne({ _id: req.params.order_id, isClosed: { $exists: false }}, (err, order)=>{
     if (err) { return next(err); }
     if (!order) {
       return next(new Error('No order to continue with payment.')); }
@@ -282,13 +282,13 @@ router.get('/payment/:order_id', (req, res, next)=>{
 
 // Select payment page.
 router.post('/payment/:order_id', (req, res, next)=>{
-  Order.findById(req.params.order_id, (err, order)=>{
+  Order.findOne({ _id: req.params.order_id, isClosed: { $exists: false }}, (err, order)=>{
     if (err) { return next(err); }
     if (!order) {
       return next(new Error('No order to continue with payment.')); }
     else {
       // Send a e-mail.
-      console.log(`paypal payment: ${JSON.stringify(req.body.payment)}`);
+      // console.log(`paypal payment: ${JSON.stringify(req.body.payment)}`);
       order.isClosed = Date.now();
       order.isPaid = Date.now();
       order.payment = {
@@ -300,6 +300,8 @@ router.post('/payment/:order_id', (req, res, next)=>{
           return next(err); 
         } else {
           res.json({});
+          // Clean cart.
+          req.cart.clean();
         }
       })
     }
@@ -308,7 +310,7 @@ router.post('/payment/:order_id', (req, res, next)=>{
 
 // Order confirmation - page.
 router.get('/order-confirmation/:order_id', (req, res, next)=>{
-  Order.findById(req.params.order_id, (err, order)=>{
+  Order.findOne({ _id: req.params.order_id, isClosed: { $exists: true }}, (err, order)=>{
     if (err) { return next(err); }
     if (!order) {
       return next(new Error('No order to confirm.')); }

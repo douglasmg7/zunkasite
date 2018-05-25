@@ -84,6 +84,12 @@ module.exports = function Cart(cart) {
     this.update();
   }
 
+  // Clean cart.
+  this.clean = function(){
+    this.products = [];
+    this.update();
+  }
+
   // Merge cart .
   this.mergeCart = function(cart){
     if (cart) {
