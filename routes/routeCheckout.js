@@ -287,8 +287,6 @@ router.post('/payment/:order_id', (req, res, next)=>{
     if (!order) {
       return next(new Error('No order to continue with payment.')); }
     else {
-      // Send a e-mail.
-      // console.log(`paypal payment: ${JSON.stringify(req.body.payment)}`);
       order.isClosed = Date.now();
       order.isPaid = Date.now();
       order.payment = {
@@ -302,6 +300,27 @@ router.post('/payment/:order_id', (req, res, next)=>{
           res.json({});
           // Clean cart.
           req.cart.clean();
+          // Send email.
+          let mailOptions = {
+              from: 'dev@zunka.com.br',
+              to: req.user.email,
+              subject: 'Confirmação de pedido.',
+              text: 'Seu pedido foi realizado com sucesso.\n\n' + 
+                    'Número de pedido: ' + order._id + '\n\n' + 
+                    'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' + 
+                    'https://' + req.headers.host + '/checkout/order-confirmation/' + order._id + '\n\n' +
+                    // 'Esta solicitação de redefinição expira em duas horas.\n' +
+                    'Obrigado pelo seu pedido.'
+          }; 
+          log.info(`mailOptions: ${JSON.stringify(mailOptions)}`);
+          // // Send email.
+          // transporter.sendMail(mailOptions, function(err, info){
+          //   if(err){
+          //     log.error(err, new Error().stack);
+          //   } else {
+          //     log.info(`Reset email sent to ${req.body.email}`);
+          //   }
+          // });
         }
       })
     }
