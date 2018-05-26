@@ -1,10 +1,7 @@
-// // Search for products.
-// function _search(text){
-
-// };
-// formatMoney(val){
-//   return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-// };
+// Search for products.
+function _search(text){
+  window.location.href = `/?page=1&search=${text}`;
+};
 // Vue.
 var app = new Vue({
   el: '#app',

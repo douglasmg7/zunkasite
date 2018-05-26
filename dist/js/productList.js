@@ -12,10 +12,10 @@ var app = new Vue({
     productAddedToCart: {},
     // Curret page for pagination.
     page: 1,
-    // Number of pages for pagination.
+    // Quantity of pages to show all products.
     pageCount: 1,
     // Text for search products.
-    search: '',
+    search: search,
     // Cart.
     cart: cart
   },

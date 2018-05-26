@@ -253,11 +253,6 @@ router.get('/access', (req, res, next)=>{
   res.render('user/access', req.flash());
 });
 
-// Orders page.
-router.get('/orders', (req, res, next)=>{
-  res.render('user/orders', req.flash());
-});
-
 // Edit name page.
 router.get('/access/edit-name', (req, res, next)=>{
   res.render('user/editName', req.flash());
@@ -647,11 +642,6 @@ router.put('/address/remove/:addressId', checkPermission, (req, res, next)=>{
   });
 });
 
-// // Login page (no bootstrap).
-// router.get('/loginc', (req, res, next)=>{
-//   // Message from authentication, who set a flash message with erros.
-//   res.render('loginC', { message: req.flash('error') });
-// });
 
 
 /****************************************************************************** 
@@ -659,17 +649,16 @@ router.put('/address/remove/:addressId', checkPermission, (req, res, next)=>{
 ******************************************************************************/
 
 // Get orders page.
-router.get('/', checkPermission, function(req, res, next) {
+router.get('/orders', checkPermission, function(req, res, next) {
   res.render('user/orderList', {
     page: req.query.page ? req.query.page : 1,
     search: req.query.search ? req.query.search : '',  
     nav: {
-      showAdminLinks: true
     }
   });   
 });
 
-// Get orders.
+// Get orders data.
 router.get('/api/orders', checkPermission, function(req, res, next) {
   const user_id = req.params.user_id;
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
@@ -678,16 +667,11 @@ router.get('/api/orders', checkPermission, function(req, res, next) {
     ? { user_id: req.user._id, isClosed: {$exists: true}, _id: {$regex: req.query.search, $options: 'i'} }
     : { user_id: req.user._id, isClosed: {$exists: true} };
   // Find orders.
-  let orderPromise = Order.find(search).sort({'isClosed': 1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
+  let orderPromise = Order.find(search).sort({'isClosed': -1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
   // Order count.
   let orderCountPromise = Order.find({ user_id: user_id, isClosed: {$exists: true} }).count(search).exec();
   Promise.all([orderPromise, orderCountPromise])
   .then(([orders, count])=>{    
-    // for (var i = orders.length - 1; i >= 0; i--) {
-    //   console.log(`id: ${orders[i]._id}`);
-    // }
-    console.log(`date: ${orders[0].isClosed}`);
-    console.log(`date: ${orders[0].isClosed.toDate()}`);
     res.json({orders, page, pageCount: Math.ceil(count / ORDER_QTD_BY_PAGE)});
   }).catch(err=>{
     return next(err);

@@ -1,22 +1,32 @@
 @import '../reset'
 @import '../main-nav'
 @import '../pagination'
+main
+  display flex
+  flex-flow column nowrap
+  justify-content center
+  margin 1em auto
+  max-width 1000px
+.breadlink
+  a
+    text-decoration none
 table
-  border-bottom: solid 1px lightgray
-  border-spacing: 0
-  width: 100%
-  text-align: left
+  margin-top .5em
+  border-bottom solid 1px lightgray
+  border-spacing 0
+  width 100%
+  text-align left
 td
-  border-top: solid 1px lightgray
+  border-top solid 1px lightgray
 th, td
-  padding: .3em .2em .3em .5em
+  padding .3em .2em .3em .5em
 // th.clickable, td.clickable
 td
-  cursor: pointer
+  cursor pointer
   a
     text-decoration none
     color black
 tr.product-commercialize
-  background-color: #F2DEDE
+  background-color #F2DEDE
 tr.product-commercialize.product-active
-  background-color: #bdffbd
+  background-color #bdffbd

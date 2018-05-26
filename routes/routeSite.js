@@ -17,7 +17,8 @@ function formatMoney(val){
 router.get('/', function(req, res, next) {
   res.render('productList', {
     nav: {
-    }
+    },
+    search: req.query.search ? req.query.search : '',
   });   
 });
 

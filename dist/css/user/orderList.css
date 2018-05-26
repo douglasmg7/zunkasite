@@ -126,7 +126,18 @@ input {
 .pagination a[active] {
   color: #000;
 }
+main {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  margin: 1em auto;
+  max-width: 1000px;
+}
+.breadlink a {
+  text-decoration: none;
+}
 table {
+  margin-top: 0.5em;
   border-bottom: solid 1px #d3d3d3;
   border-spacing: 0;
   width: 100%;

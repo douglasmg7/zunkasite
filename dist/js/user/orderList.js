@@ -1,9 +1,10 @@
+// Brasilian name of the months.
+const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 // Search for orders.
 function _search(text){
-  app.search = text;
-  app.getOrders(1);
+  window.location.href = `/?page=1&search=${text}`;
 }
-
+// Vue.
 var app = new Vue({
   el: '#app',
   data: {
@@ -32,9 +33,6 @@ var app = new Vue({
         this.orders = res.data.orders;
         this.page = res.data.page;
         this.pageCount = res.data.pageCount;
-        console.log('orders count: ', this.orders.length);
-        console.log(`date: ${typeof this.orders[0].isShippingAddressSelected}`);
-        console.log(`date.now: ${typeof Date.now()}`);
       })
       .catch((err)=>{
         console.log(`Error - getOrders(), err: ${err}`);
@@ -48,12 +46,8 @@ var app = new Vue({
     },
     // Format number to money format.
     formatDate(val){
-      console.log(val);
-      let date = Date(val)
-      console.log(date.toString());
-      console.log(typeof date);
-      return 1;
-      // return date.getDay.toString(), + date.getYear.toString();
+      let d = new Date(val);
+      return `${d.getDate()} - ${MONTHS[d.getMonth()]} - ${d.getFullYear()}`;
     }
   }
 });
