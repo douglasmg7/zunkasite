@@ -651,8 +651,8 @@ router.put('/address/remove/:addressId', checkPermission, (req, res, next)=>{
 // Get orders page.
 router.get('/orders', checkPermission, function(req, res, next) {
   res.render('user/orderList', {
-    page: req.query.page ? req.query.page : 1,
-    search: req.query.search ? req.query.search : '',  
+    // page: req.query.page ? req.query.page : 1,
+    // search: req.query.search ? req.query.search : '',  
     nav: {
     }
   });   
@@ -663,13 +663,38 @@ router.get('/api/orders', checkPermission, function(req, res, next) {
   const user_id = req.params.user_id;
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
   const skip = (page - 1) * ORDER_QTD_BY_PAGE;
-  const search = req.query.search
-    ? { user_id: req.user._id, isClosed: {$exists: true}, _id: {$regex: req.query.search, $options: 'i'} }
-    : { user_id: req.user._id, isClosed: {$exists: true} };
+  // Db search.
+  let search;
+  // No search request.
+  if (req.query.search == '') {
+    search = { user_id: req.user._id, isClosed: {$exists: true} };
+  } 
+  // Search by _id.
+  else if (req.query.search.match(/^[a-f\d]{24}$/i)) {
+    search = { user_id: req.user._id, isClosed: {$exists: true}, _id: req.query.search };
+  }
+  // No search by _id.
+  else {
+    search = { 
+      user_id: req.user._id, isClosed: {$exists: true},
+      $or: [ 
+        {'shipping.address.name': {$regex: req.query.search, $options: 'i'}},
+        {totalPrice: {$regex: req.query.search, $options: 'i'}},
+        {'items.name': {$regex: req.query.search, $options: 'i'}},
+      ] 
+    }
+  }
+  // const search = req.query.search
+  //   ? { user_id: req.user._id, isClosed: {$exists: true}, _id: req.query.search }
+  //   : { user_id: req.user._id, isClosed: {$exists: true} };
+  //   // ? { user_id: req.user._id, isClosed: {$exists: true}, _id: {$regex: req.query.search, $options: 'i'} }
+  console.log(`search: ${JSON.stringify(search)}`);
   // Find orders.
   let orderPromise = Order.find(search).sort({'isClosed': -1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
   // Order count.
-  let orderCountPromise = Order.find({ user_id: user_id, isClosed: {$exists: true} }).count(search).exec();
+  let orderCountPromise = Order.find(search).count().exec();
+  // let orderCountPromise = Order.find({ user_id: user_id, isClosed: {$exists: true} }).count(search).exec();
+  console.log('before promisse');
   Promise.all([orderPromise, orderCountPromise])
   .then(([orders, count])=>{    
     res.json({orders, page, pageCount: Math.ceil(count / ORDER_QTD_BY_PAGE)});

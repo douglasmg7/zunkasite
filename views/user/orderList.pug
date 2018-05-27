@@ -9,32 +9,74 @@ html(lang="en")
     header
       nav
         include ../main-nav.pug
-    main
-      #app(v-cloak)
-        .breadlink
-          a(href='/users/account') Sua conta
-          a &nbsp> Seus Pedidos
+    main#app(v-cloak)
+      .breadlink
+        a(href='/users/account') Sua conta
+        a &nbsp> Seus Pedidos
+      header
         h2 Seus Pedidos
-        table
-          thead
-            tr
-              th Data do pedido
-              th Total
-              th Enviado para
-              th Número
-          tbody
-            tr(v-for='order in orders')
-              td: a(:href='`/admin/orders`') {{order.isShippingAddressSelected | formatDate}}
-              td: a(:href='`/admin/orders`') {{order.totalPrice | formatMoney}}
-              td: a(:href='`/admin/orders`') {{order.shipping.address.name}}
-              td: a(:href='`/admin/orders`') {{order._id}}
-        nav.pagination
-          a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
+        .search-order
+          input(type='text' v-model='searchOrder' @keyup.enter='getOrders()' placeholder='Pesquise em todas as ordens')
+          button(@click='getOrders()') Pesquisar ordens
+      table
+        thead
+          tr
+            th Data do pedido
+            th Total
+            th Enviado para
+            th Número
+        tbody
+          tr(v-for='order, index in orders' @click='showOrderDetail(index)')
+            td {{order.isShippingAddressSelected | formatDate}}
+            td {{order.totalPrice | formatMoney}}
+            td {{order.shipping.address.name}}
+            td {{order._id}}
+      nav.pagination
+        a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
+      div.modal(v-if='showModal')
+        .modal-content
+          .pedido
+            p.title Número do pedido
+            P {{orderSelec._id}}
+          .clientdetail
+            p.title Cliente.
+            p Nome: {{orderSelec.name}}
+            p Email: {{orderSelec.email}}
+          .address
+            p.title Endereço de entrega.
+            p Nome: {{orderSelec.shipping.address.name}}
+            p Telefone: {{orderSelec.shipping.address.phone}}
+            p {{orderSelec.shipping.address.address}},  {{orderSelec.shipping.address.addressNumber}} {{orderSelec.shipping.address.addressComplement}}
+            p {{orderSelec.shipping.address.district}}
+            p {{orderSelec.shipping.address.city}} - {{orderSelec.shipping.address.state}} - Brasil
+            p {{orderSelec.shipping.address.cep}} 
+          .shipment
+            p.title Frete
+            p Envio padrão
+            span Prazo: 
+            span.deadline {{orderSelec.shipping.deadline}} dia(s)
+            br
+            span Valor do frete: 
+            span.price R${{orderSelec.shipping.price}}
+          .items(v-if='orderSelec.items.length > 0')
+            p.title Itens
+            ul
+              li(v-for='item in orderSelec.items')
+                p 
+                  strong {{item.name}}
+                p 
+                  span.price {{item.price | formatMoney}} 
+                  span.quantity - Quantidade: {{item.quantity}}
+          .total
+            p.title Valor total com frete
+            p.price {{ orderSelec.totalPrice | formatMoney }}
+          .button
+            button(@click='hideOrderDetail()') Fechar
     script.
       // Make available for vue.
       let csrfToken = !{JSON.stringify(csrfToken)};
-      let search = !{JSON.stringify(search)};
-      let page = !{JSON.stringify(page)};   //  Selected page.
+      //- let search = !{JSON.stringify(search)};
+      //- let page = !{JSON.stringify(page)};   //  Selected page.
     include ../components/axios.js.pug
     include ../components/vue.js.pug
     script(src='/js/user/orderList.js')

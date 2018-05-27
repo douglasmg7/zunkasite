@@ -8,14 +8,19 @@ function _search(text){
 var app = new Vue({
   el: '#app',
   data: {
+    // All orders from search.
     orders: [],
+    // Selected order.
+    orderSelec: {},
     // user: user,
     // Curret page for pagination.
-    page: page,
+    page: 1,
     // Number of pages for pagination.
     pageCount: 1,
     // Text for search orders.
-    search: search
+    searchOrder: '',
+    // Show modal.
+    showModal: false,
   },
   created() {
     // On reload page use the query string for search, not the input search.
@@ -23,10 +28,10 @@ var app = new Vue({
   },
   methods: {
     // Get orders.
-    getOrders(page=this.page){
+    getOrders(page=1){
       axios({
         method: 'get',
-        url: `/users/api/orders?page=${page}&search=${this.search}`,
+        url: `/users/api/orders?page=${page}&search=${this.searchOrder}`,
         headers:{'csrf-token' : csrfToken}
       })
       .then((res)=>{
@@ -38,6 +43,15 @@ var app = new Vue({
         console.log(`Error - getOrders(), err: ${err}`);
       });
     },
+    // Show order detail on modal window.
+    showOrderDetail(index){
+      this.orderSelec = this.orders[index];
+      this.showModal = true;
+    },
+    // Hide order detail modal.
+    hideOrderDetail(){
+      this.showModal = false;
+    }
   },
   filters: {
     // Format number to money format.
@@ -47,7 +61,7 @@ var app = new Vue({
     // Format number to money format.
     formatDate(val){
       let d = new Date(val);
-      return `${d.getDate()} - ${MONTHS[d.getMonth()]} - ${d.getFullYear()}`;
+      return `${d.getDate()}-${MONTHS[d.getMonth()]}-${d.getFullYear()}`;
     }
   }
 });

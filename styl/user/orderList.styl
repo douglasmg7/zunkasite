@@ -7,26 +7,95 @@ main
   justify-content center
   margin 1em auto
   max-width 1000px
-.breadlink
-  a
-    text-decoration none
-table
-  margin-top .5em
-  border-bottom solid 1px lightgray
-  border-spacing 0
-  width 100%
-  text-align left
-td
-  border-top solid 1px lightgray
-th, td
-  padding .3em .2em .3em .5em
-// th.clickable, td.clickable
-td
-  cursor pointer
-  a
-    text-decoration none
-    color black
-tr.product-commercialize
-  background-color #F2DEDE
-tr.product-commercialize.product-active
-  background-color #bdffbd
+  .breadlink
+    a
+      text-decoration none
+  header
+    // background-color lightyellow
+    margin-bottom 1.5em
+    display flex
+    flex-flow row wrap
+    justify-content space-between
+    align-items flex-end
+    h2
+      // background-color lightblue
+      margin .5em 0 0 0
+    .search-order
+    display flex
+    flex-flow row nowrap
+    justify-content start-end
+    align-items flex-end
+      button
+        margin-left .5em
+        height 2.3em
+  table
+    margin-top .5em
+    border-bottom solid 1px lightgray
+    border-spacing 0
+    width 100%
+    text-align left
+    td
+      border-top solid 1px lightgray
+    th, td
+      padding .3em .2em .3em .5em
+    // th.clickable, td.clickable
+    td
+      cursor pointer
+      a
+        text-decoration none
+        color black
+    tr.product-commercialize
+      background-color #F2DEDE
+    tr.product-commercialize.product-active
+      background-color #bdffbd
+  .modal
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ 
+    .modal-content
+      background-color: #fefefe;
+      // margin: 10% auto;
+      padding: 1em;
+      border-radius: .1em
+      // width: 95%;
+      display flex
+      flex-flow column nowrap
+      justify-content center
+      margin 0 auto 3em auto
+      max-width 600px
+      hr
+        margin-bottom 1em
+      h4
+        margin-top 0.8em
+        margin-bottom 0.2em
+        font-weight bold
+      .price
+        color $RED_PRICE
+      .quantity
+        color $GRAY_TITLE
+      .title
+        font-weight bold
+        margin-top .5em
+      .deadline
+        font-weight bold
+      .items
+        // margin-top 1em
+        ul
+          margin-left 2em
+          li
+            color $GRAY_TITLE
+          margin-top .5em
+          p
+            margin-top .2em
+            color black
+        button
+          margin-top 2em
+      .total
+        margin-top .5em
+        margin-bottom 1em
