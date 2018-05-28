@@ -23,6 +23,7 @@
     "csurf": "^1.9.0",
     "debug": "^2.6.9",
     "express": "^4.16.3",
+    "express-middleware-rollup": "^2.0.0",
     "express-session": "^1.15.6",
     "express-validator": "^3.2.1",
     "extend": "^3.0.1",

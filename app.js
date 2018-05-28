@@ -14,6 +14,8 @@ const stylus = require('stylus');
 // Validation.
 const validator = require('express-validator');
 const cpfValidator = require('gerador-validador-cpf');
+// Rollup.
+const rollup  = require('express-middleware-rollup');
 
 // // Mongo.
 // const dbConfig = require('./config/db');
@@ -31,6 +33,7 @@ const cookieParser = require('cookie-parser');
 const csurf = require('csurf');
 const session = require('express-session');
 const flash = require('connect-flash');
+
 // const MongoStore = require('connect-mongo')(session);
 const redisStore = require('connect-redis')(session);
 const passport = require('passport');
@@ -100,6 +103,14 @@ if (app.get('env') === 'development') {
   let livereloadServer = livereload.createServer({debug: false, exts: ['pug', 'styl', 'js']});
   livereloadServer.watch([__dirname + "/views", __dirname + "/styl", __dirname + "/dist/js"]);  
 }
+
+// Rollup.
+app.use(rollup({
+  src: 'scripts',
+  dest: 'dist/js',
+  root: __dirname,
+  prefix: '/js'
+}));
 
 // Statics files.
 app.use(express.static(path.join(__dirname, 'dist/')));

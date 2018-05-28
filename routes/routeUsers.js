@@ -688,13 +688,12 @@ router.get('/api/orders', checkPermission, function(req, res, next) {
   //   ? { user_id: req.user._id, isClosed: {$exists: true}, _id: req.query.search }
   //   : { user_id: req.user._id, isClosed: {$exists: true} };
   //   // ? { user_id: req.user._id, isClosed: {$exists: true}, _id: {$regex: req.query.search, $options: 'i'} }
-  console.log(`search: ${JSON.stringify(search)}`);
+  // console.log(`search: ${JSON.stringify(search)}`);
   // Find orders.
   let orderPromise = Order.find(search).sort({'isClosed': -1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
   // Order count.
   let orderCountPromise = Order.find(search).count().exec();
   // let orderCountPromise = Order.find({ user_id: user_id, isClosed: {$exists: true} }).count(search).exec();
-  console.log('before promisse');
   Promise.all([orderPromise, orderCountPromise])
   .then(([orders, count])=>{    
     res.json({orders, page, pageCount: Math.ceil(count / ORDER_QTD_BY_PAGE)});
