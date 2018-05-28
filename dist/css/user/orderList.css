@@ -130,6 +130,7 @@ main {
   flex-flow: column nowrap;
   justify-content: center;
   margin: 1em auto;
+  width: 95%;
   max-width: 1000px;
 }
 main .breadlink a {
@@ -193,21 +194,13 @@ main .modal {
 }
 main .modal .modal-content {
   background-color: #fefefe;
+  margin: 10% auto;
   padding: 1em;
   border-radius: 0.1em;
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
-  margin: 0 auto 3em auto;
   max-width: 600px;
-}
-main .modal .modal-content hr {
-  margin-bottom: 1em;
-}
-main .modal .modal-content h4 {
-  margin-top: 0.8em;
-  margin-bottom: 0.2em;
-  font-weight: bold;
 }
 main .modal .modal-content .price {
   color: #c45d43;
