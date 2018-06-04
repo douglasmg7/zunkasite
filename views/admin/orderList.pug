@@ -3,32 +3,91 @@ html(lang="en")
   head
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Zunka - Produtos
+    title Zunka - Pedidos
     link(rel="stylesheet" href="/css/admin/orderList.css" charset="utf-8")
   body
     header
       nav
         include ../main-nav.pug
-    main
-      #app(v-cloak)
-        table
-          thead
-            tr
-              th user_id
-              th status
-              th shipMethod
-          tbody
-            tr(v-for='order in orders')
-              td: a(:href='`/admin/orders`') {{order.user_id}}
-              td: a(:href='`/admin/orders`') {{order.status}}
-              td: a(:href='`/admin/orders`') {{order.shipMethod}}
-        nav.pagination
-          a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
+    main#app(v-cloak)
+      .breadlink
+        a(href='/admin') Admin
+        a &nbsp> Pedidos
+      header
+        h2 Seus Pedidos
+        .search-order
+          input(type='text' v-model='searchOrder' @keyup.enter='getOrders()' placeholder='Pesquise em todas as ordens')
+          button(@click='getOrders()') Pesquisar ordens
+      table
+        thead
+          tr
+            th Data do pedido
+            th Cliente
+            th Total
+            th Número
+            th Status
+        tbody
+          tr(v-for='order, index in orders' @click='showOrderDetail(index)')
+            td {{order.isShippingAddressSelected | formatDate}}
+            td {{order.name}}
+            td {{order.totalPrice | formatMoney}}
+            td {{order._id}}
+            td {{status(order)}}
+      nav.pagination
+        a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
+      div.modal(v-if='showModal')
+        .modal-content
+          .pedido
+            p.title Número do pedido
+            P {{orderSelec._id}}
+          .clientdetail
+            p.title Cliente.
+            p Nome: {{orderSelec.name}}
+            p Email: {{orderSelec.email}}
+          .address
+            p.title Endereço de entrega.
+            p Nome: {{orderSelec.shipping.address.name}}
+            p Telefone: {{orderSelec.shipping.address.phone}}
+            p {{orderSelec.shipping.address.address}},  {{orderSelec.shipping.address.addressNumber}} {{orderSelec.shipping.address.addressComplement}}
+            p {{orderSelec.shipping.address.district}}
+            p {{orderSelec.shipping.address.city}} - {{orderSelec.shipping.address.state}} - Brasil
+            p {{orderSelec.shipping.address.cep}} 
+          .shipment
+            p.title Frete
+            p Envio padrão
+            span Prazo: 
+            span.deadline {{orderSelec.shipping.deadline}} dia(s)
+            br
+            span Valor do frete: 
+            span.price R${{orderSelec.shipping.price}}
+          .items(v-if='orderSelec.items.length > 0')
+            p.title Itens
+            ul
+              li(v-for='item in orderSelec.items')
+                p 
+                  strong {{item.name}}
+                p 
+                  span.price {{item.price | formatMoney}} 
+                  span.quantity - Quantidade: {{item.quantity}}
+          .total
+            p.title Valor total com frete
+            p.price {{ orderSelec.totalPrice | formatMoney }}
+          .status
+            p.title Status
+            p {{status(orderSelec)}}
+          .change-status
+            p.title Alterar status para
+            button(v-if='status(orderSelec) === "Aberto"' @click='setStatus(orderSelec, "paid")') Pago
+            button(v-if='status(orderSelec) === "Pago"' @click='setStatus(orderSelec, "shipped")') Enviado
+            button(v-if='status(orderSelec) === "Enviado"' @click='setStatus(orderSelec, "Delivered")') Entrege
+            button(v-if='status(orderSelec) !== "Cancelado"' @click='setStatus(orderSelec, "canceled")') Cancelado
+          .close-modal
+            button(@click='hideOrderDetail()') Fechar
     script.
       // Make available for vue.
       let csrfToken = !{JSON.stringify(csrfToken)};
-      let search = !{JSON.stringify(search)};
-      let page = !{JSON.stringify(page)};   //  Selected page.
+      //- let search = !{JSON.stringify(search)};
+      //- let page = !{JSON.stringify(page)};   //  Selected page.
     include ../components/axios.js.pug
     include ../components/vue.js.pug
     script(src='/js/admin/orderList.js')

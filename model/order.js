@@ -74,7 +74,7 @@ let schema = new mongoose.Schema({
   totalPrice: { type: String }, // Items price plus shipping price.
   isShippingAddressSelected: { type: Date }, // When the user select the shipping address.
   isShippingMethodSelected: { type: Date }, // When the user select the shipping method.
-  isClosed: { type: Date }, // When the user post the order (final process), it goes to closed.
+  isPlaced: { type: Date }, // When the user place the order.
   isPaid: { type: Date },   // When receive payment confirmation.
   isCanceled: { type: Date }, // When the user cancel the order after it was posted (clesed order).
   isShipped: { type: Date },    // Order was shipped.

@@ -100,8 +100,8 @@ app.use(stylus.middleware({
 // Livereload.
 if (app.get('env') === 'development') {
   const livereload = require('livereload');
-  let livereloadServer = livereload.createServer({debug: false, exts: ['pug', 'styl', 'js']});
-  livereloadServer.watch([__dirname + "/views", __dirname + "/styl", __dirname + "/dist/js"]);  
+  let livereloadServer = livereload.createServer({debug: false, exts: ['pug', 'styl', 'js', 'bundle']});
+  livereloadServer.watch([__dirname + "/views", __dirname + "/styl", __dirname + "/dist/js", __dirname + "/scripts"]);  
 }
 
 // Rollup.

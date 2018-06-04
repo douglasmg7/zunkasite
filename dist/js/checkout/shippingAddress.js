@@ -81,7 +81,7 @@ var app = new Vue({
         }
         // Address selected with success.
         else {
-          window.location.href='/checkout/shipment';
+          window.location.href=`/checkout/shipping-method/${response.data.order_id}`;
         }
       })
       .catch(err => {

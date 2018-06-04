@@ -268,33 +268,57 @@ router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
 
 // Get orders page.
 router.get('/orders', checkPermission, function(req, res, next) {
-  res.render('admin/orderList', {
-    page: req.query.page ? req.query.page : 1,
-    search: req.query.search ? req.query.search : '',  
+  res.render('admin/orderList', { 
     nav: {
-      showAdminLinks: true
     }
   });   
 });
 
-// Get orders.
+// Get orders data.
 router.get('/api/orders', checkPermission, function(req, res, next) {
+  const user_id = req.params.user_id;
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
   const skip = (page - 1) * ORDER_QTD_BY_PAGE;
-  const search = req.query.search
-    ? { $or: [
-        {'user_id': {$regex: req.query.search, $options: 'i'}}, 
-        {'status': {$regex: req.query.search, $options: 'i'}}
-        ]}
-    : {};
+  // Db search.
+  let search;
+  // No search request.
+  if (req.query.search == '') {
+    search = { isPlaced: {$exists: true} };
+  } 
+  // Search by _id.
+  else if (req.query.search.match(/^[a-f\d]{24}$/i)) {
+    search = { isPlaced: {$exists: true}, _id: req.query.search };
+  }
+  // No search by _id.
+  else {
+    search = { 
+      isPlaced: {$exists: true},
+      $or: [ 
+        {'name': {$regex: req.query.search, $options: 'i'}},
+        {totalPrice: {$regex: req.query.search, $options: 'i'}},
+        {'items.name': {$regex: req.query.search, $options: 'i'}},
+      ] 
+    }
+  }
+  // console.log(`search: ${JSON.stringify(search)}`);
   // Find orders.
-  let orderPromise = Order.find(search).sort({'user_id': 1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
+  let orderPromise = Order.find(search).sort({'isPlaced': -1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
   // Order count.
-  let orderCountPromise = Order.count(search).exec();
+  let orderCountPromise = Order.find(search).count().exec();
+  // let orderCountPromise = Order.find({ user_id: user_id, isPlaced: {$exists: true} }).count(search).exec();
   Promise.all([orderPromise, orderCountPromise])
   .then(([orders, count])=>{    
     res.json({orders, page, pageCount: Math.ceil(count / ORDER_QTD_BY_PAGE)});
   }).catch(err=>{
     return next(err);
   });
+});
+
+// Change order status.
+router.post('/api/order/status/:_id/:status', checkPermission, function(req, res, next) {
+  const order_id = req.params._id;
+  const status = req.params.status;
+  console.log(`order_id: ${order_id}`);
+  console.log(`status: ${status}`);
+  res.json({});
 });
