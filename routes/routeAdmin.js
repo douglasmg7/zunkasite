@@ -316,9 +316,35 @@ router.get('/api/orders', checkPermission, function(req, res, next) {
 
 // Change order status.
 router.post('/api/order/status/:_id/:status', checkPermission, function(req, res, next) {
-  const order_id = req.params._id;
-  const status = req.params.status;
-  console.log(`order_id: ${order_id}`);
-  console.log(`status: ${status}`);
-  res.json({});
+  // To update order on db.
+  let update = {};
+  // Status to change.
+  switch (req.params.status){
+    case 'paid':
+      update.isPaid = new Date();
+      break;
+    case 'shipped':
+      update.isShipped = new Date();
+      break;
+    case 'delivered':
+      update.isDelivered = new Date();
+      break;
+    case 'canceled':
+      update.isCanceled = new Date();
+      break;
+    default:
+      res.json({ err: 'No valid status.'})
+      return;
+  }
+  // console.log(`update: ${JSON.stringify(update)}`);
+  // Update order.
+  Order.findByIdAndUpdate(req.params._id, update, { new: true }, (err, order)=>{
+    if (err) { 
+      res.json({err: err});
+      return next(err); 
+    } else {
+      res.json({order});
+      console.log(`order.isShipped: ${JSON.stringify(order.isShipped)}`);
+    }
+  });
 });

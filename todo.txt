@@ -1,5 +1,7 @@
 Price in R$2.412,09 into db to search
 
+use isCanceled to filter orders.
+
 Remover senhas do servidor
 
 carrinho atualizar quando alterar o preço dos produtos.

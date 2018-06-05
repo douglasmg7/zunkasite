@@ -18,6 +18,23 @@ html(lang="en")
         .search-order
           input(type='text' v-model='searchOrder' @keyup.enter='getOrders()' placeholder='Pesquise em todas as ordens')
           button(@click='getOrders()') Pesquisar ordens
+      .filter
+        //- h3 Exibir
+        //- Show placed.
+        input(type='checkbox' id='showPlaced' v-on:change='getOrdersFilter()', v-model:checked='filter.showPlacedOrdres')
+        label(for='showPlaced') Aberto
+        //- Show paid.
+        input(type='checkbox' id='showPaid')
+        label(for='showPaid') Pagos
+        //- Show shipped.
+        input(type='checkbox' id='showShipped')
+        label(for='showShipped') Enviados
+        //- Show delivered.
+        input(type='checkbox' id='showDelivered')
+        label(for='showDelivered') Entreges
+        //- Show canceled.
+        input(type='checkbox' id='showCanceled')
+        label(for='showCanceled') Cancelados
       table
         thead
           tr
@@ -75,12 +92,12 @@ html(lang="en")
           .status
             p.title Status
             p {{status(orderSelec)}}
-          .change-status
+          .change-status(v-if='status(orderSelec) !== "Cancelado"')
             p.title Alterar status para
-            button(v-if='status(orderSelec) === "Aberto"' @click='setStatus(orderSelec, "paid")') Pago
-            button(v-if='status(orderSelec) === "Pago"' @click='setStatus(orderSelec, "shipped")') Enviado
-            button(v-if='status(orderSelec) === "Enviado"' @click='setStatus(orderSelec, "Delivered")') Entrege
-            button(v-if='status(orderSelec) !== "Cancelado"' @click='setStatus(orderSelec, "canceled")') Cancelado
+            button(v-if='status(orderSelec) === "Aberto"' @click='setStatus("paid")') Pago
+            button(v-if='status(orderSelec) === "Pago"' @click='setStatus("shipped")') Enviado
+            button(v-if='status(orderSelec) === "Enviado"' @click='setStatus("delivered")') Entrege
+            button(v-if='status(orderSelec) !== "Cancelado"' @click='setStatus("canceled")') Cancelado
           .close-modal
             button(@click='hideOrderDetail()') Fechar
     script.

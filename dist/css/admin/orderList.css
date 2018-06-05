@@ -137,7 +137,7 @@ main .breadlink a {
   text-decoration: none;
 }
 main header {
-  margin-bottom: 1.5em;
+  margin-bottom: 1em;
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
@@ -146,16 +146,23 @@ main header {
 main header h2 {
   margin: 0.5em 0 0 0;
 }
-main header .search-order button,
-main header display flex button,
-main header flex-flow row nowrap button,
-main header justify-content start-end button,
-main header align-items flex-end button {
+main header .search-order button {
   margin-left: 0.5em;
   height: 2.3em;
 }
+main .filter {
+  background-color: #eee;
+  display: flex;
+  padding: 0.2em;
+}
+main .filter input {
+  margin-right: 0.4em;
+}
+main .filter label {
+  margin-right: 1em;
+}
 main table {
-  margin-top: 0.5em;
+  margin-top: 1em;
   border-bottom: solid 1px #d3d3d3;
   border-spacing: 0;
   width: 100%;

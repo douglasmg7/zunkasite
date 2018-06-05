@@ -11,9 +11,10 @@ var app = new Vue({
   data: {
     // All orders from search.
     orders: [],
-    // Selected order.
+    // Order selected index.
+    orderSelecIndex: -1,
+    // Order selected.
     orderSelec: {},
-    // user: user,
     // Curret page for pagination.
     page: 1,
     // Number of pages for pagination.
@@ -22,6 +23,10 @@ var app = new Vue({
     searchOrder: '',
     // Show modal.
     showModal: false,
+    // Filter.
+    filter: {
+      showPlacedOrdres: true
+    }
   },
   created() {
     // On reload page use the query string for search, not the input search.
@@ -44,8 +49,25 @@ var app = new Vue({
         console.log(`Error - getOrders(), err: ${err}`);
       });
     },
+    // Get orders with filter.
+    getOrdersFilter(page=1){
+      axios({
+        method: 'get',
+        url: `/admin/api/orders?page=${page}&search=${this.searchOrder}`,
+        headers:{'csrf-token' : csrfToken}
+      })
+      .then((res)=>{
+        this.orders = res.data.orders;
+        this.page = res.data.page;
+        this.pageCount = res.data.pageCount;
+      })
+      .catch((err)=>{
+        console.log(`Error - getOrders(), err: ${err}`);
+      });
+    },    
     // Show order detail on modal window.
     showOrderDetail(index){
+      this.orderSelecIndex = index;
       this.orderSelec = this.orders[index];
       this.showModal = true;
     },
@@ -78,18 +100,23 @@ var app = new Vue({
       }
       return status;
     },
-    setStatus(order, status){
-      axios({
-        method: 'post',
-        url: `/admin/api/order/status/${order._id}/${status}`,
-        headers:{'csrf-token' : csrfToken}
-      })
-      .then((res)=>{
-        console.log('setStatus ok');
-      })
-      .catch((err)=>{
-        console.error(`Error - setStatus(), err: ${err}`);
-      });
+    // Set order status from selected order.
+    setStatus(status){
+      if(window.confirm('Confirma alteração do status?')){
+        axios({
+          method: 'post',
+          url: `/admin/api/order/status/${this.orderSelec._id}/${status}`,
+          headers:{'csrf-token' : csrfToken}
+        })
+        .then((res)=>{
+          // Update selected order and orders.
+          this.orderSelec = res.data.order;
+          this.$set(this.orders, this.orderSelecIndex, res.data.order);
+        })
+        .catch((err)=>{
+          console.error(`Error - setStatus(), err: ${err}`);
+        });
+      }
     }
   },
   filters: {
