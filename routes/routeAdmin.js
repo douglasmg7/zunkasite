@@ -314,6 +314,49 @@ router.get('/api/orders', checkPermission, function(req, res, next) {
   });
 });
 
+// Get orders data.
+router.get('/api/orders_', checkPermission, function(req, res, next) {
+  const user_id = req.params.user_id;
+  const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
+  const skip = (page - 1) * ORDER_QTD_BY_PAGE;
+  console.log(`filter: ${JSON.stringify(req.query.filter)}`);
+  console.log(`filter: ${req.query.filter}`);
+
+  // Db search.
+  let search;
+  // No search request.
+  if (req.query.search == '') {
+    search = { isPlaced: {$exists: true} };
+  } 
+  // Search by _id.
+  else if (req.query.search.match(/^[a-f\d]{24}$/i)) {
+    search = { isPlaced: {$exists: true}, _id: req.query.search };
+  }
+  // No search by _id.
+  else {
+    search = { 
+      isPlaced: {$exists: true},
+      $or: [ 
+        {'name': {$regex: req.query.search, $options: 'i'}},
+        {totalPrice: {$regex: req.query.search, $options: 'i'}},
+        {'items.name': {$regex: req.query.search, $options: 'i'}},
+      ] 
+    }
+  }
+  // console.log(`search: ${JSON.stringify(search)}`);
+  // Find orders.
+  let orderPromise = Order.find(search).sort({'isPlaced': -1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
+  // Order count.
+  let orderCountPromise = Order.find(search).count().exec();
+  // let orderCountPromise = Order.find({ user_id: user_id, isPlaced: {$exists: true} }).count(search).exec();
+  Promise.all([orderPromise, orderCountPromise])
+  .then(([orders, count])=>{    
+    res.json({orders, page, pageCount: Math.ceil(count / ORDER_QTD_BY_PAGE)});
+  }).catch(err=>{
+    return next(err);
+  });
+});
+
 // Change order status.
 router.post('/api/order/status/:_id/:status', checkPermission, function(req, res, next) {
   // To update order on db.

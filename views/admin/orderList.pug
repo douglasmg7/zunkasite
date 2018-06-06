@@ -21,19 +21,19 @@ html(lang="en")
       .filter
         //- h3 Exibir
         //- Show placed.
-        input(type='checkbox' id='showPlaced' v-on:change='getOrdersFilter()', v-model:checked='filter.showPlacedOrdres')
+        input(type='checkbox' id='showPlaced' @change='getOrdersFilter()', v-model:checked='filter.showPlacedOrders')
         label(for='showPlaced') Aberto
         //- Show paid.
-        input(type='checkbox' id='showPaid')
+        input(type='checkbox' id='showPaid' @change='getOrdersFilter()', v-model:checked='filter.showPaidOrders')
         label(for='showPaid') Pagos
         //- Show shipped.
-        input(type='checkbox' id='showShipped')
+        input(type='checkbox' id='showShipped' @change='getOrdersFilter()', v-model:checked='filter.showShippedOrders')
         label(for='showShipped') Enviados
         //- Show delivered.
-        input(type='checkbox' id='showDelivered')
+        input(type='checkbox' id='showDelivered' @change='getOrdersFilter()', v-model:checked='filter.showDeliveredOrders')
         label(for='showDelivered') Entreges
         //- Show canceled.
-        input(type='checkbox' id='showCanceled')
+        input(type='checkbox' id='showCanceled' @change='getOrdersFilter()', v-model:checked='filter.showCanceledOrders')
         label(for='showCanceled') Cancelados
       table
         thead

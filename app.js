@@ -109,7 +109,8 @@ app.use(rollup({
   src: 'scripts',
   dest: 'dist/js',
   root: __dirname,
-  prefix: '/js'
+  prefix: '/js',
+  bundleOpts: { format: 'cjs' }
 }));
 
 // Statics files.

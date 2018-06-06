@@ -1,10 +1,8 @@
-(function () {
 'use strict';
 
 // Brasilian months names.
 const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
-// Brasilian months names.
 // Vue.
 var app = new Vue({
   el: '#app',
@@ -25,12 +23,26 @@ var app = new Vue({
     showModal: false,
     // Filter.
     filter: {
-      showPlacedOrdres: true
+      showPlacedOrders: true,
+      showPaidOrders: true,
+      showShippedOrders: true,
+      showDeliveredOrders: true,
+      showCanceledOrders: true
     }
   },
   created() {
     // On reload page use the query string for search, not the input search.
     this.getOrders();
+  },
+  watch: {
+    filter: {
+      handler(val){
+        this.getOrdersFilter();
+        // console.log('watch');
+        // console.log(val.showPlacedOrders);
+      },
+      deep: true
+    }
   },
   methods: {
     // Get orders.
@@ -53,7 +65,8 @@ var app = new Vue({
     getOrdersFilter(page=1){
       axios({
         method: 'get',
-        url: `/admin/api/orders?page=${page}&search=${this.searchOrder}`,
+        url: `/admin/api/orders_?page=${page}&search=${this.searchOrder}&filter=${JSON.stringify(this.filter)}`,
+        // url: `/admin/api/orders_?page=${page}&search=${this.searchOrder}&filter=${this.filter}`,
         headers:{'csrf-token' : csrfToken}
       })
       .then((res)=>{
@@ -131,5 +144,3 @@ var app = new Vue({
     }
   }
 });
-
-}());
