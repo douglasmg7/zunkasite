@@ -124,8 +124,8 @@ router.post('/shipping-address', (req, res, next)=>{
     // Find selected address.
     Address.findOne({ _id: address_id}, (err, address)=>{
       if (err) return next(err);
-      // Remove order not closed yet, to start from begin again.
-      Order.remove({user_id: req.user._id, isPlaced: {$exists: false}}, err=>{
+      // Remove order not placed yet, to start from begin again.
+      Order.remove({user_id: req.user._id, 'timestamps.placedAt': {$exists: false}}, err=>{
         if (err) return next(err);
         // Get products itens.
         let items = []
@@ -142,7 +142,6 @@ router.post('/shipping-address', (req, res, next)=>{
           }
           items.push(item);
         }
-        // console.log(`cart: ${JSON.stringify(req.cart)}`);
         // Create a new order.
         let order = new Order();
         order.items = items;
@@ -150,7 +149,9 @@ router.post('/shipping-address', (req, res, next)=>{
         order.user_id = req.user._id;
         order.name = req.user.name;
         order.email = req.user.email;
-        order.isShippingAddressSelected = new Date();
+        order.timestamps = { shippingAddressSelectedAt: new Date() };
+        // order.timestamps.shippingAddressSelectedAt = new Date();
+        order.status = 'shippingAddressSelected';
         order.shipping = { address: {} };
         order.shipping.address.name = address.name;
         order.shipping.address.cep = address.cep;
@@ -175,8 +176,8 @@ router.post('/shipping-address', (req, res, next)=>{
 
 // Select shipment - page.
 router.get('/shipping-method/:order_id', (req, res, next)=>{
-  // Find order not closed yet.
-  Order.findOne({ _id: req.params.order_id, isPlaced: { $exists: false }}, (err, order)=>{
+  // Find order not placed yet.
+  Order.findById(req.params.order_id, (err, order)=>{
     if (err) { return next(err); }
     if (!order) {
       return next(new Error('No order to continue with shipping method selection.')); }
@@ -246,7 +247,7 @@ router.get('/shipping-method/:order_id', (req, res, next)=>{
 // Select shipment.
 router.post('/shipping-method/:order_id', (req, res, next)=>{
   // Set shipment method to default.
-  Order.findOne({ _id: req.params.order_id, isPlaced: { $exists: false }}, (err, order)=>{
+  Order.findById(req.params.order_id, (err, order)=>{
     // Only one option yet. Alredy set on get shippment.
     // shipping.price: 
     // shipping.daedline: 
@@ -254,7 +255,7 @@ router.post('/shipping-method/:order_id', (req, res, next)=>{
     // console.log(`req.body: ${JSON.stringify(req.body)}`);
     if (req.body.shippingMethod == 'correios') { order.shipping.carrier = 'correios'; }
     order.totalPrice = (parseFloat(order.subtotalPrice) + parseFloat(order.shipping.price)).toFixed(2);
-    order.isShippingMethodSelected = new Date();
+    order.timestamps.shippingMethodSelectedAt = new Date();
     order.save(err=>{
       if (err) { return next(err) };
       res.json({});
@@ -264,7 +265,7 @@ router.post('/shipping-method/:order_id', (req, res, next)=>{
 
 // Payment - page.
 router.get('/payment/:order_id', (req, res, next)=>{
-  Order.findOne({ _id: req.params.order_id, isPlaced: { $exists: false }}, (err, order)=>{
+  Order.findById(req.params.order_id, (err, order)=>{
     if (err) { return next(err); }
     if (!order) {
       return next(new Error('No order to continue with payment.')); }
@@ -282,13 +283,14 @@ router.get('/payment/:order_id', (req, res, next)=>{
 
 // Select payment page.
 router.post('/payment/:order_id', (req, res, next)=>{
-  Order.findOne({ _id: req.params.order_id, isPlaced: { $exists: false }}, (err, order)=>{
+  Order.findById(req.params.order_id, (err, order)=>{
     if (err) { return next(err); }
     if (!order) {
       return next(new Error('No order to continue with payment.')); }
     else {
-      order.isPlaced = new Date();
-      order.isPaid = new Date();
+      order.timestamps.placedAt = new Date();
+      order.timestamps.paidAt = new Date();
+      order.status = 'paid';
       order.payment = {
         paypal: req.body.payment
       };
@@ -329,7 +331,7 @@ router.post('/payment/:order_id', (req, res, next)=>{
 
 // Order confirmation - page.
 router.get('/order-confirmation/:order_id', (req, res, next)=>{
-  Order.findOne({ _id: req.params.order_id, isPlaced: { $exists: true }}, (err, order)=>{
+  Order.findById(req.params.order_id, (err, order)=>{
     if (err) { return next(err); }
     if (!order) {
       return next(new Error('No order to confirm.')); }

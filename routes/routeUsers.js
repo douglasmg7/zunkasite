@@ -667,16 +667,16 @@ router.get('/api/orders', checkPermission, function(req, res, next) {
   let search;
   // No search request.
   if (req.query.search == '') {
-    search = { user_id: req.user._id, isPlaced: {$exists: true} };
+    search = { user_id: req.user._id, 'timestamps.placedAt': {$exists: true} };
   } 
   // Search by _id.
   else if (req.query.search.match(/^[a-f\d]{24}$/i)) {
-    search = { user_id: req.user._id, isPlaced: {$exists: true}, _id: req.query.search };
+    search = { user_id: req.user._id, 'timestamps.placedAt': {$exists: true}, _id: req.query.search };
   }
   // No search by _id.
   else {
     search = { 
-      user_id: req.user._id, isPlaced: {$exists: true},
+      user_id: req.user._id, 'timestamps.placedAt': {$exists: true},
       $or: [ 
         {'shipping.address.name': {$regex: req.query.search, $options: 'i'}},
         {totalPrice: {$regex: req.query.search, $options: 'i'}},
@@ -684,16 +684,10 @@ router.get('/api/orders', checkPermission, function(req, res, next) {
       ] 
     }
   }
-  // const search = req.query.search
-  //   ? { user_id: req.user._id, isPlaced: {$exists: true}, _id: req.query.search }
-  //   : { user_id: req.user._id, isPlaced: {$exists: true} };
-  //   // ? { user_id: req.user._id, isPlaced: {$exists: true}, _id: {$regex: req.query.search, $options: 'i'} }
-  // console.log(`search: ${JSON.stringify(search)}`);
   // Find orders.
-  let orderPromise = Order.find(search).sort({'isPlaced': -1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
+  let orderPromise = Order.find(search).sort({'timestamps.placedAt': -1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
   // Order count.
   let orderCountPromise = Order.find(search).count().exec();
-  // let orderCountPromise = Order.find({ user_id: user_id, isPlaced: {$exists: true} }).count(search).exec();
   Promise.all([orderPromise, orderCountPromise])
   .then(([orders, count])=>{    
     res.json({orders, page, pageCount: Math.ceil(count / ORDER_QTD_BY_PAGE)});

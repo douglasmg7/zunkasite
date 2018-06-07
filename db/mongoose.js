@@ -8,7 +8,7 @@ let uri = null;
 process.env.NODE_ENV === 'unitTest' ? uri = dbConfig.urlUnitTest : uri = dbConfig.url;
 // Options.
 let options = {
-  useMongoClient: true,
+  // useMongoClient: true,  // WARNING: The `useMongoClient` option is no longer necessary in mongoose 5.x, please remove it.
   socketTimeoutMS: 0,
   keepAlive: true,
   reconnectTries: 30,

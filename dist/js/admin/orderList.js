@@ -90,28 +90,20 @@ var app = new Vue({
     },
     // Get status order.
     status(order){
-      let status = '';
-      // Canceled.
-      if (order.isCanceled) {
-        status = 'Cancelado';
-      } 
-      // Delivered.
-      else if (order.isDelivered) {
-        status = 'Entrege';
+      switch(order.status) {
+        case 'canceled':
+          return 'Cancelado';
+        case 'delivered':
+          return 'Entrege';
+        case 'shipped':
+          return 'Enviado';
+        case 'paid':
+          return 'Pago';
+        case 'placed':
+          return 'Aberto';
+        default:
+          return '';
       }
-      // Shipped.
-      else if (order.isShipped) {
-        status = 'Enviado';
-      }
-      // Paid.
-      else if (order.isPaid) { 
-        status = 'Pago';
-      }
-      // Placed.
-      else if (order.isPlaced) { 
-        status = 'Aberto';
-      }
-      return status;
     },
     // Set order status from selected order.
     setStatus(status){

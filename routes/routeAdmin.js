@@ -283,16 +283,16 @@ router.get('/api/orders', checkPermission, function(req, res, next) {
   let search;
   // No search request.
   if (req.query.search == '') {
-    search = { isPlaced: {$exists: true} };
+    search = { 'timestamps.placedAt': { $exists: true } };
   } 
   // Search by _id.
   else if (req.query.search.match(/^[a-f\d]{24}$/i)) {
-    search = { isPlaced: {$exists: true}, _id: req.query.search };
+    search = { 'timestamps.placedAt': {$exists: true}, _id: req.query.search };
   }
   // No search by _id.
   else {
     search = { 
-      isPlaced: {$exists: true},
+      'timestamps.placedAt': {$exists: true},
       $or: [ 
         {'name': {$regex: req.query.search, $options: 'i'}},
         {totalPrice: {$regex: req.query.search, $options: 'i'}},
@@ -302,10 +302,9 @@ router.get('/api/orders', checkPermission, function(req, res, next) {
   }
   // console.log(`search: ${JSON.stringify(search)}`);
   // Find orders.
-  let orderPromise = Order.find(search).sort({'isPlaced': -1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
+  let orderPromise = Order.find(search).sort({'timestamps.placedAt': -1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
   // Order count.
   let orderCountPromise = Order.find(search).count().exec();
-  // let orderCountPromise = Order.find({ user_id: user_id, isPlaced: {$exists: true} }).count(search).exec();
   Promise.all([orderPromise, orderCountPromise])
   .then(([orders, count])=>{    
     res.json({orders, page, pageCount: Math.ceil(count / ORDER_QTD_BY_PAGE)});
@@ -326,16 +325,16 @@ router.get('/api/orders_', checkPermission, function(req, res, next) {
   let search;
   // No search request.
   if (req.query.search == '') {
-    search = { isPlaced: {$exists: true} };
+    search = { 'timestamps.placedAt': {$exists: true} };
   } 
   // Search by _id.
   else if (req.query.search.match(/^[a-f\d]{24}$/i)) {
-    search = { isPlaced: {$exists: true}, _id: req.query.search };
+    search = { 'timestamps.placedAt': {$exists: true}, _id: req.query.search };
   }
   // No search by _id.
   else {
     search = { 
-      isPlaced: {$exists: true},
+      'timestamps.placedAt': {$exists: true},
       $or: [ 
         {'name': {$regex: req.query.search, $options: 'i'}},
         {totalPrice: {$regex: req.query.search, $options: 'i'}},
@@ -345,10 +344,9 @@ router.get('/api/orders_', checkPermission, function(req, res, next) {
   }
   // console.log(`search: ${JSON.stringify(search)}`);
   // Find orders.
-  let orderPromise = Order.find(search).sort({'isPlaced': -1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
+  let orderPromise = Order.find(search).sort({'timestamps.placedAt': -1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
   // Order count.
   let orderCountPromise = Order.find(search).count().exec();
-  // let orderCountPromise = Order.find({ user_id: user_id, isPlaced: {$exists: true} }).count(search).exec();
   Promise.all([orderPromise, orderCountPromise])
   .then(([orders, count])=>{    
     res.json({orders, page, pageCount: Math.ceil(count / ORDER_QTD_BY_PAGE)});
@@ -364,16 +362,20 @@ router.post('/api/order/status/:_id/:status', checkPermission, function(req, res
   // Status to change.
   switch (req.params.status){
     case 'paid':
-      update.isPaid = new Date();
+      update.status = 'paid';
+      update.timestamps.paidAt = new Date();
       break;
     case 'shipped':
-      update.isShipped = new Date();
+      update.status = 'shipped';
+      update.timestamps.shippedAt = new Date();
       break;
     case 'delivered':
-      update.isDelivered = new Date();
+      update.status = 'delivered';
+      update.timestamps.deliveredAt = new Date();
       break;
     case 'canceled':
-      update.isCanceled = new Date();
+      update.status = 'canceled';
+      update.timestamps.canceleddAt = new Date();
       break;
     default:
       res.json({ err: 'No valid status.'})
@@ -387,7 +389,6 @@ router.post('/api/order/status/:_id/:status', checkPermission, function(req, res
       return next(err); 
     } else {
       res.json({order});
-      console.log(`order.isShipped: ${JSON.stringify(order.isShipped)}`);
     }
   });
 });

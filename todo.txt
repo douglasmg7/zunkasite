@@ -1,6 +1,10 @@
-Price in R$2.412,09 into db to search
+Reduce stock after order placed.
 
-use isCanceled to filter orders.
+Alter all createdAt and modifiedAt to timestamp.
+
+Price in R$2.412,09 into db to search.
+
+use canceledAt to filter orders.
 
 Remover senhas do servidor
 

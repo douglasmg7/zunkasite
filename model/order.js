@@ -57,10 +57,21 @@ let shipping = new mongoose.Schema({
   deadline: { type: Number },
   correioResult: correioResult, // Result from correio search ws for shipment price and deadline.
 });
-// Schema - payment.
+// Schema - Payment.
 let payment = new mongoose.Schema({
   paypal: { type: Object },
 });
+// Schema - timestamps.
+let timestamps = new mongoose.Schema({
+  shippingAddressSelectedAt: { type: Date }, // When the user select the shipping address.
+  shippingMethodSelectedAt: { type: Date }, // When the user select the shipping method.
+  placedAt: { type: Date }, // When the user place the order.
+  paidAt: { type: Date },   // When receive payment confirmation.
+  shippedAt: { type: Date },    // Order was shipped.
+  deliveredAt: { type: Date },  // Receive delivered confirmation.
+  canceledAt: { type: Date }, // When the user cancel the order after it was posted (clesed order).
+});
+
 // Schema.
 let schema = new mongoose.Schema({
   user_id: { type: mongoose.Schema.Types.ObjectId, required: true },
@@ -72,14 +83,11 @@ let schema = new mongoose.Schema({
   payment: payment,
   subtotalPrice: { type: String },  // Items price without shipping price.
   totalPrice: { type: String }, // Items price plus shipping price.
-  isShippingAddressSelected: { type: Date }, // When the user select the shipping address.
-  isShippingMethodSelected: { type: Date }, // When the user select the shipping method.
-  isPlaced: { type: Date }, // When the user place the order.
-  isPaid: { type: Date },   // When receive payment confirmation.
-  isCanceled: { type: Date }, // When the user cancel the order after it was posted (clesed order).
-  isShipped: { type: Date },    // Order was shipped.
-  isDelivered: { type: Date },  // Receive delivered confirmation.
-  createdAt: { type: Date, default: Date.now },
-  modifiedAt: { type: Date, default: Date.now }
+  status: { type: String, enum: ['shippingAddressSelected', 'shippingMethodSelected', 'placed', 'paid', 'shipped', 'delivered', 'canceled'], default: 'initiated' },  // Order status.
+  timestamps: timestamps,
+},
+{
+  timestamps: true
+  // timestamps: { createdAt: 'timestamps.createdAt', updatedAt: 'timestamps.updatedAt' }   // Not updating updateAt, maybe a bug.
 });
 module.exports = mongoose.model('Order', schema);

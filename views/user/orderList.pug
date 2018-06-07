@@ -27,7 +27,7 @@ html(lang="en")
             th Número
         tbody
           tr(v-for='order, index in orders' @click='showOrderDetail(index)')
-            td {{order.isShippingAddressSelected | formatDate}}
+            td {{order.timestamps.shippingAddressSelectedAt | formatDate}}
             td {{order.totalPrice | formatMoney}}
             td {{order.shipping.address.name}}
             td {{order._id}}

@@ -45,7 +45,7 @@ html(lang="en")
             th Status
         tbody
           tr(v-for='order, index in orders' @click='showOrderDetail(index)')
-            td {{order.isShippingAddressSelected | formatDate}}
+            td {{order.timestamps.shippingAddressSelectedAt | formatDate}}
             td {{order.name}}
             td {{order.totalPrice | formatMoney}}
             td {{order._id}}
