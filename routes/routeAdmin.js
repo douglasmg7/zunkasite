@@ -319,13 +319,14 @@ router.get('/api/orders_', checkPermission, function(req, res, next) {
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
   const skip = (page - 1) * ORDER_QTD_BY_PAGE;
   console.log(`filter: ${JSON.stringify(req.query.filter)}`);
-  console.log(`filter: ${req.query.filter}`);
-
   // Db search.
   let search;
   // No search request.
   if (req.query.search == '') {
-    search = { 'timestamps.placedAt': {$exists: true} };
+    search = { 
+      'timestamps.placedAt': {$exists: true},
+      status: 'canceled'
+    };
   } 
   // Search by _id.
   else if (req.query.search.match(/^[a-f\d]{24}$/i)) {
@@ -342,7 +343,7 @@ router.get('/api/orders_', checkPermission, function(req, res, next) {
       ] 
     }
   }
-  // console.log(`search: ${JSON.stringify(search)}`);
+  console.log(`search: ${JSON.stringify(search)}`);
   // Find orders.
   let orderPromise = Order.find(search).sort({'timestamps.placedAt': -1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
   // Order count.
@@ -357,38 +358,44 @@ router.get('/api/orders_', checkPermission, function(req, res, next) {
 
 // Change order status.
 router.post('/api/order/status/:_id/:status', checkPermission, function(req, res, next) {
-  // To update order on db.
-  let update = {};
-  // Status to change.
-  switch (req.params.status){
-    case 'paid':
-      update.status = 'paid';
-      update.timestamps.paidAt = new Date();
-      break;
-    case 'shipped':
-      update.status = 'shipped';
-      update.timestamps.shippedAt = new Date();
-      break;
-    case 'delivered':
-      update.status = 'delivered';
-      update.timestamps.deliveredAt = new Date();
-      break;
-    case 'canceled':
-      update.status = 'canceled';
-      update.timestamps.canceleddAt = new Date();
-      break;
-    default:
-      res.json({ err: 'No valid status.'})
-      return;
-  }
-  // console.log(`update: ${JSON.stringify(update)}`);
-  // Update order.
-  Order.findByIdAndUpdate(req.params._id, update, { new: true }, (err, order)=>{
-    if (err) { 
-      res.json({err: err});
-      return next(err); 
-    } else {
-      res.json({order});
+  // Find order.
+  Order.findById(req.params._id, (err, order)=>{
+    if (err) { return next(err); }
+    if (!order) {
+      return next(new Error('Did not find order.')); }
+    else {
+      // Status to change.
+      switch (req.params.status){
+        case 'paid':
+          order.status = 'paid';
+          order.timestamps.paidAt = new Date();
+          break;
+        case 'shipped':
+          order.status = 'shipped';
+          order.timestamps.shippedAt = new Date();
+          break;
+        case 'delivered':
+          order.status = 'delivered';
+          order.timestamps.deliveredAt = new Date();
+          break;
+        case 'canceled':
+          order.status = 'canceled';
+          order.timestamps.canceleddAt = new Date();
+          break;
+        default:
+          res.json({ err: 'No valid status.'})
+          return;
+      }
+      // Save order.
+      order.save((err, newOrder)=>{
+        if (err) { 
+          res.json({err: err});
+          return next(err); 
+        } else {
+          // console.log(`newOrder: ${JSON.stringify(newOrder)}`);
+          res.json({order: newOrder});
+        }
+      });
     }
   });
 });

@@ -38,8 +38,6 @@ var app = new Vue({
     filter: {
       handler(val){
         this.getOrdersFilter();
-        // console.log('watch');
-        // console.log(val.showPlacedOrders);
       },
       deep: true
     }
@@ -115,6 +113,7 @@ var app = new Vue({
         })
         .then((res)=>{
           // Update selected order and orders.
+          // console.log(`data: ${JSON.stringify(res.data)}`);
           this.orderSelec = res.data.order;
           this.$set(this.orders, this.orderSelecIndex, res.data.order);
         })

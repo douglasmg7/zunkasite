@@ -1,20 +1,21 @@
 {
-	  "verbose": true,
-	  "ignore": [
-      "*/*.log",
-      "*/*.txt",
-      "*/*.jpeg",
-      "dist/*",
-      "scripts/*",
-      "views/*",
-      "test/*",
-      "bower.json",
-      "node_modules/*",
-      "bower_components/*",
-      "bin/updateDbWithAllNationsProducts.js",
-      "bin/getAllNationsProducts.js",
-      "bin/downloadFile.js",
-      "bin/insertProductMakers.js",
-      "bin/insertProductCategories.js"
-	  ]
+  "verbose": true,
+  "ignore": [
+    "*/*.log",
+    "*/*.txt",
+    "*/*.jpeg",
+    "log/*",
+    "dist/*",
+    "scripts/*",
+    "views/*",
+    "test/*",
+    "bower.json",
+    "node_modules/*",
+    "bower_components/*",
+    "bin/updateDbWithAllNationsProducts.js",
+    "bin/getAllNationsProducts.js",
+    "bin/downloadFile.js",
+    "bin/insertProductMakers.js",
+    "bin/insertProductCategories.js"
+  ]
 }

@@ -150,7 +150,6 @@ router.post('/shipping-address', (req, res, next)=>{
         order.name = req.user.name;
         order.email = req.user.email;
         order.timestamps = { shippingAddressSelectedAt: new Date() };
-        // order.timestamps.shippingAddressSelectedAt = new Date();
         order.status = 'shippingAddressSelected';
         order.shipping = { address: {} };
         order.shipping.address.name = address.name;
@@ -256,6 +255,7 @@ router.post('/shipping-method/:order_id', (req, res, next)=>{
     if (req.body.shippingMethod == 'correios') { order.shipping.carrier = 'correios'; }
     order.totalPrice = (parseFloat(order.subtotalPrice) + parseFloat(order.shipping.price)).toFixed(2);
     order.timestamps.shippingMethodSelectedAt = new Date();
+    order.status = 'shippingMethodSelected';
     order.save(err=>{
       if (err) { return next(err) };
       res.json({});
