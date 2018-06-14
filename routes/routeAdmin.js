@@ -275,7 +275,7 @@ router.get('/orders', checkPermission, function(req, res, next) {
 });
 
 // Get orders data.
-router.get('/api/orders', checkPermission, function(req, res, next) {
+router.get('/api/orders_old', checkPermission, function(req, res, next) {
   const user_id = req.params.user_id;
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
   const skip = (page - 1) * ORDER_QTD_BY_PAGE;
@@ -314,28 +314,29 @@ router.get('/api/orders', checkPermission, function(req, res, next) {
 });
 
 // Get orders data.
-router.get('/api/orders_', checkPermission, function(req, res, next) {
+router.get('/api/orders', checkPermission, function(req, res, next) {
   const user_id = req.params.user_id;
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
   const skip = (page - 1) * ORDER_QTD_BY_PAGE;
-  console.log(`filter: ${JSON.stringify(req.query.filter)}`);
   // Db search.
   let search;
   // No search request.
   if (req.query.search == '') {
     search = { 
-      'timestamps.placedAt': {$exists: true},
-      status: 'canceled'
+      status: { $in: JSON.parse(req.query.filter) }
     };
   } 
   // Search by _id.
   else if (req.query.search.match(/^[a-f\d]{24}$/i)) {
-    search = { 'timestamps.placedAt': {$exists: true}, _id: req.query.search };
+    search = { 
+      status: { $in: JSON.parse(req.query.filter) },
+      _id: req.query.search 
+    };
   }
   // No search by _id.
   else {
     search = { 
-      'timestamps.placedAt': {$exists: true},
+      status: { $in: JSON.parse(req.query.filter) },
       $or: [ 
         {'name': {$regex: req.query.search, $options: 'i'}},
         {totalPrice: {$regex: req.query.search, $options: 'i'}},
@@ -343,7 +344,6 @@ router.get('/api/orders_', checkPermission, function(req, res, next) {
       ] 
     }
   }
-  console.log(`search: ${JSON.stringify(search)}`);
   // Find orders.
   let orderPromise = Order.find(search).sort({'timestamps.placedAt': -1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
   // Order count.
@@ -392,7 +392,6 @@ router.post('/api/order/status/:_id/:status', checkPermission, function(req, res
           res.json({err: err});
           return next(err); 
         } else {
-          // console.log(`newOrder: ${JSON.stringify(newOrder)}`);
           res.json({order: newOrder});
         }
       });

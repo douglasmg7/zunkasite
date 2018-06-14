@@ -24,11 +24,11 @@ var app = new Vue({
     showModal: false,
     // Filter.
     filter: {
-      showPlacedOrders: true,
-      showPaidOrders: true,
-      showShippedOrders: true,
-      showDeliveredOrders: true,
-      showCanceledOrders: true
+      placed: true,
+      paid: true,
+      shipped: true,
+      delivered: true,
+      canceled: true
     }
   },
   created() {
@@ -38,34 +38,23 @@ var app = new Vue({
   watch: {
     filter: {
       handler(val){
-        this.getOrdersFilter();
+        this.getOrders();
       },
       deep: true
     }
   },
   methods: {
-    // Get orders.
     getOrders(page=1){
+      // Orders status to show.
+      let filter = [];
+      for (let prop in this.filter) {
+        if (this.filter[prop]){
+          filter.push(prop);
+        }
+      }
       axios({
         method: 'get',
-        url: `/admin/api/orders?page=${page}&search=${this.searchOrder}`,
-        headers:{'csrf-token' : csrfToken}
-      })
-      .then((res)=>{
-        this.orders = res.data.orders;
-        this.page = res.data.page;
-        this.pageCount = res.data.pageCount;
-      })
-      .catch((err)=>{
-        console.log(`Error - getOrders(), err: ${err}`);
-      });
-    },
-    // Get orders with filter.
-    getOrdersFilter(page=1){
-      axios({
-        method: 'get',
-        url: `/admin/api/orders_?page=${page}&search=${this.searchOrder}&filter=${JSON.stringify(this.filter)}`,
-        // url: `/admin/api/orders_?page=${page}&search=${this.searchOrder}&filter=${this.filter}`,
+        url: `/admin/api/orders?page=${page}&search=${this.searchOrder}&filter=${JSON.stringify(filter)}`,
         headers:{'csrf-token' : csrfToken}
       })
       .then((res)=>{
