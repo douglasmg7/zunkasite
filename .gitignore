@@ -8,11 +8,4 @@ public/js/bundle*
 bin/xml/
 dist/img/
 
-semantic/*.*
-semantic/tasks/
-semantic/dist/
-semantic/src/*.less
-semantic/src/themes/
-semantic/src/definitions/
-
 

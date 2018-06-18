@@ -25,9 +25,9 @@ try {
 }
 
 // Log configuration.
-const log = new (winston.Logger)({
+const log = winston.createLogger({
   transports: [
-    new (winston.transports.File)({
+    new winston.transports.File({
       level: 'silly',
       prettyPrint: true,
       silent: false,
@@ -44,7 +44,7 @@ const log = new (winston.Logger)({
 
 // No test mode.
 if(process.env.NODE_ENV !== 'test'){
-  log.add(winston.transports.Console,
+  log.add(new winston.transports.Console(),
     {
       level: 'silly',
       prettyPrint: true,

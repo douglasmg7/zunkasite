@@ -34,7 +34,6 @@ const csurf = require('csurf');
 const session = require('express-session');
 const flash = require('connect-flash');
 
-// const MongoStore = require('connect-mongo')(session);
 const redisStore = require('connect-redis')(session);
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
@@ -43,19 +42,9 @@ const bcrypt = require('bcrypt-nodejs');
 // Cart.
 const Cart = require('./model/cart');
 
-// Paypal.
-// const paypal = require('paypal-rest-sdk');
-
-// // Webpack HMR - hot module reload.
-// const webpack = require('webpack');
-// const webpackConfig = require('./webpack.config');
-// const compiler = webpack(webpackConfig);
-// const webpackDevMiddleware = require('webpack-dev-middleware')(compiler, {
-//   noInfo: false, 
-//   publicPath: webpackConfig.output.publicPath, 
-//   stats: {colors: true, chunks: false}
-// });
-// const webpackHotMiddleware = require('webpack-hot-middleware')(compiler);
+// Not need here, just to turn off npm-check warning.
+const debug = require('debug');
+const pug = require('pug');
 
 // App must be before routes.
 const app = express();
@@ -117,7 +106,6 @@ app.use(rollup({
 app.use(express.static(path.join(__dirname, 'dist/')));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components/')));
 app.use('/node_modules', express.static(path.join(__dirname, 'node_modules/')));
-app.use('/semantic', express.static(path.join(__dirname, 'semantic/')));
 
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
