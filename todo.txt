@@ -1,3 +1,5 @@
+Remove bootstrap and jquery.
+
 Add forever for production.
 
 Reduce stock after order placed.

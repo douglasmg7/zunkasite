@@ -44,7 +44,11 @@ router.post('/signup', checkNotLogged, passport.authenticate('local.signup', {
 
 // Login page.
 router.get('/login', checkNotLogged, (req, res, next)=>{
-  res.render('login', req.flash());
+  // res.render('user/login', req.flash());
+  res.render('user/login', {
+          nav: {
+      },
+  });
 });
 
 // Confirm signup.

@@ -1,0 +1,24 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Login.
+    link(rel="stylesheet" href="/css/user/login.css" charset="utf-8")
+  body
+    header
+      nav
+        include ../main-nav.pug
+    main
+      .login
+        h1 Identificação                          
+        input(type='hidden' name='_csrf' value=csrfToken)
+        input(type='text' name='email' placeholder='e-mail')
+        input(type='password' name='password' placeholder='senha')
+        p 
+          a.find-password(href='forgot/') Esqueceu a senha?
+        input.log(type='submit' value='Entrar')
+        hr/
+        p Não tem cadastro?
+        input.signup(type='submit' value='Cadastrar')
+        //- a(href='/users/signup') Cadastrar
