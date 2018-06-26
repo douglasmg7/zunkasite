@@ -4,7 +4,7 @@ html(lang="en")
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
     title Login.
-    link(rel="stylesheet" href="/css/user/login.css" charset="utf-8")
+    link(rel="stylesheet" href="/css/user/signin.css" charset="utf-8")
   body
     header
       nav
@@ -13,6 +13,7 @@ html(lang="en")
       .login
         h1 Identificação                          
         //- input(type='hidden' name='_csrf' value=csrfToken)
+        p.warn-message {{warnMessage}}
         input(type='text' v-model='email' placeholder='e-mail')
         input(type='password' v-model='password' placeholder='senha')
         p 
@@ -27,4 +28,4 @@ html(lang="en")
     let csrfToken = !{JSON.stringify(csrfToken)};
   include ../components/axios.js.pug
   include ../components/vue.js.pug
-  script(src='/js/user/login.js')        
+  script(src='/js/user/signin.js')        

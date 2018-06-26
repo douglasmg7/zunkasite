@@ -46,7 +46,7 @@
         | Sair  
     //- Not logged.
     else
-      a(href='/users/login') 
+      a(href='/users/signin') 
         svg.icon: use(xlink:href='/icon/sprite.svg#ic_account_circle_white_24px')
         | Entrar
       //- Cart.
@@ -55,4 +55,4 @@
         svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px')
         | Carrinho
         | &nbsp
-        span#total-qtd.badge= cart.totalQtd
+        span#cart-qtd= cart.totalQtd

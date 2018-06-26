@@ -82,63 +82,53 @@ router.get('/login/:token', (req, res, next)=>{
 });
 
 // Login page.
-router.get('/login', checkNotLogged, (req, res, next)=>{
+router.get('/signin', checkNotLogged, (req, res, next)=>{
   // res.render('user/login', req.flash());
-  res.render('user/login', {
+  res.render('user/signin', {
           nav: {
       },
   });
 });
 
 // Login request.
-router.post('/api/login', checkNotLogged, (req, res, next)=>{
-  passport.authenticate('local.signin', (err, user, info)=>{
-    console.log(`info: ${JSON.stringify(info)} `);
-    if (err) { return next(); }
-    // Not signup.
-    if (!user) { 
-      console.log('Not user'); 
-      return res.json({message: info});
+router.post('/api/signin', checkNotLogged, (req, res, next)=>{
+  // Validation.
+  req.checkBody('email', 'E-mail inválido.').isEmail();
+  req.checkBody('password', 'Senha deve conter pelo menos 8 caracteres.').isLength({ min: 8});
+  req.checkBody('password', 'Senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
+  req.sanitizeBody("email").normalizeEmail();
+  req.getValidationResult().then(function(result) {
+    // Send validation errors.
+    if (!result.isEmpty()) {
+      let messages = [];
+      messages.push(result.array()[0].msg);
+      return res.json({ success: false, message: messages[0]});
     }
-    // Signin.
-    req.login(user, function(err){
-      if(err) { return next(err); }
-      res.json({success: true});
-    })
-  })(req, res, next);
+    // No validation erros.
+    else {
+      passport.authenticate('local.signin', (err, user, info)=>{
+        if (err) { return next(); }
+        // Not signin.
+        if (!user) { 
+          return res.json({ message: info.message});
+        }
+        // Signin.
+        req.login(user, function(err){
+          if(err) { return next(err); }
+          return res.json({success: true});
+        })
+      })(req, res, next);
+    }
+  }); 
 });
-
-// // Login request.
-// router.post('/api/login', checkNotLogged, 
-//   passport.authenticate('local.signin', 
-//     (req, res)=>{
-//       console.log('local.signin - callback');
-//       console.log(`user: ${JSON.strigify(req.user)} `);
-
-// }));
-
-// // Login request.
-// router.post('/api/login', checkNotLogged, passport.authenticate('local.signin', {
-//   successRedirect: '/',
-//   failureRedirect: 'login',
-//   badRequestMessage: 'Falta credenciais.',
-//   failureFlash: true
-// }));
-
-// // Login request.
-// router.post('/api/login', (req, res, next)=>{
-//   console.log('api.login');
-//   console.log(`req.body: ${JSON.stringify(req.body)}`);
-// });
 
 // logout.
 router.get('/logout', (req, res, next)=>{
-  console.log(`req.user: ${JSON.stringify(req.user)}`);
   if (req.isAuthenticated()) {
     req.logout();
-    res.redirect('/users/login');
+    res.redirect('/users/signin');
   } else {
-    res.redirect('/users/login');
+    res.redirect('/users/signin');
   }
 });
 

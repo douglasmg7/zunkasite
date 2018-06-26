@@ -107,53 +107,42 @@ passport.use('local.signup', new LocalStrategy({
 
 // Signin.
 passport.use('local.signin', new LocalStrategy({ usernameField: 'email', passwordField: 'password', passReqToCallback: true }, function (req, email, password, done) {
-  // Validation.
-  req.checkBody('email', 'E-mail inválido.').isEmail();
-  req.checkBody('password', 'Senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
-  req.sanitizeBody("email").normalizeEmail();
-  req.getValidationResult().then(function(result) {
-    if (!result.isEmpty()) {
-      let messages = [];
-      messages.push(result.array()[0].msg);
-      // return done(null, false, req.flash('error', messages));
-      return done(null, false, messages[0]);
-    }    
-    User.findOne({ email: email}, (err, user)=>{
-      if (err) { 
-        log.error(`Passport.use - local strategy - Database error: ${err}`); 
-        return done(err, false, {message: 'Internal error.'}); 
-      }
-      // User not found.
-      if (!user) { 
-        log.warn(`email ${email} not found on database.`); 
-        return done(null, false, { message: 'Usuário não cadastrado.'} ); 
-      }
-      // Password match.
-      if (user.validPassword(password)) {
-       // Merge cart from session.
-        redis.get(`cart:${req.sessionID}`, (err, sessCart)=>{
-          if (sessCart) {
-            // Get authenticated user cart.
-            redis.get(`cart:${user.email}`, (err, userCart)=>{
-              let cart = userCart ? new Cart(JSON.parse(userCart)) : new Cart();
-              // Merge anonymous cart to authenticated user cart.
-              cart.mergeCart(JSON.parse(sessCart));
-              redis.del(`cart:${req.sessionID}`);
-              redis.set(`cart:${user.email}`, JSON.stringify(cart), (err)=>{
-                return done(null, user); 
-              });   
-            }); 
-          }
-          // No cart session to merge.
-          else {
-            return done(null, user); 
-          }        
-        });
-      }
-      // Wrong password.
-      else {
-        return done(null, false, { message: 'Senha incorreta.'} ); 
-      }
-    });
+  // Find email.
+  User.findOne({ email: email}, (err, user)=>{
+    if (err) { 
+      log.error(`Passport.use - local strategy - Database error: ${err}`); 
+      return done(err, false, {message: 'Internal error.'}); 
+    }
+    // User not found.
+    if (!user) { 
+      log.warn(`email ${email} not found on database.`); 
+      return done(null, false, { message: 'Usuário não cadastrado.'} ); 
+    }
+    // Password match.
+    if (user.validPassword(password)) {
+     // Merge cart from session.
+      redis.get(`cart:${req.sessionID}`, (err, sessCart)=>{
+        if (sessCart) {
+          // Get authenticated user cart.
+          redis.get(`cart:${user.email}`, (err, userCart)=>{
+            let cart = userCart ? new Cart(JSON.parse(userCart)) : new Cart();
+            // Merge anonymous cart to authenticated user cart.
+            cart.mergeCart(JSON.parse(sessCart));
+            redis.del(`cart:${req.sessionID}`);
+            redis.set(`cart:${user.email}`, JSON.stringify(cart), (err)=>{
+              return done(null, user); 
+            });   
+          }); 
+        }
+        // No cart session to merge.
+        else {
+          return done(null, user); 
+        }        
+      });
+    }
+    // Wrong password.
+    else {
+      return done(null, false, { message: 'Senha incorreta.'} ); 
+    }
   });
 }));
