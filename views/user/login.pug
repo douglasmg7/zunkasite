@@ -9,16 +9,22 @@ html(lang="en")
     header
       nav
         include ../main-nav.pug
-    main
+    main#app(v-cloak)
       .login
         h1 Identificação                          
-        input(type='hidden' name='_csrf' value=csrfToken)
-        input(type='text' name='email' placeholder='e-mail')
-        input(type='password' name='password' placeholder='senha')
+        //- input(type='hidden' name='_csrf' value=csrfToken)
+        input(type='text' v-model='email' placeholder='e-mail')
+        input(type='password' v-model='password' placeholder='senha')
         p 
           a.find-password(href='forgot/') Esqueceu a senha?
-        input.log(type='submit' value='Entrar')
+        input.log(type='submit' value='Entrar' @click='signin()')
         hr/
         p Não tem cadastro?
         input.signup(type='submit' value='Cadastrar')
         //- a(href='/users/signup') Cadastrar
+  script.
+    // Make available for vue.
+    let csrfToken = !{JSON.stringify(csrfToken)};
+  include ../components/axios.js.pug
+  include ../components/vue.js.pug
+  script(src='/js/user/login.js')        

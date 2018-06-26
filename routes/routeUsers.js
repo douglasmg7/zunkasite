@@ -42,15 +42,6 @@ router.post('/signup', checkNotLogged, passport.authenticate('local.signup', {
   failureFlash: true
 }));
 
-// Login page.
-router.get('/login', checkNotLogged, (req, res, next)=>{
-  // res.render('user/login', req.flash());
-  res.render('user/login', {
-          nav: {
-      },
-  });
-});
-
 // Confirm signup.
 router.get('/login/:token', (req, res, next)=>{
   EmailConfirmation.findOne({ token: req.params.token }, (err, emailConfirmation)=>{
@@ -90,13 +81,55 @@ router.get('/login/:token', (req, res, next)=>{
   })     
 });
 
+// Login page.
+router.get('/login', checkNotLogged, (req, res, next)=>{
+  // res.render('user/login', req.flash());
+  res.render('user/login', {
+          nav: {
+      },
+  });
+});
+
 // Login request.
-router.post('/login', checkNotLogged, passport.authenticate('local.signin', {
-  successRedirect: '/',
-  failureRedirect: 'login',
-  badRequestMessage: 'Falta credenciais.',
-  failureFlash: true
-}));
+router.post('/api/login', checkNotLogged, (req, res, next)=>{
+  passport.authenticate('local.signin', (err, user, info)=>{
+    console.log(`info: ${JSON.stringify(info)} `);
+    if (err) { return next(); }
+    // Not signup.
+    if (!user) { 
+      console.log('Not user'); 
+      return res.json({message: info});
+    }
+    // Signin.
+    req.login(user, function(err){
+      if(err) { return next(err); }
+      res.json({success: true});
+    })
+  })(req, res, next);
+});
+
+// // Login request.
+// router.post('/api/login', checkNotLogged, 
+//   passport.authenticate('local.signin', 
+//     (req, res)=>{
+//       console.log('local.signin - callback');
+//       console.log(`user: ${JSON.strigify(req.user)} `);
+
+// }));
+
+// // Login request.
+// router.post('/api/login', checkNotLogged, passport.authenticate('local.signin', {
+//   successRedirect: '/',
+//   failureRedirect: 'login',
+//   badRequestMessage: 'Falta credenciais.',
+//   failureFlash: true
+// }));
+
+// // Login request.
+// router.post('/api/login', (req, res, next)=>{
+//   console.log('api.login');
+//   console.log(`req.body: ${JSON.stringify(req.body)}`);
+// });
 
 // logout.
 router.get('/logout', (req, res, next)=>{

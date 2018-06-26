@@ -115,7 +115,8 @@ passport.use('local.signin', new LocalStrategy({ usernameField: 'email', passwor
     if (!result.isEmpty()) {
       let messages = [];
       messages.push(result.array()[0].msg);
-      return done(null, false, req.flash('error', messages));
+      // return done(null, false, req.flash('error', messages));
+      return done(null, false, messages[0]);
     }    
     User.findOne({ email: email}, (err, user)=>{
       if (err) { 
