@@ -36,6 +36,9 @@ var app = new Vue({
       .catch((err)=>{
         console.error(`Error - signin(), err: ${err}`);
       });
+    },
+    signup(){
+      window.location.href = '/users/signup';
     }
   } 
 });

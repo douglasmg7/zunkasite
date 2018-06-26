@@ -10,7 +10,7 @@
   .search
     input(id='search' onkeyup='__search(event)' placeholder='O que você procura?')
     //- input(id='search' oninput='window.location="/admin/productList&search=" + getElementById("search").value' placeholder='Pesquisa')
-    input(onclick='_search()')
+    input(onclick='__search()')
   script.
     function __search(event){
       if (!event || event.key === 'Enter') {
