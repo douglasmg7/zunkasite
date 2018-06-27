@@ -31,16 +31,57 @@ let transporter = nodemailer.createTransport({
 
 // Signup page.
 router.get('/signup', checkNotLogged, (req, res, next)=>{
-  res.render('signup', req.flash());
+  res.render('user/signup', {
+    nav: {}
+  });
 });
 
 // Signup request.
-router.post('/signup', checkNotLogged, passport.authenticate('local.signup', {
-  successRedirect: '/users/login',
-  failureRedirect: '/users/signup',
-  badRequestMessage: 'Campo(s) não preenchidos.',
-  failureFlash: true
-}));
+router.post('/api/signup', checkNotLogged, (req, res, next)=>{
+  // console.log(`req.body: ${JSON.stringify(req.body)}`);
+  // Validation.
+  req.checkBody('name', 'Nome deve conter pelo menos 2 caracteres.').isLength({ min: 2});
+  req.checkBody('name', 'Nome deve conter no máximo 40 caracteres.').isLength({ max: 40});
+  req.checkBody('email', 'E-mail inválido.').isEmail();
+  req.checkBody('password', 'Senha deve conter pelo menos 8 caracteres.').isLength({ min: 8});
+  req.checkBody('password', 'Senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
+  req.checkBody('password', 'Senha e confirmação da senha devem ser iguais').equals(req.body.passwordConfirm);
+  req.sanitizeBody("email").normalizeEmail();
+  req.getValidationResult().then(function(result) {
+    // Send validation errors.
+    if (!result.isEmpty()) {
+      let messages = [];
+      messages.push(result.array()[0].msg);
+      return res.json({ success: false, message: messages[0] });
+    } 
+    // No validation erros.
+    else {
+      passport.authenticate('local.signup', (err, user, info)=>{
+        console.log(`user: ${user}`);
+        console.log(`info: ${JSON.stringify(info)}`);
+
+        if (err) { 
+          res.json({ success: false, message: 'Erro interno.'});
+          return next(new Error('Some error.')); 
+        }
+        // Not signin.
+        if (!user) { 
+          return res.json({ success: false, message: info.message});
+        }
+        // First step of signup, successful.
+        return res.json({success: true, message: info.message});
+      })(req, res, next);
+    }
+  });
+});
+
+// // Signup request.
+// router.post('/signup', checkNotLogged, passport.authenticate('local.signup', {
+//   successRedirect: '/users/login',
+//   failureRedirect: '/users/signup',
+//   badRequestMessage: 'Campo(s) não preenchidos.',
+//   failureFlash: true
+// }));
 
 // Confirm signup.
 router.get('/login/:token', (req, res, next)=>{
@@ -189,7 +230,7 @@ router.post('/forgot', (req, res, next)=>{
                       // 'Esta solicitação de redefinição expira em duas horas.\n' +
                       'Se não foi você que requisitou esta redefinição de senha, por favor ignore este e-mail e sua senha permanecerá a mesma.'
             }; 
-            log.info('link', 'https://' + req.headers.host + '/users/reset/' + token + '\n\n');
+            log.info('link: https://' + req.headers.host + '/users/reset/' + token + '\n\n');
             // // Send email.
             // transporter.sendMail(mailOptions, function(err, info){
             //   if(err){

@@ -5,6 +5,13 @@ const path = require('path');
 const favicon = require('serve-favicon');
 // General log.
 const log = require('./config/log');
+
+
+log.info('info - starting...')
+log.warn('warn - starting...')
+log.error('error - starting...')
+log.silly('silly - starting...')
+
 // Log transaction.
 const morgan = require('morgan');
 // Body.

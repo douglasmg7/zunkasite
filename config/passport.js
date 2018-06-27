@@ -42,64 +42,54 @@ passport.use('local.signup', new LocalStrategy({
   usernameField: 'email',
   passwordField: 'password',
   passReqToCallback: true
-}, function(req, email, password, done){
-  // Validation.
-  req.checkBody('name', 'Nome deve conter pelo menos 2 caracteres.').isLength({ min: 2});
-  req.checkBody('name', 'Nome deve conter no máximo 40 caracteres.').isLength({ max: 40});
-  req.checkBody('email', 'E-mail inválido.').isEmail();
-  req.checkBody('password', 'Senha deve conter pelo menos 8 caracteres.').isLength({ min: 8});
-  req.checkBody('password', 'Senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
-  req.checkBody('password', 'Senha e confirmação da senha devem ser iguais').equals(req.body.passwordConfirm);
-  req.sanitizeBody("email").normalizeEmail();
-  req.getValidationResult().then(function(result) {
-    if (!result.isEmpty()) {
-      let messages = [];
-      messages.push(result.array()[0].msg);
-      return done(null, false, req.flash('error', messages));
-    }    
-    // Find user.
-    User.findOne({email: email}, (err, user)=>{
-      if (err) { return done(err, { message: 'Internal error.'} ); }
-      if (user) { return done(null, false, { message: 'E-mail já cadastrado.' }); }
-      // Create a radom key.
-      crypto.randomBytes(20, function(err, rawToken) {
+}, function(req, email, password, done){ 
+  // Find user.
+  User.findOne({email: email}, (err, user)=>{
+    // if (err) { return done(err, { message: 'Internal error.'} ); }
+    if (err) { return done(err, false, { message: 'Internal error.'} ); }
+    if (user) { return done(null, false, { message: 'E-mail já cadastrado.' }); }
+    // Create a radom key.
+    crypto.randomBytes(20, function(err, rawToken) {
+      if (err) { 
+        log.error(err, new Error().stack);
+        return done(err, false, { message: 'Serviço indisponível.'});
+      }
+      let token = rawToken.toString('hex')
+      // Create the new user.
+      let emailConfirmation = new EmailConfirmation();
+      emailConfirmation.name = req.body.name;
+      emailConfirmation.email = req.body.email;
+      emailConfirmation.password = emailConfirmation.encryptPassword(req.body.password);
+      emailConfirmation.token = token;
+      // Save.
+      emailConfirmation.save((err, result)=>{
         if (err) { 
           log.error(err, new Error().stack);
           return done(err, false, { message: 'Serviço indisponível.'});
-        }
-        let token = rawToken.toString('hex')
-        // Create the new user.
-        let emailConfirmation = new EmailConfirmation();
-        emailConfirmation.name = req.body.name;
-        emailConfirmation.email = req.body.email;
-        emailConfirmation.password = emailConfirmation.encryptPassword(req.body.password);
-        emailConfirmation.token = token;
-        // Save.
-        emailConfirmation.save((err, result)=>{
-          if (err) { 
-            log.error(err, new Error().stack);
-            return done(err, false, { message: 'Serviço indisponível.'});
-          }     
-          let mailOptions = {
-                from: 'dev@zunka.com.br',
-                to: req.body.email,
-                subject: 'Solicitação de criação de conta no site da Zunka.',
-                text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a criação de uma conta no site da Zunka usando este e-mail.\n\n' + 
-                      'Por favor click no link, ou cole no seu navegador de internet para confirmar a criação da conta.\n\n' + 
-                      'https://' + req.headers.host + '/users/login/' + token + '\n\n' +
-                      'Se não foi você que requisitou esta criação de conta, por favor ignore este e-mail e nenhuma conta será criada.'
-          }; 
-          log.info('link: ', 'https://' + req.headers.host + '/users/login/' + token + '\n\n');
-          // transporter.sendMail(mailOptions, function(err, info){
-          //   if(err){
-          //     log.error(err, new Error().stack);
-          //   } else {
-          //     log.info("mail send successfully");
-          //   }
-          // }); 
-          req.flash('success', `Foi enviado um e-mail para ${req.body.email} com instruções para completar o cadastro.`);
-          done(null, emailConfirmation);               
-        });
+        }     
+        let mailOptions = {
+              from: 'dev@zunka.com.br',
+              to: req.body.email,
+              subject: 'Solicitação de criação de conta no site da Zunka.',
+              text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a criação de uma conta no site da Zunka usando este e-mail.\n\n' + 
+                    'Por favor click no link, ou cole no seu navegador de internet para confirmar a criação da conta.\n\n' + 
+                    'https://' + req.headers.host + '/users/login/' + token + '\n\n' +
+                    'Se não foi você que requisitou esta criação de conta, por favor ignore este e-mail e nenhuma conta será criada.'
+        };
+        // todo-remove.
+        log.info( mailOptions );
+        log.info('link: https://' + req.headers.host + '/users/login/' + token + '\n\n');
+        // transporter.sendMail(mailOptions, function(err, info){
+        //   if(err){
+        //     log.error(err, new Error().stack);
+        //   } else {
+        //     log.info("mail send successfully");
+        //   }
+        // }); 
+
+        // req.flash('success', `Foi enviado um e-mail para ${req.body.email} com instruções para completar o cadastro.`);
+        done(null, emailConfirmation, { message: `Foi enviado um e-mail para ${req.body.email} com instruções para completar o cadastro.`});               
+        // done(null, emailConfirmation);               
       });
     });
   });
@@ -146,3 +136,72 @@ passport.use('local.signin', new LocalStrategy({ usernameField: 'email', passwor
     }
   });
 }));
+
+
+// // Signup.
+// passport.use('local.signup', new LocalStrategy({
+//   usernameField: 'email',
+//   passwordField: 'password',
+//   passReqToCallback: true
+// }, function(req, email, password, done){
+//   // Validation.
+//   req.checkBody('name', 'Nome deve conter pelo menos 2 caracteres.').isLength({ min: 2});
+//   req.checkBody('name', 'Nome deve conter no máximo 40 caracteres.').isLength({ max: 40});
+//   req.checkBody('email', 'E-mail inválido.').isEmail();
+//   req.checkBody('password', 'Senha deve conter pelo menos 8 caracteres.').isLength({ min: 8});
+//   req.checkBody('password', 'Senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
+//   req.checkBody('password', 'Senha e confirmação da senha devem ser iguais').equals(req.body.passwordConfirm);
+//   req.sanitizeBody("email").normalizeEmail();
+//   req.getValidationResult().then(function(result) {
+//     if (!result.isEmpty()) {
+//       let messages = [];
+//       messages.push(result.array()[0].msg);
+//       return done(null, false, req.flash('error', messages));
+//     }    
+//     // Find user.
+//     User.findOne({email: email}, (err, user)=>{
+//       if (err) { return done(err, { message: 'Internal error.'} ); }
+//       if (user) { return done(null, false, { message: 'E-mail já cadastrado.' }); }
+//       // Create a radom key.
+//       crypto.randomBytes(20, function(err, rawToken) {
+//         if (err) { 
+//           log.error(err, new Error().stack);
+//           return done(err, false, { message: 'Serviço indisponível.'});
+//         }
+//         let token = rawToken.toString('hex')
+//         // Create the new user.
+//         let emailConfirmation = new EmailConfirmation();
+//         emailConfirmation.name = req.body.name;
+//         emailConfirmation.email = req.body.email;
+//         emailConfirmation.password = emailConfirmation.encryptPassword(req.body.password);
+//         emailConfirmation.token = token;
+//         // Save.
+//         emailConfirmation.save((err, result)=>{
+//           if (err) { 
+//             log.error(err, new Error().stack);
+//             return done(err, false, { message: 'Serviço indisponível.'});
+//           }     
+//           let mailOptions = {
+//                 from: 'dev@zunka.com.br',
+//                 to: req.body.email,
+//                 subject: 'Solicitação de criação de conta no site da Zunka.',
+//                 text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a criação de uma conta no site da Zunka usando este e-mail.\n\n' + 
+//                       'Por favor click no link, ou cole no seu navegador de internet para confirmar a criação da conta.\n\n' + 
+//                       'https://' + req.headers.host + '/users/login/' + token + '\n\n' +
+//                       'Se não foi você que requisitou esta criação de conta, por favor ignore este e-mail e nenhuma conta será criada.'
+//           }; 
+//           log.info('link: ', 'https://' + req.headers.host + '/users/login/' + token + '\n\n');
+//           // transporter.sendMail(mailOptions, function(err, info){
+//           //   if(err){
+//           //     log.error(err, new Error().stack);
+//           //   } else {
+//           //     log.info("mail send successfully");
+//           //   }
+//           // }); 
+//           req.flash('success', `Foi enviado um e-mail para ${req.body.email} com instruções para completar o cadastro.`);
+//           done(null, emailConfirmation);               
+//         });
+//       });
+//     });
+//   });
+// }));

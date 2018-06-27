@@ -5,7 +5,7 @@
 
 // npm modules
 const path = require('path');
-const winston = require('winston');
+const { createLogger, format, transports } = require('winston');
 const fs = require('fs');
 
 // file to log.
@@ -24,19 +24,22 @@ try {
   console.log(e);
 }
 
+  // format: format.simple(),
 // Log configuration.
-const log = winston.createLogger({
+const log = createLogger({
+  format: format.combine(
+    format.colorize(),
+    format.timestamp(),
+    format.simple(),
+  ),
+  // levels: config.npm(),
+  // format: winston.format.json(),
   transports: [
-    new winston.transports.File({
-      level: 'silly',
-      prettyPrint: true,
-      silent: false,
-      colorize: true,
-      timestamp: true,
+    new transports.File({
       filename: logFilename,
+      level: 'silly',
       maxsize: 40000,
       maxFiles: 10,
-      json: false
       // pid: 2323
     })
   ]
@@ -44,16 +47,52 @@ const log = winston.createLogger({
 
 // No test mode.
 if(process.env.NODE_ENV !== 'test'){
-  log.add(new winston.transports.Console(),
-    {
-      level: 'silly',
-      prettyPrint: true,
-      colorize: true,
-      silent: false,
-      timestamp: false
-    }
-  );
+  log.add(new transports.Console({
+    level: 'silly',
+  }));
 }
 
 // module.exports = module = log;
 module.exports = log;
+
+
+
+
+
+
+
+
+
+
+
+
+// // Log configuration.
+// const log = winston.createLogger({
+//   transports: [
+//     new winston.transports.File({
+//       level: 'silly',
+//       prettyPrint: true,
+//       silent: false,
+//       colorize: true,
+//       timestamp: true,
+//       filename: logFilename,
+//       maxsize: 40000,
+//       maxFiles: 10,
+//       json: false
+//       // pid: 2323
+//     })
+//   ]
+// });
+
+// // No test mode.
+// if(process.env.NODE_ENV !== 'test'){
+//   log.add(new winston.transports.Console(),
+//     {
+//       level: 'silly',
+//       prettyPrint: true,
+//       colorize: true,
+//       silent: false,
+//       timestamp: false
+//     }
+//   );
+// }
