@@ -7,10 +7,12 @@ const favicon = require('serve-favicon');
 const log = require('./config/log');
 
 
-log.info('info - starting...')
-log.warn('warn - starting...')
-log.error('error - starting...')
-log.silly('silly - starting...')
+log.error('starting A');
+log.warn('starting B');
+log.info('starting C');
+log.verbose('starting D');
+log.debug('starting E');
+log.silly('starting F');
 
 // Log transaction.
 const morgan = require('morgan');

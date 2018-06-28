@@ -27,17 +27,17 @@ try {
   // format: format.simple(),
 // Log configuration.
 const log = createLogger({
-  format: format.combine(
-    format.colorize(),
-    format.timestamp(),
-    format.simple(),
-  ),
   // levels: config.npm(),
   // format: winston.format.json(),
   transports: [
     new transports.File({
       filename: logFilename,
       level: 'silly',
+      format: format.combine(
+        format.timestamp(),
+        format.align(),
+        format.printf(info=>`${info.timestamp}  ${info.level}  ${info.message}`)
+      ),
       maxsize: 40000,
       maxFiles: 10,
       // pid: 2323
@@ -49,13 +49,22 @@ const log = createLogger({
 if(process.env.NODE_ENV !== 'test'){
   log.add(new transports.Console({
     level: 'silly',
+    format: format.combine(
+      format.colorize(),
+      // format.align(),
+      format.timestamp(),
+      format.printf(info=>`${info.timestamp}  ${info.level}  ${info.message}`)
+    )
   }));
 }
 
 // module.exports = module = log;
 module.exports = log;
 
-
+// format: format.combine(
+//   format.timestamp(),
+//   format.simple(),
+// ),
 
 
 
