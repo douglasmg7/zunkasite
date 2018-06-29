@@ -1,21 +1,33 @@
-#!/usr/bin/env node
 'use strict';
-
-// { error: 0, warn: 1, info: 2, verbose: 3, debug: 4, silly: 5 }
 
 // npm modules
 const path = require('path');
-const { createLogger, format, transports } = require('winston');
+const { createLogger, format, transports, addColors } = require('winston');
 const fs = require('fs');
-
-// file to log.
+const colors = require('colors/safe');
+// file to write logs.
 const parsePath = path.parse(module.parent.filename);
 const logDir = path.join(parsePath.dir, 'log');
 const logFilename = path.join(logDir, (parsePath.name + '.log'));
 // console.log(logDir);
 // console.log(logFilename);
 
-// create log dir
+// Custom levels.
+const levels = {
+    error: 0, 
+    warn: 1, 
+    info: 2, 
+    debug: 3, 
+};
+// Level colors.
+const levelColors = {
+    error: 'red', 
+    warn: 'yellow', 
+    info: 'green', 
+    debug: 'blue', 
+};
+
+// Create log dir.
 try {
   if (!fs.existsSync(logDir)) {
     fs.mkdirSync(logDir);
@@ -24,19 +36,17 @@ try {
   console.log(e);
 }
 
-  // format: format.simple(),
 // Log configuration.
 const log = createLogger({
-  // levels: config.npm(),
-  // format: winston.format.json(),
+  levels: levels,
   transports: [
     new transports.File({
       filename: logFilename,
-      level: 'silly',
+      level: 'debug',
       format: format.combine(
         format.timestamp(),
-        format.align(),
-        format.printf(info=>`${info.timestamp}  ${info.level}  ${info.message}`)
+        format.printf(info=>`${info.timestamp}  ${info.level.padEnd(5)}  ${info.message}`)
+        // format.printf(info=>colors[levelColors[info.level]](`${info.timestamp}  ${info.level.padEnd(5)}  ${info.message}`))
       ),
       maxsize: 40000,
       maxFiles: 10,
@@ -48,60 +58,12 @@ const log = createLogger({
 // No test mode.
 if(process.env.NODE_ENV !== 'test'){
   log.add(new transports.Console({
-    level: 'silly',
+    level: 'debug',
     format: format.combine(
-      format.colorize(),
-      // format.align(),
-      format.timestamp(),
-      format.printf(info=>`${info.timestamp}  ${info.level}  ${info.message}`)
+      format.label({ label: '[app]' }),
+      format.printf(info=>colors[levelColors[info.level]](`${info.label} ${info.message}`)),
     )
   }));
 }
 
-// module.exports = module = log;
 module.exports = log;
-
-// format: format.combine(
-//   format.timestamp(),
-//   format.simple(),
-// ),
-
-
-
-
-
-
-
-
-
-
-// // Log configuration.
-// const log = winston.createLogger({
-//   transports: [
-//     new winston.transports.File({
-//       level: 'silly',
-//       prettyPrint: true,
-//       silent: false,
-//       colorize: true,
-//       timestamp: true,
-//       filename: logFilename,
-//       maxsize: 40000,
-//       maxFiles: 10,
-//       json: false
-//       // pid: 2323
-//     })
-//   ]
-// });
-
-// // No test mode.
-// if(process.env.NODE_ENV !== 'test'){
-//   log.add(new winston.transports.Console(),
-//     {
-//       level: 'silly',
-//       prettyPrint: true,
-//       colorize: true,
-//       silent: false,
-//       timestamp: false
-//     }
-//   );
-// }

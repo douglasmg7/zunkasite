@@ -1,3 +1,5 @@
+Verify app.log size rotation.
+
 Remove bootstrap and jquery.
 
 Add forever for production.

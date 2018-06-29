@@ -1,5 +1,9 @@
 {
-  "verbose": true,
+  "verbose": false,
+  "watch": [
+    "bin/www",
+    "*.*"
+  ],
   "ignore": [
     "*/*.log",
     "*/*.txt",

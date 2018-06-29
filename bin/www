@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 const app = require('../app');
-const debug = require('debug')('server:server');
 const http = require('http');
 const https = require('https');
 const express = require('express');
@@ -111,12 +110,12 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug('Http  Listening on ' + bind);
+  log.info('Http  Listening on ' + bind);
 }
 function onListeningSsl() {
   var addr = serverSsl.address();
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug('Https Listening on ' + bind);
+  log.info('Https Listening on ' + bind);
 }
