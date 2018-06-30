@@ -27,6 +27,7 @@ html(lang='en')
         input(type='password' id='passwordConfirm' v-model='passwordConfirm')           
         //- Signup.           
         input.signup(type='submit' value='Cadastrar' @click='signup()')
+        p.success-message {{ successMessage }}
     script.
       // Make available for vue.
       let csrfToken = !{JSON.stringify(csrfToken)};

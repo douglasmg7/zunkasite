@@ -8,6 +8,8 @@ var app = new Vue({
   data: {
     // Authentication error.
     warnMessage: '',
+    // Success message.
+    successMessage: '',
     // Name.
     name: '',
     // Email.
@@ -30,12 +32,12 @@ var app = new Vue({
         // Singin successful.
         if (res.data.success) {
           this.warnMessage = '';
-          window.location.href = '/';
+          this.successMessage = res.data.message;
         }
         // Not success on signin.
         else {
           console.log(res.data.message);
-          this.warnMessage = res.data.message
+          this.warnMessage = res.data.message;
         }
       })
       .catch((err)=>{

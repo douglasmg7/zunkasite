@@ -130,6 +130,9 @@ main {
   color: #f00;
   margin-bottom: 0.5em;
 }
+.login p.success-message {
+  color: #008000;
+}
 .login input,
 .login button {
   height: 2em;

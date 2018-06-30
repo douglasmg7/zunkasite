@@ -58,6 +58,8 @@ const routeConfigProducts = require('./routes/routeConfigProducts');
 const routeTest = require('./routes/routeTest');
 const routeAdmin = require('./routes/routeAdmin');
 
+// Starting app.
+log.info('Starting app.');
 // Node env.
 log.info(`NODE_ENV: ${process.env.NODE_ENV}`);
 

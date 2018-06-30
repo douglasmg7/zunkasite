@@ -1,4 +1,5 @@
 'use strict';
+const app = require ('express')();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const redis = require('../db/redis');
@@ -55,42 +56,59 @@ passport.use('local.signup', new LocalStrategy({
         return done(err, false, { message: 'Serviço indisponível.'});
       }
       let token = rawToken.toString('hex')
-      // Create the new user.
-      let emailConfirmation = new EmailConfirmation();
-      emailConfirmation.name = req.body.name;
-      emailConfirmation.email = req.body.email;
-      emailConfirmation.password = emailConfirmation.encryptPassword(req.body.password);
-      emailConfirmation.token = token;
-      // Save.
-      emailConfirmation.save((err, result)=>{
+      // Verify if alredy exist a email confirmation.
+      EmailConfirmation.findOne({email: req.body.email}, (err, emailConfirmation)=>{
+        // Error find email confirmation.
         if (err) { 
           log.error(err, new Error().stack);
           return done(err, false, { message: 'Serviço indisponível.'});
-        }     
-        let mailOptions = {
-              from: 'dev@zunka.com.br',
-              to: req.body.email,
-              subject: 'Solicitação de criação de conta no site da Zunka.',
-              text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a criação de uma conta no site da Zunka usando este e-mail.\n\n' + 
-                    'Por favor click no link, ou cole no seu navegador de internet para confirmar a criação da conta.\n\n' + 
-                    'https://' + req.headers.host + '/users/login/' + token + '\n\n' +
-                    'Se não foi você que requisitou esta criação de conta, por favor ignore este e-mail e nenhuma conta será criada.'
-        };
-        // todo-remove.
-        log.info( mailOptions );
-        log.info('link: https://' + req.headers.host + '/users/login/' + token + '\n\n');
-        // transporter.sendMail(mailOptions, function(err, info){
-        //   if(err){
-        //     log.error(err, new Error().stack);
-        //   } else {
-        //     log.info("mail send successfully");
-        //   }
-        // }); 
-
-        // req.flash('success', `Foi enviado um e-mail para ${req.body.email} com instruções para completar o cadastro.`);
-        done(null, emailConfirmation, { message: `Foi enviado um e-mail para ${req.body.email} com instruções para completar o cadastro.`});               
-        // done(null, emailConfirmation);               
-      });
+        }
+        // Alredy have email confirmation.
+        if (emailConfirmation) {
+          return done(null, false, { message: 'Email já foi cadastrado anteriormente, falta confirmação do cadastro atravéz do link enviado para o respectivo email.'});
+        }
+        // Not email confirmation yet.
+        if (!emailConfirmation) {
+          // Create the new user.
+          let emailConfirmation = new EmailConfirmation();
+          emailConfirmation.name = req.body.name;
+          emailConfirmation.email = req.body.email;
+          emailConfirmation.password = emailConfirmation.encryptPassword(req.body.password);
+          emailConfirmation.token = token;
+          // Save email confirmation..
+          emailConfirmation.save((err, result)=>{
+            if (err) { 
+              log.error(err, new Error().stack);
+              return done(err, false, { message: 'Serviço indisponível.'});
+            }     
+            let mailOptions = {
+                  from: 'dev@zunka.com.br',
+                  to: req.body.email,
+                  subject: 'Solicitação de criação de conta no site da Zunka.',
+                  text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a criação de uma conta no site da Zunka usando este e-mail.\n\n' + 
+                        'Por favor click no link, ou cole no seu navegador de internet para confirmar a criação da conta.\n\n' + 
+                        'https://' + req.headers.host + '/users/signin/' + token + '\n\n' +
+                        'Se não foi você que requisitou esta criação de conta, por favor ignore este e-mail e nenhuma conta será criada.'
+            };
+            // Send e-mail only in production mode.
+            if (req.app.get('env') === 'production') {
+              // Send e-mail with link to conclude signup.
+              transporter.sendMail(mailOptions, function(err, info){
+                if(err){
+                  log.error(err, new Error().stack);
+                } else {
+                  log.info("mail send successfully");
+                }
+              }); 
+            }
+            // Log token if not in production. 
+            else {
+              log.info('link to email confirmation: http://' + req.headers.host + '/users/signin/' + token + '\n\n');
+            }
+            done(null, emailConfirmation, { message: `Foi enviado um e-mail para ${req.body.email} com instruções para completar o cadastro.`});               
+          });
+        }
+      })
     });
   });
 }));

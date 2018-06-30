@@ -7,7 +7,9 @@ var app = new Vue({
   el: '#app',
   data: {
     // Authentication error.
-    warnMessage: '',
+    warnMessage: warnMessage,
+    // Success message.
+    successMessage: successMessage,
     // Email.
     email: '',
     // Password.
@@ -30,7 +32,7 @@ var app = new Vue({
         }
         // Not success on signin.
         else {
-          this.warnMessage = res.data.message
+          this.warnMessage = res.data.message;
         }
       })
       .catch((err)=>{

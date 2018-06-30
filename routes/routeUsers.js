@@ -38,7 +38,6 @@ router.get('/signup', checkNotLogged, (req, res, next)=>{
 
 // Signup request.
 router.post('/api/signup', checkNotLogged, (req, res, next)=>{
-  // console.log(`req.body: ${JSON.stringify(req.body)}`);
   // Validation.
   req.checkBody('name', 'Nome deve conter pelo menos 2 caracteres.').isLength({ min: 2});
   req.checkBody('name', 'Nome deve conter no máximo 40 caracteres.').isLength({ max: 40});
@@ -57,12 +56,9 @@ router.post('/api/signup', checkNotLogged, (req, res, next)=>{
     // No validation erros.
     else {
       passport.authenticate('local.signup', (err, user, info)=>{
-        console.log(`user: ${user}`);
-        console.log(`info: ${JSON.stringify(info)}`);
-
         if (err) { 
           res.json({ success: false, message: 'Erro interno.'});
-          return next(new Error('Some error.')); 
+          return next(err); 
         }
         // Not signin.
         if (!user) { 
@@ -75,22 +71,13 @@ router.post('/api/signup', checkNotLogged, (req, res, next)=>{
   });
 });
 
-// // Signup request.
-// router.post('/signup', checkNotLogged, passport.authenticate('local.signup', {
-//   successRedirect: '/users/login',
-//   failureRedirect: '/users/signup',
-//   badRequestMessage: 'Campo(s) não preenchidos.',
-//   failureFlash: true
-// }));
-
 // Confirm signup.
-router.get('/login/:token', (req, res, next)=>{
+router.get('/signin/:token', (req, res, next)=>{
   EmailConfirmation.findOne({ token: req.params.token }, (err, emailConfirmation)=>{
     // Internal error.
     if (err) { 
       log.error(err, Error().stack);
-      req.flash('error', 'Serviço indisponível.');
-      return res.redirect('/users/login/');
+      return res.render('user/signin', { nav: {}, warnMessage: 'Serviço indisponível.' ,successMessage: ''});
     }  
     // Found Email confirmation.    
     if (emailConfirmation) { 
@@ -105,30 +92,23 @@ router.get('/login/:token', (req, res, next)=>{
       // Save.
       newUser.save((err, result)=>{
         if (err) { 
-          log.error(err, new Error().stack);
-          res.falsh('error', 'Não foi possível confirmar o cadastro.\nFavor entrar em contato com o suporte técnico.');
-          res.redirect('/users/login/');
+          log.error(err, Error().stack);
+          return res.render('user/signin', { nav: {}, warnMessage: 'Não foi possível confirmar o cadastro. Favor entrar em contato com o suporte técnico.', successMessage: '' });
         }
         emailConfirmation.remove(err=>{ if (err) { log.error(err, new Error().stack); } });
-        req.flash('success', 'Cadastro finalizado com sucesso.');
-        res.redirect('/users/login/');          
+        return res.render('user/signin', { nav: {}, warnMessage: '', successMessage: 'Cadastro finalizado com sucesso.' });
       });  
     } 
     // No email confirmation.
     else {
-      req.flash('error', 'Solicitação de criação de conta expirou.');
-      return res.redirect('/users/login/');    
+      return res.render('user/signin', { nav: {}, warnMessage: 'A conta já foi confirmada ou link para a confirmação expirou.', successMessage: '' });
     }  
   })     
 });
 
 // Login page.
 router.get('/signin', checkNotLogged, (req, res, next)=>{
-  // res.render('user/login', req.flash());
-  res.render('user/signin', {
-          nav: {
-      },
-  });
+  res.render('user/signin', { nav: {}, warnMessage: '', successMessage: ''});
 });
 
 // Login request.
@@ -148,7 +128,7 @@ router.post('/api/signin', checkNotLogged, (req, res, next)=>{
     // No validation erros.
     else {
       passport.authenticate('local.signin', (err, user, info)=>{
-        if (err) { return next(); }
+        if (err) { return next(err); }
         // Not signin.
         if (!user) { 
           return res.json({ message: info.message});

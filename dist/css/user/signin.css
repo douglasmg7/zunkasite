@@ -128,13 +128,17 @@ main {
 }
 .login p.warn-message {
   color: #f00;
+  margin-top: 0;
+}
+.login p.success-message {
+  color: #008000;
 }
 .login input,
 .login button {
   height: 2em;
   border: 1px solid #d3d3d3;
   margin-top: 0.5em;
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
   padding-left: 1em;
   padding-right: 1em;
   border-radius: 4px;
