@@ -24,7 +24,7 @@ var app = new Vue({
     signup(){
       axios({
         method: 'post',
-        url: `/users/api/signup`,
+        url: `/user/api/signup`,
         headers: {'csrf-token' : csrfToken},
         data: {name: this.name, email: this.email, password: this.password, passwordConfirm: this.passwordConfirm}
       })

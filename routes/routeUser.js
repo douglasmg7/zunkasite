@@ -31,9 +31,7 @@ let transporter = nodemailer.createTransport({
 
 // Signup page.
 router.get('/signup', checkNotLogged, (req, res, next)=>{
-  res.render('user/signup', {
-    nav: {}
-  });
+  res.render('user/signup', { nav: {} } );
 });
 
 // Signup request.
@@ -298,7 +296,7 @@ router.post('/reset/:token', (req, res, next)=>{
 
 // Account page.
 router.get('/account', (req, res, next)=>{
-  res.render('user/account', req.flash());
+  res.render('user/account', { nav: {} } );
 });
 
 // Access page.
@@ -703,12 +701,7 @@ router.put('/address/remove/:addressId', checkPermission, (req, res, next)=>{
 
 // Get orders page.
 router.get('/orders', checkPermission, function(req, res, next) {
-  res.render('user/orderList', {
-    // page: req.query.page ? req.query.page : 1,
-    // search: req.query.search ? req.query.search : '',  
-    nav: {
-    }
-  });   
+  res.render('user/orderList', { nav: {} } );
 });
 
 // Get orders data.
