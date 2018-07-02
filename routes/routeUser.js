@@ -143,23 +143,23 @@ router.post('/api/signin', checkNotLogged, (req, res, next)=>{
   }); 
 });
 
-// logout.
-router.get('/logout', (req, res, next)=>{
+// signout.
+router.get('/signout', (req, res, next)=>{
   if (req.isAuthenticated()) {
     req.logout();
-    res.redirect('/users/signin');
+    res.redirect('/user/signin');
   } else {
-    res.redirect('/users/signin');
+    res.redirect('/user/signin');
   }
 });
 
 // Forgot password page.
-router.get('/forgot', checkNotLogged, (req, res, next)=>{
-  res.render('forgot', req.flash());
+router.get('/forgottenPassword', checkNotLogged, (req, res, next)=>{
+  res.render('user/forgottenPassword', { nav: {}, warnMessage: '', successMessage: ''});
 });
 
 // Forgot password.
-router.post('/forgot', (req, res, next)=>{
+router.post('/api/forgottenPassword', (req, res, next)=>{
   // Validation.
   req.checkBody('email', 'E-mail inválido.').isEmail();
   req.sanitizeBody("email").normalizeEmail();
@@ -167,17 +167,15 @@ router.post('/forgot', (req, res, next)=>{
     if (!result.isEmpty()) {
       let messages = [];
       messages.push(result.array()[0].msg);
-      req.flash('error', messages);
-      res.redirect('back');
-      return;
+      log.debug(JSON.stringify(messages));
+      return res.json({ success: false, message: messages[0]});
     } 
     else {
+      log.debug('before-findone');
       User.findOne({ email: req.body.email }, (err, user)=>{
         // No exist.
         if(!user){
-          req.flash('error', `O email ${req.body.email} não está cadastrado no sistema.`);
-          res.redirect('back');
-          return;
+          return res.json({ success: false, message: `O email ${req.body.email} não consta em nosso sistema.`});
         }        
         // Create token.
         crypto.randomBytes(20, function(err, buf) {
@@ -206,25 +204,32 @@ router.post('/forgot', (req, res, next)=>{
                 subject: 'Solicitação para Redefinir senha.',
                 text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a redefinição da senha de sua conta.\n\n' + 
                       'Por favor click no link, ou cole no seu navegador de internet para completar o processo.\n\n' + 
-                      'https://' + req.headers.host + '/users/reset/' + token + '\n\n' +
+                      'https://' + req.headers.host + '/user/reset/' + token + '\n\n' +
                       // 'Esta solicitação de redefinição expira em duas horas.\n' +
                       'Se não foi você que requisitou esta redefinição de senha, por favor ignore este e-mail e sua senha permanecerá a mesma.'
             }; 
-            log.info('link: https://' + req.headers.host + '/users/reset/' + token + '\n\n');
-            // // Send email.
-            // transporter.sendMail(mailOptions, function(err, info){
-            //   if(err){
-            //     log.error(err, new Error().stack);
-            //   } else {
-            //     log.info(`Reset email sent to ${req.body.email}`);
-            //   }
-            // });
-            req.flash('success', `Foi enviado um e-mail para ${req.body.email} com instruções para a alteração da senha.`)
-            res.redirect('back');
+            // Send e-mail only in production mode.
+            if (req.app.get('env') === 'production') {
+              // Send email com information to reset password.
+              transporter.sendMail(mailOptions, function(err, info){
+                if(err){
+                  log.error(err, new Error().stack);
+                } else {
+                  log.info(`Reset email sent to ${req.body.email}`);
+                }
+              });
+            }
+            // Log token if not in production. 
+            else {
+              log.info('link to reset password: http://' + req.headers.host + '/user/reset/' + token + '\n\n');
+            }
+            return res.json({ success: true, message: `Foi enviado um e-mail para ${req.body.email} com instruções para a alteração da senha.`});
           });
         });        
       });
     }
+  }).catch(err=>{
+    return next(err);
   });
 });
 
@@ -238,7 +243,7 @@ router.get('/reset/:token', (req, res, next)=>{
     } 
     // Not found.
     else {
-      return res.render('messageLink', { message: 'Chave para alteração de senha expirou.', linkMessage: 'Deseja criar uma nova chave?', linkUrl: '/users/forgot/'});
+      return res.render('messageLink', { message: 'Chave para alteração de senha expirou.', linkMessage: 'Deseja criar uma nova chave?', linkUrl: '/user/forgot/'});
     }
   });
 });
@@ -262,7 +267,7 @@ router.post('/reset/:token', (req, res, next)=>{
         if (err) { return next(err); }     
         // Not exist token to reset password.
         if (!passwordReset) { 
-          return res.render('messageLink', { message: 'Chave para alteração de senha expirou.', linkMessage: 'Deseja criar uma nova chave?', linkUrl: '/users/forgot/'});          
+          return res.render('messageLink', { message: 'Chave para alteração de senha expirou.', linkMessage: 'Deseja criar uma nova chave?', linkUrl: '/user/forgot/'});          
         }
         // Token found.
         else {
@@ -270,7 +275,7 @@ router.post('/reset/:token', (req, res, next)=>{
             if (err) { return next(err); }  
             // User not found.
             if (!user) {
-              return res.render('messageLink', { message: 'Usuário não cadastrado.', linkMessage: 'Deseja criar um cadastro?', linkUrl: '/users/signup/'});          
+              return res.render('messageLink', { message: 'Usuário não cadastrado.', linkMessage: 'Deseja criar um cadastro?', linkUrl: '/user/signup/'});          
             }
             // User found.
             else {
@@ -281,7 +286,7 @@ router.post('/reset/:token', (req, res, next)=>{
                 // Remove password reset.
                 passwordReset.remove(err=>{ if(err) { return next(err); } })
                 req.flash('success', 'Senha alterada com sucesso.');
-                res.redirect('/users/login/');              
+                res.redirect('/user/login/');              
               })                 
             }
           })
@@ -327,7 +332,7 @@ router.post('/access/edit-name/:userId', checkPermission, (req, res, next)=>{
         user.name = req.body.name;
         user.save(function(err) {
           if (err) { return next(err); } 
-          res.redirect('/users/access');
+          res.redirect('/user/access');
         });  
       });
     }
@@ -365,7 +370,7 @@ router.post('/access/edit-email/:userId', checkPermission, (req, res, next)=>{
           user.email = req.body.email;
           user.save(function(err) {
             if (err) { return next(err); } 
-            res.redirect('/users/login');
+            res.redirect('/user/login');
           });  
         // Inválid password.
         } else {
@@ -403,7 +408,7 @@ router.post('/access/edit-cell-phone/:userId', checkPermission, (req, res, next)
         user.cellPhone = req.body.cellphone;
         user.save(function(err) {
           if (err) { return next(err); } 
-          res.redirect('/users/access');
+          res.redirect('/user/access');
         });  
       });
     }
@@ -441,7 +446,7 @@ router.post('/access/edit-password/:userId', checkPermission, (req, res, next)=>
           user.password = user.encryptPassword(req.body.passwordNew);
           user.save(function(err) {
             if (err) { return next(err); } 
-            res.redirect('/users/access');
+            res.redirect('/user/access');
           });  
         // Inválid password.
         } else {
@@ -480,7 +485,7 @@ router.post('/access/edit-cpf/:userId', checkPermission, (req, res, next)=>{
         user.cpf = req.body.cpf;
         user.save(function(err) {
           if (err) { return next(err); } 
-          res.redirect('/users/access');
+          res.redirect('/user/access');
         });  
       });
     }
@@ -540,7 +545,7 @@ router.post('/access/delete-account/:userId', checkPermission, (req, res, next)=
               // Remove cart.
               redis.del(`cart:${user.email}`); 
               req.flash('success', 'Conta apagada com sucesso.');
-              res.redirect('/users/login/');               
+              res.redirect('/user/login/');               
             });
           });  
         // Inválid password.
@@ -602,7 +607,7 @@ router.post('/address/add', checkPermission, (req, res, next)=>{
       address.phone = req.body.phone;
       address.save(function(err) {
         if (err) { return next(err); } 
-        res.redirect('/users/address');
+        res.redirect('/user/address');
       });        
     }
   });
@@ -656,7 +661,7 @@ router.post('/address/edit', checkPermission, (req, res, next)=>{
         address.phone = req.body.phone;
         address.save(function(err) {
           if (err) { return next(err); } 
-          res.redirect('/users/address');
+          res.redirect('/user/address');
         });  
       });
     }
@@ -755,7 +760,7 @@ function checkPermission (req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/users/login');
+  res.redirect('/user/login');
 }
 
 // Check not logged.

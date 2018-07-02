@@ -49,7 +49,7 @@ const pug = require('pug');
 // App must be before routes.
 const app = express();
 // Routes.
-const routeUsers = require('./routes/routeUsers');
+const routeUser = require('./routes/routeUser');
 const routeSite = require('./routes/routeSite');
 const routeCheckout = require('./routes/routeCheckout');
 // const routeWsAllNations = require('./routes/routeWsAllNations');
@@ -192,7 +192,7 @@ app.use(function(req, res, next) {
 
 // Routes.
 // Users.
-app.use('/users', routeUsers);
+app.use('/user', routeUser);
 // Products configuration.
 app.use('/configProducts', routeConfigProducts);
 // Test.

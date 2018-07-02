@@ -103,7 +103,7 @@ passport.use('local.signup', new LocalStrategy({
             }
             // Log token if not in production. 
             else {
-              log.info('link to email confirmation: http://' + req.headers.host + '/users/signin/' + token + '\n\n');
+              log.info('link to confirm email: http://' + req.headers.host + '/users/signin/' + token + '\n\n');
             }
             done(null, emailConfirmation, { message: `Foi enviado um e-mail para ${req.body.email} com instruções para completar o cadastro.`});               
           });

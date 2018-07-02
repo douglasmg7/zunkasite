@@ -41,12 +41,12 @@
           a(href='/admin') 
             svg.icon: use(xlink:href='/icon/sprite.svg#ic_supervisor_account_white_24px')
             | Admin
-      a(href='/users/logout')
+      a(href='/user/signout')
         svg.icon: use(xlink:href='/icon/sprite.svg#ic_exit_to_app_white_24px')
         | Sair  
     //- Not logged.
     else
-      a(href='/users/signin') 
+      a(href='/user/signin') 
         svg.icon: use(xlink:href='/icon/sprite.svg#ic_account_circle_white_24px')
         | Entrar
       //- Cart.

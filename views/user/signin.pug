@@ -16,7 +16,7 @@ html(lang="en")
         input(type='text' v-model='email' placeholder='e-mail')
         input(type='password' v-model='password' placeholder='senha')
         p 
-          a.find-password(href='forgot/') Esqueceu a senha?
+          a.find-password(href='/user/forgottenPassword') Esqueceu a senha?
         input.log(type='submit' value='Entrar' @click='signin()')
         p.warn-message {{warnMessage}}
         hr/

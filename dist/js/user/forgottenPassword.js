@@ -12,35 +12,31 @@ var app = new Vue({
     successMessage: successMessage,
     // Email.
     email: '',
-    // Password.
-    password: ''
   },
   methods: {
     // Get products.
-    signin(){
+    reset(){
       axios({
         method: 'post',
-        url: `/user/api/signin`,
-        headers: {'csrf-token' : csrfToken},
-        data: {email: this.email, password: this.password}
+        url: `/user/api/forgottenPassword`,
+        headers: { 'csrf-token' : csrfToken },
+        data: { email: this.email }
       })
       .then((res)=>{
-        // Singin successful.
+        // Reset successful.
         if (res.data.success) {
           this.warnMessage = '';
-          window.location.href = '/';
+          this.successMessage = res.data.message;
         }
-        // Not success on signin.
+        // Unsuccessful reset.
         else {
+          this.successMessage = '';
           this.warnMessage = res.data.message;
         }
       })
       .catch((err)=>{
-        console.error(`Error - signin(), err: ${err}`);
+        console.error(`Error - reset(), err: ${err}`);
       });
     },
-    signup(){
-      window.location.href = '/user/signup';
-    }
   } 
 });
