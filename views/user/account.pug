@@ -13,21 +13,24 @@ html(lang="en")
       //- Orders.
       .panel
         a(href='/user/orders')      
-          svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px')
-          h3.text-left Pedidos
-          p.text-left Acompanhe seus pedidos 
+          svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_black_24px')
+          .text
+            h3.text-left Pedidos
+            p.text-left Acompanhe seus pedidos 
       //- Address.
       .panel
         a(href='/user/address')      
-          svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px')
-          h3.text-left Endereços
-          p.text-left Altere seus endereços
+          svg.icon: use(xlink:href='/icon/sprite.svg#ic_home_black_24px')
+          .text
+            h3.text-left Endereços
+            p.text-left Altere seus endereços
       //- User.
       .panel
         a(href='/user/access')      
           svg.icon: use(xlink:href='/icon/sprite.svg#ic_account_circle_black_24px') 
-          h3.text-left Autenticação
-          p.text-left Altere seu nome e senha
+          .text
+            h3.text-left Autenticação
+            p.text-left Altere seu nome e senha
   script.
     // Make available for vue.
     let csrfToken = !{JSON.stringify(csrfToken)};

@@ -10,7 +10,7 @@
     "testCompile": "mocha test -u bdd --compilers js:babel-core/register",
     "insertMakers": "bin/insertProductMakers.js",
     "insertCategories": "bin/insertProductCategories.js",
-    "icon": "svg-sprite --symbol --symbol-dest='' --symbol-sprite='dist/icon/sprite.svg' dist/icon/*.svg"
+    "icon": "./node_modules/svg-sprite/bin/svg-sprite.js --symbol --symbol-dest='' --symbol-sprite='dist/icon/sprite.svg' dist/icon/*.svg"
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
@@ -43,6 +43,7 @@
     "request": "^2.87.0",
     "serve-favicon": "^2.5.0",
     "soap": "^0.24.0",
+    "svg-sprite": "^1.4.0",
     "winston": "^3.0.0",
     "yargs": "^11.0.0"
   },

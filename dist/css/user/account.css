@@ -116,19 +116,23 @@ main {
   width: 95%;
 }
 .panel {
-  display: flex;
-  flex-flow: column nowrap;
   padding: 1em;
   margin: 0.5em;
   border: 1px solid #d3d3d3;
   border-radius: 4px;
 }
 .panel a {
+  display: flex;
+  flex-flow: row wrap;
   text-decoration: none;
 }
-.panel .icon {
-  width: 1.5em;
-  height: 1.5em;
-  vertical-align: middle;
+.panel a .icon {
+  color: #008000;
+  width: 3em;
+  height: 3em;
   margin: 0.5em 0.5em 0.5em 0.5em;
+}
+.panel a .text {
+  margin: auto 0.5em;
+  color: #000;
 }
