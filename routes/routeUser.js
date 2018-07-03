@@ -558,11 +558,19 @@ router.post('/access/delete-account/:userId', checkPermission, (req, res, next)=
 
 // Address page.
 router.get('/address', (req, res, next)=>{
+  Address.find({ user_id: req.user._id }, (err, addresses)=>{
+    if (err) return next(err);
+    res.render('user/address', { nav: {}, addresses: addresses }); 
+  })
+});
+
+// Address page.
+router.get('/address_old', (req, res, next)=>{
   Address.find({ user_id: req.user._id }, (err, addresss)=>{
     if (err) return next(err);
     let data = req.flash();
     data.addresss = addresss;
-    res.render('user/address', data); 
+    res.render('user/address_old', data); 
   })
 });
 
