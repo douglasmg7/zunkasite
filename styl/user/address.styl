@@ -8,46 +8,59 @@ main
   margin 2em auto
   width 95%
   max-width 1200px
-& > .breadlink
-  margin-left 1em
-  a
-    text-decoration none
-& > .title
-  margin 1em
-& > .addresses
-  display flex
-  flex-flow row wrap
-  justify-content space-between
-  border-radius 4px  
-  .address-panel
-    border 1px solid lightgray
-    border-radius 5px
-    min-height 200px
-    width: 350px
-    margin 1em
-  & .add
-    display flex
-    flex row nowrap
-    justify-content center
-    align-items center
-    border 2px dashed lightgray
+  > .breadlink
+    margin-left 1em
     a
       text-decoration none
-      color black
-  .address-heading, 
-  .address-body, 
-  .address-footer
-    padding 1em
-  .address-heading
-    height 3.5em
-    border-bottom 1px solid lightgray
-    border-top-left-radius 5px
-    border-top-right-radius 5px      
-  .address-body > p.name
-    font-weight bold
-  // .address-footer
-  //   // position absolute
-  //   bottom 1px
-  //   height 3.5em
-  //   border-bottom-left-radius 5px
-  //   border-bottom-right-radius 5px    
+  > .title
+    margin 1em  
+  > .addresses
+    display flex
+    flex-flow row wrap
+    justify-content space-between
+    border-radius 4px  
+    > .address-panel.add
+      display flex
+      flex row nowrap
+      justify-content center
+      align-items center
+      border 2px dashed lightgray
+      &:hover
+        cursor pointer
+    > .address-panel
+      display flex
+      flex-flow column nowrap
+      border 1px solid #eee
+      border-radius 5px
+      margin 1em
+      min-height 300px
+      width: 350px
+      background-color #fcfcfc
+      justify-content space-between // flex-end
+      > .address-header
+        background-color #f4f4f4
+        h3
+          padding .5em
+        hr
+          margin 0
+      > .address-body, 
+      > .address-footer
+        padding .8em
+      > .address-body > p
+        margin-bottom .3em
+      > .address-body > p.name
+        font-weight bold
+        margin-bottom .5em
+      > .address-footer
+        color green
+        a:hover
+          cursor pointer
+
+
+
+          
+          // .address-heading
+          //   height 3.5em
+          //   border-bottom 1px solid lightgray
+          //   border-top-left-radius 5px
+          //   border-top-right-radius 5px    

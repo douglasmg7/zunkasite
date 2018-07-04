@@ -686,7 +686,7 @@ router.put('/address/default/:addressId', checkPermission, (req, res, next)=>{
         address.default = true;
         address.save(err=>{
           if (err) { next(err) };
-          res.json({success: true, msg: 'Address default changed.' });  
+          res.json({success: true});  
         });
       });    
     }

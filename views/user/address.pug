@@ -16,14 +16,14 @@ html(lang="en")
       .title
         h2 Seus endereços
       .addresses
-        .address-panel.add
-          a(href='address/add') 
-            h3 Adicionar endereço
+        .address-panel.add(@click='addAddress()')
+          h2 Adicionar endereço
         //- Addresses list.
         .address-panel(v-for='address in addresses' data-address-id='address._id')
-          .address-header(v-if='address.defaut')
-            p Padrão
-          .address-body             
+          .address-header(v-if='address.default')
+            h3 Padrão
+            hr
+          .address-body      
             p.name {{address.name}}                                                                                                
             p {{address.phone}}                                                                                                
             p {{address.cep}}                                                                                                
@@ -33,13 +33,13 @@ html(lang="en")
             p {{address.district}}                                                                                                
             p {{address.city}}                                                                                                
             p {{address.state}}
-          .address-footer                                                                          
+          .address-footer    
             span
               a.edit-address(@click='editAddress(address._id)') Editar 
               strong &nbsp | &nbsp                                                                                       
               a.remove-address Apagar
               strong &nbsp | &nbsp
-              a.set-default-address Marcar como padrão                   
+              a.set-default-address(@click='setDefaultAddress(address._id)') Marcar como padrão                   
   script.
     // Make available for vue.
     let csrfToken = !{JSON.stringify(csrfToken)};

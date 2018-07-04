@@ -10,6 +10,13 @@ var app = new Vue({
     addresses: addresses,
   },
   methods: {
+    // Add new address.
+    addAddress(){
+      window.location.href = 'address/add';
+    },
+    editAddress(addressId){
+      window.location.href = `address/edit?addressId=${addressId}`;
+    },
     // Remove address.
     removeAddress(addressId){
       if (confirm('Confirma a remoção do endereço ?')) {
@@ -30,19 +37,25 @@ var app = new Vue({
         });
       }
     },
-    // Remove address.
+    // Set default address.
     setDefaultAddress(addressId){
-      if (confirm('Confirma a remoção do endereço ?')) {
+      if (confirm('Marcar como endereço padrão?')) {
         axios({
-          method: 'post',
+          method: 'put',
           url: `address/default/${addressId}`,
           headers: {'csrf-token' : csrfToken},
         })
         .then((res)=>{
           // Successful set address as default.
           if (res.data.success) {
-            // Set only this address as default.
-            // todo.
+            // Set default address on client side.
+            for (let i=0; i < this.addresses.length; i++) {
+              if (this.addresses[i]._id === addressId) {
+                this.addresses[i].default = true;
+              } else {
+                this.addresses[i].default = false;
+              }
+            }
           }
         })
         .catch((err)=>{
@@ -50,12 +63,6 @@ var app = new Vue({
         });
       }
     },
-    addAddress(addressId){
-      // window.location.href = '/user/signup';
-    },
-    editAddress(addressId){
-      window.location.href = `address/edit?addressId=${addressId}`;
-    }
   } 
 });
 
