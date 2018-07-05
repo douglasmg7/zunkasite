@@ -21,15 +21,19 @@ var app = new Vue({
     removeAddress(addressId){
       if (confirm('Confirma a remoção do endereço ?')) {
         axios({
-          method: 'post',
+          method: 'put',
           url: `address/remove/${addressId}`,
           headers: {'csrf-token' : csrfToken},
         })
         .then((res)=>{
           // Address removed successful.
           if (res.data.success) {
-            // Remove address.
-            // todo.
+            // Set deleted address on client side.
+            for (let i=0; i < this.addresses.length; i++) {
+              if (this.addresses[i]._id === addressId) {
+                this.$delete(this.addresses, i);
+              } 
+            }
           }
         })
         .catch((err)=>{

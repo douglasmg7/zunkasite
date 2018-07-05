@@ -37,7 +37,7 @@ html(lang="en")
             span
               a.edit-address(@click='editAddress(address._id)') Editar 
               strong &nbsp | &nbsp                                                                                       
-              a.remove-address Apagar
+              a.remove-address(@click='removeAddress(address._id)') Apagar
               strong &nbsp | &nbsp
               a.set-default-address(@click='setDefaultAddress(address._id)') Marcar como padrão                   
   script.
