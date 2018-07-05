@@ -155,7 +155,9 @@ app.use((req, res, next)=>{
 // Validation.
 app.use(validator({
   customValidators: {
-    isCpf: function(value){ return cpfValidator.validate(value); }
+    isCpf: function(value){ return cpfValidator.validate(value); },
+    // isCep: function(value){ return value.match(/^\d{8}$/); }
+    isCep: function(value){ return value.match(/^\d{5}-\d{3}$/); }
   }
 }));
 

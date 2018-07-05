@@ -6,7 +6,7 @@ function _search(text){
 var app = new Vue({
   el: '#app',
   data: {
-    // Authentication error.
+    // Warn message.
     warnMessage: '',
     // Success message.
     successMessage: '',

@@ -12,8 +12,9 @@ html(lang='en')
     main#app(v-cloak)
       .login
         h1 Cadastro 
-        //- Name.
+        //- Warn message.
         p.warn-message {{ warnMessage }}
+        //- Name.
         label(for='name') Nome
         input(type='text' id='name' v-model='name')                              
         //- Email.

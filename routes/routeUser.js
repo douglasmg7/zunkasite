@@ -576,13 +576,16 @@ router.get('/address_old', (req, res, next)=>{
 
 // Add address page.
 router.get('/address/add', (req, res, next)=>{
-  res.render('user/addressAdd', req.flash());
+  res.render('user/addAddress', { nav: {} });
 });
+
 // Add address.
 router.post('/address/add', checkPermission, (req, res, next)=>{
+  // log.debug(`body: ${JSON.stringify(req.body)}`)
   // Validation.
   req.checkBody('name', 'Campo NOME deve ser preenchido.').notEmpty();
   req.checkBody('cep', 'Campo CEP deve ser preenchido.').notEmpty();
+  req.checkBody('cep', 'CEP inválido.').isCep();
   req.checkBody('address', 'Campo ENDEREÇO deve ser preenchido.').notEmpty();
   req.checkBody('addressNumber', 'Campo NÚMERO deve ser preenchido.').notEmpty();
   req.checkBody('district', 'Campo BAIRRO deve ser preenchido.').notEmpty();
@@ -594,9 +597,7 @@ router.post('/address/add', checkPermission, (req, res, next)=>{
     if (!result.isEmpty()) {
       let messages = [];
       messages.push(result.array()[0].msg);
-      req.flash('error', messages);
-      res.redirect('back');
-      return;
+      return res.json({ success: false, message: messages[0]});
     } 
     // Save address.
     else {
@@ -613,7 +614,7 @@ router.post('/address/add', checkPermission, (req, res, next)=>{
       address.phone = req.body.phone;
       address.save(function(err) {
         if (err) { return next(err); } 
-        res.redirect('/user/address');
+        return res.json({ success: true });
       });        
     }
   });
@@ -761,7 +762,7 @@ function checkPermission (req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/user/login');
+  res.redirect('/user/signin');
 }
 
 // Check not logged.
