@@ -564,23 +564,24 @@ router.get('/address', (req, res, next)=>{
   })
 });
 
-// Address page.
-router.get('/address_old', (req, res, next)=>{
-  Address.find({ user_id: req.user._id }, (err, addresss)=>{
-    if (err) return next(err);
-    let data = req.flash();
-    data.addresss = addresss;
-    res.render('user/address_old', data); 
-  })
+// Edit address page.
+router.get('/address/edit', (req, res, next)=>{
+  if (req.query.addressId === 'new') {
+    let address = new Address();
+    // log.debug(`address: ${JSON.stringify(address)}`)
+    res.render('user/editAddress', { nav: {}, isNewAddress: true, address: address });
+  } else  {
+    Address.findById(req.query.addressId, (err, address)=>{
+      if (err) return next(err);
+      log.debug(`address: ${JSON.stringify(address)}`)
+      res.render('user/editAddress', { nav: {}, isNewAddress: false, address: address } );
+    });
+  }
 });
 
-// Add address page.
-router.get('/address/add', (req, res, next)=>{
-  res.render('user/addAddress', { nav: {} });
-});
-
-// Add address.
+// Edit address.
 router.post('/address/add', checkPermission, (req, res, next)=>{
+  log.debug(`query: ${req.query.addressId}`)
   // log.debug(`body: ${JSON.stringify(req.body)}`)
   // Validation.
   req.checkBody('name', 'Campo NOME deve ser preenchido.').notEmpty();
@@ -620,15 +621,15 @@ router.post('/address/add', checkPermission, (req, res, next)=>{
   });
 });
 
-// Edit address page.
-router.get('/address/edit', (req, res, next)=>{
-  Address.findById(req.query.addressId, (err, address)=>{
-    if (err) return next(err);
-    let data = req.flash();
-    data.address = address;
-    res.render('user/addressEdit', data);
-  });
-});
+// // Edit address page.
+// router.get('/address/edit', (req, res, next)=>{
+//   Address.findById(req.query.addressId, (err, address)=>{
+//     if (err) return next(err);
+//     let data = req.flash();
+//     data.address = address;
+//     res.render('user/addressEdit', data);
+//   });
+// });
 
 // Edit address.
 router.post('/address/edit', checkPermission, (req, res, next)=>{

@@ -12,7 +12,7 @@ var app = new Vue({
   methods: {
     // Add new address.
     addAddress(){
-      window.location.href = 'address/add';
+      window.location.href = 'address/edit?addressId=new';
     },
     editAddress(addressId){
       window.location.href = `address/edit?addressId=${addressId}`;
