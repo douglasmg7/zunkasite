@@ -568,12 +568,10 @@ router.get('/address', (req, res, next)=>{
 router.get('/address/edit', (req, res, next)=>{
   if (req.query.addressId === 'new') {
     let address = new Address();
-    // log.debug(`address: ${JSON.stringify(address)}`)
     res.render('user/editAddress', { nav: {}, isNewAddress: true, address: address });
   } else  {
     Address.findById(req.query.addressId, (err, address)=>{
       if (err) return next(err);
-      log.debug(`address: ${JSON.stringify(address)}`)
       res.render('user/editAddress', { nav: {}, isNewAddress: false, address: address } );
     });
   }
@@ -581,9 +579,6 @@ router.get('/address/edit', (req, res, next)=>{
 
 // Edit address.
 router.post('/address/edit', checkPermission, (req, res, next)=>{
-  log.debug('inside address edit.');
-  log.debug(`query: ${req.query.addressId}`);
-  log.debug(`body: ${JSON.stringify(req.body)}`);
   // Validation.
   req.checkBody('address.name', 'Campo NOME deve ser preenchido.').notEmpty();
   req.checkBody('address.cep', 'Campo CEP deve ser preenchido.').notEmpty();
@@ -605,15 +600,15 @@ router.post('/address/edit', checkPermission, (req, res, next)=>{
     else if (req.query.addressId === 'new'){
       let address = new Address();
       address.user_id = req.user._id;
-      address.name = req.body.name;
-      address.cep = req.body.cep;
-      address.address = req.body.address;
-      address.addressNumber = req.body.addressNumber;
-      address.addressComplement = req.body.addressComplement;
-      address.district = req.body.district;
-      address.city = req.body.city;
-      address.state = req.body.state;
-      address.phone = req.body.phone;
+      address.name = req.body.address.name;
+      address.cep = req.body.address.cep;
+      address.address = req.body.address.address;
+      address.addressNumber = req.body.address.addressNumber;
+      address.addressComplement = req.body.address.addressComplement;
+      address.district = req.body.address.district;
+      address.city = req.body.address.city;
+      address.state = req.body.address.state;
+      address.phone = req.body.address.phone;
       address.save(function(err) {
         if (err) { return next(err); } 
         return res.json({ success: true });
@@ -623,17 +618,18 @@ router.post('/address/edit', checkPermission, (req, res, next)=>{
     else if (req.query.addressId) {
       Address.findByIdAndUpdate(req.query.addressId, { 
         $set: { 
-          name: req.body.name;
-          cep: req.body.cep;
-          address: req.body.address;
-          addressNumber: req.body.addressNumber;
-          addressComplement: req.body.addressComplement;
-          district: req.body.district;
-          city: req.body.city;
-          state: req.body.state;
-          phone: req.body.phone;
+          name: req.body.address.name,
+          cep: req.body.address.cep,
+          address: req.body.address.address,
+          addressNumber: req.body.address.addressNumber,
+          addressComplement: req.body.address.addressComplement,
+          district: req.body.address.district,
+          city: req.body.address.city,
+          state: req.body.address.state,
+          phone: req.body.address.phone
         }}, err=>{
           if (err) return next(err);
+          return res.json({ success: true });
       });
     }
     // Not new no edit addres.
@@ -642,61 +638,6 @@ router.post('/address/edit', checkPermission, (req, res, next)=>{
     }
   });
 });
-
-// // Edit address page.
-// router.get('/address/edit', (req, res, next)=>{
-//   Address.findById(req.query.addressId, (err, address)=>{
-//     if (err) return next(err);
-//     let data = req.flash();
-//     data.address = address;
-//     res.render('user/addressEdit', data);
-//   });
-// });
-
-// // Edit address.
-// router.post('/address/edit', checkPermission, (req, res, next)=>{
-//   // Validation.
-//   req.checkBody('name', 'Campo NOME deve ser preenchido.').notEmpty();
-//   req.checkBody('cep', 'Campo CEP deve ser preenchido.').notEmpty();
-//   req.checkBody('address', 'Campo ENDEREÇO deve ser preenchido.').notEmpty();
-//   req.checkBody('addressNumber', 'Campo NÚMERO deve ser preenchido.').notEmpty();
-//   req.checkBody('district', 'Campo BAIRRO deve ser preenchido.').notEmpty();
-//   req.checkBody('city', 'Campo CIDADE deve ser preenchido.').notEmpty();
-//   req.checkBody('state', 'Campo ESTADO deve ser preenchido.').notEmpty();
-//   req.checkBody('phone', 'Campo TELEFONE deve ser preenchido.').notEmpty();
-//   req.getValidationResult().then(function(result) {
-//     // Send validations errors to client.
-//     if (!result.isEmpty()) {
-//       let messages = [];
-//       messages.push(result.array()[0].msg);
-//       req.flash('error', messages);
-//       res.redirect('back');
-//       return;
-//     } 
-//     // Save address.
-//     else {
-//       if (!req.body.addressId) { return next(new Error('No addressId to find address data.')); }
-//       Address.findById(req.body.addressId, (err, address)=>{
-//         if (err) { return next(err) };
-//         if (!address) { return next(new Error('Not found address to save.')); }
-//         address.user_id = req.user._id;
-//         address.name = req.body.name;
-//         address.cep = req.body.cep;
-//         address.address = req.body.address;
-//         address.addressNumber = req.body.addressNumber;
-//         address.addressComplement = req.body.addressComplement;
-//         address.district = req.body.district;
-//         address.city = req.body.city;
-//         address.state = req.body.state;
-//         address.phone = req.body.phone;
-//         address.save(function(err) {
-//           if (err) { return next(err); } 
-//           res.redirect('/user/address');
-//         });  
-//       });
-//     }
-//   });
-// });
 
 // Set address as default.
 router.put('/address/default/:addressId', checkPermission, (req, res, next)=>{
