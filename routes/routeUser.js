@@ -316,31 +316,29 @@ router.get('/access', (req, res, next)=>{
 
 // Edit name page.
 router.get('/access/edit-name', (req, res, next)=>{
-  res.render('user/editName', req.flash());
+  res.render('user/editName', { nav: {}, name: req.user.name });
 });
 // Edit name.
-router.post('/access/edit-name/:userId', checkPermission, (req, res, next)=>{
+router.post('/access/edit-name', checkPermission, (req, res, next)=>{
   // Validation.
   req.checkBody('name', 'Campo NOME deve ser preenchido.').notEmpty();
+  req.checkBody('name', 'Nome deve conter pelo menos 2 caracteres.').isLength({ min: 2});
+  req.checkBody('name', 'Nome deve conter no máximo 40 caracteres.').isLength({ max: 40});
   req.getValidationResult().then(function(result) {
     // Send validations errors to client.
     if (!result.isEmpty()) {
       let messages = [];
       messages.push(result.array()[0].msg);
-      req.flash('error', messages);
-      res.redirect('back');
-      return;
+      return res.json({ success: false, message: messages[0]});
     } 
-    // Save address.
     else {
-      if (!req.params.userId) { return next(new Error('No userId to find user data.')); }
-      User.findById(req.params.userId, (err, user)=>{
+      User.findById(req.user._id, (err, user)=>{
         if (err) { return next(err) };
         if (!user) { return next(new Error('Not found user to save.')); }
         user.name = req.body.name;
         user.save(function(err) {
           if (err) { return next(err); } 
-          res.redirect('/user/access');
+          return res.json({ success: true });
         });  
       });
     }
