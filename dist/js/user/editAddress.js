@@ -50,7 +50,6 @@ var app = new Vue({
       this.address.cep = this.address.cep.match(/^\d{5}/)[0] + '-' + this.address.cep.match(/\d{3}$/)[0];
       // Get addressId from url query.
       let regExpResult = /[?&]addressId=([^&#]*)/.exec(window.location.href);
-      console.log(`regExp: ${regExpResult[1]}`);
       if (regExpResult) {
         axios({
           method: 'post',

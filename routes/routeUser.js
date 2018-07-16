@@ -29,6 +29,11 @@ let transporter = nodemailer.createTransport({
     }
 });
 
+
+/****************************************************************************** 
+/   SIGNUP
+******************************************************************************/
+
 // Signup page.
 router.get('/signup', checkNotLogged, (req, res, next)=>{
   res.render('user/signup', { nav: {} } );
@@ -294,6 +299,11 @@ router.post('/reset/:token', (req, res, next)=>{
   });
 });
 
+
+/****************************************************************************** 
+/   ACCESS
+******************************************************************************/
+
 // Account page.
 router.get('/account', (req, res, next)=>{
   res.render('user/account', { nav: {} } );
@@ -301,7 +311,7 @@ router.get('/account', (req, res, next)=>{
 
 // Access page.
 router.get('/access', (req, res, next)=>{
-  res.render('user/access', req.flash());
+  res.render('user/access', { nav: {}, user: req.user });
 });
 
 // Edit name page.
