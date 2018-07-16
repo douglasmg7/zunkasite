@@ -347,10 +347,10 @@ router.post('/access/edit-name', checkPermission, (req, res, next)=>{
 
 // Edit email page.
 router.get('/access/edit-email', (req, res, next)=>{
-  res.render('user/editEmail', req.flash());
+  res.render('user/editEmail', { nav: {}, email: req.user.email });
 });
 // Edit email.
-router.post('/access/edit-email/:userId', checkPermission, (req, res, next)=>{
+router.post('/access/edit-email', checkPermission, (req, res, next)=>{
   // Validation.
   req.checkBody('email', 'E-mail inválido.').isEmail();
   req.checkBody('emailConfirm', 'E-mail e Confirmação do e-mail devem ser iguais.').equals(req.body.email);
@@ -361,9 +361,7 @@ router.post('/access/edit-email/:userId', checkPermission, (req, res, next)=>{
     if (!result.isEmpty()) {
       let messages = [];
       messages.push(result.array()[0].msg);
-      req.flash('error', messages);
-      res.redirect('back');
-      return;
+      return res.json({ success: false, message: messages[0]});
     } 
     // Save address.
     else {

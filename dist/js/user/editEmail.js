@@ -8,8 +8,14 @@ var app = new Vue({
   data: {
     // Warn message.
     warnMessage: '',
-    // User.
-    name: name
+    // Email.
+    email: email,
+    // New email.
+    newEmail: '',
+    // Email confirmation.
+    newEmailConfir: '',
+    // Password.
+    password: password
   },
   methods: {
     exit(){
@@ -18,9 +24,9 @@ var app = new Vue({
     save(){
       axios({
         method: 'post',
-        url: `/user/access/edit-name`,
+        url: `/user/access/edit-email`,
         headers: {'csrf-token' : csrfToken},
-        data: { name: this.name }
+        data: { newEmail: this.newEmail, newEmailConfir: this.newEmailConfir, password: this.password }
       })
       .then((res)=>{
         // Successful change the name.
