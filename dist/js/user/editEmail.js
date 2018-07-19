@@ -13,9 +13,9 @@ var app = new Vue({
     // New email.
     newEmail: '',
     // Email confirmation.
-    newEmailConfir: '',
+    newEmailConfirm: '',
     // Password.
-    password: password
+    password: ''
   },
   methods: {
     exit(){
@@ -26,12 +26,12 @@ var app = new Vue({
         method: 'post',
         url: `/user/access/edit-email`,
         headers: {'csrf-token' : csrfToken},
-        data: { newEmail: this.newEmail, newEmailConfir: this.newEmailConfir, password: this.password }
+        data: { newEmail: this.newEmail, newEmailConfirm: this.newEmailConfirm, password: this.password }
       })
       .then((res)=>{
         // Successful change the name.
         if (res.data.success) {
-          window.location.href = '/user/access';
+          window.location.href = '/user/signin';
         }
         // Something wrong.
         else

@@ -352,8 +352,8 @@ router.get('/access/edit-email', (req, res, next)=>{
 // Edit email.
 router.post('/access/edit-email', checkPermission, (req, res, next)=>{
   // Validation.
-  req.checkBody('email', 'E-mail inválido.').isEmail();
-  req.checkBody('emailConfirm', 'E-mail e Confirmação do e-mail devem ser iguais.').equals(req.body.email);
+  req.checkBody('newEmail', 'E-mail inválido.').isEmail();
+  req.checkBody('newEmailConfirm', 'E-mail e Confirmação do e-mail devem ser iguais.').equals(req.body.newEmail);
   req.checkBody('password', 'Senha inválida.').notEmpty();
   req.sanitizeBody("email").normalizeEmail();
   req.getValidationResult().then(function(result) {
@@ -365,21 +365,20 @@ router.post('/access/edit-email', checkPermission, (req, res, next)=>{
     } 
     // Save address.
     else {
-      if (!req.params.userId) { return next(new Error('No userId to find user data.')); }
-      User.findById(req.params.userId, (err, user)=>{
+      User.findById(req.user._id, (err, user)=>{
         if (err) { return next(err) };
         if (!user) { return next(new Error('Not found user to save.')); }
         // Verify password.
         if (user.validPassword(req.body.password)) {
-          user.email = req.body.email;
+          user.email = req.body.newEmail;
           user.save(function(err) {
             if (err) { return next(err); } 
-            res.redirect('/user/login');
+            return res.json({ success: true });
           });  
         // Inválid password.
         } else {
           req.flash('error', 'Senha incorreta');
-          res.redirect('back');
+          return res.json({ success: false, message: 'Senha incorreta'});
         }
       });
     }

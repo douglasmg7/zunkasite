@@ -14,20 +14,20 @@ html(lang="en")
         a(href='/user/account') Sua conta
         a &nbsp> Altere seu e-mail
       .edit-email
-        h2.text-left Altere Seu E-mail
+        h2.text-left Altere seu e-mail
         //- Warn message.
         p.warn-message {{ warnMessage }}   
         label E-mail antigo
         p {{ email }}
         //- New email.
         label(for='email') Novo e-mail
-        input(type='text' name='email' id='email')
+        input(type='text' name='email' id='email' v-model='newEmail')
         //- New email confirmation.
-        label(for='emailConfirm') Entre o e-mail novamente
-        input(type='text' name='emailConfirm' id='emailConfirm')      
+        label(for='emailConfirm') Insira o novo e-mail novamente
+        input(type='text' name='emailConfirm' id='emailConfirm' v-model='newEmailConfirm')      
         //- Password.
         label(for='password') Senha
-        input(type='password' name='password' id='password')        
+        input(type='password' name='password' id='password' v-model='password')        
         input(type='button' value='Salvar Alterações' @click='save()')               
   script.
     // Make available for vue.
