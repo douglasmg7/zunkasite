@@ -8,12 +8,8 @@ var app = new Vue({
   data: {
     // Warn message.
     warnMessage: '',
-    // Email.
-    email: email,
-    // New email.
-    newEmail: '',
-    // Email confirmation.
-    newEmailConfirm: '',
+    // Mobile number.
+    mobileNumber: mobileNumber,
     // Password.
     password: ''
   },
@@ -21,14 +17,14 @@ var app = new Vue({
     save(){
       axios({
         method: 'post',
-        url: `/user/access/edit-email`,
+        url: `/user/access/edit-mobile-number`,
         headers: {'csrf-token' : csrfToken},
-        data: { newEmail: this.newEmail, newEmailConfirm: this.newEmailConfirm, password: this.password }
+        data: { mobileNumber: this.mobileNumber, password: this.password }
       })
       .then((res)=>{
         // Successful change the name.
         if (res.data.success) {
-          window.location.href = '/user/signin';
+          window.location.href = '/user/access';
         }
         // Something wrong.
         else

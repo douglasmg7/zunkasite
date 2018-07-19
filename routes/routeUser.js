@@ -386,32 +386,30 @@ router.post('/access/edit-email', checkPermission, (req, res, next)=>{
 });
 
 // Edit cell phone page.
-router.get('/access/edit-cell-phone', (req, res, next)=>{
-  res.render('user/editCellPhone', req.flash());
+router.get('/access/edit-mobile-number', (req, res, next)=>{
+  res.render('user/editMobileNumber', { nav: {}, mobileNumber: req.user.mobileNumber});
 });
+
 // Edit cell phone.
-router.post('/access/edit-cell-phone/:userId', checkPermission, (req, res, next)=>{
+router.post('/access/edit-mobile-number', checkPermission, (req, res, next)=>{
   // Validation.
-  req.checkBody('cellphone', 'Campo NÚMERO DE TELEFONE CELULAR deve ser preenchido.').notEmpty();
+  // req.checkBody('mobileNumber', 'Campo NÚMERO DE CELULAR deve ser preenchido.').notEmpty();
   req.getValidationResult().then(function(result) {
     // Send validations errors to client.
     if (!result.isEmpty()) {
       let messages = [];
       messages.push(result.array()[0].msg);
-      req.flash('error', messages);
-      res.redirect('back');
-      return;
+      return res.json({ success: false, message: messages[0]});
     } 
     // Save address.
     else {
-      if (!req.params.userId) { return next(new Error('No userId to find user data.')); }
-      User.findById(req.params.userId, (err, user)=>{
+      User.findById(req.user._id, (err, user)=>{
         if (err) { return next(err) };
         if (!user) { return next(new Error('Not found user to save.')); }
-        user.cellPhone = req.body.cellphone;
+        user.mobileNumber = req.body.mobileNumber;
         user.save(function(err) {
           if (err) { return next(err); } 
-          res.redirect('/user/access');
+          return res.json({ success: true });
         });  
       });
     }
