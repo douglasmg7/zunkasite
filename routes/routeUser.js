@@ -420,6 +420,7 @@ router.post('/access/edit-mobile-number', checkPermission, (req, res, next)=>{
 router.get('/access/edit-password', (req, res, next)=>{
   res.render('user/editPassword', { nav: {} });
 });
+
 // Edit password.
 router.post('/access/edit-password', checkPermission, (req, res, next)=>{
   // Validation.
@@ -448,7 +449,7 @@ router.post('/access/edit-password', checkPermission, (req, res, next)=>{
           });  
         // Inválid password.
         } else {
-          return res.json({ success: false, message: 'Senha incorreta.'});
+          return res.json({ success: false, message: 'Senha incorreta.' });
         }
       });
     }
@@ -457,10 +458,11 @@ router.post('/access/edit-password', checkPermission, (req, res, next)=>{
 
 // Edit CPF page.
 router.get('/access/edit-cpf', (req, res, next)=>{
-  res.render('user/editCpf', req.flash());
+  res.render('user/editCpf', { nav: {}, cpf: req.user.cpf });
 });
+
 // Edit CPF.
-router.post('/access/edit-cpf/:userId', checkPermission, (req, res, next)=>{
+router.post('/access/edit-cpf', checkPermission, (req, res, next)=>{
   // Validation.
   req.checkBody('cpf', 'Campo CPF deve ser preenchido.').notEmpty();
   req.checkBody('cpf', 'CPF inválido.').isCpf();
@@ -469,20 +471,23 @@ router.post('/access/edit-cpf/:userId', checkPermission, (req, res, next)=>{
     if (!result.isEmpty()) {
       let messages = [];
       messages.push(result.array()[0].msg);
-      req.flash('error', messages);
-      res.redirect('back');
-      return;
+      return res.json({ success: false, message: messages[0]});
     } 
     // Save address.
     else {
-      if (!req.params.userId) { return next(new Error('No userId to find user data.')); }
-      User.findById(req.params.userId, (err, user)=>{
+      // Get only the digits.
+      let cpf = req.body.cpf.match(/\d+/g).join('');
+      // Array [3][3][3][2].
+      cpf = cpf.match(/\d{2}\d?/g); 
+      // Format to 000.000.000-00.
+      cpf = `${cpf[0]}.${cpf[1]}.${cpf[2]}-${cpf[3]}`
+      User.findById(req.user._id, (err, user)=>{
         if (err) { return next(err) };
         if (!user) { return next(new Error('Not found user to save.')); }
-        user.cpf = req.body.cpf;
+        user.cpf = cpf;
         user.save(function(err) {
           if (err) { return next(err); } 
-          res.redirect('/user/access');
+          return res.json({ success: true });
         });  
       });
     }

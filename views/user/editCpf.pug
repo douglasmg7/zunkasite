@@ -4,75 +4,62 @@ html(lang="en")
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
     title Dados de acesso.
-    include ../components/bootstrap.css.pug
+    link(rel="stylesheet" href="/css/user/editCpf.css" charset="utf-8")
   body
-    include ../navbar.pug
-    .container
-      .row
-        .col-md-3
-        .col-md-6
-          ol.breadcrumb
-            li
-              a(href='/users/account') Sua Conta
-            li
-              a(href='/users/access') Autenticação
-            li.active Altere Seu CPF
-          h2.text-left Altere Seu CPF
-          //- Flash erros.          
-          if error
-            each err in error
-              .alert.alert-danger(role='alert') 
-                p.text-center #{err} 
-          //- Flash success.
-          if success
-            each suc in success
-              .alert.alert-info(role='alert') 
-                p.text-center #{suc}    
-          .z-panel
-            form(id='form-edit-cpf' method='post' action=`/users/access/edit-cpf/${user._id}`)
-              input(type='hidden' name='_csrf' value=csrfToken)
-              .form-group
-                label(for='cpf') Novo CPF
-                input.form-control(type='text' name='cpf' id='cpf' value=user.cpf)
-              input.btn.btn-primary(type='submit' value='Salvar Alterações')               
-        .col-md-3
-    include ../components/jquery.js.pug
-    include ../components/jquery.maskedinput.js.pug
-    include ../components/cpf.js.pug
-    include ../components/jquery.validation.js.pug    
-    include ../components/jquery.validation.localization.js.pug
-    include ../components/bootstrap.js.pug
-    script.
-      jQuery(function($){
-        // Maskedinput.
-        $('#cpf').mask('999.999.999-99');
-        // Validator method for cpf.
-        $.validator.addMethod('cpf', function(value, element){ return CPF.validate(value); }, 'Por favor, forneça um CPF válido.');        
-        // Form validation.
-        $('#form-edit-cpf').validate({
-          rules:{
-            cpf: {
-              cpf: true,
-            }
-          },      
-          messages: {
-          },
-          highlight: function (element) {
-              $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-          },
-          success: function (element) {
-            // Remove erros.
-            element.closest('.form-group').removeClass('has-error').addClass('has-success');
-          }          
-        });
-      });     
-  style.
-    a.not-decoration {
-      text-decoration: none;
-    }
-    /* Panel */
-    .z-panel{
-      border: 1px solid lightgray;
-      border-radius: 5px;
-      padding: 1em;
-    }
+    header
+      nav
+        include ../main-nav.pug
+    main#app(v-cloak)
+      .breadlink
+        a(href='/user/account') Sua conta
+        a &nbsp> Altere seu CPF  
+      .edit-cpf
+        h2.text-left Altere Seu CPF
+        //- Warn message.
+        p.warn-message {{ warnMessage }}  
+        label(for='cpf') CPF
+        input(type='text' name='cpf' id='cpf' v-model='cpf')
+        input(type='button' value='Salvar Alterações' @click='save()')               
+  script.
+    // Make available for vue.
+    let csrfToken = !{JSON.stringify(csrfToken)};
+    let cpf = !{JSON.stringify(cpf)};
+  include ../components/axios.js.pug
+  include ../components/vue.js.pug
+  //- include ../components/cpf.js.pug
+  script(src='/js/user/editCpf.js')  
+
+  //-   script.
+  //-     jQuery(function($){
+  //-       // Maskedinput.
+  //-       $('#cpf').mask('999.999.999-99');
+  //-       // Validator method for cpf.
+  //-       $.validator.addMethod('cpf', function(value, element){ return CPF.validate(value); }, 'Por favor, forneça um CPF válido.');        
+  //-       // Form validation.
+  //-       $('#form-edit-cpf').validate({
+  //-         rules:{
+  //-           cpf: {
+  //-             cpf: true,
+  //-           }
+  //-         },      
+  //-         messages: {
+  //-         },
+  //-         highlight: function (element) {
+  //-             $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+  //-         },
+  //-         success: function (element) {
+  //-           // Remove erros.
+  //-           element.closest('.form-group').removeClass('has-error').addClass('has-success');
+  //-         }          
+  //-       });
+  //-     });     
+  //- style.
+  //-   a.not-decoration {
+  //-     text-decoration: none;
+  //-   }
+  //-   /* Panel */
+  //-   .z-panel{
+  //-     border: 1px solid lightgray;
+  //-     border-radius: 5px;
+  //-     padding: 1em;
+  //-   }
