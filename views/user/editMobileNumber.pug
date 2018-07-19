@@ -20,10 +20,10 @@ html(lang="en")
         label(for='mobileNumber') Novo Número de Celular
         input(type='text' name='mobileNumber' id='mobileNumber' v-model='mobileNumber')
         input(type='button' value='Salvar Alterações' @click='save()')  
-    script.
-      // Make available for vue.
-      let csrfToken = !{JSON.stringify(csrfToken)};
-      let mobileNumber = !{JSON.stringify(mobileNumber)};
-    include ../components/axios.js.pug
-    include ../components/vue.js.pug
-    script(src='/js/user/editMobileNumber.js')  
+  script.
+    // Make available for vue.
+    let csrfToken = !{JSON.stringify(csrfToken)};
+    let mobileNumber = !{JSON.stringify(mobileNumber)};
+  include ../components/axios.js.pug
+  include ../components/vue.js.pug
+  script(src='/js/user/editMobileNumber.js')  

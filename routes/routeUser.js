@@ -418,41 +418,37 @@ router.post('/access/edit-mobile-number', checkPermission, (req, res, next)=>{
 
 // Edit password page.
 router.get('/access/edit-password', (req, res, next)=>{
-  res.render('user/editPassword', req.flash());
+  res.render('user/editPassword', { nav: {} });
 });
 // Edit password.
-router.post('/access/edit-password/:userId', checkPermission, (req, res, next)=>{
+router.post('/access/edit-password', checkPermission, (req, res, next)=>{
   // Validation.
-  req.checkBody('password', 'Senha inválida.').notEmpty();
-  req.checkBody('passwordNew', 'Nova senha deve conter pelo menos 8 caracteres.').isLength({ min: 8});
-  req.checkBody('passwordNew', 'Nova senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
-  req.checkBody('passwordNewConfirm', 'Nova senha e confirmação da nova senha devem ser iguais').equals(req.body.passwordNew);  
+  req.checkBody('newPassword', 'Nova senha deve conter pelo menos 8 caracteres.').isLength({ min: 8});
+  req.checkBody('newPassword', 'Nova senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
+  req.checkBody('newPasswordConfirm', 'Nova senha e confirmação da nova senha devem ser iguais').equals(req.body.newPassword);  
+  req.checkBody('oldPassword', 'Senha inválida.').notEmpty();
   req.getValidationResult().then(function(result) {
     // Send validations errors to client.
     if (!result.isEmpty()) {
       let messages = [];
       messages.push(result.array()[0].msg);
-      req.flash('error', messages);
-      res.redirect('back');
-      return;
+      return res.json({ success: false, message: messages[0]});
     } 
     // Save address.
     else {
-      if (!req.params.userId) { return next(new Error('No userId to find user data.')); }
-      User.findById(req.params.userId, (err, user)=>{
+      User.findById(req.user._id, (err, user)=>{
         if (err) { return next(err) };
         if (!user) { return next(new Error('Not found user to save.')); }
         // Verify password.
-        if (user.validPassword(req.body.password)) {
-          user.password = user.encryptPassword(req.body.passwordNew);
+        if (user.validPassword(req.body.oldPassword)) {
+          user.password = user.encryptPassword(req.body.newPassword);
           user.save(function(err) {
             if (err) { return next(err); } 
-            res.redirect('/user/access');
+            return res.json({ success: true });
           });  
         // Inválid password.
         } else {
-          req.flash('error', 'Senha incorreta');
-          res.redirect('back');
+          return res.json({ success: false, message: 'Senha incorreta.'});
         }
       });
     }
