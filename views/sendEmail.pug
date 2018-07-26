@@ -3,26 +3,10 @@ html(lang="en")
   head
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Login Using bootstrap.
-    include components/bootstrap.css.pug
+    title Test send e-mail.
   body
-    nav.navbar.navbar-inverse.navbar-static-top
-      //- .container-fluid
-      .container
-        .navbar-header
-          a.navbar-brand(href='/') ZUNKA
-    .container
-      .row
-        .col-md-4
-        .col-md-4
-          .panel.panel-default
-            .panel-body
-              h1.text-left Testes
-              form(action='/test/send-email' method='post')
-                input(type='hidden' name='_csrf' value=csrfToken)
-                //- .form-group
-                //-   input.form-control(type='text' name='email' placeholder='e-mail')
-                input.btn.btn-primary.btn-block(type='submit' value='Enviar')
-        .col-md-4
-    include components/jquery.js.pug
-    include components/bootstrap.js.pug
+    main
+      h1.text-left Testes
+      form(action='/test/send-email' method='post')
+        input(type='hidden' name='_csrf' value=csrfToken)
+        input.btn.btn-primary.btn-block(type='submit' value='Enviar')

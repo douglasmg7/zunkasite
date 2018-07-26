@@ -246,7 +246,7 @@ router.get('/reset/:token', (req, res, next)=>{
     } 
     // Not found.
     else {
-      return res.render('messageLink', { message: 'Chave para alteração de senha expirou.', linkMessage: 'Deseja criar uma nova chave?', linkUrl: '/user/forgot/'});
+      return res.render('user/messageLink', { nav: {}, message: 'Chave para alteração de senha expirou.', linkMessage: 'Deseja criar uma nova chave?', linkUrl: '/user/forgot/'});
     }
   });
 });
@@ -270,7 +270,7 @@ router.post('/reset/:token', (req, res, next)=>{
         if (err) { return next(err); }     
         // Not exist token to reset password.
         if (!passwordReset) { 
-          return res.render('messageLink', { message: 'Chave para alteração de senha expirou.', linkMessage: 'Deseja criar uma nova chave?', linkUrl: '/user/forgot/'});          
+          return res.render('user/messageLink', { nav: {}, message: 'Chave para alteração de senha expirou.', linkMessage: 'Deseja criar uma nova chave?', linkUrl: '/user/forgot/'});          
         }
         // Token found.
         else {
@@ -278,7 +278,7 @@ router.post('/reset/:token', (req, res, next)=>{
             if (err) { return next(err); }  
             // User not found.
             if (!user) {
-              return res.render('messageLink', { message: 'Usuário não cadastrado.', linkMessage: 'Deseja criar um cadastro?', linkUrl: '/user/signup/'});          
+              return res.render('user/messageLink', { nav: {}, message: 'Usuário não cadastrado.', linkMessage: 'Deseja criar um cadastro?', linkUrl: '/user/signup/'});          
             }
             // User found.
             else {
@@ -717,6 +717,16 @@ router.get('/api/orders', checkPermission, function(req, res, next) {
   }).catch(err=>{
     return next(err);
   });
+});
+
+
+/****************************************************************************** 
+/   TEST
+******************************************************************************/
+
+// Message link - just for test.
+router.get('/message-link', (req, res, next)=>{
+  return res.render('user/messageLink', { nav: {}, message: 'Este é apenas um teste.', linkMessage: 'Deseja ir para a página principal?', linkUrl: '/'});
 });
 
 
