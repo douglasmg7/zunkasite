@@ -207,7 +207,7 @@ router.post('/api/forgottenPassword', (req, res, next)=>{
                 subject: 'Solicitação para Redefinir senha.',
                 text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a redefinição da senha de sua conta.\n\n' + 
                       'Por favor click no link, ou cole no seu navegador de internet para completar o processo.\n\n' + 
-                      'https://' + req.headers.host + '/user/reset/' + token + '\n\n' +
+                      'https://' + req.headers.host + '/user/reset-password/' + token + '\n\n' +
                       // 'Esta solicitação de redefinição expira em duas horas.\n' +
                       'Se não foi você que requisitou esta redefinição de senha, por favor ignore este e-mail e sua senha permanecerá a mesma.'
             }; 
@@ -224,7 +224,7 @@ router.post('/api/forgottenPassword', (req, res, next)=>{
             }
             // Log token if not in production. 
             else {
-              log.info('link to reset password: http://' + req.headers.host + '/user/reset/' + token + '\n\n');
+              log.info('link to reset password: http://' + req.headers.host + '/user/reset-password/' + token + '\n\n');
             }
             return res.json({ success: true, message: `Foi enviado um e-mail para ${req.body.email} com instruções para a alteração da senha.`});
           });
@@ -237,12 +237,12 @@ router.post('/api/forgottenPassword', (req, res, next)=>{
 });
 
 // Reset password page.
-router.get('/reset/:token', (req, res, next)=>{
+router.get('/reset-password/:token', (req, res, next)=>{
   PasswordReset.findOne({ token: req.params.token }, (err, passwordReset)=>{
     if (err) { return next(err); }
     // Found.
     if (passwordReset) {
-      res.render('reset', req.flash() );
+      res.render('user/resetPassword', { nav: {} , resetPasswordToken: req.params.token} );
     } 
     // Not found.
     else {
@@ -252,7 +252,7 @@ router.get('/reset/:token', (req, res, next)=>{
 });
 
 // Reset password.
-router.post('/reset/:token', (req, res, next)=>{
+router.post('/reset-password/:token', (req, res, next)=>{
   // Validation.
   req.checkBody('password', 'Senha deve conter pelo menos 8 caracteres.').isLength({ min: 8});
   req.checkBody('password', 'Senha deve conter no máximo 20 caracteres.').isLength({ max: 20});
@@ -261,16 +261,14 @@ router.post('/reset/:token', (req, res, next)=>{
     if (!result.isEmpty()) {
       let messages = [];
       messages.push(result.array()[0].msg);
-      req.flash('error', messages);
-      res.redirect('back');
-      return;
+      return res.json({ success: false, message: messages[0] });
     } 
     else {
       PasswordReset.findOne({ token: req.params.token }, (err, passwordReset)=>{
         if (err) { return next(err); }     
         // Not exist token to reset password.
         if (!passwordReset) { 
-          return res.render('user/messageLink', { nav: {}, message: 'Chave para alteração de senha expirou.', linkMessage: 'Deseja criar uma nova chave?', linkUrl: '/user/forgot/'});          
+          return res.json({ success: false, message: 'Chave para alteração de senha expirou.' });
         }
         // Token found.
         else {
@@ -278,7 +276,7 @@ router.post('/reset/:token', (req, res, next)=>{
             if (err) { return next(err); }  
             // User not found.
             if (!user) {
-              return res.render('user/messageLink', { nav: {}, message: 'Usuário não cadastrado.', linkMessage: 'Deseja criar um cadastro?', linkUrl: '/user/signup/'});          
+              return res.json({ success: false, message: 'Usuário não cadastrado.' });
             }
             // User found.
             else {
@@ -288,8 +286,7 @@ router.post('/reset/:token', (req, res, next)=>{
                 if(err) { return next(err); }
                 // Remove password reset.
                 passwordReset.remove(err=>{ if(err) { return next(err); } })
-                req.flash('success', 'Senha alterada com sucesso.');
-                res.redirect('/user/login/');              
+                return res.json({ success: true });              
               })                 
             }
           })
