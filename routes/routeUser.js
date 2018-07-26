@@ -492,11 +492,12 @@ router.post('/access/edit-cpf', checkPermission, (req, res, next)=>{
 });
 
 // Delete account page.
-router.get('/access/delete-account', (req, res, next)=>{
-  res.render('user/deleteAccount', req.flash());
+router.get('/access/delete-account', checkPermission, (req, res, next)=>{
+  res.render('user/deleteAccount', { nav: {} } );
 });
+
 // Delete account.
-router.post('/access/delete-account/:userId', checkPermission, (req, res, next)=>{
+router.post('/access/delete-account', checkPermission, (req, res, next)=>{
   // Validation.
   req.checkBody('email', 'E-mail inválido.').isEmail();
   req.checkBody('password', 'Senha inválida.').notEmpty();
@@ -506,21 +507,16 @@ router.post('/access/delete-account/:userId', checkPermission, (req, res, next)=
     if (!result.isEmpty()) {
       let messages = [];
       messages.push(result.array()[0].msg);
-      req.flash('error', messages);
-      res.redirect('back');
-      return;
+      return res.json({ success: false, message: messages[0]});
     } 
     // Save address.
     else {
-      if (!req.params.userId) { return next(new Error('No userId to find user data.')); }
-      User.findById(req.params.userId, (err, user)=>{
+      User.findById(req.user._id, (err, user)=>{
         if (err) { return next(err) };
         if (!user) { return next(new Error('Not found user to save.')); }
         // Verify e-mail.
         if (user.email !== req.body.email) { 
-          req.flash('error', 'E-mail incorreto');
-          res.redirect('back');
-          return;
+          return res.json({ success: false, message: 'E-mail incorreto'})
         }
         // Verify password.
         if (user.validPassword(req.body.password)) {
@@ -543,18 +539,21 @@ router.post('/access/delete-account/:userId', checkPermission, (req, res, next)=
               if (err) { return next(err); }
               // Remove cart.
               redis.del(`cart:${user.email}`); 
-              req.flash('success', 'Conta apagada com sucesso.');
-              res.redirect('/user/login/');               
+              return res.json({ success: true, message: 'Conta apagada com sucesso.'})            
             });
           });  
         // Inválid password.
         } else {
-          req.flash('error', 'Senha incorreta');
-          res.redirect('back');
+          return res.json({ success: false, message: 'Senha incorreta.'})
         }
       });
     }
   });
+});
+
+// Account deleted.
+router.get('/access/account-deleted', (req, res, next)=>{
+  res.render('user/accountDeleted', { nav: {} } );
 });
 
 // Address page.

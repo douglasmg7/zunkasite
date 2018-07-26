@@ -31,3 +31,7 @@ Avoid user see order from other user.
 Centralize all email configurations.
   - transporter
 
+User removed, must remove all info after two months.
+
+Insert label for input
+  signin

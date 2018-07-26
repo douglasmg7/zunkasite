@@ -3,76 +3,27 @@ html(lang="en")
   head
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Dados de acesso.
-    include ../components/bootstrap.css.pug
+    title Apagar conta
+    link(rel="stylesheet" href="/css/user/deleteAccount.css" charset="utf-8")
   body
-    include ../navbar.pug
-    .container
-      .row
-        .col-md-3
-        .col-md-6
-          ol.breadcrumb
-            li
-              a(href='/users/account') Sua Conta
-            li
-              a(href='/users/access') Autenticação
-            li.active Apagar Conta
-          h2.text-left Apagar Conta
-          //- Flash erros.          
-          if error
-            each err in error
-              .alert.alert-danger(role='alert') 
-                p.text-center #{err} 
-          //- Flash success.
-          if success
-            each suc in success
-              .alert.alert-info(role='alert') 
-                p.text-center #{suc}    
-          .z-panel
-            form(id='form-delete-account' method='post' action=`/users/access/delete-account/${user._id}`)
-              input(type='hidden' name='_csrf' value=csrfToken)
-              .form-group
-                label(for='email') E-mail
-                input.form-control(type='text' name='email' id='email')
-              .form-group
-                label(for='password') Senha
-                input.form-control(type='password' name='password' id='password')        
-              input.btn.btn-danger(type='submit' value='Apagar Conta')               
-        .col-md-3
-    include ../components/jquery.js.pug
-    include ../components/jquery.validation.js.pug    
-    include ../components/jquery.validation.localization.js.pug    
-    include ../components/bootstrap.js.pug
-    script.
-      jQuery(function($){
-        // Form validation.
-        $('#form-delete-account').validate({
-          rules:{
-            email: {
-              required: true,
-              email: true
-            },          
-            password: {
-              required: true,
-              minlength: 8,
-              maxlength: 20
-            }
-          },      
-          messages: {
-          },
-          highlight: function (element) {
-              $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-          },
-          success: function (element) {
-            // Remove erros.
-            element.closest('.form-group').removeClass('has-error').addClass('has-success');
-          }          
-        });
-      });    
-  style.
-    /* Panel */
-    .z-panel{
-      border: 1px solid lightgray;
-      border-radius: 5px;
-      padding: 1em;
-    }
+    header
+      nav
+        include ../main-nav.pug
+    main#app(v-cloak)
+      .breadlink
+        a(href='/user/account') Sua conta
+        a &nbsp> Apagar conta
+      .delete-account
+        h2 Apagar Conta
+        label(for='email') E-mail
+        input(type='text' id='email' v-model='email')
+        label(for='password') Senha
+        input(type='password' id='password' v-model='password')        
+        input(type='button' value='Apagar Conta' @click='deleteAccount()')
+        p.warn-message {{warnMessage}}
+  script.
+    // Make available for vue.
+    let csrfToken = !{JSON.stringify(csrfToken)};
+  include ../components/axios.js.pug
+  include ../components/vue.js.pug
+  script(src='/js/user/deleteAccount.js')

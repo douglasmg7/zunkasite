@@ -87,7 +87,7 @@ passport.use('local.signup', new LocalStrategy({
                   subject: 'Solicitação de criação de conta no site da Zunka.',
                   text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a criação de uma conta no site da Zunka usando este e-mail.\n\n' + 
                         'Por favor click no link, ou cole no seu navegador de internet para confirmar a criação da conta.\n\n' + 
-                        'https://' + req.headers.host + '/users/signin/' + token + '\n\n' +
+                        'https://' + req.headers.host + '/user/signin/' + token + '\n\n' +
                         'Se não foi você que requisitou esta criação de conta, por favor ignore este e-mail e nenhuma conta será criada.'
             };
             // Send e-mail only in production mode.
@@ -103,7 +103,7 @@ passport.use('local.signup', new LocalStrategy({
             }
             // Log token if not in production. 
             else {
-              log.info('link to confirm email: http://' + req.headers.host + '/users/signin/' + token + '\n\n');
+              log.info('link to confirm email: http://' + req.headers.host + '/user/signin/' + token + '\n\n');
             }
             done(null, emailConfirmation, { message: `Foi enviado um e-mail para ${req.body.email} com instruções para completar o cadastro.`});               
           });
