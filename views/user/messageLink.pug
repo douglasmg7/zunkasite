@@ -1,0 +1,15 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Mensagem
+    link(rel="stylesheet" href="/css/user/messageLink.css" charset="utf-8")
+  body
+    header
+      nav
+        include ../main-nav.pug
+    main
+      .message-link
+        h3 #{message} 
+        a(href=linkUrl) #{linkMessage}
