@@ -104,7 +104,7 @@ var app = new Vue({
     }
   },    
   filters: { 
-    currencyBr(value){ return accounting.formatMoney(value, "R$ ", 2, ".", ","); },
+    currencyBr(value){ return accounting.formatMoney(value, "R$", 2, ".", ","); },
     // currencyInt(value){
     //   return accounting.formatMoney(accounting.parse(value, ','), '', 2, '.', ',').split(',')[0];
     // },

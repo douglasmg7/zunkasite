@@ -79,7 +79,17 @@ router.get('/api/product/:_id', function(req, res, next) {
 // Cart page.
 router.get('/cart', (req, res, next)=>{
   // log.info('req.session', JSON.stringify(req.session));
-  res.render('cart', {
+  res.render('user/cart', {
+    nav: {},
+    user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
+    cart: req.cart,
+    formatMoney: formatMoney  });
+})
+
+// Cart page.
+router.get('/cart_old', (req, res, next)=>{
+  // log.info('req.session', JSON.stringify(req.session));
+  res.render('cart_old', {
     user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
     cart: req.cart,
     formatMoney: formatMoney,
@@ -109,8 +119,8 @@ router.put('/cart/add/:_id', (req, res, next)=>{
 
 // Change product quantity from cart.
 router.put('/cart/change-qtd/:_id/:qtd', (req, res, next)=>{
-  req.cart.changeProductQtd(req.params._id, req.params.qtd)
-  res.json({success: true, msg: 'Product quantity changed', productQtdChanged: req.params._id, cart: req.cart});
+  req.cart.changeProductQtd(req.params._id, req.params.qtd);
+  res.json({success: true, cart: req.cart});
 })
 
 // Remove product from cart.
