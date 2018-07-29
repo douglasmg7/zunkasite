@@ -122,50 +122,46 @@ main > .cart {
   justify-content: space-between;
   border-radius: 4px;
 }
-main > .cart > .address-panel.add {
-  display: flex;
-  flex: row nowrap;
-  justify-content: center;
-  align-items: center;
-  border: 2px dashed #d3d3d3;
+main > .cart table {
+  border-spacing: 0;
 }
-main > .cart > .address-panel.add:hover {
-  cursor: pointer;
-}
-main > .cart > .address-panel {
-  display: flex;
-  flex-flow: column nowrap;
-  border: 1px solid #eee;
-  border-radius: 5px;
-  margin: 1em;
-  min-height: 300px;
-  width: 350px;
-  background-color: #fcfcfc;
-  justify-content: space-between;
-}
-main > .cart > .address-panel > .address-header {
-  background-color: #f4f4f4;
-}
-main > .cart > .address-panel > .address-header h3 {
+main > .cart table thead td {
   padding: 0.5em;
 }
-main > .cart > .address-panel > .address-header hr {
-  margin: 0;
+main > .cart table tbody td {
+  border-top: 1px solid #ddd;
+  padding: 0.5em;
 }
-main > .cart > .address-panel > .address-body,
-main > .cart > .address-panel > .address-footer {
-  padding: 0.8em;
+main > .cart img.product {
+  max-width: 100px;
+  height: auto;
 }
-main > .cart > .address-panel > .address-body > p {
-  margin-bottom: 0.3em;
-}
-main > .cart > .address-panel > .address-body > p.name {
+main > .cart .subtotal {
+  color: #008000;
   font-weight: bold;
-  margin-bottom: 0.5em;
 }
-main > .cart > .address-panel > .address-footer {
+main > .cart a.product-title {
+  color: #337ab7;
+  display: block;
+  text-decoration: none;
+}
+main > .cart p.remove-product {
+  color: #337ab7;
+  margin-top: 0.5em;
+  font-size: 0.9em;
+  cursor: pointer;
+}
+main > .cart p.product-price,
+main > .cart a.product-title {
+  font-size: 1.2em;
+  padding-top: 0.6em;
+}
+main > .cart p.product-price {
   color: #008000;
 }
-main > .cart > .address-panel > .address-footer a:hover {
-  cursor: pointer;
+main > .cart a.checkout {
+  margin-left: 2em;
+}
+main > .cart footer p {
+  font-size: 0.9em;
 }

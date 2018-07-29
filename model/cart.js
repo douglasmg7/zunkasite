@@ -15,7 +15,7 @@ module.exports = function Cart(cart) {
   this.changed = false;
 
   // Re-caluculate total quantity and price.
-  this.update = function(){
+  this.update = function(cb){
     // Calculate products total quantity and price.
     this.totalQtd = 0;
     this.totalPrice = 0;
@@ -24,7 +24,10 @@ module.exports = function Cart(cart) {
       that.totalQtd += product.qtd;
       that.totalPrice += (product.price * product.qtd);
     });
-    this.changed = true;    
+    this.changed = true;
+    if (cb) {
+      cb();
+    }    
   }  
 
   // Add product from db not from other cart.
@@ -61,27 +64,27 @@ module.exports = function Cart(cart) {
   }
 
   // Change product quantity from cart.
-  this.changeProductQtd = function(_id, qtd){
+  this.changeProductQtd = function(productId, qtd, cb){
     for (var i = 0; i  < this.products.length; i++) {
-      if (this.products[i]._id === _id) {
+      if (this.products[i]._id === productId) {
         this.products[i].qtd = parseInt(qtd, 10);
         break;
       }
     }
     // Re-caluculate total quantity and price.
-    this.update();  
+    this.update(cb);  
   }
 
   // Remove product from cart.
-  this.removeProduct = function(_id){
+  this.removeProduct = function(productId, cb){
     for (var i = 0; i  < this.products.length; i++) {
-      if (this.products[i]._id === _id) {
+      if (this.products[i]._id === productId) {
         this.products.splice(i, 1);
         break;
       }
     }
     // Re-caluculate total quantity and price.
-    this.update();
+    this.update(cb);
   }
 
   // Clean cart.

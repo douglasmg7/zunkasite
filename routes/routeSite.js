@@ -119,14 +119,16 @@ router.put('/cart/add/:_id', (req, res, next)=>{
 
 // Change product quantity from cart.
 router.put('/cart/change-qtd/:_id/:qtd', (req, res, next)=>{
-  req.cart.changeProductQtd(req.params._id, req.params.qtd);
-  res.json({success: true, cart: req.cart});
+  req.cart.changeProductQtd(req.params._id, req.params.qtd, ()=>{
+    res.json({success: true, cart: req.cart});
+  });
 })
 
 // Remove product from cart.
 router.put('/cart/remove/:_id', (req, res, next)=>{
-  req.cart.removeProduct(req.params._id);
-  res.json({success: true, msg: 'Product removed', productRemovedId: req.params._id, cart: req.cart});
+  req.cart.removeProduct(req.params._id, ()=>{
+    res.json({success: true, cart: req.cart});
+  });
 })
 
 module.exports = router;
