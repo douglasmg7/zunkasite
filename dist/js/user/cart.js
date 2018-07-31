@@ -49,7 +49,10 @@ var app = new Vue({
         alert('Erro interno, não foi possível atualizar o carrinho.');
         console.error(`Error - removeProduct(), err: ${err}`);
       });
-    },    
+    },  
+    selectAddress(){
+      window.location.href = '/checkout/shipping-address';
+    }  
   },
   filters: { 
     currencyBr(value){ return accounting.formatMoney(value, "R$", 2, ".", ","); },

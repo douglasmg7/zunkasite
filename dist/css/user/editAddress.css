@@ -39,6 +39,35 @@ body .container {
 button,
 input {
   box-sizing: border-box;
+  padding-left: 0.5em;
+  border-radius: 0.2em;
+  border: solid 1px #aaa;
+  height: 2em;
+}
+button[type='button'],
+input[type='button'] {
+  color: #fff;
+  margin-top: 1em;
+}
+button[type='button'].green,
+input[type='button'].green {
+  background-color: #5cb85c;
+  border-color: #4cae4c;
+}
+button[type='button'].green:hover,
+input[type='button'].green:hover {
+  background-color: #449d44;
+  border-color: #398439;
+}
+button[type='button'].blue,
+input[type='button'].blue {
+  background-color: #337ab7;
+  border-color: #2e6da4;
+}
+button[type='button'].blue:hover,
+input[type='button'].blue:hover {
+  background-color: #286090;
+  border-color: #204d74;
 }
 .main-nav {
   font-size: 1em;
@@ -141,21 +170,4 @@ main > .form > a {
 }
 main > .form > label {
   margin-top: 1em;
-}
-main > .form > input {
-  margin: 0.2em 0 0 0;
-  padding-left: 0.5em;
-  border-radius: 0.2em;
-  border: solid 1px #aaa;
-  height: 2em;
-}
-main > .form > input[type='submit'] {
-  margin-top: 1em;
-  color: #fff;
-  background-color: #337ab7;
-  border-color: #2e6da4;
-}
-main > .form > input[type='submit']:hover {
-  background-color: #286090;
-  border-color: #204d74;
 }

@@ -38,12 +38,12 @@ html(lang="en")
                     option(value='5') 5
               td: p.product-price {{ product.price | currencyBr }}
               td: p.product-price {{ product.price * product.qtd | currencyBr }}
-        h4.subtotal
-          strong Subtotal ({{ cart.totalQtd }} {{ cart.totalQtd > 1 ? 'itens): ' : 'item): ' }}
-          span.subtotal {{ cart.totalPrice | currencyBr }}
-          a.checkout(href='/checkout/shipping-address') Continuar
-    footer
-      p O preço e a disponibilidade dos itens na loja estão sujetios a mudanças. O carrinho é um local temporário para guardar a lista de seus ítens e reflete o preço mais recente.
+        .subtotal
+          h3
+            strong Subtotal ({{ cart.totalQtd }} {{ cart.totalQtd > 1 ? 'itens): ' : 'item): ' }}
+            span {{ cart.totalPrice | currencyBr }}
+            input.green(type='button' value='continuar' @click='selectAddress()')
+          p O preço e a disponibilidade dos itens na loja estão sujetios a mudanças. O carrinho é um local temporário para guardar a lista de seus ítens e reflete o preço mais recente.
   script.
     // Make available for vue.
     let csrfToken = !{JSON.stringify(csrfToken)};

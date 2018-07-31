@@ -5,15 +5,16 @@ main
   flex-flow column nowrap
   justify-content center
   // margin 2em 4em
-  margin 2em auto
+  margin 1em auto
   width 95%
   max-width 1200px
   > .cart
     display flex
-    flex-flow row wrap
+    flex-flow column wrap
     justify-content space-between
     border-radius 4px  
     table
+      margin-top 1em
       border-spacing 0
       thead
         td
@@ -26,8 +27,14 @@ main
       max-width 100px
       height auto
     .subtotal
-      color green
-      font-weight bold
+      margin-top 1em
+      span
+        color green
+        font-weight bold
+      p
+        margin-top 1em
+      input
+        margin-left 1em
     a.product-title
       color #337ab7
       display block
@@ -45,5 +52,3 @@ main
       color green
     a.checkout
       margin-left 2em
-    footer p
-      font-size .9em

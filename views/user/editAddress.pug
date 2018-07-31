@@ -49,7 +49,7 @@ html(lang='en')
         //- Phone.
         label(for='phone') Telefone
         input(type='text' id='phone' v-model='address.phone')                                                                                        
-        input(type='submit', :value='isNewAddress ? "Criar novo Endereço": "Salvar"' @click='saveAddress()')
+        input.green(type='button', :value='isNewAddress ? "Criar novo Endereço": "Salvar"' @click='saveAddress()')
   script.
     // Make available for vue.
     let csrfToken = !{JSON.stringify(csrfToken)};

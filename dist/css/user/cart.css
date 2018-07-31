@@ -39,6 +39,35 @@ body .container {
 button,
 input {
   box-sizing: border-box;
+  padding-left: 0.5em;
+  border-radius: 0.2em;
+  border: solid 1px #aaa;
+  height: 2em;
+}
+button[type='button'],
+input[type='button'] {
+  color: #fff;
+  margin-top: 1em;
+}
+button[type='button'].green,
+input[type='button'].green {
+  background-color: #5cb85c;
+  border-color: #4cae4c;
+}
+button[type='button'].green:hover,
+input[type='button'].green:hover {
+  background-color: #449d44;
+  border-color: #398439;
+}
+button[type='button'].blue,
+input[type='button'].blue {
+  background-color: #337ab7;
+  border-color: #2e6da4;
+}
+button[type='button'].blue:hover,
+input[type='button'].blue:hover {
+  background-color: #286090;
+  border-color: #204d74;
 }
 .main-nav {
   font-size: 1em;
@@ -112,17 +141,18 @@ main {
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
-  margin: 2em auto;
+  margin: 1em auto;
   width: 95%;
   max-width: 1200px;
 }
 main > .cart {
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: column wrap;
   justify-content: space-between;
   border-radius: 4px;
 }
 main > .cart table {
+  margin-top: 1em;
   border-spacing: 0;
 }
 main > .cart table thead td {
@@ -137,8 +167,17 @@ main > .cart img.product {
   height: auto;
 }
 main > .cart .subtotal {
+  margin-top: 1em;
+}
+main > .cart .subtotal span {
   color: #008000;
   font-weight: bold;
+}
+main > .cart .subtotal p {
+  margin-top: 1em;
+}
+main > .cart .subtotal input {
+  margin-left: 1em;
 }
 main > .cart a.product-title {
   color: #337ab7;
@@ -161,7 +200,4 @@ main > .cart p.product-price {
 }
 main > .cart a.checkout {
   margin-left: 2em;
-}
-main > .cart footer p {
-  font-size: 0.9em;
 }
