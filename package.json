@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "cross-env NODE_ENV=production nodemon ./bin/www",
+    "start": "cross-env NODE_ENV=production forever ./bin/www",
+    "start_": "cross-env NODE_ENV=production nodemon ./bin/www",
     "start-mlab": "cross-env NODE_ENV=production DB=mlab nodemon ./bin/www",
     "dev": "cross-env NODE_ENV=development nodemon ./bin/www",
     "test": "mocha test -u bdd -R spec -t 2000",
