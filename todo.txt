@@ -1,3 +1,5 @@
+Uninstall forever
+
 Menu cart not update on cart page, when quantity products are changed.
 
 Verify app.log size rotation.
