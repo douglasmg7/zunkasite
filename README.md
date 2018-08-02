@@ -7,31 +7,24 @@ $ npm install
 $ sudo npm i pm2 -g
 ```
 ### Running server
-Development mode
+Development mode.
 ```bash
 $ npm run dev
 ```
 
-Production mode
+Production mode.
 ```bash
 $ npm start
 ```
 
-### Stopping server running in development mode.
+### Stopping server
+Development mode.
 ``` bash
 $ <ctrl+c>
 ```
-
-### Automatically start pm2 (create a systemd entry)
+Production mode.
 ```bash
-$ pm2 startup   
-```
-
-
-
-### Saving pm2 process list, so it restart the server on startup system
-```bash
-$ pm2 save
+$ npm stop
 ```
 
 ### Restarting server on production mode
@@ -39,20 +32,29 @@ $ pm2 save
 $ npm restrart
 ```
 
-### Stopping server in production mode 
+### Enable/disable pm2 startup hook (add/remove a systemd entry)
+So pm2 can startup the pocess list.
+Add a startup hook.
 ```bash
-$ npm stop
+$ pm2 startup   
+```
+Remove a startup hook.
+```bash
+$ pm2 unstart
 ```
 
-### Disable server from start on system start (production mode)
+### Saving/removing pm2 process list (production mode)
+So it restart the server on startup system.
+Server must been running before execute the command.
+```bash
+$ pm2 save
+```
+Disable server from start on system start.
 ```bash
 $ pm2 cleardump
 ```
 
-### Disable pm2 start on system startup (Remove systemd entry)
-```bash
-$ pm2 unstart
-```
+
 
 
 
