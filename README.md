@@ -6,12 +6,18 @@ $ cd zunka
 $ npm install
 $ sudo npm i pm2 -g
 ```
-### Run server in development mode
+### Running server
+Development mode
 ```bash
 $ npm run dev
 ```
 
-### Stop server running in development mode.
+Production mode
+```bash
+$ npm start
+```
+
+### Stopping server running in development mode.
 ``` bash
 $ <ctrl+c>
 ```
@@ -21,22 +27,19 @@ $ <ctrl+c>
 $ pm2 startup   
 ```
 
-### Run server in production mode
-```bash
-$ npm start
-```
 
-### Save pm2 process list, so it restart the server on startup system
+
+### Saving pm2 process list, so it restart the server on startup system
 ```bash
 $ pm2 save
 ```
 
-### Restart server on production mode
+### Restarting server on production mode
 ```bash
 $ npm restrart
 ```
 
-### Stop server in production mode 
+### Stopping server in production mode 
 ```bash
 $ npm stop
 ```
