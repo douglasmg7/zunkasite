@@ -31,8 +31,7 @@ passport.serializeUser(function(user, done) {
 
 // Use the user id saved in the session to retrive the data.
 passport.deserializeUser(function(id, done) {
-  log.info('passport.deserialize');
-  // log.info('id: ', id);
+  // log.info('passport.deserialize');
   User.findOne({email: id}, (err, user)=>{
     done(null, user)
   });
