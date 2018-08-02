@@ -5,6 +5,10 @@ const path = require('path');
 const favicon = require('serve-favicon');
 // General log.
 const log = require('./config/log');
+// Starting app.
+log.info('Starting app.');
+// Node env.
+log.info(`NODE_ENV: ${process.env.NODE_ENV}`);
 // Log transaction.
 const morgan = require('morgan');
 // Body.
@@ -57,11 +61,6 @@ const routeCheckout = require('./routes/routeCheckout');
 const routeConfigProducts = require('./routes/routeConfigProducts');
 const routeTest = require('./routes/routeTest');
 const routeAdmin = require('./routes/routeAdmin');
-
-// Starting app.
-log.info('Starting app.');
-// Node env.
-log.info(`NODE_ENV: ${process.env.NODE_ENV}`);
 
 // Transaction log - no log in test mode.
 if (app.get('env') !== 'test') {

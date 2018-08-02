@@ -3,6 +3,7 @@ module.exports = {
     name: 'zunka_server',
     interpreter: "/usr/bin/node",
     script: './bin/www',
+    watch: false,
     env: {
       NODE_ENV: 'development'
     },

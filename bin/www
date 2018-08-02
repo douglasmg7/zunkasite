@@ -119,3 +119,7 @@ function onListeningSsl() {
     : 'port ' + addr.port;
   log.info('Https Listening on ' + bind);
 }
+
+process.on('SIGINT', () => {
+  log.info('SIGINT signal received. 0-0-0-0-0');
+})
