@@ -137,7 +137,6 @@ signs.forEach(signal=>{
 // Finish app.
 function finishApp() {
   log.info('Finishing app.');
-  // Stops the server from accepting new connections and finishes connections.
   // Close http server.
   server.close(function(err) {
     if (err) {
@@ -145,23 +144,23 @@ function finishApp() {
       process.exit(1)
     }
     log.info('Http server closed.')
+    // Close https server.
+    serverSsl.close(function(err) {
+      if (err) {
+        log.error(err.stack);
+        process.exit(1)
+      }
+      log.info('Https server closed.')
+      // Close mongoose. 
+      mongoose.connection.close(()=>{
+        // Close redis.
+        redis.quit(()=>{
+          log.info('Redis closed.')
+          log.info('App ended.');
+          // End app.
+          process.exit();
+        });
+      });
+    });
   });
-  // Close https server.
-  serverSsl.close(function(err) {
-    if (err) {
-      log.error(err.stack);
-      process.exit(1)
-    }
-    log.info('Https server closed.')
-  });
-  // Close mongoose. 
-  mongoose.connection.close();
-  // Close redis.
-  redis.quit();
-  // App End.
-  // Time to receive close events from dbs before exit.
-  setTimeout(()=>{
-    log.info('App ended.');
-    process.exit();
-  }, 10);
 }
