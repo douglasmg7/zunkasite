@@ -61,7 +61,7 @@ function normalizePort(val) {
   return false;
 }
 
-// Event listener for HTTP server "error" event.
+// Event listener for http server "error" event.
 function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
@@ -83,6 +83,8 @@ function onError(error) {
       throw error;
   }
 }
+
+// Event listener for https server "error" event.
 function onErrorSsl(error) {
   if (error.syscall !== 'listen') {
     throw error;
@@ -105,7 +107,7 @@ function onErrorSsl(error) {
   }
 }
 
-// Event listener for HTTP server "listening" event.
+// Event listener for http server "listening" event.
 function onListening() {
   var addr = server.address();
   var bind = typeof addr === 'string'
@@ -113,6 +115,8 @@ function onListening() {
     : 'port ' + addr.port;
   log.info('Http  Listening on ' + bind);
 }
+
+// Event listener for https server "listening" event.
 function onListeningSsl() {
   var addr = serverSsl.address();
   var bind = typeof addr === 'string'
@@ -121,9 +125,19 @@ function onListeningSsl() {
   log.info('Https Listening on ' + bind);
 }
 
-// Stops the server from accepting new connections and finishes connections.
-process.on('SIGINT', () => {
-  log.info('SIGINT signal received.');
+// Treat signals to close app.
+let signs = ['SIGINT', 'SIGTERM', 'SIGQUIT'];
+signs.forEach(signal=>{
+  process.on(signal, ()=>{
+    log.info(`${signal} signal received.`);
+    finishApp();
+  });
+});
+
+// Finish app.
+function finishApp() {
+  log.info('Finishing app.');
+  // Stops the server from accepting new connections and finishes connections.
   // Close http server.
   server.close(function(err) {
     if (err) {
@@ -150,4 +164,4 @@ process.on('SIGINT', () => {
     log.info('App ended.');
     process.exit();
   }, 10);
-})
+}
