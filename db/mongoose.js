@@ -1,7 +1,7 @@
 'use strict';
+const log = require('../config/log');
 const mongoose = require('mongoose');
 const dbConfig = require('../config/db');
-const log = require('../config/log');
 
 // Uri.
 let uri = null;
@@ -16,23 +16,27 @@ let options = {
 };
 mongoose.Promise = global.Promise;  // Set promise for mongoose uses.
 // Mongoose.
-mongoose.connect(uri, options, function(err){
+mongoose.connect(uri, options, function asdf(err){
   if (err) {
-    log.error('Mongoose connection error.', {err: err});
+    log.error(err.stack);
   }
 });
 // Error.
 mongoose.connection.on('error', function(err){
-  log.error('Mongoose connection error.', {err: err});
+  log.error(err.stack);
   process.exit(1);
 });
 // Success.
 mongoose.connection.once('open', function() {
   log.info('Connected to Mongoose.');
 });
+// Disconnected.
+mongoose.connection.on('disconnected', function(){
+  log.info("Mongoose disconnected.");
+});
 // Close.
 mongoose.connection.once('close', function() {
-  log.info('Mongoose connection close.');
+  log.info('Mongoose closed.');
 });
 
 module.exports = mongoose.connection;

@@ -1,7 +1,6 @@
 'use strict';
 const express = require('express');
 const router = express.Router();
-const dbConfig = require('../config/db');
 const passport = require('passport');
 const nodemailer = require('nodemailer');
 const soap = require('soap');
@@ -318,7 +317,7 @@ router.post('/payment/:order_id', (req, res, next)=>{
           // // Send email.
           // transporter.sendMail(mailOptions, function(err, info){
           //   if(err){
-          //     log.error(err, new Error().stack);
+          //     log.error(err.stack);
           //   } else {
           //     log.info(`Reset email sent to ${req.body.email}`);
           //   }
@@ -386,7 +385,7 @@ function estimateShipping(box, cb) {
   // Create soap.
   soap.createClient('http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?wsdl', (err, client)=>{
     if (err) {
-      log.error(err, new Error().stack);
+      log.error(err.stack);
       return cb(err);
     }
     // Argments.
@@ -410,12 +409,12 @@ function estimateShipping(box, cb) {
     // Call webservice.
     client.CalcPrecoPrazo(args, (err, result)=>{
       if (err) {
-        log.error(err, new Error().stack);
+        log.error(err.stack);
         return cb('Serviço indisponível');
       }
       // Result.
       if (result.CalcPrecoPrazoResult.Servicos.cServico[0].Erro !== '0') {
-        log.error('WS Correios: ' + result.CalcPrecoPrazoResult.Servicos.cServico[0].MsgErro, new Error().stack);
+        log.error(new Error('WS Correios: ' + result.CalcPrecoPrazoResult.Servicos.cServico[0].MsgErro).stack);
         return cb(result.CalcPrecoPrazoResult.Servicos.cServico[0].MsgErro);
       }
       return cb(null, result.CalcPrecoPrazoResult.Servicos.cServico[0]);

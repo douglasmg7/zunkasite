@@ -173,7 +173,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
         // Get list of uploaded images.
         fse.readdir(path.join(__dirname, '..', 'dist/img/', req.body.product._id), (err, files)=>{
           if (err) {
-            log.error(err + '\n', new Error().stack);
+            log.error(err.stack);
           } 
           else {
             // Remove uploaded images not in product images.
@@ -190,7 +190,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
                 // Remove uploaded image.
                 let fileToRemove = file;
                 fse.remove(path.join(__dirname, '..', 'dist/img/', req.body.product._id, fileToRemove), err=>{
-                  if (err) { log.error(ERROR().stack, err); }
+                  if (err) { log.error(err.stack); }
                 });
               }
             });
@@ -207,13 +207,13 @@ router.delete('/product/:_id', checkPermission, function(req, res) {
     .then(result=>{
       // Delete images dir.
       fse.remove(path.join(__dirname, '..', 'dist/img/', req.params._id), err=>{
-        if (err) { log.error(ERROR().stack, err); }
+        if (err) { log.error(err.stack); }
         res.json({});
         log.info(`Product ${req.params._id} deleted.`);
       });
     })
     .catch(err=>{
-      log.error(new Error().stack, err);
+      log.error(err.stack);
       res.json(err);
     });
 });
@@ -240,7 +240,7 @@ router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
   });
   // Err.
   form.on('error', function(err) {
-    log.error(`error uploading file: ${err}`);
+    log.error(err.stack);
     res.writeHead(413, {'connection': 'close', 'content-type': 'text/plain'});
     res.end(err);
     req.connection.destroy();
@@ -253,7 +253,7 @@ router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
   fse.ensureDir(DIR_IMG_PRODUCT, err=>{
     // Other erro than file alredy exist.
     if (err && err.code !== 'EEXIST') {
-      log.error(`Error creating path for uploaded images - err: ${err}`);
+      log.error(err.stack);
     } else {
       form.parse(req);
     }

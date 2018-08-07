@@ -80,12 +80,12 @@ router.post('/', checkPermission, function(req, res) {
   .then(result=>{
     // Create folder.
     fse.ensureDir(path.join(__dirname, '../dist/img', result.ops[0]._id.toString()), err=>{
-      if (err) { log.error(new Error().stack, err); }
+      if (err) { log.error(err.stack); }
     });
     // Send product inserted (client need the _id).
     res.json(result.ops[0]);
   }).catch(err=>{
-    log.error(err + '\n', new Error().stack)
+    log.error(err.stack)
     res.json('status: fail');
   });
 });
@@ -105,7 +105,7 @@ router.put('/:id', checkPermission, function(req, res) {
     // Get list of uploaded images.
     fse.readdir(path.join(__dirname, '..', 'dist/img/', product_id), (err, files)=>{
       if (err) {
-        log.error(err + '\n', new Error().stack);
+        log.error(err.stack);
       } 
       else {
         // Remove uploaded images not in product images.
@@ -122,7 +122,7 @@ router.put('/:id', checkPermission, function(req, res) {
             // Remove uploaded image.
             let fileToRemove = file;
             fse.remove(path.join(__dirname, '..', 'dist/img/', product_id, fileToRemove), err=>{
-              if (err) { log.error(ERROR().stack, err); }
+              if (err) { log.error(err.stack); }
             });
           }
         });
@@ -143,12 +143,12 @@ router.delete('/:_id', checkPermission, function(req, res) {
     .then(result=>{
       // Delete images dir.
       fse.remove(path.join(__dirname, '..', 'dist/img/', req.params._id), err=>{
-        if (err) { log.error(ERROR().stack, err); }
+        if (err) { log.error(err.stack); }
         res.json('status: success');
       });
     })
     .catch(err=>{
-      log.error(new Error().stack, err);
+      log.error(err.stack);
       res.json('status: fail');
     });
 });
@@ -175,7 +175,7 @@ router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
   });
   // Err.
   form.on('error', function(err) {
-    log.error(`error uploading file: ${err}`);
+    log.error(err.stack);
     res.writeHead(413, {'connection': 'close', 'content-type': 'text/plain'});
     res.end(err);
     req.connection.destroy();
@@ -188,7 +188,7 @@ router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
   fse.ensureDir(DIR_IMG_PRODUCT, err=>{
     // Other erro than file alredy exist.
     if (err && err.code !== 'EEXIST') {
-      log.error(`Error creating path for uploaded images - err: ${err}`);
+      log.error(err.stack);
     } else {
       form.parse(req);
     }
@@ -203,7 +203,7 @@ router.put('/remove-product-image/:_id/:urlImage', checkPermission, (req, res)=>
     // Remove file.
     fse.remove(IMAGE_PATH, err=>{
       if (err) { 
-        log.error(new Error().stack, err);
+        log.error(err.stack);
         res.json({'status': 'success'});
       }
       else {

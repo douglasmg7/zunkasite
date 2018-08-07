@@ -74,7 +74,7 @@ function getLastReqDate() {
       }
       // No expected error.
       else {
-        log.error('Error reading last request time from file', {err: err});
+        log.error(err.stack);
         process.nextTick(process.exit(1));
         // todo: entry test
       }
@@ -113,7 +113,8 @@ function reqWS() {
   // Request to ws.
   timer.begin('reqTime');
   request.get(url, (err, res, body) => {
-    if (err) {      log.error('Error making web service request', {err: err});
+    if (err) {      
+      log.error(err.stack);
       return;
     }
     timerAux = timer.end('reqTime');
@@ -124,7 +125,7 @@ function reqWS() {
     let xmlFile = XML_DIR + lastQuery.toISOString() + '--' + now.toISOString() + '.xml';
     fs.writeFile(xmlFile, body, (err)=>{
       if (err)
-        log.error('Error saving xml ws response to file.', {err: err, xml_file: xmlFile});
+        log.error(err.stack);
       else
         log.info('Xml ws reaponse saved to file.', {xml_file: xmlFile});
     // Write last query date to file.

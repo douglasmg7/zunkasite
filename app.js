@@ -87,12 +87,12 @@ app.use(stylus.middleware({
     })
 );
 
-// Livereload.
-if (app.get('env') === 'development') {
-  const livereload = require('livereload');
-  let livereloadServer = livereload.createServer({debug: false, exts: ['pug', 'styl', 'js', 'bundle']});
-  livereloadServer.watch([__dirname + "/views", __dirname + "/styl", __dirname + "/dist/js", __dirname + "/scripts"]);  
-}
+// // Livereload.
+// if (app.get('env') === 'development') {
+//   const livereload = require('livereload');
+//   let livereloadServer = livereload.createServer({debug: false, exts: ['pug', 'styl', 'js', 'bundle']});
+//   livereloadServer.watch([__dirname + "/views", __dirname + "/styl", __dirname + "/dist/js", __dirname + "/scripts"]);  
+// }
 
 // Rollup.
 app.use(rollup({
@@ -185,7 +185,7 @@ app.use(function(req, res, next) {
     if (req.cart.changed) {
       let cartKey = req.isAuthenticated() ? req.user.email : req.sessionID;
       redis.set(`cart:${cartKey}`, JSON.stringify(req.cart), (err)=>{
-        if (err) { log.error(err, new Error().stack) ;}
+        if (err) { log.error(new Error(err).stack) ;}
       });
     }
   })  

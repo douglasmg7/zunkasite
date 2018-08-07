@@ -79,7 +79,7 @@ router.get('/signin/:token', (req, res, next)=>{
   EmailConfirmation.findOne({ token: req.params.token }, (err, emailConfirmation)=>{
     // Internal error.
     if (err) { 
-      log.error(err, Error().stack);
+      log.error(err.stack);
       return res.render('user/signin', { nav: {}, warnMessage: 'Serviço indisponível.' ,successMessage: ''});
     }  
     // Found Email confirmation.    
@@ -95,10 +95,10 @@ router.get('/signin/:token', (req, res, next)=>{
       // Save.
       newUser.save((err, result)=>{
         if (err) { 
-          log.error(err, Error().stack);
+          log.error(err.stack);
           return res.render('user/signin', { nav: {}, warnMessage: 'Não foi possível confirmar o cadastro. Favor entrar em contato com o suporte técnico.', successMessage: '' });
         }
-        emailConfirmation.remove(err=>{ if (err) { log.error(err, new Error().stack); } });
+        emailConfirmation.remove(err=>{ if (err) { log.error(err.stack); } });
         return res.render('user/signin', { nav: {}, warnMessage: '', successMessage: 'Cadastro finalizado com sucesso.' });
       });  
     } 
@@ -183,7 +183,7 @@ router.post('/api/forgottenPassword', (req, res, next)=>{
         // Create token.
         crypto.randomBytes(20, function(err, buf) {
           if (err) { 
-            log.error(err, new Error().stack);
+            log.error(err.stack);
             req.flash('error', 'Serviço indisponível.');
             res.redirect('back');            
             return; 
@@ -196,7 +196,7 @@ router.post('/api/forgottenPassword', (req, res, next)=>{
           })
           .save(err=>{
             if (err) { 
-              log.error(err, new Error().stack);
+              log.error(err.stack);
               req.flash('error', 'Serviço indisponível.');
               res.redirect('back');            
               return; 
@@ -216,7 +216,7 @@ router.post('/api/forgottenPassword', (req, res, next)=>{
               // Send email com information to reset password.
               transporter.sendMail(mailOptions, function(err, info){
                 if(err){
-                  log.error(err, new Error().stack);
+                  log.error(err.stack);
                 } else {
                   log.info(`Reset email sent to ${req.body.email}`);
                 }

@@ -5,6 +5,7 @@ const https = require('https');
 const express = require('express');
 const fs = require('fs');
 const log = require('../config/log');
+const mongoose = require('mongoose');
 
 // Get ssh key and certificate.
 let sshOptions = {
@@ -121,5 +122,21 @@ function onListeningSsl() {
 }
 
 process.on('SIGINT', () => {
-  log.info('SIGINT signal received. 0-0-0-0-0');
+  log.info('SIGINT signal received.');
+  // Stops the server from accepting new connections and finishes connections.
+  server.close(function(err) {
+    if (err) {
+      log.error(err.stack);
+      process.exit(1)
+    }
+    log.info('Http server closed.')
+  });
+  serverSsl.close(function(err) {
+    if (err) {
+      log.error(err.stack);
+      process.exit(1)
+    }
+    log.info('Https server closed.')
+  });
+  mongoose.connection.close();
 })

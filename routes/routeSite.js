@@ -108,11 +108,11 @@ router.put('/cart/add/:_id', (req, res, next)=>{
       res.json({success: true});      
     // Not exist the product.
     } else {
-      log.error(`product ${req.params._id} not found to add to cart.`);
+      log.error(new Error(`product ${req.params._id} not found to add to cart.`).stack);
       res.status(404).send('Produto não encontrado na base de dados.');  
     }
   }).catch(err=>{
-    log.error(err, new Error().stack);
+    log.error(err.stack);
     res.status(404).send('Produto não encontrado na base de dados.');
   });  
 })

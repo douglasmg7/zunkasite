@@ -1,5 +1,7 @@
 Change 3088 port to 443 on production.
 
+Test forgotten password.
+
 Menu cart not update on cart page, when quantity products are changed.
 
 Verify app.log size rotation.

@@ -15,7 +15,7 @@ process.env.NODE_ENV === 'unitTest' ? url = dbConfig.urlUnitTest : url = dbConfi
 
 mongo.connect(url, (err, database)=>{
   if(err){
-    log.error('MongoDb connection error.', {err: err});
+    log.error(err.stack);
     process.exit(1);
   } else {
     state.db = database;

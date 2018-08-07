@@ -30,7 +30,7 @@ let url = `mongodb://${host}:${port}/${name}`;
 if (user) {
   url = `mongodb://${user}:${password}@${host}:${port}/${name}`;
 }
-// Log which db will use.
+// Log which db will be used.
 log.info(logMsg);
 // Configuration.
 const dbConfig = {
