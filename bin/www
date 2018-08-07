@@ -6,6 +6,7 @@ const express = require('express');
 const fs = require('fs');
 const log = require('../config/log');
 const mongoose = require('mongoose');
+const redis = require('../db/redis');
 
 // Get ssh key and certificate.
 let sshOptions = {
@@ -121,9 +122,10 @@ function onListeningSsl() {
   log.info('Https Listening on ' + bind);
 }
 
+// Stops the server from accepting new connections and finishes connections.
 process.on('SIGINT', () => {
   log.info('SIGINT signal received.');
-  // Stops the server from accepting new connections and finishes connections.
+  // Close http server.
   server.close(function(err) {
     if (err) {
       log.error(err.stack);
@@ -131,6 +133,7 @@ process.on('SIGINT', () => {
     }
     log.info('Http server closed.')
   });
+  // Close https server.
   serverSsl.close(function(err) {
     if (err) {
       log.error(err.stack);
@@ -138,5 +141,8 @@ process.on('SIGINT', () => {
     }
     log.info('Https server closed.')
   });
+  // Close mongoose. 
   mongoose.connection.close();
+  // Close redis.
+  redis.quit();
 })
