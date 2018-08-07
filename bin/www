@@ -39,7 +39,6 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
-
 // Create https server (change 3088 port to 443 on production).
 var portSsl = normalizePort(process.env.PORT_SSL || '3088');
 app.set('portSsl', portSsl);
@@ -145,4 +144,10 @@ process.on('SIGINT', () => {
   mongoose.connection.close();
   // Close redis.
   redis.quit();
+  // App End.
+  // Time to receive close events from dbs before exit.
+  setTimeout(()=>{
+    log.info('App ended.');
+    process.exit();
+  }, 10);
 })
