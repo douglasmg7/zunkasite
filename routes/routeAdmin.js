@@ -155,7 +155,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
         return next(err); 
       } else {
         log.info(`Produto ${newProduct._id} saved.`);
-        res.json({});
+        res.json({ isNew: true, product: newProduct });
       }
     });
   }

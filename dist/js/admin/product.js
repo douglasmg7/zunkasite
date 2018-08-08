@@ -63,6 +63,10 @@ var app = new Vue({
         // Server side error.
         if (response.data.err) {
           alert('Não foi possível salvar.');
+        // Saved.
+        }
+        if (response.data.isNew) {
+          window.location.href = `/admin/product/${response.data.product._id}`
         }
       })
       .catch(err => {

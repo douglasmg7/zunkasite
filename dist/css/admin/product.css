@@ -39,6 +39,45 @@ body .container {
 button,
 input {
   box-sizing: border-box;
+  padding-left: 0.5em;
+  border-radius: 0.2em;
+  border: solid 1px #aaa;
+  height: 2em;
+}
+button[type='button'],
+input[type='button'] {
+  color: #fff;
+  margin-top: 1em;
+}
+button[type='button'].green,
+input[type='button'].green {
+  background-color: #34b734;
+  border-color: #2ea32e;
+}
+button[type='button'].green:hover,
+input[type='button'].green:hover {
+  background-color: #288f28;
+  border-color: #217321;
+}
+button[type='button'].blue,
+input[type='button'].blue {
+  background-color: #3475b7;
+  border-color: #2e69a3;
+}
+button[type='button'].blue:hover,
+input[type='button'].blue:hover {
+  background-color: #285c8f;
+  border-color: #214a73;
+}
+button[type='button'].red,
+input[type='button'].red {
+  background-color: #b73434;
+  border-color: #a32e2e;
+}
+button[type='button'].red:hover,
+input[type='button'].red:hover {
+  background-color: #8f2828;
+  border-color: #732121;
 }
 .main-nav {
   font-size: 1em;
@@ -136,6 +175,7 @@ h3 {
 button {
   margin-top: 2em;
   margin-left: 3em;
+  min-width: 5em;
 }
 input,
 textarea {

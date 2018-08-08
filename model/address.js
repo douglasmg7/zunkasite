@@ -13,8 +13,9 @@ let schema = new mongoose.Schema({
   district: { type: String, default: '', required: true },
   city: { type: String, default: '', required: true },
   state: { type: String, default: '', required: true },
-  createdAt: { type: Date, default: Date.now },
-  modifiedAt: { type: Date, default: Date.now },
+},
+{
+  timestamps: true
 });
 
 module.exports = mongoose.model('Address', schema);

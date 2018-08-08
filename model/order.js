@@ -1,5 +1,6 @@
 'use strict';
 const mongoose = require('mongoose');
+
 // Schema - Address.
 let address = new mongoose.Schema({
   name: { type: String, required: true },       // Used by carrier for contact.
@@ -12,6 +13,7 @@ let address = new mongoose.Schema({
   city: { type: String, required: true },
   state: { type: String, required: true },
 });
+
 // Schema - Item.
 let item = new mongoose.Schema({
   _id: { type: String, required: true },
@@ -23,6 +25,7 @@ let item = new mongoose.Schema({
   width: { type: Number, required: true },
   weight: { type: Number, required: true },
 });
+
 // Schema - Correio result.
 let correioResult = new mongoose.Schema({
   Codigo: { type: Number },
@@ -38,6 +41,7 @@ let correioResult = new mongoose.Schema({
   ValorSemAdicionais: { type: String },
   obsFim: { type: String },
 });
+
 // Schema - Shipping box dimensions.
 let boxDimensions = new mongoose.Schema({
   length: { type: Number, required: true },
@@ -47,6 +51,7 @@ let boxDimensions = new mongoose.Schema({
   cepOrigin: { type: String, required: true },
   cepDestiny: { type: String, required: true },
 });
+
 // Schema - Shipping.
 let shipping = new mongoose.Schema({
   box: boxDimensions, // Approximately dimensions for box shipping.
@@ -57,10 +62,12 @@ let shipping = new mongoose.Schema({
   deadline: { type: Number },
   correioResult: correioResult, // Result from correio search ws for shipment price and deadline.
 });
+
 // Schema - Payment.
 let payment = new mongoose.Schema({
   paypal: { type: Object },
 });
+
 // Schema - timestamps.
 let timestamps = new mongoose.Schema({
   shippingAddressSelectedAt: { type: Date }, // When the user select the shipping address.

@@ -40,11 +40,10 @@ let product = new mongoose.Schema({
   storeProductDiscountEnable: { type: Boolean },
   storeProductDiscountType: { type: String },
   storeProductDiscountValue: { type: Number },
-  // isNewProduct: { type: Boolean , required: true},  // To know if product need be include on db or just saved.
-  images: [String],
-  // Default.
-  createdAt: { type: Date, default: Date.now },
-  modifiedAt: { type: Date, default: Date.now },
+  images: [String]
+},
+{
+  timestamps: true
 });
 
 product.pre('findOneAndUpdate', function(next){

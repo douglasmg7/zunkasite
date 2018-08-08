@@ -16,7 +16,7 @@ let options = {
 };
 mongoose.Promise = global.Promise;  // Set promise for mongoose uses.
 // Mongoose.
-mongoose.connect(uri, options, function asdf(err){
+mongoose.connect(uri, options, function(err){
   if (err) {
     log.error(err.stack);
   }
