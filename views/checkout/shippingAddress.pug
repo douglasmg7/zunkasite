@@ -28,7 +28,7 @@ html(lang="en")
             p {{address.district}}
             p {{address.city}}
             p {{address.state}}
-            button(@click='selectAddress(address._id)') Enviar para este endereço
+            input.green(type='button' @click='selectAddress(address._id)' value='Enviar para este endereço') 
         .form
           hr
           .field
@@ -81,7 +81,7 @@ html(lang="en")
             label(for='phone') Telefone
             input(type='text' name='phone' id='phone' v-model='newAddress.phone')                                                                                        
             p.validation(v-if='validation.phone') {{validation.phone}} 
-          button(@click='newAddressSelected()') Enviar para este endereço
+          input.green(type='button' @click='newAddressSelected()' value='Enviar para este endereço') 
   //- Make available for vue.
   script.
     let addresss = !{JSON.stringify(addresss)};

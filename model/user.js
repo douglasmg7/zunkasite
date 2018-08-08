@@ -10,9 +10,10 @@ let schema = new mongoose.Schema({
   mobileNumber: { type: String, default: '' },
   password: { type: String, required: true },
   group: { type: Array, required: true },
-  status: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
-  modifiedAt: { type: Date, default: Date.now },
+  status: { type: String, required: true }
+},
+{
+  timestamps: true
 });
 // Encrypt password.
 schema.methods.encryptPassword = function(password){

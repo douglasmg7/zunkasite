@@ -1,16 +1,12 @@
-Save again when create a new product not work.
-
 Change 3088 port to 443 on production.
 
 Test forgotten password.
-
-Menu cart not update on cart page, when quantity products are changed.
 
 Verify app.log size rotation.
 
 Reduce stock after order placed.
 
-Alter all createdAt and modifiedAt to timestamp.
+Some models not update update updatedAt.
 
 Price in R$2.412,09 into db to search.
 

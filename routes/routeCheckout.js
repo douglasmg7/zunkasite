@@ -299,6 +299,10 @@ router.post('/payment/:order_id', (req, res, next)=>{
           return next(err); 
         } else {
           res.json({});
+          // Update stock.
+          for (var i = 0; i < req.cart.products.length; i++) {
+            // Product.update({ _id: req.cart.products[i]._id }, { $inc: { dealerProductQtd: -1 }});
+          }
           // Clean cart.
           req.cart.clean();
           // Send email.

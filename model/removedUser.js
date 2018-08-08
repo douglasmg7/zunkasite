@@ -11,9 +11,10 @@ let schema = new mongoose.Schema({
   password: { type: String, required: true },
   group: { type: Array, required: true },
   status: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
-  modifiedAt: { type: Date, default: Date.now },
-  removedAt: { type: Date, default: Date.now },
+  removedAt: { type: Date, default: Date.now }
+},
+{
+  timestamps: true
 });
 // Encrypt password.
 schema.methods.encryptPassword = function(password){

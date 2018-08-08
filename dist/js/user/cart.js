@@ -13,8 +13,8 @@ var app = new Vue({
   },
   methods: {
     changeProductQtd(product){
-      console.log(product._id);
-      console.log(product.qtd);
+      // console.log(product._id);
+      // console.log(product.qtd);
       axios({
         method: 'put',
         url: `cart/change-qtd/${product._id}/${product.qtd}`,
@@ -23,7 +23,9 @@ var app = new Vue({
       .then((res)=>{
         // Success.
         if (res.data.success) {
-          this.cart = res.data.cart;          
+          this.cart = res.data.cart;
+          // Update nav-bar.
+          document.getElementById('cart-qtd').innerHTML = this.cart.totalQtd;
         }
       })
       .catch((err)=>{

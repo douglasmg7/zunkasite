@@ -24,7 +24,7 @@ html(lang="en")
           //- Detail.
           ul.product-detail(v-if='productDetail.length > 0')
             li(v-for='detail in productDetail') {{detail}}
-          button(@click='addToCart') Adicionar ao carrinho
+          input.green(type='button' @click='addToCart' value='Adicionar ao carrinho')
           .estimate-ship
             p Estimar frete e prazo (Entre com o CEP)
             input(type='text' id='cep' size='7' v-model='cepDestiny')
