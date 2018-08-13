@@ -1,30 +1,8 @@
 #!/usr/bin/env node
 'use strict';
-const expect = require('chai').expect;
-const mongo = require('mongodb').MongoClient;
-// personal modules
+const mongoose = require('../db/mongoose');
+const ProductCategories = require('../model/productCategorie');
 const log = require('../config/log');
-const dbConfig = require('../config/db');
-log.info('Inserindo lista de categoria dos produtos na base de dados, para uso em dropdowns.');
-// Connect to mongo.
-mongo.connect(dbConfig.url, (err, db)=>{
-  expect(err).to.equal(null);
-  const col = db.collection(dbConfig.collProductCategories);
-  // drop data
-  col.drop(()=>{
-    col.find().toArray((err, result)=>{
-      expect(err).to.equal(null);
-      expect(result.length).to.equal(0);
-      // insert categories
-      col.insertMany(categories, (err, result)=>{
-        expect(err).to.equal(null);
-        expect(result.insertedCount).to.equal(categories.length);
-        db.close();
-        log.info('Lista de categoria dos produtos inseridos com sucesso.');
-      });
-    });
-  });
-});
 
 const categories = [
   {name: 'Adaptadores', value: 'Adaptadores'},
@@ -57,3 +35,28 @@ const categories = [
   {name: 'Ventoinhas', value: 'Ventoinhas'},
   {name: 'Webcameras', value: 'Webcameras'}
 ];
+
+// Remove old values.
+log.info('Removing product categories.');
+ProductCategories.collection.deleteMany({}, err=>{
+  if (err) {
+    log.error(err.stack);
+    // Close mongoose. 
+    mongoose.close(()=>{
+      process.exit();
+    });
+  } else{
+    log.info('Inserting product categories.');
+    ProductCategories.collection.insertMany(categories, (err, res)=>{
+      if (err) {
+        log.error(err.stack);
+      } else{
+        log.info('Product categories inserted on db, to use into dropdowns.');
+      }
+      // Close mongoose. 
+      mongoose.close(()=>{
+        process.exit();
+      });
+    });
+  }
+});

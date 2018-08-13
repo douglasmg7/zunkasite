@@ -1,30 +1,8 @@
 #!/usr/bin/env node
 'use strict';
-const expect = require('chai').expect;
-const mongo = require('mongodb').MongoClient;
-// personal modules
+const mongoose = require('../db/mongoose');
+const ProductMaker = require('../model/productMaker');
 const log = require('../config/log');
-const dbConfig = require('../config/db');
-log.info('Inserindo lista de fabricantes dos produtos na base de dados, para uso em dropdowns.');
-// Connect to mongo.
-mongo.connect(dbConfig.url, (err, db)=>{
-  expect(err).to.equal(null);
-  const col = db.collection(dbConfig.collProductMakers);
-  // drop data
-  col.drop(()=>{
-    col.find().toArray((err, result)=>{
-      expect(err).to.equal(null);
-      expect(result.length).to.equal(0);
-      // insert makers
-      col.insertMany(makers, (err, result)=>{
-        expect(err).to.equal(null);
-        expect(result.insertedCount).to.equal(makers.length);
-        db.close();
-        log.info('Lista de fabricantes dos produtos inseridos com sucesso.');
-      });
-    });
-  });
-});
 
 const makers = [
   {name: 'Dell', value: 'Dell'},
@@ -40,3 +18,32 @@ const makers = [
   {name: 'TP-Link', value: 'TP-Link'},
   {name: 'D-link', value: 'D-link'}
 ];
+
+// Remove old values.
+log.info('Removing product makers.');
+ProductMaker.collection.deleteMany({}, err=>{
+  if (err) {
+    log.error(err.stack);
+    // Close mongoose. 
+    mongoose.close(()=>{
+      process.exit();
+    });
+  } else{
+    log.info('Inserting product makers.');
+    ProductMaker.collection.insertMany(makers, (err, res)=>{
+      if (err) {
+        log.error(err.stack);
+      } else{
+        log.info('Product makers inserted on db, to use into dropdowns.');
+      }
+      // Close mongoose. 
+      mongoose.close(()=>{
+        process.exit();
+      });
+    });
+  }
+});
+
+
+
+
