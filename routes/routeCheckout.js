@@ -281,6 +281,23 @@ router.get('/payment/:order_id', (req, res, next)=>{
 });
 
 // Select payment page.
+router.post('/update-stock', (req, res, next)=>{
+  // Update stock.
+  log.debug('Inside update-stock');
+  for (var i = 0; i < req.cart.products.length; i++) {
+    log.debug(`req.cart.products.length: ${req.cart.products.length}`);
+    log.debug(`req.cart.products[i]._id: ${req.cart.products[i]._id}`);
+    log.debug(`req.cart.products[i].qtd: ${req.cart.products[i].qtd}`);
+    Product.update({ _id: req.cart.products[i]._id }, { $inc: { dealerProductQtd: -1 * req.cart.products[i].qtd } }, err=>{
+      log.info(`err: ${err}`);
+    });
+  };  
+  // Clean cart.
+  req.cart.clean();
+  res.json({ success: true , cart: req.cart });
+});
+
+// Select payment page.
 router.post('/payment/:order_id', (req, res, next)=>{
   Order.findById(req.params.order_id, (err, order)=>{
     if (err) { return next(err); }
@@ -298,10 +315,13 @@ router.post('/payment/:order_id', (req, res, next)=>{
           res.json({err});
           return next(err); 
         } else {
-          res.json({});
           // Update stock.
           for (var i = 0; i < req.cart.products.length; i++) {
-            // Product.update({ _id: req.cart.products[i]._id }, { $inc: { dealerProductQtd: -1 }});
+            Product.update({ _id: req.cart.products[i]._id }, { $inc: { dealerProductQtd: -1 * req.cart.products[i].qtd } }, err=>{
+              if (err) {
+                log.error(err.stack);
+              }
+            });
           }
           // Clean cart.
           req.cart.clean();
@@ -326,6 +346,7 @@ router.post('/payment/:order_id', (req, res, next)=>{
           //     log.info(`Reset email sent to ${req.body.email}`);
           //   }
           // });
+          res.json({});
         }
       })
     }

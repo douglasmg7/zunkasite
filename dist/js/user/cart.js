@@ -54,7 +54,24 @@ var app = new Vue({
     },  
     selectAddress(){
       window.location.href = '/checkout/shipping-address';
-    }  
+    },
+    updateStock(){
+      axios({
+        method: 'post',
+        url: '/checkout/update-stock',
+        headers: {'csrf-token' : csrfToken},
+      })
+      .then((res)=>{
+        // Success.
+        if (res.data.success) {
+          this.cart = res.data.cart;          
+        }
+      })
+      .catch((err)=>{
+        alert('Erro interno, não foi possível atualizar o carrinho.');
+        console.error(`Error - removeProduct(), err: ${err}`);
+      });
+    },  
   },
   filters: { 
     currencyBr(value){ return accounting.formatMoney(value, "R$", 2, ".", ","); },

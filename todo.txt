@@ -4,8 +4,6 @@ Test forgotten password.
 
 Verify app.log size rotation.
 
-Reduce stock after order placed.
-
 Some models not update update updatedAt.
 
 Price in R$2.412,09 into db to search.
@@ -16,7 +14,7 @@ Remover senhas do servidor
 
 carrinho atualizar quando alterar o preço dos produtos.
 
-Não remover usuário quando ele pagar a conta, manter informações por questões de segurança.
+Não remover usuário quando ele remover a conta, manter informações por questões de segurança.
 
 Num of products to not commercialize must be in to a config, not harded coded
 
