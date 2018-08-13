@@ -32,7 +32,7 @@ var app = new Vue({
     getOrders(page=1){
       axios({
         method: 'get',
-        url: `/users/api/orders?page=${page}&search=${this.searchOrder}`,
+        url: `/user/api/orders?page=${page}&search=${this.searchOrder}`,
         headers:{'csrf-token' : csrfToken}
       })
       .then((res)=>{

@@ -55,6 +55,7 @@ var app = new Vue({
     selectAddress(){
       window.location.href = '/checkout/shipping-address';
     },
+    // used for test.
     updateStock(){
       axios({
         method: 'post',

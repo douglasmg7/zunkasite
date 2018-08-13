@@ -528,8 +528,6 @@ router.post('/access/delete-account', checkPermission, (req, res, next)=>{
           removedUser.password = user.password;
           removedUser.group = user.group;
           removedUser.status = user.status;
-          removedUser.createdAt = user.createdAt;
-          removedUser.modifiedAt = user.modifiedAt;
           // Save user removed for security reasons.
           removedUser.save(function(err) {
             if (err) { return next(err); } 

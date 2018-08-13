@@ -13,8 +13,10 @@ html(lang="en")
       .login
         h1 Identificação              
         p.success-message {{successMessage}}
-        input(type='text' v-model='email' placeholder='e-mail')
-        input(type='password' v-model='password' placeholder='senha')
+        label(for='email') E-mail
+        input(type='text' id='email' v-model='email')
+        label(for='password') Senha
+        input(type='password' id='password' v-model='password')
         p 
           a.find-password(href='/user/forgottenPassword') Esqueceu a senha?
         input.log(type='submit' value='Entrar' @click='signin()')

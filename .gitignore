@@ -7,5 +7,6 @@ bower_components/
 public/js/bundle*
 bin/xml/
 dist/img/
+dist/css/
 
 

@@ -176,7 +176,7 @@ main {
 .login button {
   height: 2em;
   border: 1px solid #d3d3d3;
-  margin-top: 0.5em;
+  margin-top: 0.2em;
   margin-bottom: 0.5em;
   padding-left: 1em;
   padding-right: 1em;
@@ -192,7 +192,6 @@ main {
   border-color: #204d74;
 }
 .login input.signup {
-  margin-top: 0.2em;
   color: #fff;
   background-color: #5bc0de;
   border-color: #46b8da;

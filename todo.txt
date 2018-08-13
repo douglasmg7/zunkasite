@@ -1,35 +1,15 @@
 Change 3088 port to 443 on production.
 
-Test forgotten password.
+Verify app.log size limit.
 
-Verify app.log size rotation.
-
-Some models not update update updatedAt.
-
-Price in R$2.412,09 into db to search.
-
-use canceledAt to filter orders.
+Some models not update updatedAt field.
 
 Remover senhas do servidor
 
 carrinho atualizar quando alterar o preço dos produtos.
 
-Não remover usuário quando ele remover a conta, manter informações por questões de segurança.
-
-Num of products to not commercialize must be in to a config, not harded coded
-
-npm packages
-rimraf
-webpack-dev-server
-
-https://www.npmjs.com/package/nodemailer-stub-transport
-
-Avoid user see order from other user.
+Alterar a forma de remover o usurio, just set flag on user, to keep all information for 2 months.
+After two months remove user and all information on other documents.
 
 Centralize all email configurations.
   - transporter
-
-User removed, must remove all info after two months.
-
-Insert label for input
-  signin
