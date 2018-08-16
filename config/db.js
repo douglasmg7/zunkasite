@@ -1,5 +1,9 @@
 'use strict';
 const log = require('./log');
+const s = require('./s');
+
+log.debug(`s: ${s.db.production.host}`);
+
 // Local development.
 // `mongodb://localhost:27017/zunkaTest`,
 let host = 'localhost';

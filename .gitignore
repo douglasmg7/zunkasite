@@ -8,5 +8,6 @@ public/js/bundle*
 bin/xml/
 dist/img/
 dist/css/
+config/s.js
 
-
+.gitsecret/keys/random_seed
