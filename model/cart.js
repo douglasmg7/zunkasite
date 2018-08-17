@@ -1,4 +1,7 @@
 'use strict';
+const log = require('../config/log');
+const mongoose = require('mongoose');
+const Product = require('./product');
 
 // Cart.
 module.exports = function Cart(cart) {
@@ -49,8 +52,11 @@ module.exports = function Cart(cart) {
       this.products.push({
         _id: product._id, 
         qtd: 1, 
+        showMsgOutOfStock: false, 
         title: product.storeProductTitle, 
         price: product.storeProductPrice, 
+        oldPrice: product.storeProductPrice, 
+        showMsgPriceChanged: false, 
         image: product.images[0],
         // Dimensions.
         length: product.storeProductLength,
@@ -68,11 +74,17 @@ module.exports = function Cart(cart) {
     for (var i = 0; i  < this.products.length; i++) {
       if (this.products[i]._id === productId) {
         this.products[i].qtd = parseInt(qtd, 10);
-        break;
+        // Verifiy stock.
+        Product.findById(this.products[i]._id, (err, product)=>{
+          if (this.products[i].qtd > product.qtd) {
+            this.products[i].qtd = product.qtd;
+            this.products[i].showMsgOutOfStock = true;
+          }
+          // Re-caluculate total quantity and price.
+          return this.update(cb);  
+        })
       }
     }
-    // Re-caluculate total quantity and price.
-    this.update(cb);  
   }
 
   // Remove product from cart.
@@ -118,5 +130,47 @@ module.exports = function Cart(cart) {
     // Re-caluculate total quantity and price.
     this.update();
     }
-  }  
+  }
+
+  // Update cart with new prices and stock.
+  this.updateCartPriceAndStock = function(cb){
+    let productsId = [];
+    // Get all products on cart.
+    for (var i = 0; i < this.products.length; i++) {
+      productsId.push(mongoose.Types.ObjectId(this.products[i]._id));
+    }
+    // Get all products into cart from db.
+    Product.find({'_id': { $in: productsId }}, (err, products)=>{
+      if (err) {
+        return cb(err);
+      }
+      // Map to product object to id.
+      let productsDbMap = new Map();
+      for (var i = 0; i < products.length; i++) {
+        productsDbMap.set(products[i]._id.toString(), products[i]);
+      }
+      // Verify itens with diferent price and out of stock.
+      for (var i = 0; i < this.products.length; i++) {
+        let cartProduct = this.products[i];
+        let dbProduct = productsDbMap.get(cartProduct._id);
+        // Different prices.
+        if (cartProduct.price !== dbProduct.storeProductPrice) {
+          log.debug(`Cart product: R$${cartProduct.price} and db product: R$${dbProduct.storeProductPrice} have different prices.`);
+          // Price changed again and user not receive the message yet.
+          if (cartProduct.showMsgPriceChanged) {
+            cartProduct.price = dbProduct.storeProductPrice;
+          // Price changed once.
+          } else {
+            cartProduct.oldPrice = cartProduct.price;
+            cartProduct.price = dbProduct.storeProductPrice;
+            cartProduct.showMsgPriceChanged = true;
+          }
+        }
+        if (dbProduct.dealerProductQtd < cartProduct.qtd) {
+          log.debug(`Product db: ${dbProduct._id} out of stock.`);
+        }
+      }
+      this.update(cb);
+    });
+  }
 }

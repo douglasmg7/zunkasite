@@ -13,7 +13,7 @@ html(lang="en")
       .cart-empty(v-if='!cart.products.length')
         h2 Ainda não existem produtos no seu carrinho de compras
       .cart(v-if='cart.products.length')
-        h2 Carrinho de compras
+        h2 Carrinho de compras          
         table
           thead
             tr
@@ -42,10 +42,25 @@ html(lang="en")
           h3
             strong Subtotal ({{ cart.totalQtd }} {{ cart.totalQtd > 1 ? 'itens): ' : 'item): ' }}
             span {{ cart.totalPrice | currencyBr }}
-            input.green(type='button' value='continuar' @click='selectAddress()')
+            input.green(type='button' value='Continuar' @click='selectAddress()')
             //- Used for test.
             //- input.green(type='button' value='Update stock' @click='updateStock()')
           p O preço e a disponibilidade dos itens na loja estão sujetios a mudanças. O carrinho é um local temporário para guardar a lista de seus ítens e reflete o preço mais recente.
+      .modal(v-if='showModal')
+        .modal-content
+          h2 Alteração no carrinho de compras
+          h4 Alguns produtos do seu carrinho de compras tiveram alteração de preço.
+          table
+            tbody
+              tr(v-for='product in cart.products' data-product_id='product._id')
+                td: a(:href='`/product/${product._id}`'): img.product(:src='`/img/${product._id}/${product.image}`')
+                td: p.title {{ product.title }}
+                td
+                  span De&nbsp
+                  span.price {{ product.oldPrice | currencyBr }} 
+                  span para 
+                  span.price {{ product.price | currencyBr }}
+          input.green(type='button' @click='userReceiveMsgCartChanged()' value='Ok')
   script.
     // Make available for vue.
     let csrfToken = !{JSON.stringify(csrfToken)};

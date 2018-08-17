@@ -2,7 +2,6 @@
 const express = require('express');
 const router = express.Router();
 const log = require('../config/log');
-const mongoose = require('mongoose');
 // Models.
 const Product = require('../model/product');
 // Max product quantity by Page.
@@ -80,7 +79,7 @@ router.get('/api/product/:_id', function(req, res, next) {
 // Cart page.
 router.get('/cart', (req, res, next)=>{
   // log.info('req.session', JSON.stringify(req.session));
-  updateCart(req.cart, err=>{
+  req.cart.updateCartPriceAndStock(err=>{
     if (err) {
       log.error(err.stack);
       return next(err);
@@ -93,39 +92,6 @@ router.get('/cart', (req, res, next)=>{
     });
   });
 })
-
-// Update cart with new prices and remove itens out of stock.
-function updateCart(cart, cb){
-  let productsId = [];
-  // Get all products on cart.
-  for (var i = 0; i < cart.products.length; i++) {
-    productsId.push(mongoose.Types.ObjectId(cart.products[i]._id));
-  }
-  // Get all products into cart from db.
-  Product.find({'_id': { $in: productsId }}, (err, products)=>{
-    if (err) {
-      return cb(err);
-    }
-    // Map to product object to id.
-    let productsDbMap = new Map();
-    for (var i = 0; i < products.length; i++) {
-      productsDbMap.set(products[i]._id.toString(), products[i]);
-    }
-    // Verify itens with diferent price and out of stock.
-    for (var i = 0; i < cart.products.length; i++) {
-      let cartProduct = cart.products[i];
-      let dbProduct = productsDbMap.get(cartProduct._id);
-      // Different prices.
-      if (cartProduct.price !== dbProduct.storeProductPrice) {
-        log.debug(`Cart product: R$${cartProduct.price} and db product: R$${dbProduct.storeProductPrice} have different prices.`);
-      }
-      if (dbProduct.dealerProductQtd < cartProduct.qtd) {
-        log.debug(`Product db: ${dbProduct._id} out of stock.`);
-      }
-    }
-    cb(null);
-  });
-}
 
 // Add product to cart.
 router.put('/cart/add/:_id', (req, res, next)=>{

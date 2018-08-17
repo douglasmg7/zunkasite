@@ -9,7 +9,18 @@ var app = new Vue({
     // user.
     user: user,
     // Cart.
-    cart: cart
+    cart: cart,
+    // Show modal.
+    showModal: false
+  },
+  created(){
+    // If need show msg cart changed by the system.
+    for (var i = 0; i < cart.products.length; i++) {
+      if (cart.products[i].showMsgPriceChanged) {
+        this.showModal = true;
+        return;
+      }
+    }
   },
   methods: {
     changeProductQtd(product){
@@ -57,6 +68,26 @@ var app = new Vue({
     },
     // used for test.
     updateStock(){
+      axios({
+        method: 'post',
+        url: '/checkout/update-stock',
+        headers: {'csrf-token' : csrfToken},
+      })
+      .then((res)=>{
+        // Success.
+        if (res.data.success) {
+          this.cart = res.data.cart;          
+        }
+      })
+      .catch((err)=>{
+        alert('Erro interno, não foi possível atualizar o carrinho.');
+        console.error(`Error - removeProduct(), err: ${err}`);
+      });
+    },  
+    // user receive msg that cart was change.
+    userReceiveMsgCartChanged(){
+      this.showModal = false;
+      return;
       axios({
         method: 'post',
         url: '/checkout/update-stock',
