@@ -4,8 +4,6 @@ Verify app.log size limit.
 
 Some models not update updatedAt field.
 
-Remover senhas do servidor
-
 carrinho atualizar quando alterar o preço dos produtos.
 
 Alterar a forma de remover o usurio, just set flag on user, to keep all information for 2 months.
@@ -13,3 +11,5 @@ After two months remove user and all information on other documents.
 
 Centralize all email configurations.
   - transporter
+
+run: "git secret hide" when change s.js
