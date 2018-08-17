@@ -49,10 +49,10 @@ html(lang="en")
       .modal(v-if='showModal')
         .modal-content
           h2 Alteração no carrinho de compras
-          h4 Alguns produtos do seu carrinho de compras tiveram alteração de preço.
+          h3 Produtos com alteração de preço.
           table
             tbody
-              tr(v-for='product in cart.products' data-product_id='product._id')
+              tr(v-for='product in cart.products' v-if='product.showMsgPriceChanged' data-product_id='product._id')
                 td: a(:href='`/product/${product._id}`'): img.product(:src='`/img/${product._id}/${product.image}`')
                 td: p.title {{ product.title }}
                 td
@@ -60,6 +60,17 @@ html(lang="en")
                   span.price {{ product.oldPrice | currencyBr }} 
                   span para 
                   span.price {{ product.price | currencyBr }}
+          h3 Produtos com alteração de quantidade devido ao estoque.
+          table
+            tbody
+              tr(v-for='product in cart.products' v-if='product.showMsgQtdChanged' data-product_id='product._id')
+                td: a(:href='`/product/${product._id}`'): img.product(:src='`/img/${product._id}/${product.image}`')
+                td: p.title {{ product.title }}
+                td
+                  span De&nbsp
+                  span.qtd {{ product.oldQtd }} 
+                  span para 
+                  span.qtd {{ product.qtd }}
           input.green(type='button' @click='userReceiveMsgCartChanged()' value='Ok')
   script.
     // Make available for vue.

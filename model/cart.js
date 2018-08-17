@@ -9,11 +9,13 @@ module.exports = function Cart(cart) {
     this.totalQtd = cart.totalQtd;
     this.totalPrice = cart.totalPrice;
     this.products = cart.products;
+    this.removedProducts = cart.removedProducts;
   } 
   else {
     this.totalQtd = 0;
     this.totalPrice = 0;
     this.products = [];
+    this.removedProducts = [];
   }
   this.changed = false;
 
@@ -52,7 +54,8 @@ module.exports = function Cart(cart) {
       this.products.push({
         _id: product._id, 
         qtd: 1, 
-        showMsgOutOfStock: false, 
+        oldQtd: 1, 
+        showMsgQtdChanged: false, 
         title: product.storeProductTitle, 
         price: product.storeProductPrice, 
         oldPrice: product.storeProductPrice, 
@@ -71,14 +74,26 @@ module.exports = function Cart(cart) {
 
   // Change product quantity from cart.
   this.changeProductQtd = function(productId, qtd, cb){
-    for (var i = 0; i  < this.products.length; i++) {
+    for (let i = 0; i  < this.products.length; i++) {
       if (this.products[i]._id === productId) {
         this.products[i].qtd = parseInt(qtd, 10);
         // Verifiy stock.
         Product.findById(this.products[i]._id, (err, product)=>{
-          if (this.products[i].qtd > product.qtd) {
-            this.products[i].qtd = product.qtd;
-            this.products[i].showMsgOutOfStock = true;
+          if (err) {
+            return cb(err);
+          }
+          // Out of stock.
+          if (product.dealerProductQtd <= 0) {
+            this.removeProduct.push(this.products[i]);
+            this.products[i].splice(i, 1);
+            this.products[i].showMsgQtdChanged = true;
+            // decrement i.
+          }
+          // Stock less than required quatity. 
+          else if (this.products[i].qtd > product.dealerProductQtd) {
+            this.products[i].oldQtd = this.products[i].qtd;
+            this.products[i].qtd = product.dealerProductQtd;
+            this.products[i].showMsgQtdChanged = true;
           }
           // Re-caluculate total quantity and price.
           return this.update(cb);  
