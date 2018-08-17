@@ -1,9 +1,6 @@
 'use strict';
 const log = require('./log');
 const s = require('./s');
-
-log.debug(`s: ${s.db.production.host}`);
-
 // Local development.
 // `mongodb://localhost:27017/zunkaTest`,
 let host = 'localhost';
@@ -16,16 +13,21 @@ let logMsg = 'Using local db.';
 // mLab.
 if (process.env.DB === 'mlab') {
   // 'mongodb://mammoth:mammuthus@ds159371.mlab.com:59371/mammoth',
-  host = 'ds159371.mlab.com';
-  port = '59371';
-  name = 'mammoth';
-  user = 'mammoth';
-  password = 'mammuthus';
+  host = s.db.mlab.host;
+  port = s.db.mlab.port;
+  name = s.db.mlab.name;
+  user = s.db.mlab.user;
+  password = s.db.mlab.password;
   logMsg = 'Using mLab db.';
 
 // Production.
 } else if (process.env.DB === 'production') {
-  throw new Error('Production database not defined.');
+  host = s.db.production.host;
+  port = s.db.production.port;
+  name = s.db.production.name;
+  user = s.db.production.user;
+  password = s.db.production.password;
+  logMsg = 'Using production db.';
 }
 
 // Connection string url - 'mongodb://username:password@host:port/Database'.
