@@ -48,7 +48,7 @@ const log = createLogger({
         format.printf(info=>`${info.timestamp}  ${info.level.padEnd(5)}  ${info.message}`)
         // format.printf(info=>colors[levelColors[info.level]](`${info.timestamp}  ${info.level.padEnd(5)}  ${info.message}`))
       ),
-      maxsize: 10000,
+      maxsize: 100 * 1000,
       maxFiles: 20,
       // pid: 2323
     })

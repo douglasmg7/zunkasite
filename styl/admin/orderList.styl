@@ -8,10 +8,10 @@ main
   margin 1em auto
   width 95%
   max-width 1000px
-  .breadlink
+  > .breadlink
     a
       text-decoration none
-  header
+  > header
     // background-color lightyellow
     margin-bottom 1em
     display flex
@@ -23,16 +23,19 @@ main
     .search-order
       button
         margin-left .5em
-        height 2.3em
-  .filter
+        // height 2em
+  > .filter
     background-color $veryLightGray
     display flex
-    padding .2em
+    align-items center
     input
-      margin-right .4em
+      margin 0 .4em
+      height 2em
+      &:first-child
+       margin-left .8em
     label
       margin-right 1em        
-  table
+  > table
     margin-top 1em
     border-bottom solid 1px lightgray
     border-spacing 0
@@ -52,25 +55,30 @@ main
       background-color #F2DEDE
     tr.product-commercialize.product-active
       background-color #bdffbd
-  .modal
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ 
-    .modal-content
-      background-color: #fefefe;
-      margin: 10% auto;
-      padding: 1em;
-      border-radius: .1em
+  > .modal
+    position fixed /* Stay in place */
+    z-index 1 /* Sit on top */
+    left 0
+    top 0
+    width 100% /* Full width */
+    height 100% /* Full height */
+    overflow auto /* Enable scroll if needed */
+    background-color rgb(0,0,0) /* Fallback color */
+    background-color rgba(0,0,0,0.4) /* Black w/ opacity */ 
+    display flex
+    flex-flow column nowrap
+    align-items center
+    > .modal-content
+      background-color #fefefe
+      margin 10% auto
+      padding 1em
+      border-radius .1em
       display flex
       flex-flow column nowrap
-      justify-content center
-      max-width 600px
+      justify-content flex-start
+      min-width 400px
+      // justify-content center
+      // max-width 600px
       .price
         color $RED_PRICE
       .quantity

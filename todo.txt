@@ -1,12 +1,8 @@
-Admin product list is red for disponiable itens.
-
 Change 3088 port to 443 on production.
 
 Verify app.log size limit.
 
 Some models not update updatedAt field.
-
-carrinho atualizar quando alterar o preço dos produtos.
 
 Alterar a forma de remover o usurio, just set flag on user, to keep all information for 2 months.
 After two months remove user and all information on other documents.
