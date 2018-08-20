@@ -25,13 +25,13 @@ html(lang="en")
             tr(
               v-for='product in products', 
               @click='goToProductPage(product._id)',
-              :class='{"product-commercialize": product.storeProductCommercialize, "product-active": product.dealerProductActive && (product.dealerProductQtd > 5)}'
+              :class='{"product-commercialize": product.storeProductCommercialize, "product-active": product.storeProductActive && (product.storeProductQtd > 0) && (product.storeProductPrice > 0)}'
             )
               td {{product.storeProductId}}
               td {{product.storeProductTitle}}
               td {{product.dealerName}}
-              td {{product.dealerProductLocation}}
-              td {{product.dealerProductQtd}}
+              td {{product.storeProductLocation}}
+              td {{product.storeProductQtd}}
               td {{product.storeProductPrice | formatMoney}}    
         nav.pagination
           a(v-for='p in pageCount', @click='getProducts(p)', :page='page==p', :p='p', :active='page==p') {{p}}

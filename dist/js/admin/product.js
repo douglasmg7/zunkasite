@@ -10,8 +10,8 @@ var app = new Vue({
     validation: { 
       storeProductDiscountValue: '',
       storeProductMarkup: '',
-      dealerProductPrice: '',
-      dealerProductQtd: '',
+      storeProductPrice: '',
+      storeProductQtd: '',
       storeProductHeight: '',
       storeProductLength: '',
       storeProductWeight: '',
@@ -22,7 +22,7 @@ var app = new Vue({
     // // Calculate final price with discount.
     calcFinalPrice(){
       // Price with markup.
-      let priceWithMarkup = product.dealerProductPrice * (product.storeProductMarkup / 100 + 1)
+      let priceWithMarkup = product.storeProductPrice * (product.storeProductMarkup / 100 + 1)
       // Use discount.
       if(product.storeProductDiscountEnable){
         // Use percentage.

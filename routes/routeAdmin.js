@@ -77,8 +77,10 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
     productPromise = new Promise(function(resolve, reject){
       // Create a new product.
       let product = new Product({
+        dealerName: '',
         storeProductId: '',
         storeProductTitle: '',
+        storeProductActive: true,
         storeProductCommercialize: false,
         storeProductDetail: '',
         storeProductDescription: '',
@@ -91,8 +93,8 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
         storeProductDiscountEnable: false,
         storeProductDiscountType: '%',
         storeProductDiscountValue: 0,
-        dealerProductQtd: 0,
-        dealerProductPrice: 0,
+        storeProductQtd: 0,
+        storeProductPrice: 0,
         removeUploadedImage: false,
       });
       resolve(product);
@@ -124,13 +126,13 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
   // Form validation, true for valid value.
   let validation = {};
   // Price.
-  validation.dealerProductPrice = req.body.product.dealerProductPrice >= 0 ? undefined : 'Valor inválido';
+  validation.storeProductPrice = req.body.product.storeProductPrice >= 0 ? undefined : 'Valor inválido';
   // Markup.
   validation.storeProductMarkup = req.body.product.storeProductMarkup >= 0 ? undefined : 'Valor inválido'; 
   // Discount.
   validation.storeProductDiscountValue = req.body.product.storeProductDiscountValue >= 0 ? undefined: 'Valor inválido';
   // Quantity.
-  validation.dealerProductQtd = req.body.product.dealerProductQtd >= 0 ? undefined: 'Valor inválido';
+  validation.storeProductQtd = req.body.product.storeProductQtd >= 0 ? undefined: 'Valor inválido';
   // Length.
   validation.storeProductLength = req.body.product.storeProductLength >= 0 ? undefined: 'Valor inválido';
   // Height.

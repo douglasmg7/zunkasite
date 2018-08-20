@@ -99,8 +99,8 @@ html(lang="en")
           //- Dealer price.
           .field
             label(for='dealerPrice') Fornecedor (R$)
-            input.input-money(type='text' id='dealerPrice' v-model='product.dealerProductPrice' v-on:input='calcFinalPrice()')
-            p.validation(v-if='validation.dealerProductPrice') {{validation.dealerProductPrice}}
+            input.input-money(type='text' id='dealerPrice' v-model='product.storeProductPrice' v-on:input='calcFinalPrice()')
+            p.validation(v-if='validation.storeProductPrice') {{validation.storeProductPrice}}
           //- Markup.
           .field
             label(for='markup') Lucro (%)
@@ -128,8 +128,8 @@ html(lang="en")
             label(for='commercialize') Comercializar produto
           .field
             label(for='stock') Estoque (Unidade)
-            input(type='text' id='stock' v-model='product.dealerProductQtd')
-            p.validation(v-if='validation.dealerProductQtd') {{validation.dealerProductQtd}}
+            input(type='text' id='stock' v-model='product.storeProductQtd')
+            p.validation(v-if='validation.storeProductQtd') {{validation.storeProductQtd}}
           .field.buttons
             button.red(type='button' v-on:click='deleteProduct()') Apagar
             button.green(type='button' v-on:click='saveProduct()') Salvar

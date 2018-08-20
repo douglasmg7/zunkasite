@@ -83,15 +83,15 @@ module.exports = function Cart(cart) {
             return cb(err);
           }
           // Out of stock.
-          if (product.dealerProductQtd <= 0) {
+          if (product.storeProductQtd <= 0) {
             this.removeProduct.push(this.products[i]);
             this.products[i].splice(i, 1);
             this.products[i].showMsgQtdChanged = true;
           }
           // Stock less than required quatity. 
-          else if (this.products[i].qtd > product.dealerProductQtd) {
+          else if (this.products[i].qtd > product.storeProductQtd) {
             this.products[i].oldQtd = this.products[i].qtd;
-            this.products[i].qtd = product.dealerProductQtd;
+            this.products[i].qtd = product.storeProductQtd;
             this.products[i].showMsgQtdChanged = true;
           }
           // Re-caluculate total quantity and price.
@@ -167,23 +167,23 @@ module.exports = function Cart(cart) {
       for (var i = 0; i < this.products.length; i++) {
         let dbProduct = productsDbMap.get(this.products[i]._id);
         // Out of stock.
-        if (dbProduct.dealerProductQtd <= 0) {
+        if (dbProduct.storeProductQtd <= 0) {
           this.removedProducts.push(this.products[i]);
           this.products.splice(i, 1);
           i--;
           continue;
         }
         // Stock less than required quatity. 
-        else if (this.products[i].qtd > dbProduct.dealerProductQtd) {
+        else if (this.products[i].qtd > dbProduct.storeProductQtd) {
           // Price alredy changed.
           if (this.products[i].showMsgQtdChanged) {
             this.products[i].oldQtd = this.products[i].qtd;
-            this.products[i].qtd = dbProduct.dealerProductQtd;
+            this.products[i].qtd = dbProduct.storeProductQtd;
             this.products[i].showMsgQtdChanged = true;
           }
           // Price change once.
           else {
-            this.products[i].qtd = dbProduct.dealerProductQtd;
+            this.products[i].qtd = dbProduct.storeProductQtd;
           }
         }
         // Different prices.

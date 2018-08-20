@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 // Product.
 let product = new mongoose.Schema({
   // Dealer.
-  dealer: { type: String },   // Dealer name.
+  dealerName: { type: String },   // Dealer name.
   dealerProductId: { type: String },
   dealerProductTitle: { type: String },
   dealerProductLastUpdate: { type: Date },
@@ -17,11 +17,11 @@ let product = new mongoose.Schema({
   dealerProductWeight: { type: Number },   // Weight in grams.
   dealerProductActive: { type: Boolean },
   dealerProductCommercialize: { type: Boolean },
-  dealerProductQtd: { type: Number },
   dealerProductPrice: { type: Number },
   // Store.
   storeProductId: { type: String },
   storeProductTitle: { type: String },
+  storeProductActive: { type: Boolean },
   storeProductCommercialize: { type: Boolean },
   storeProductDetail: { type: String },
   storeProductDescription: { type: String },
@@ -31,6 +31,7 @@ let product = new mongoose.Schema({
   storeProductCategory: { type: String },
   storeProductWarrantyDays: { type: Number},  // Warrant in days.
   storeProductWarrantyDetail: { type: String},
+  sotreProductLocation: { type: String },  // Product location (ES, MG, RJ, etc...)
   storeProductLength: { type: Number, required: true },    // Length in cm.  
   storeProductHeight: { type: Number, required: true },  // Height in cm.
   storeProductWidth: { type: Number, required: true },   // Width in cm.
@@ -40,6 +41,7 @@ let product = new mongoose.Schema({
   storeProductDiscountEnable: { type: Boolean },
   storeProductDiscountType: { type: String },
   storeProductDiscountValue: { type: Number },
+  storeProductQtd: { type: Number, required: true},
   images: [String]
 },
 {
