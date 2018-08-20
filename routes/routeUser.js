@@ -5,7 +5,7 @@ const router = express.Router();
 const passport = require('passport');
 const bcrypt = require('bcrypt-nodejs');
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
+const transporter = require('../config/transporter');
 // Personal modules.
 const log = require('../config/log');
 const User = require('../model/user');
@@ -17,17 +17,6 @@ const Order = require('../model/order');
 
 // Quantity of orders per page.
 const ORDER_QTD_BY_PAGE = 10;
-
-// Transporter object using the default SMTP transport.
-let transporter = nodemailer.createTransport({
-    host: 'smtps.dialhost.com.br',
-    port: 587,
-    // secure:true for port 465, secure:false for port 587
-    auth: {
-        user: 'dev@zunka.com.br',
-        pass: 'SergioMiranda1'
-    }
-});
 
 
 /****************************************************************************** 

@@ -5,23 +5,12 @@ const LocalStrategy = require('passport-local').Strategy;
 const redis = require('../db/redis');
 const bcrypt = require('bcrypt-nodejs');
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
+const transporter = require('./transporter');
 // My moudles.
 const log = require('./log');
 const Cart = require('../model/cart');
 const User = require('../model/user');
 const EmailConfirmation = require('../model/emailConfirmation')
-
-// Transporter object using the default SMTP transport.
-let transporter = nodemailer.createTransport({
-    host: 'smtps.dialhost.com.br',
-    port: 587,
-    // secure:true for port 465, secure:false for port 587
-    auth: {
-        user: 'dev@zunka.com.br',
-        pass: 'SergioMiranda1'
-    }
-});
 
 // How to save user id on the session.
 passport.serializeUser(function(user, done) {

@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const nodemailer = require('nodemailer');
+const transporter = require('../config/transporter');
 const soap = require('soap');
 // const https = require('https');
 // const request = require('request');
@@ -44,17 +44,6 @@ function checkNotLogged (req, res, next) {
   }
   res.redirect('/');
 }
-
-// Transporter object using the default SMTP transport.
-let transporter = nodemailer.createTransport({
-    host: 'smtps.dialhost.com.br',
-    port: 587,
-    // secure:true for port 465, secure:false for port 587
-    auth: {
-        user: 'dev@zunka.com.br',
-        pass: 'SergioMiranda1'
-    }
-});
 
 // Shipping address page.
 router.get('/shipping-address', (req, res, next)=>{
