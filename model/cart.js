@@ -87,7 +87,6 @@ module.exports = function Cart(cart) {
             this.removeProduct.push(this.products[i]);
             this.products[i].splice(i, 1);
             this.products[i].showMsgQtdChanged = true;
-            // decrement i.
           }
           // Stock less than required quatity. 
           else if (this.products[i].qtd > product.dealerProductQtd) {
@@ -166,26 +165,50 @@ module.exports = function Cart(cart) {
       }
       // Verify itens with diferent price and out of stock.
       for (var i = 0; i < this.products.length; i++) {
-        let cartProduct = this.products[i];
-        let dbProduct = productsDbMap.get(cartProduct._id);
-        // Different prices.
-        if (cartProduct.price !== dbProduct.storeProductPrice) {
-          log.debug(`Cart product: R$${cartProduct.price} and db product: R$${dbProduct.storeProductPrice} have different prices.`);
-          // Price changed again and user not receive the message yet.
-          if (cartProduct.showMsgPriceChanged) {
-            cartProduct.price = dbProduct.storeProductPrice;
-          // Price changed once.
-          } else {
-            cartProduct.oldPrice = cartProduct.price;
-            cartProduct.price = dbProduct.storeProductPrice;
-            cartProduct.showMsgPriceChanged = true;
+        let dbProduct = productsDbMap.get(this.products[i]._id);
+        // Out of stock.
+        if (dbProduct.dealerProductQtd <= 0) {
+          this.removedProducts.push(this.products[i]);
+          this.products.splice(i, 1);
+          i--;
+          continue;
+        }
+        // Stock less than required quatity. 
+        else if (this.products[i].qtd > dbProduct.dealerProductQtd) {
+          // Price alredy changed.
+          if (this.products[i].showMsgQtdChanged) {
+            this.products[i].oldQtd = this.products[i].qtd;
+            this.products[i].qtd = dbProduct.dealerProductQtd;
+            this.products[i].showMsgQtdChanged = true;
+          }
+          // Price change once.
+          else {
+            this.products[i].qtd = dbProduct.dealerProductQtd;
           }
         }
-        if (dbProduct.dealerProductQtd < cartProduct.qtd) {
-          log.debug(`Product db: ${dbProduct._id} out of stock.`);
+        // Different prices.
+        if (this.products[i].price !== dbProduct.storeProductPrice) {
+          // Price changed again and user not receive the message yet.
+          if (this.products[i].showMsgPriceChanged) {
+            this.products[i].price = dbProduct.storeProductPrice;
+          // Price changed once.
+          } else {
+            this.products[i].oldPrice = this.products[i].price;
+            this.products[i].price = dbProduct.storeProductPrice;
+            this.products[i].showMsgPriceChanged = true;
+          }
         }
       }
       this.update(cb);
     });
+  },
+  // Clean messages shown to client and removed products.
+  this.cleanAlertMsg = function(cb){
+    this.removedProducts = [];
+    for (var i = 0; i < this.products.length; i++) {
+      this.products[i].showMsgPriceChanged = false;
+      this.products[i].showMsgQtdChanged = false;
+    }
+    this.update(cb);
   }
 }

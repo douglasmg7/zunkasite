@@ -15,14 +15,20 @@ var app = new Vue({
   },
   created(){
     // If need show msg cart changed by the system.
-    for (var i = 0; i < cart.products.length; i++) {
-      if (cart.products[i].showMsgPriceChanged) {
-        this.showModal = true;
-        return;
-      }
-    }
+    this.isServerChangedCart();
   },
   methods: {
+    isServerChangedCart(){
+      // If need show msg cart changed by the system.
+      if (cart.removedProducts.length > 0) {
+          return this.showModal = true;
+      }
+      for (var i = 0; i < cart.products.length; i++) {
+        if (cart.products[i].showMsgPriceChanged || cart.products[i].showMsgQtdChanged) {
+          return this.showModal = true;
+        }
+      }
+    },
     changeProductQtd(product){
       // console.log(product._id);
       // console.log(product.qtd);
@@ -37,6 +43,8 @@ var app = new Vue({
           this.cart = res.data.cart;
           // Update nav-bar.
           document.getElementById('cart-qtd').innerHTML = this.cart.totalQtd;
+          // Show changed cart itens by server.
+          this.isServerChangedCart();
         }
       })
       .catch((err)=>{
@@ -81,29 +89,45 @@ var app = new Vue({
       })
       .catch((err)=>{
         alert('Erro interno, não foi possível atualizar o carrinho.');
-        console.error(`Error - removeProduct(), err: ${err}`);
+        console.error(`Error - updateStock(), err: ${err}`);
       });
     },  
     // user receive msg that cart was change.
     userReceiveMsgCartChanged(){
-      this.showModal = false;
-      return;
       axios({
         method: 'post',
-        url: '/checkout/update-stock',
+        url: '/cart/clean-alert-msg',
         headers: {'csrf-token' : csrfToken},
       })
       .then((res)=>{
         // Success.
         if (res.data.success) {
-          this.cart = res.data.cart;          
+          this.cart = res.data.cart;
+          this.showModal = false;    
         }
       })
       .catch((err)=>{
-        alert('Erro interno, não foi possível atualizar o carrinho.');
-        console.error(`Error - removeProduct(), err: ${err}`);
+        console.error(`Error - userReceiveMsgCartChanged(), err: ${err}`);
       });
     },  
+  },
+  computed: {
+    productsPriceChanged: function(){
+      for (var i = 0; i < this.cart.products.length; i++) {
+        if (this.cart.products[i].showMsgPriceChanged) {
+          return true;
+        } 
+      }
+      return false;
+    },
+    productsQtdChanged: function(){
+      for (var i = 0; i < this.cart.products.length; i++) {
+        if (this.cart.products[i].showMsgQtdChanged) {
+          return true;
+        } 
+      }
+      return false;
+    }
   },
   filters: { 
     currencyBr(value){ return accounting.formatMoney(value, "R$", 2, ".", ","); },

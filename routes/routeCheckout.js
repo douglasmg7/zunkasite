@@ -280,7 +280,7 @@ router.get('/payment/:order_id', (req, res, next)=>{
   });  
 });
 
-// Select payment page.
+// Only for test.
 router.post('/update-stock', (req, res, next)=>{
   // Update stock.
   log.debug('Inside update-stock');

@@ -1,4 +1,4 @@
-Product with 0 stock is appearing on the site.
+Admin product list is red for disponiable itens.
 
 Change 3088 port to 443 on production.
 

@@ -47,8 +47,8 @@ router.get('/api/products', function (req, res) {
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
   const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
   const search = req.query.search
-    ? {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$gt: 0}, 'storeProductTitle': {$regex: req.query.search, $options: 'i'}}
-    : {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$gt: 0}};    
+    ? {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'dealerProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}, 'storeProductTitle': {$regex: req.query.search, $options: 'i'}}
+    : {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'dealerProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};    
   // Find products.
   let productPromise = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
   // Product count.
@@ -115,7 +115,11 @@ router.put('/cart/add/:_id', (req, res, next)=>{
 
 // Change product quantity from cart.
 router.put('/cart/change-qtd/:_id/:qtd', (req, res, next)=>{
-  req.cart.changeProductQtd(req.params._id, req.params.qtd, ()=>{
+  req.cart.changeProductQtd(req.params._id, req.params.qtd, (err)=>{
+    if (err) {
+      log.error(err.stack);
+      return res.json({ success: false });
+    }
     res.json({success: true, cart: req.cart});
   });
 })
@@ -123,6 +127,13 @@ router.put('/cart/change-qtd/:_id/:qtd', (req, res, next)=>{
 // Remove product from cart.
 router.put('/cart/remove/:_id', (req, res, next)=>{
   req.cart.removeProduct(req.params._id, ()=>{
+    res.json({success: true, cart: req.cart});
+  });
+})
+
+// Change product quantity from cart.
+router.post('/cart/clean-alert-msg', (req, res, next)=>{
+  req.cart.cleanAlertMsg(()=>{
     res.json({success: true, cart: req.cart});
   });
 })
