@@ -8,3 +8,9 @@ Alterar a forma de remover o usurio, just set flag on user, to keep all informat
 After two months remove user and all information on other documents.
 
 run: "git secret hide" when change s.js
+
+mongodump
+https://docs.mongodb.com/manual/reference/program/mongodump/#bin.mongodump
+
+mongorestore
+https://docs.mongodb.com/manual/reference/program/mongorestore/#bin.mongorestore
