@@ -34,7 +34,7 @@ if (process.env.DB === 'mlab') {
 let url = `mongodb://${host}:${port}/${name}`;
 // Have a user.
 if (user) {
-  url = `mongodb://${user}:${password}@${host}:${port}/${name}`;
+  url = `mongodb://${user}:${password}@${host}:${port}/${name}?authSource=admin`;
 }
 // Log which db will be used.
 log.info(logMsg);

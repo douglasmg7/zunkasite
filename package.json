@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "pm2 start --env production",
+    "startt": "NODE_ENV=production DB=production ./bin/www",
     "restart": "pm2 restart zunka_server",
     "stop": "pm2 delete zunka_server",
     "start-mlab": "NODE_ENV=production DB=mlab nodemon ./bin/www",
