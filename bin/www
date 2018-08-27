@@ -18,7 +18,7 @@ let sshOptions = {
 };
 
 // Get port from environment and store in Express (change 3080 port to 80 on production).
-var port = normalizePort(process.env.PORT || '3080');
+var port = normalizePort(process.env.PORT || '80');
 // app.set('port', port);
 // Create server to redirect http to https.
 let httpToHttps = express().get('*', function(req, res) {
@@ -40,7 +40,7 @@ server.on('error', onError);
 server.on('listening', onListening);
 
 // Create https server (change 3088 port to 443 on production).
-var portSsl = normalizePort(process.env.PORT_SSL || '3088');
+var portSsl = normalizePort(process.env.PORT_SSL || '443');
 app.set('portSsl', portSsl);
 var serverSsl = https.createServer(sshOptions, app);
 serverSsl.listen(portSsl);
