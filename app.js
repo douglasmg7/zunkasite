@@ -5,10 +5,14 @@ const path = require('path');
 const favicon = require('serve-favicon');
 // General log.
 const log = require('./config/log');
-// Starting app.
-log.info('Starting app.');
-// Node env.
-log.info(`NODE_ENV: ${process.env.NODE_ENV}`);
+// Run mode.
+if (process.env.NODE_ENV == 'development') {
+  log.info(`Starting app in development mode.`);
+} else if (process.env.NODE_ENV == 'production'){
+  log.info(`Starting app in production mode.`);
+} else {
+  log.info(`Starting app with run mode not defined.`);
+}
 // Log transaction.
 const morgan = require('morgan');
 // Body.

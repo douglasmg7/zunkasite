@@ -1,5 +1,3 @@
-Remove user zunka from db.
-
 Change 3088 port to 443 on production.
 
 Verify app.log size limit.
