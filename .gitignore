@@ -7,6 +7,7 @@ bower_components/
 public/js/bundle*
 bin/xml/
 dist/img/*
+!dist/img/.gitkeep 
 config/s.js
 
 .gitsecret/keys/random_seed
