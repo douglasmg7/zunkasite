@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const transporter = require('../config/transporter');
+const email = require('../config/email');
 const soap = require('soap');
 // const https = require('https');
 // const request = require('request');
@@ -316,7 +316,7 @@ router.post('/payment/:order_id', (req, res, next)=>{
           req.cart.clean();
           // Send email.
           let mailOptions = {
-              from: 'dev@zunka.com.br',
+              from: email.from,
               to: req.user.email,
               subject: 'Confirmação de pedido.',
               text: 'Seu pedido foi realizado com sucesso.\n\n' + 
@@ -326,15 +326,19 @@ router.post('/payment/:order_id', (req, res, next)=>{
                     // 'Esta solicitação de redefinição expira em duas horas.\n' +
                     'Obrigado pelo seu pedido.'
           }; 
-          log.info(`mailOptions: ${JSON.stringify(mailOptions)}`);
-          // // Send email.
-          // transporter.sendMail(mailOptions, function(err, info){
-          //   if(err){
-          //     log.error(err.stack);
-          //   } else {
-          //     log.info(`Reset email sent to ${req.body.email}`);
-          //   }
-          // });
+          if (req.app.get('env') === 'production') {
+            // Send email.
+            email.transporter.sendMail(mailOptions, function(err, info){
+              if(err){
+                log.error(err.stack);
+              } else {
+                log.info(`Reset email sent to ${req.body.email}`);
+              }
+            });
+          }
+          else {
+            log.info(`mailOptions: ${JSON.stringify(mailOptions)}`);
+          }
           res.json({});
         }
       })

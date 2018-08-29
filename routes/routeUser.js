@@ -5,7 +5,7 @@ const router = express.Router();
 const passport = require('passport');
 const bcrypt = require('bcrypt-nodejs');
 const crypto = require('crypto');
-const transporter = require('../config/transporter');
+const email = require('../config/email');
 // Personal modules.
 const log = require('../config/log');
 const User = require('../model/user');
@@ -191,7 +191,7 @@ router.post('/api/forgottenPassword', (req, res, next)=>{
               return; 
             }
             let mailOptions = {
-                from: 'dev@zunka.com.br',
+                from: email.from,
                 to: req.body.email,
                 subject: 'Solicitação para Redefinir senha.',
                 text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a redefinição da senha de sua conta.\n\n' + 
@@ -203,7 +203,7 @@ router.post('/api/forgottenPassword', (req, res, next)=>{
             // Send e-mail only in production mode.
             if (req.app.get('env') === 'production') {
               // Send email com information to reset password.
-              transporter.sendMail(mailOptions, function(err, info){
+              email.transporter.sendMail(mailOptions, function(err, info){
                 if(err){
                   log.error(err.stack);
                 } else {

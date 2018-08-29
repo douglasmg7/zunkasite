@@ -5,7 +5,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const redis = require('../db/redis');
 const bcrypt = require('bcrypt-nodejs');
 const crypto = require('crypto');
-const transporter = require('./transporter');
+const email = require('./email');
 // My moudles.
 const log = require('./log');
 const Cart = require('../model/cart');
@@ -70,7 +70,7 @@ passport.use('local.signup', new LocalStrategy({
               return done(err, false, { message: 'Serviço indisponível.'});
             }     
             let mailOptions = {
-                  from: 'dev@zunka.com.br',
+                  from: email.from,
                   to: req.body.email,
                   subject: 'Solicitação de criação de conta no site da Zunka.',
                   text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a criação de uma conta no site da Zunka usando este e-mail.\n\n' + 
@@ -81,7 +81,7 @@ passport.use('local.signup', new LocalStrategy({
             // Send e-mail only in production mode.
             if (req.app.get('env') === 'production') {
               // Send e-mail with link to conclude signup.
-              transporter.sendMail(mailOptions, function(err, info){
+              email.transporter.sendMail(mailOptions, function(err, info){
                 if(err){
                   log.error(err.stack);
                 } else {
