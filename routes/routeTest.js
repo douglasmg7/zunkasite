@@ -13,24 +13,25 @@ router.get('/', (req, res, next)=>{
 });
 
 // Test.
-let text = `Teste de envio realizado as ${Date()}.`
 router.post('/send-email', (req, res, next)=>{
   let mailOptions = {
-      from: email.from,
-      to: 'douglasmg7@gmail.com',
-      subject: 'Test.',
-      text: text
-  }; 
-  log.info('Requested to send a email test.');
-  log.info(`Email test: ${mailOptions.text}`);
-  email.transporter.sendMail(mailOptions, function(err, info){
-    if(err){
-      log.error(err.stack);
-    } else {
-      log.info("Email test sent successfully.");
+    from: '',
+    to: 'douglasmg7@gmail.com',
+    subject: 'Test',
+    text: `Teste de envio realizado as ${Date()}.`
+  }
+  email.sendMail(mailOptions, err=>{
+      if (err) { 
+        log.error(err.stack);
+        // res.json({ success: false});            
+        res.send('Erro ao enviar email.');            
+      }
+      else {
+        // res.json({ success: true}); 
+        res.send('Email enviado.');            
+      }
     }
-  });   
-  res.json({ success: true});            
+  );          
 });
 
 module.exports = router;

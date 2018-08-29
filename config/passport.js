@@ -69,31 +69,24 @@ passport.use('local.signup', new LocalStrategy({
               log.error(err.stack);
               return done(err, false, { message: 'Serviço indisponível.'});
             }     
-            let mailOptions = {
-                  from: email.from,
-                  to: req.body.email,
-                  subject: 'Solicitação de criação de conta no site da Zunka.',
-                  text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a criação de uma conta no site da Zunka usando este e-mail.\n\n' + 
-                        'Por favor click no link, ou cole no seu navegador de internet para confirmar a criação da conta.\n\n' + 
-                        'https://' + req.headers.host + '/user/signin/' + token + '\n\n' +
-                        'Se não foi você que requisitou esta criação de conta, por favor ignore este e-mail e nenhuma conta será criada.'
+            let emailOptions = {
+              from: '',
+              to: req.body.email,
+              subject: 'Solicitação de criação de conta no site da Zunka.',
+              text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a criação de uma conta no site da Zunka usando este e-mail.\n\n' + 
+              'Por favor click no link, ou cole no seu navegador de internet para confirmar a criação da conta.\n\n' + 
+              'https://' + req.headers.host + '/user/signin/' + token + '\n\n' +
+              'Se não foi você que requisitou esta criação de conta, por favor ignore este e-mail e nenhuma conta será criada.',
             };
-            // Send e-mail only in production mode.
-            if (req.app.get('env') === 'production') {
-              // Send e-mail with link to conclude signup.
-              email.transporter.sendMail(mailOptions, function(err, info){
-                if(err){
-                  log.error(err.stack);
-                } else {
-                  log.info("mail send successfully");
-                }
-              }); 
-            }
-            // Log token if not in production. 
-            else {
-              log.info('link to confirm email: http://' + req.headers.host + '/user/signin/' + token + '\n\n');
-            }
-            done(null, emailConfirmation, { message: `Foi enviado um e-mail para ${req.body.email} com instruções para completar o cadastro.`});               
+            email.sendMail(emailOptions, err=>{
+              if (err) { 
+                log.error(err.stack);
+                return done(err, false, {message: 'Internal error.'}); 
+              }
+              else {
+                done(null, emailConfirmation, { message: `Foi enviado um e-mail para ${req.body.email} com instruções para completar o cadastro.`});               
+              }
+            });
           });
         }
       })

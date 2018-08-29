@@ -191,7 +191,7 @@ router.post('/api/forgottenPassword', (req, res, next)=>{
               return; 
             }
             let mailOptions = {
-                from: email.from,
+                from: '',
                 to: req.body.email,
                 subject: 'Solicitação para Redefinir senha.',
                 text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a redefinição da senha de sua conta.\n\n' + 
@@ -200,22 +200,15 @@ router.post('/api/forgottenPassword', (req, res, next)=>{
                       // 'Esta solicitação de redefinição expira em duas horas.\n' +
                       'Se não foi você que requisitou esta redefinição de senha, por favor ignore este e-mail e sua senha permanecerá a mesma.'
             }; 
-            // Send e-mail only in production mode.
-            if (req.app.get('env') === 'production') {
-              // Send email com information to reset password.
-              email.transporter.sendMail(mailOptions, function(err, info){
-                if(err){
-                  log.error(err.stack);
-                } else {
-                  log.info(`Reset email sent to ${req.body.email}`);
-                }
-              });
-            }
-            // Log token if not in production. 
-            else {
-              log.info('link to reset password: http://' + req.headers.host + '/user/reset-password/' + token + '\n\n');
-            }
-            return res.json({ success: true, message: `Foi enviado um e-mail para ${req.body.email} com instruções para a alteração da senha.`});
+            email.sendMail(mailOptions, err=>{
+              if(err){
+                log.error(err.stack);
+                return res.json({ success: false, message: 'Erro interno.'});
+              } else {
+                log.info(`Password reset email sent to ${req.body.email}`);
+                return res.json({ success: true, message: `Foi enviado um e-mail para ${req.body.email} com instruções para a alteração da senha.`});
+              }
+            })
           });
         });        
       });

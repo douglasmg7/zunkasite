@@ -316,7 +316,7 @@ router.post('/payment/:order_id', (req, res, next)=>{
           req.cart.clean();
           // Send email.
           let mailOptions = {
-              from: email.from,
+              from: '',
               to: req.user.email,
               subject: 'Confirmação de pedido.',
               text: 'Seu pedido foi realizado com sucesso.\n\n' + 
@@ -326,20 +326,14 @@ router.post('/payment/:order_id', (req, res, next)=>{
                     // 'Esta solicitação de redefinição expira em duas horas.\n' +
                     'Obrigado pelo seu pedido.'
           }; 
-          if (req.app.get('env') === 'production') {
-            // Send email.
-            email.transporter.sendMail(mailOptions, function(err, info){
-              if(err){
-                log.error(err.stack);
-              } else {
-                log.info(`Reset email sent to ${req.body.email}`);
-              }
-            });
-          }
-          else {
-            log.info(`mailOptions: ${JSON.stringify(mailOptions)}`);
-          }
-          res.json({});
+          email.sendMail(mailOptions, err=>{
+            if (err) {
+              log.error(err.stack);
+            } else {
+              log.info(`Email with order confirmation sent to ${req.body.email}`);
+            }
+            res.json({});
+          })
         }
       })
     }
