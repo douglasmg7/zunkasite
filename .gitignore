@@ -6,8 +6,7 @@ node_modules/
 bower_components/
 public/js/bundle*
 bin/xml/
-dist/img/
-dist/css/
+dist/img/*
 config/s.js
 
 .gitsecret/keys/random_seed
