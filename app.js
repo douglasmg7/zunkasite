@@ -5,6 +5,7 @@ const path = require('path');
 const favicon = require('serve-favicon');
 // General log.
 const log = require('./config/log');
+const HOSTNAME = 'www.zunka.com.br';
 // Run mode.
 if (process.env.NODE_ENV == 'development') {
   log.info(`Starting app in development mode.`);
@@ -65,6 +66,13 @@ const routeCheckout = require('./routes/routeCheckout');
 const routeConfigProducts = require('./routes/routeConfigProducts');
 const routeTest = require('./routes/routeTest');
 const routeAdmin = require('./routes/routeAdmin');
+
+// Run mode.
+if (process.env.NODE_ENV == 'production') {
+  app.set('hostname', HOSTNAME);
+} else {
+  app.set('hostname', 'localhost');
+}
 
 // Transaction log - no log in test mode.
 if (app.get('env') !== 'test') {
