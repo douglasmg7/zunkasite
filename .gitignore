@@ -10,6 +10,8 @@ bin/xml/
 # Include directoy img but not the files.
 dist/img/*
 !dist/img/.gitkeep 
+dist/css/*
+!dist/css/.gitkeep 
 
 # Git secret.
 config/s.js
