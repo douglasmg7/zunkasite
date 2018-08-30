@@ -5,7 +5,7 @@ const router = express.Router();
 const passport = require('passport');
 const bcrypt = require('bcrypt-nodejs');
 const crypto = require('crypto');
-const email = require('../config/email');
+const emailSender = require('../config/email');
 // Personal modules.
 const log = require('../config/log');
 const User = require('../model/user');
@@ -196,11 +196,11 @@ router.post('/api/forgottenPassword', (req, res, next)=>{
                 subject: 'Solicitação para Redefinir senha.',
                 text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a redefinição da senha de sua conta.\n\n' + 
                       'Por favor click no link, ou cole no seu navegador de internet para completar o processo.\n\n' + 
-                      'https://' + req.headers.host + '/user/reset-password/' + token + '\n\n' +
+                      'https://' + req.hostname + '/user/reset-password/' + token + '\n\n' +
                       // 'Esta solicitação de redefinição expira em duas horas.\n' +
                       'Se não foi você que requisitou esta redefinição de senha, por favor ignore este e-mail e sua senha permanecerá a mesma.'
             }; 
-            email.sendMail(mailOptions, err=>{
+            emailSender.sendMail(mailOptions, err=>{
               if(err){
                 log.error(err.stack);
                 return res.json({ success: false, message: 'Erro interno.'});
@@ -519,6 +519,7 @@ router.post('/access/delete-account', checkPermission, (req, res, next)=>{
               if (err) { return next(err); }
               // Remove cart.
               redis.del(`cart:${user.email}`); 
+              log.info(`Account ${removedUser.email} was removed.`);
               return res.json({ success: true, message: 'Conta apagada com sucesso.'})            
             });
           });  

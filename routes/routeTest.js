@@ -2,7 +2,7 @@
 const express = require('express');
 const redis = require('../db/redis');
 const router = express.Router();
-const email = require('../config/email');
+const emailSender = require('../config/email');
 const crypto = require('crypto');
 // Personal modules.
 const log = require('../config/log');
@@ -20,7 +20,7 @@ router.post('/send-email', (req, res, next)=>{
     subject: 'Test',
     text: `Teste de envio realizado as ${Date()}.`
   }
-  email.sendMail(mailOptions, err=>{
+  emailSender.sendMail(mailOptions, err=>{
       if (err) { 
         log.error(err.stack);
         // res.json({ success: false});            

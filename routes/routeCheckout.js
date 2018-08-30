@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const email = require('../config/email');
+const emailSender = require('../config/email');
 const soap = require('soap');
 // const https = require('https');
 // const request = require('request');
@@ -322,11 +322,11 @@ router.post('/payment/:order_id', (req, res, next)=>{
               text: 'Seu pedido foi realizado com sucesso.\n\n' + 
                     'Número de pedido: ' + order._id + '\n\n' + 
                     'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' + 
-                    'https://' + req.headers.host + '/checkout/order-confirmation/' + order._id + '\n\n' +
+                    'https://' + req.hostname + '/checkout/order-confirmation/' + order._id + '\n\n' +
                     // 'Esta solicitação de redefinição expira em duas horas.\n' +
                     'Obrigado pelo seu pedido.'
           }; 
-          email.sendMail(mailOptions, err=>{
+          emailSender.sendMail(mailOptions, err=>{
             if (err) {
               log.error(err.stack);
             } else {

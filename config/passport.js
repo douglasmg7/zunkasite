@@ -5,7 +5,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const redis = require('../db/redis');
 const bcrypt = require('bcrypt-nodejs');
 const crypto = require('crypto');
-const email = require('./email');
+const emailSender = require('./email');
 // My moudles.
 const log = require('./log');
 const Cart = require('../model/cart');
@@ -75,10 +75,10 @@ passport.use('local.signup', new LocalStrategy({
               subject: 'Solicitação de criação de conta no site da Zunka.',
               text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a criação de uma conta no site da Zunka usando este e-mail.\n\n' + 
               'Por favor click no link, ou cole no seu navegador de internet para confirmar a criação da conta.\n\n' + 
-              'https://' + req.headers.host + '/user/signin/' + token + '\n\n' +
+              'https://' + req.hostname + '/user/signin/' + token + '\n\n' +
               'Se não foi você que requisitou esta criação de conta, por favor ignore este e-mail e nenhuma conta será criada.',
             };
-            email.sendMail(emailOptions, err=>{
+            emailSender.sendMail(emailOptions, err=>{
               if (err) { 
                 log.error(err.stack);
                 return done(err, false, {message: 'Internal error.'}); 
