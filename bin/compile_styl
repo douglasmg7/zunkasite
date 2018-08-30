@@ -1,0 +1,12 @@
+#!/usr/bin/bash
+# Change to fire directory.
+cd $(dirname "$0")
+# Compile stylus to css.
+stylus ../styl/product.styl --out ../dist/css/
+stylus ../styl/productList.styl --out ../dist/css/
+mkdir -p ../dist/css/admin
+stylus ../styl/admin --out ../dist/css/admin/
+mkdir -p ../dist/css/checkout
+stylus ../styl/checkout --out ../dist/css/checkout/
+mkdir -p ../dist/css/user
+stylus ../styl/user --out ../dist/css/user/
