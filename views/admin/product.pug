@@ -50,14 +50,18 @@ html(lang="en")
             label(for='extraInfo') Informações adicionais
             textarea(id='extraInfo' rows='8' v-model='product.storeProductAdditionalInformation')
           //- Maker.
-          .field
+          //- .field
             label(for='maker') Fabricante
             select(id='maker')
-              option(v-for='maker in productMakers' value='maker.value', :selected='maker.name === product.storeProductMaker') {{maker.name}}
+              option(v-for='maker in productMakers', :value='maker.value', :selected='maker.name === product.storeProductMaker') {{maker.name}}
+          .field
+            label(for='maker') Fabricante
+            select(id='maker' v-model='product.storeProductMaker')
+              option(v-for='maker in productMakers', :value='maker.value') {{maker.name}}              
           .field
             label(for='category') Categoria
-            select(id='category')
-              option(v-for='category in productCategories' value='category.value', :selected='category.name === product.storeProductCategory') {{category.name}}       
+            select(id='category' v-model='product.storeProductCategory')
+              option(v-for='category in productCategories', :value='category.value') {{category.name}}       
           //- Warranty.
           h2 Garantia
           hr
@@ -99,8 +103,8 @@ html(lang="en")
           //- Dealer price.
           .field
             label(for='dealerPrice') Fornecedor (R$)
-            input.input-money(type='text' id='dealerPrice' v-model='product.storeProductPrice' v-on:input='calcFinalPrice()')
-            p.validation(v-if='validation.storeProductPrice') {{validation.storeProductPrice}}
+            input.input-money(type='text' id='dealerPrice' v-model='product.dealerProductPrice' v-on:input='calcFinalPrice()')
+            p.validation(v-if='validation.dealerProductPrice') {{validation.dealerProductPrice}}
           //- Markup.
           .field
             label(for='markup') Lucro (%)

@@ -125,6 +125,8 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
 router.post('/product/:productId', checkPermission, (req, res, next)=>{
   // Form validation, true for valid value.
   let validation = {};
+  // Dealer price.
+  validation.dealerProductPrice = req.body.product.dealerProductPrice >= 0 ? undefined : 'Valor inválido';
   // Price.
   validation.storeProductPrice = req.body.product.storeProductPrice >= 0 ? undefined : 'Valor inválido';
   // Markup.

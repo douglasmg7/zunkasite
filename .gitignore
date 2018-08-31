@@ -7,6 +7,9 @@ bower_components/
 public/js/bundle*
 bin/xml/
 
+# Mongo bakcup.
+dump/
+
 # Include directoy img but not the files.
 dist/img/*
 !dist/img/.gitkeep 

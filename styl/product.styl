@@ -14,12 +14,14 @@ main
   flex-flow row wrap
   justify-content space-between
   margin 0 1em
-  .image
+  > .image
     flex 1 1 40%
-    img
+    > img
       display block
       margin 0 auto 2em auto
-    .thumbnail
+      max-height 300px
+      max-width 300px
+    > .thumbnail
       // background-color blue
       display flex
       flex-flow row wrap
