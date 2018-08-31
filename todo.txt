@@ -1,4 +1,30 @@
-Setup produc and productList format.
+Make systemd time to run certbot-auto --certonly
+
+Backup from private and public key from douglasmg7@gmail.com
+
+Make script to backup letencrypt
+
+Make back from ~/temp
+
+- Congratulations! Your certificate and chain have been saved at:
+   /etc/letsencrypt/live/www.zunka.com.br/fullchain.pem
+   Your key file has been saved at:
+   /etc/letsencrypt/live/www.zunka.com.br/privkey.pem
+   Your cert will expire on 2018-11-29. To obtain a new or tweaked
+   version of this certificate in the future, simply run certbot-auto
+   again with the "certonly" option. To non-interactively renew *all*
+   of your certificates, run "certbot-auto renew"
+
+Your account credentials have been saved in your Certbot
+  configuration directory at /etc/letsencrypt. You should make a
+  secure backup of this folder now. This configuration directory will
+  also contain certificates and private keys obtained by Certbot so
+  making regular backups of this folder is ideal.
+
+Setup product and productList page format.
+
+Point zunka.com.br to https://www.zunka.com.br
+Point https://zunka.com.br to https://www.zunka.com.br
 
 block 3080 port
 
