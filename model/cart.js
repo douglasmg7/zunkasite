@@ -27,8 +27,6 @@ module.exports = function Cart(cart) {
       if (this.products[i]._id == product._id){
         // Add quantity.
         this.products[i].qtd++;
-        // // Update price.
-        // this.products[i].price = product.storeProductPrice;
         prodctFound = true;
         break;
       }        

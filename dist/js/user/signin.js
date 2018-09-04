@@ -28,7 +28,7 @@ var app = new Vue({
         // Singin successful.
         if (res.data.success) {
           this.warnMessage = '';
-          window.location.href = '/';
+          window.location.href = res.data.redirect;
         }
         // Not success on signin.
         else {

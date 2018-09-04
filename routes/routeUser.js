@@ -128,7 +128,14 @@ router.post('/api/signin', checkNotLogged, (req, res, next)=>{
         // Signin.
         req.login(user, function(err){
           if(err) { return next(err); }
-          return res.json({success: true});
+          // To redirect to cart.
+          if (req.flash('redirect-signin-complete') == 'cart') {
+            return res.json({success: true, redirect: '/cart'});
+          }
+          // Redirect to main page.
+          else {
+            return res.json({success: true, redirect: '/'});
+          }
         })
       })(req, res, next);
     }

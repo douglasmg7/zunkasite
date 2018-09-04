@@ -58,6 +58,7 @@ router.get('/shipping-address', (req, res, next)=>{
       });
     });
   } else {
+    req.flash('redirect-signin-complete', 'cart');
     res.render('user/signin', { nav: {}, warnMessage: '', successMessage: ''});
   }
 
