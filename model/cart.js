@@ -17,34 +17,18 @@ module.exports = function Cart(cart) {
     this.products = [];
     this.removedProducts = [];
   }
-  this.changed = false;
-
-  // Re-caluculate total quantity and price.
-  this.update = function(cb){
-    // Calculate products total quantity and price.
-    this.totalQtd = 0;
-    this.totalPrice = 0;
-    let that = this;
-    this.products.forEach(function(product) {
-      that.totalQtd += product.qtd;
-      that.totalPrice += (product.price * product.qtd);
-    });
-    this.changed = true;
-    if (cb) {
-      cb();
-    }    
-  }  
+  this.changed = false;  
 
   // Add product from db not from other cart.
-  this.addProduct = function(product){
+  this.addProduct = function(product, cb){
     let prodctFound = false;
-    for (var i = 0; i < this.products.length; i++) {
+    for (let i = 0; i < this.products.length; i++) {
       // Product alredy in the cart.
       if (this.products[i]._id == product._id){
         // Add quantity.
         this.products[i].qtd++;
-        // Update price.
-        this.products[i].price = product.storeProductPrice;
+        // // Update price.
+        // this.products[i].price = product.storeProductPrice;
         prodctFound = true;
         break;
       }        
@@ -69,7 +53,7 @@ module.exports = function Cart(cart) {
       });
     }
     // Re-caluculate total quantity and price.
-    this.update();
+    this.update(cb);
   }
 
   // Change product quantity from cart.
@@ -120,7 +104,7 @@ module.exports = function Cart(cart) {
   }
 
   // Merge cart .
-  this.mergeCart = function(cart){
+  this.mergeCart = function(cart, cb){
     if (cart) {
       for (let i = 0; i < cart.products.length; i++) {
         let newProduct = cart.products[i];
@@ -128,10 +112,9 @@ module.exports = function Cart(cart) {
         for (let j = 0; j < this.products.length; j++) {
           // Product alredy in the cart.
           if (this.products[j]._id == newProduct._id){
-            // Add quantity.
-            this.products[j].qtd++;
-            // Update price.
-            this.products[j].price = product.storeProductPrice;
+            // Not add quantity, user problably added for second time because wasn't logged.
+            // // Add quantity.
+            // this.products[j].qtd++;
             prodctFound = true;
             break;
           }        
@@ -141,31 +124,30 @@ module.exports = function Cart(cart) {
           this.products.push(newProduct);
         }
       }
-    // Re-caluculate total quantity and price.
-    this.update();
     }
+    this.update(cb);
   }
 
   // Update cart with new prices and stock.
-  this.updateCartPriceAndStock = function(cb){
+  this.update = function(cb){
     let productsId = [];
     // Get all products on cart.
-    for (var i = 0; i < this.products.length; i++) {
+    for (let i = 0; i < this.products.length; i++) {
       productsId.push(mongoose.Types.ObjectId(this.products[i]._id));
     }
     // Get all products into cart from db.
-    Product.find({'_id': { $in: productsId }}, (err, products)=>{
+    Product.find({'_id': { $in: productsId }}, (err, dbProducts)=>{
       if (err) {
         return cb(err);
       }
       // Map to product object to id.
       let productsDbMap = new Map();
-      for (var i = 0; i < products.length; i++) {
-        productsDbMap.set(products[i]._id.toString(), products[i]);
+      for (let i = 0; i < dbProducts.length; i++) {
+        productsDbMap.set(dbProducts[i]._id.toString(), dbProducts[i]);
       }
       // Verify itens with diferent price and out of stock.
-      for (var i = 0; i < this.products.length; i++) {
-        let dbProduct = productsDbMap.get(this.products[i]._id);
+      for (let i = 0; i < this.products.length; i++) {
+        let dbProduct = productsDbMap.get(this.products[i]._id.toString());
         // Out of stock.
         if (dbProduct.storeProductQtd <= 0) {
           this.removedProducts.push(this.products[i]);
@@ -199,9 +181,21 @@ module.exports = function Cart(cart) {
           }
         }
       }
-      this.update(cb);
+      // Calculate products total quantity and price.
+      this.totalQtd = 0;
+      this.totalPrice = 0;
+      let that = this;
+      this.products.forEach(function(product) {
+        that.totalQtd += product.qtd;
+        that.totalPrice += (product.price * product.qtd);
+      });
+      this.changed = true;
+      if (cb) {
+        cb();
+      }  
     });
   },
+
   // Clean messages shown to client and removed products.
   this.cleanAlertMsg = function(cb){
     this.removedProducts = [];

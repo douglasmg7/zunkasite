@@ -47,15 +47,20 @@ function checkNotLogged (req, res, next) {
 
 // Shipping address page.
 router.get('/shipping-address', (req, res, next)=>{
-  Address.find({ user_id: req.user._id }, (err, addresss)=>{
-    if (err) return next(err);
-    let newAddress = new Address();
-    res.render('checkout/shippingAddress', {
-      nav: {
-      },
-      addresss,
+  if (req.user) {
+    Address.find({ user_id: req.user._id }, (err, addresss)=>{
+      if (err) return next(err);
+      let newAddress = new Address();
+      res.render('checkout/shippingAddress', {
+        nav: {
+        },
+        addresss,
+      });
     });
-  });
+  } else {
+    res.render('user/signin', { nav: {}, warnMessage: '', successMessage: ''});
+  }
+
 });
 
 // Ship address selected.

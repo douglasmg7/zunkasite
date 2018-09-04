@@ -14,7 +14,7 @@ const EmailConfirmation = require('../model/emailConfirmation')
 
 // How to save user id on the session.
 passport.serializeUser(function(user, done) {
-  log.info('passport.serialize');
+  // log.info('passport.serialize');
   done(null, user.email);
 });
 
@@ -116,11 +116,12 @@ passport.use('local.signin', new LocalStrategy({ usernameField: 'email', passwor
           redis.get(`cart:${user.email}`, (err, userCart)=>{
             let cart = userCart ? new Cart(JSON.parse(userCart)) : new Cart();
             // Merge anonymous cart to authenticated user cart.
-            cart.mergeCart(JSON.parse(sessCart));
-            redis.del(`cart:${req.sessionID}`);
-            redis.set(`cart:${user.email}`, JSON.stringify(cart), (err)=>{
-              return done(null, user); 
-            });   
+            cart.mergeCart(JSON.parse(sessCart), ()=>{
+              redis.del(`cart:${req.sessionID}`);
+              redis.set(`cart:${user.email}`, JSON.stringify(cart), (err)=>{
+                return done(null, user); 
+              });   
+            });
           }); 
         }
         // No cart session to merge.

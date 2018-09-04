@@ -79,7 +79,7 @@ router.get('/api/product/:_id', function(req, res, next) {
 // Cart page.
 router.get('/cart', (req, res, next)=>{
   // log.info('req.session', JSON.stringify(req.session));
-  req.cart.updateCartPriceAndStock(err=>{
+  req.cart.update(err=>{
     if (err) {
       log.error(err.stack);
       return next(err);
@@ -99,9 +99,10 @@ router.put('/cart/add/:_id', (req, res, next)=>{
   Product.findById(req.params._id)
   .then(product=>{
     if (product._id) {
-      req.cart.addProduct(product);
-      // console.log('user cart', JSON.stringify(user.cart));
-      res.json({success: true});      
+      req.cart.addProduct(product, ()=>{
+        // console.log('user cart', JSON.stringify(user.cart));
+        res.json({success: true});  
+      });
     // Not exist the product.
     } else {
       log.error(new Error(`product ${req.params._id} not found to add to cart.`).stack);

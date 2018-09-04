@@ -159,11 +159,11 @@ router.post('/api/forgottenPassword', (req, res, next)=>{
     if (!result.isEmpty()) {
       let messages = [];
       messages.push(result.array()[0].msg);
-      log.debug(JSON.stringify(messages));
+      // log.debug(JSON.stringify(messages));
       return res.json({ success: false, message: messages[0]});
     } 
     else {
-      log.debug('before-findone');
+      // log.debug('before-findone');
       User.findOne({ email: req.body.email }, (err, user)=>{
         // No exist.
         if(!user){

@@ -63,7 +63,9 @@ var app = new Vue({
       .then((res)=>{
         // Success.
         if (res.data.success) {
-          this.cart = res.data.cart;          
+          this.cart = res.data.cart;      
+          // Update nav-bar.
+          document.getElementById('cart-qtd').innerHTML = this.cart.totalQtd;    
         }
       })
       .catch((err)=>{
