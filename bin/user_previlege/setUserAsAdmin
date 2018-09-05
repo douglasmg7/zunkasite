@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+read -p "User email to set as Zunka admin: " USER_EMAIL
+read -p "Db admin password: " -s PASSWORD
+
+mongo -u admin --authenticationDatabase admin -p $PASSWORD 127.0.0.1/zunka <<EOF
+  db.users.updateOne({email: "$USER_EMAIL"}, {\$addToSet: {group: "admin"}})
+  db.users.find({email: "$USER_EMAIL"}, {_id: false, group: true}).pretty();
+EOF
+

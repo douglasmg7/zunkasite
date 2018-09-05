@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+USER=""
+CMD=""
+
+while [ "$1" != "" ]; do
+  case $1 in
+    set)
+      CMD="\$addToSet"; shift ;;
+    unset)
+      CMD="\$pull"; shift ;;
+    -u | --user)
+      USER=$2; shift; shift ;;
+    -p | --previlege)
+      PREVILEGE=$2; shift; shift ;;
+    *)
+      # POSITIONAL+=("$1") # save it in an array for later
+      # shift # past argument
+      echo "Usage: $0 -u user_name -p previlege"
+      exit 1
+      ;;
+  esac
+done
+
+# set -- "${POSITIONAL[@]}" # restore positional parameters
+
+# Command.
+while [ -z $CMD ]; do
+  read -p "Select (0) unset, (1) set: " OPTION
+  [ $OPTION -eq "0" ] && CMD="\$pull"
+  [ $OPTION -eq "1" ] && CMD="\$addToSet"
+done
+# Usuer.
+[ -z $USER ] && read -p "User email to config previlege: " USER
+# Previlege.
+[ -z $PREVILEGE ] && read -p "Previlges to change: " PREVILEGE
+
+# echo "User: $USER"
+# echo "Previlege: $PREVILEGE"
+# echo "Command: $CMD"
+# echo "db.users.updateOne({email: "$USER"}, {$CMD: {group: "$PREVILEGE"}})"
+
+read -p "Db admin password: " -s PASSWORD
+
+mongo -u admin --authenticationDatabase admin -p $PASSWORD 127.0.0.1/zunka <<EOF
+  db.users.updateOne({email: "$USER"}, {$CMD: {group: "$PREVILEGE"}})
+  db.users.find({email: "$USER"}, {_id: false, group: true}).pretty();
+EOF

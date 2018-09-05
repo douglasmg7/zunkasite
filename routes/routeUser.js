@@ -530,7 +530,7 @@ router.post('/access/delete-account', checkPermission, (req, res, next)=>{
               // Remove cart.
               redis.del(`cart:${user.email}`); 
               log.info(`Account ${removedUser.email} was removed.`);
-              return res.json({ success: true, message: 'Conta apagada com sucesso.'})            
+              return res.json({ success: true, message: 'Pronto! A sua conta já foi removida.'})            
             });
           });  
         // Inválid password.
