@@ -31,11 +31,7 @@ html(lang="en")
               td.product-qtd
                 .dropdown
                   select(v-model='product.qtd' v-on:change='changeProductQtd(product)')
-                    option(value='1') 1
-                    option(value='2') 2
-                    option(value='3') 3
-                    option(value='4') 4
-                    option(value='5') 5
+                    option(v-for='item in product.stockQtd', :value='item') {{ item }}
               td: p.product-price {{ product.price | currencyBr }}
               td: p.product-price {{ product.price * product.qtd | currencyBr }}
         .subtotal
@@ -69,11 +65,12 @@ html(lang="en")
                   td: a(:href='`/product/${product._id}`'): img.product(:src='`/img/${product._id}/${product.image}`')
                   td: p.title {{ product.title }}
                   td
-                    span De&nbsp
-                    span.qtd {{ product.oldQtd }} 
+                    span De
+                    span.qtd &nbsp {{ product.oldQtd }} &nbsp
                     span para 
-                    span.qtd {{ product.qtd }}
-          .products-removed
+                    span.qtd &nbsp {{ product.qtd }} &nbsp
+                    span unidade(s).
+          .products-removed(v-if='cart.removedProducts.length')
             h3 Produto(s) removido(s) por falta de estoque
             table
               tbody

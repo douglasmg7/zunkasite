@@ -85,10 +85,13 @@ router.get('/signin/:token', (req, res, next)=>{
       newUser.save((err, result)=>{
         if (err) { 
           log.error(err.stack);
-          return res.render('user/signin', { nav: {}, warnMessage: 'Não foi possível confirmar o cadastro. Favor entrar em contato com o suporte técnico.', successMessage: '' });
+          return res.render('user/signin', { nav: {}, warnMessage: 'Não foi possível confirmar sua conta. Favor entrar em contato com o suporte técnico.', successMessage: '' });
         }
         emailConfirmation.remove(err=>{ if (err) { log.error(err.stack); } });
-        return res.render('user/signin', { nav: {}, warnMessage: '', successMessage: 'Cadastro finalizado com sucesso.' });
+        return res.render('user/signin', { 
+          nav: {}, warnMessage: '', 
+          successMessage: `Oi, ${req.user.name}, sua conta foi confirmada. Boas Compras.` 
+        });
       });  
     } 
     // No email confirmation.
@@ -202,10 +205,10 @@ router.post('/api/forgottenPassword', (req, res, next)=>{
                 to: req.body.email,
                 subject: 'Solicitação para Redefinir senha.',
                 text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a redefinição da senha de sua conta.\n\n' + 
-                      'Por favor click no link, ou cole no seu navegador de internet para completar o processo.\n\n' + 
+                      'Por favor clique no link, ou cole-o no seu navegador de internet para completar o processo.\n\n' + 
                       'https://' + req.app.get('hostname') + '/user/reset-password/' + token + '\n\n' +
                       // 'Esta solicitação de redefinição expira em duas horas.\n' +
-                      'Se não foi você que requisitou esta redefinição de senha, por favor ignore este e-mail e sua senha permanecerá a mesma.'
+                      'Se não foi você que requisitou esta redefinição de senha, por favor, ignore este e-mail e sua senha permanecerá a mesma.'
             }; 
             emailSender.sendMail(mailOptions, err=>{
               if(err){

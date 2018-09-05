@@ -35,6 +35,7 @@ module.exports = function Cart(cart) {
     if (!prodctFound) {
       this.products.push({
         _id: product._id, 
+        stockQtd: product.storeProductQtd,
         qtd: 1, 
         oldQtd: 1, 
         showMsgQtdChanged: false, 
@@ -146,24 +147,26 @@ module.exports = function Cart(cart) {
       // Verify itens with diferent price and out of stock.
       for (let i = 0; i < this.products.length; i++) {
         let dbProduct = productsDbMap.get(this.products[i]._id.toString());
+        // Update stock quantity, restrict to max 10.
+        this.products[i].stockQtd = (dbProduct.storeProductQtd <= 10) ? dbProduct.storeProductQtd : 10;
         // Out of stock.
-        if (dbProduct.storeProductQtd <= 0) {
+        if (this.products[i].stockQtd <= 0) {
           this.removedProducts.push(this.products[i]);
           this.products.splice(i, 1);
           i--;
           continue;
         }
         // Stock less than required quatity. 
-        else if (this.products[i].qtd > dbProduct.storeProductQtd) {
-          // Price alredy changed.
+        else if (this.products[i].qtd > this.products[i].stockQtd) {
+          // Quantity alredy changed and user not receiver alert yet, only update new quantity.
           if (this.products[i].showMsgQtdChanged) {
-            this.products[i].oldQtd = this.products[i].qtd;
-            this.products[i].qtd = dbProduct.storeProductQtd;
-            this.products[i].showMsgQtdChanged = true;
+            this.products[i].qtd = this.products[i].stockQtd;
           }
-          // Price change once.
+          // Quantity just changed.
           else {
-            this.products[i].qtd = dbProduct.storeProductQtd;
+            this.products[i].oldQtd = this.products[i].qtd;
+            this.products[i].qtd = this.products[i].stockQtd;
+            this.products[i].showMsgQtdChanged = true;
           }
         }
         // Different prices.
