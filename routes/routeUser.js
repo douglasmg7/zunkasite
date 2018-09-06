@@ -90,7 +90,7 @@ router.get('/signin/:token', (req, res, next)=>{
         emailConfirmation.remove(err=>{ if (err) { log.error(err.stack); } });
         return res.render('user/signin', { 
           nav: {}, warnMessage: '', 
-          successMessage: `Oi, ${req.user.name}, sua conta foi confirmada. Boas Compras.` 
+          successMessage: `Oi, ${newUser.name}.\nSua conta foi confirmada.\nBoas Compras.` 
         });
       });  
     } 
@@ -530,7 +530,7 @@ router.post('/access/delete-account', checkPermission, (req, res, next)=>{
               // Remove cart.
               redis.del(`cart:${user.email}`); 
               log.info(`Account ${removedUser.email} was removed.`);
-              return res.json({ success: true, message: 'Pronto! A sua conta já foi removida.'})            
+              return res.json({ success: true })            
             });
           });  
         // Inválid password.
