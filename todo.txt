@@ -1,5 +1,3 @@
-Admin not work to admin and client set on array.
-
 Make systemd time to run certbot-auto --certonly
 (Your cert will expire on 2018-11-29)
 

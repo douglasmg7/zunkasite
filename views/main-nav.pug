@@ -37,7 +37,7 @@
           | &nbsp
           span#cart-qtd= cart.totalQtd
         //- Admin.
-        if user.group == 'admin'
+        if user.group.includes('admin')
           a(href='/admin') 
             svg.icon: use(xlink:href='/icon/sprite.svg#ic_supervisor_account_white_24px')
             | Admin
