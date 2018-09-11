@@ -1,0 +1,49 @@
+#! /usr/bin/env bash
+
+# Should run as a root.
+if [ "$EUID" -ne 0 ]; then 
+  echo "Please run as root"
+  exit
+fi
+
+# systemctl stop certbot.timer &> /dev/null
+# rm /usr/lib/systemd/certbot.timer &> /dev/null
+# rm /usr/lib/systemd/certbot.service &> /dev/null
+
+systemctl stop certbot.timer 
+systemctl disable certbot.timer 
+systemctl daemon-reload
+systemctl reset-failed
+rm -v /usr/lib/systemd/system/certbot.timer
+rm -v /usr/lib/systemd/system/certbot.service
+
+# cat > certbot.timer << EOF
+cat > /usr/lib/systemd/system/certbot.timer << EOF
+[Unit]
+Description=Certbot timer
+
+[Timer]
+OnCalendar=*-*-* *:*:00
+
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
+echo "created '/usr/lib/systemd/system/certbot.timer'"
+
+# cat > certbot.service << EOF
+cat > /usr/lib/systemd/system/certbot.service << EOF
+[Unit]
+Description=Certbot.
+
+[Service]
+Type=oneshot
+ExecStart=/home/douglasmg7/code/zunka/bin/certbot.sh
+EOF
+echo "created '/usr/lib/systemd/system/certbot.service'"
+
+systemctl start certbot.timer
+systemctl enable certbot.timer
+# systemctl status certbot.timer
+# systemctl status certbot.service
