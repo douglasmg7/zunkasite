@@ -13,7 +13,7 @@
     "insertCategories": "DB=production bin/insertProductCategories.js",
     "icon": "./node_modules/svg-sprite/bin/svg-sprite.js --symbol --symbol-dest='' --symbol-sprite='dist/icon/sprite.svg' dist/icon/*.svg",
     "db_backup": "mongodump --db zunka -u admin --authenticationDatabase admin",
-    "install-certbot-service": "./bin/install-certbot-service",
+    "install-certbot-service": "sudo ./bin/install-certbot-service",
     "start-mlab": "NODE_ENV=production DB=mlab nodemon ./bin/www",
     "test": "mocha test -u bdd -R spec -t 2000",
     "testCompile": "mocha test -u bdd --compilers js:babel-core/register"

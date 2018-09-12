@@ -23,7 +23,8 @@ cat > /usr/lib/systemd/system/certbot.timer << EOF
 Description=Certbot timer
 
 [Timer]
-OnCalendar=*-*-* *:*:00
+OnCalendar=*-*-* 01:00:00
+OnCalendar=*-*-* 13:00:00
 
 Persistent=true
 
