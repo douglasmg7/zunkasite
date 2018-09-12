@@ -31,7 +31,7 @@ html(lang="en")
         label(for='showShipped') Enviados
         //- Show delivered.
         input(type='checkbox' id='showDelivered' v-model:checked='filter.delivered')
-        label(for='showDelivered') Entreges
+        label(for='showDelivered') Entregues
         //- Show canceled.
         input(type='checkbox' id='showCanceled' v-model:checked='filter.canceled')
         label(for='showCanceled') Cancelados
@@ -96,7 +96,7 @@ html(lang="en")
             p.title Alterar status para
             button(v-if='status(orderSelec) === "Aberto"' @click='setStatus("paid")') Pago
             button(v-if='status(orderSelec) === "Pago"' @click='setStatus("shipped")') Enviado
-            button(v-if='status(orderSelec) === "Enviado"' @click='setStatus("delivered")') Entrege
+            button(v-if='status(orderSelec) === "Enviado"' @click='setStatus("delivered")') Entregue
             button(v-if='status(orderSelec) !== "Cancelado"' @click='setStatus("canceled")') Cancelado
           .close-modal
             button(@click='hideOrderDetail()') Fechar
