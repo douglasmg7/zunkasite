@@ -320,17 +320,28 @@ router.post('/payment/:order_id', (req, res, next)=>{
           }
           // Clean cart.
           req.cart.clean();
+          // // Send email.
+          // let mailOptions = {
+          //     from: '',
+          //     to: req.user.email,
+          //     subject: 'Confirmação de pedido.',
+          //     text: 'Seu pedido foi realizado com sucesso.\n\n' + 
+          //           'Número de pedido: ' + order._id + '\n\n' + 
+          //           'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' + 
+          //           'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
+          //           // 'Esta solicitação de redefinição expira em duas horas.\n' +
+          //           'Obrigado pelo seu pedido.'
+          // };
           // Send email.
           let mailOptions = {
               from: '',
               to: req.user.email,
               subject: 'Confirmação de pedido.',
-              text: 'Seu pedido foi realizado com sucesso.\n\n' + 
+              text: 'Parabéns! Sua compra já foi concluída, agora é só aguardar o envio do produto.\n\n' + 
                     'Número de pedido: ' + order._id + '\n\n' + 
                     'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' + 
                     'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
-                    // 'Esta solicitação de redefinição expira em duas horas.\n' +
-                    'Obrigado pelo seu pedido.'
+                    'Muito obrigado por comprar na ZUNKA.'
           }; 
           emailSender.sendMail(mailOptions, err=>{
             if (err) {

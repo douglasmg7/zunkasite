@@ -1,5 +1,12 @@
-Make systemd time to run certbot-auto --certonly
-(Your cert will expire on 2018-11-29)
+Image upload limit to 6 images.
+
+Image distorced on product item.
+
+Change email messages.
+
+db backup.
+
+Certbot will expire on 2018-11-29.
 
 Setup product and productList page format.
 
