@@ -1,10 +1,10 @@
-Image upload limit to 6 images.
-
 Image distorced on product item.
 
-Change email messages.
+When cancel order, ask if is to return to stock quantity.
 
-db backup.
+Db backup (mongo and redis).
+
+Verify certbot.service log.
 
 Certbot will expire on 2018-11-29.
 
