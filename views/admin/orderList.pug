@@ -100,6 +100,13 @@ html(lang="en")
             button(v-if='status(orderSelec) !== "Cancelado"' @click='setStatus("canceled")') Cancelado
           .close-modal
             button(@click='hideOrderDetail()') Fechar
+      div.confirm(v-if='showConfirm')
+        .content
+          .message
+            p Confirma alteração do status?
+          .buttons
+            button() Sim
+            button() Não
     script.
       // Make available for vue.
       let csrfToken = !{JSON.stringify(csrfToken)};

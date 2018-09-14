@@ -21,6 +21,8 @@ var app = new Vue({
     searchOrder: '',
     // Show modal.
     showModal: false,
+    // Confirm window.
+    showConfirm: false,
     // Filter.
     filter: {
       placed: true,
