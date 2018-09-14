@@ -46,12 +46,12 @@ html(lang="en")
       .description(v-if='product.storeProductDescription.trim() !== ""')
         //- Description.
         hr
-        h4.title Descrição do produto
+        h3.title Descrição do produto
         p {{product.storeProductDescription}}
       .info(v-if='productInformationTechnical.length > 0 || productInformationAdditional.length > 0')
         //- Informations.
         hr
-        h4.title Informação do produto
+        h3.title Informaçẽs do produto
         //- Technical information.
         .infos
           .info-tech(v-if='productInformationTechnical.length > 0')
