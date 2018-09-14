@@ -1,5 +1,7 @@
 Image distorced on product item.
 
+Price with same size.
+
 When cancel order, ask if is to return to stock quantity.
 
 Db backup (mongo and redis).
