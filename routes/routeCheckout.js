@@ -284,7 +284,7 @@ router.post('/update-stock', (req, res, next)=>{
     log.debug(`req.cart.products[i]._id: ${req.cart.products[i]._id}`);
     log.debug(`req.cart.products[i].qtd: ${req.cart.products[i].qtd}`);
     Product.update({ _id: req.cart.products[i]._id }, { $inc: { storeProductQtd: -1 * req.cart.products[i].qtd } }, err=>{
-      log.info(`err: ${err}`);
+      log.error(`err: ${err}`);
     });
   };  
   // Clean cart.
@@ -309,7 +309,8 @@ router.post('/payment/:order_id', (req, res, next)=>{
         if (err) {
           res.json({err});
           return next(err); 
-        } else {
+        } 
+        else {
           // Update stock.
           for (var i = 0; i < req.cart.products.length; i++) {
             Product.update({ _id: req.cart.products[i]._id }, { $inc: { storeProductQtd: -1 * req.cart.products[i].qtd } }, err=>{
@@ -347,7 +348,7 @@ router.post('/payment/:order_id', (req, res, next)=>{
             if (err) {
               log.error(err.stack);
             } else {
-              log.info(`Email with order confirmation sent to ${req.body.email}`);
+              log.info(`Email with order confirmation sent to ${req.user.email}`);
             }
             res.json({});
           })

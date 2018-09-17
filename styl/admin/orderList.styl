@@ -109,7 +109,7 @@ main
       .close-modal
         display flex
         justify-content flex-end
-  & > .confirm
+  & > .set-status
     position fixed /* Stay in place */
     z-index 2
     left 0
@@ -123,11 +123,28 @@ main
     flex-flow column nowrap
     align-items center
     & > .content
+      border solid 1px black
       background-color #fefefe
       margin 30% auto
-      padding 1em
       border-radius .1em
       display flex
       flex-flow column nowrap
       justify-content flex-start
-      min-width 400px
+      min-width 100px
+      & > .message
+        padding 1em
+      & > .options
+        display flex
+        align-items flex-start
+        padding 0 1em 1em 1em
+        input[type='checkbox']
+          height: auto
+      & > .buttons
+        display flex
+        justify-content center
+        background-color #f4f4f4
+        padding 1em
+        & > button
+          margin-left 1em
+          min-width 6em
+

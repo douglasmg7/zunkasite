@@ -94,19 +94,26 @@ html(lang="en")
             p {{status(orderSelec)}}
           .change-status(v-if='status(orderSelec) !== "Cancelado"')
             p.title Alterar status para
-            button(v-if='status(orderSelec) === "Aberto"' @click='setStatus("paid")') Pago
-            button(v-if='status(orderSelec) === "Pago"' @click='setStatus("shipped")') Enviado
-            button(v-if='status(orderSelec) === "Enviado"' @click='setStatus("delivered")') Entregue
-            button(v-if='status(orderSelec) !== "Cancelado"' @click='setStatus("canceled")') Cancelado
+            button(v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("paid")') Pago
+            button(v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("shipped")') Enviado
+            button(v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("delivered")') Entregue
+            button(v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")') Cancelado
+            //- button(v-if='status(orderSelec) === "Aberto"' @click='setStatus("paid")') Pago
+            //- button(v-if='status(orderSelec) === "Pago"' @click='setStatus("shipped")') Enviado
+            //- button(v-if='status(orderSelec) === "Enviado"' @click='setStatus("delivered")') Entregue
+            //- button(v-if='status(orderSelec) !== "Cancelado"' @click='setStatus("canceled")') Cancelado
           .close-modal
             button(@click='hideOrderDetail()') Fechar
-      div.confirm(v-if='showConfirm')
+      div.set-status(v-if='setStatusWindow.show')
         .content
           .message
-            p Confirma alteração do status?
+            h3 {{ setStatusWindow.message }}
+          .options(v-if='setStatusWindow.showCheckboxUpdateStock')
+            input(type='checkbox' id='updateStock' v-model:checked='setStatusWindow.updateStock')
+            label(for='updateStock') Voltar com o produto para o estoque
           .buttons
-            button() Sim
-            button() Não
+            button(@click='setStatus()') Sim
+            button(@click='setStatusWindow.show=false') Não
     script.
       // Make available for vue.
       let csrfToken = !{JSON.stringify(csrfToken)};

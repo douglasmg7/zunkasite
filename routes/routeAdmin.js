@@ -385,6 +385,16 @@ router.post('/api/order/status/:_id/:status', checkPermission, function(req, res
         case 'canceled':
           order.status = 'canceled';
           order.timestamps.canceleddAt = new Date();
+          // Update stock.
+          if (req.query.updateStock) {
+            for (let i = 0; i < order.items.length; i++) {
+              Product.update({ _id: order.items[i]._id }, { $inc: { storeProductQtd: order.items[i].quantity }}, err=>{
+                if (err) {
+                  log.error(err.stack);
+                }
+              });
+            }
+          }
           break;
         default:
           res.json({ err: 'No valid status.'})
