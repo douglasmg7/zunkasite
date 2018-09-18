@@ -27,14 +27,14 @@ html(lang="en")
               a(:href='"/product/" + product._id')
                 img(:src='`/img/${product._id}/${product.images[0]}`', v-if='product.images[0]')
                 h4.title {{ product.storeProductTitle }}
-                h3.price
+                //- h3.price
                   sup R$
                   | {{ product.storeProductPrice | currency | currencyInt }}
                   sup {{ product.storeProductPrice | currency | currencyCents }}                
-                h2 {{ product.storeProductPrice }}
-                h2 {{ product.storeProductPrice | currency }}
-                h2 {{ product.storeProductPrice | currency | currencyInt }}
-                h2 {{ product.storeProductPrice | currency | currencyCents }}                
+                h2 {{ product.storeProductPrice }} - price
+                h2 {{ product.storeProductPrice | currency }} - price | currency 
+                //- h2 {{ product.storeProductPrice | currency | currencyInt }} - price | currency | currencyInt 
+                //- h2 {{ product.storeProductPrice | currency | currencyCents }} - price | currency | currencyCents 
 
 
   script.

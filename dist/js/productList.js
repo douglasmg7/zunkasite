@@ -70,6 +70,12 @@ var app = new Vue({
     // },
     // Format number to money format.
     currency(val){
+      let t1 = val.toFixed(2);
+      console.log(`toFixed(2): ${t1}`);
+
+      t2 = t1.replace('.', ',');
+      console.log(`replace('.', ','): ${t2}`);
+
       return val.toFixed(2).replace('.', ',');
       // return val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
