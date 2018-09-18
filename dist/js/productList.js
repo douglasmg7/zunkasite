@@ -70,8 +70,8 @@ var app = new Vue({
     // },
     // Format number to money format.
     currency(val){
-      return val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-      // return 'asdf' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      return val.toFixed(2).replace('.', ',');
+      // return val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
     // currencyBr(val){
     //   return accounting.formatMoney(val, 'R$ ', 2, '.', ',');
