@@ -65,16 +65,17 @@ var app = new Vue({
   },  
   filters: {
     // Format number to money format.
-    formatMoney(val){
-      return 'yR$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    },
+    // formatMoney(val){
+    //   return 'yR$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    // },
     // Format number to money format.
     currency(val){
       return val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      // return 'asdf' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
-    currencyBr(val){
-      return accounting.formatMoney(val, 'R$ ', 2, '.', ',');
-    },
+    // currencyBr(val){
+    //   return accounting.formatMoney(val, 'R$ ', 2, '.', ',');
+    // },
     currencyInt(val){
       // return accounting.formatMoney(accounting.parse(val, ','), '', 2, '.', ',').split(',')[0];
       // return this.currency(val).split(',')[0];

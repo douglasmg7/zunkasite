@@ -31,10 +31,7 @@ html(lang="en")
                   sup R$
                   | {{ product.storeProductPrice | currency | currencyInt }}
                   sup {{ product.storeProductPrice | currency | currencyCents }}                
-                //- h3.price
-                  sup R$
-                  | {{ product.storeProductPrice | currencyInt }}
-                  sup {{ product.storeProductPrice | currencyCents }}
+                //- h2 {{ product.storeProductPrice }}
   script.
     // Make available for vue.
     let csrfToken = !{JSON.stringify(csrfToken)};
