@@ -75,8 +75,10 @@ var app = new Vue({
 
       t2 = t1.replace('.', ',');
       console.log(`replace('.', ','): ${t2}`);
+      // console.log(`replace('.', ','): ${t2}`);
 
-      return val.toFixed(2).replace('.', ',');
+      return val.toFixed(2).replace('\.', '---');
+      // return val.toFixed(2).replace('.', ',');
       // return val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
     charCode(val){
