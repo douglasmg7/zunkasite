@@ -1,3 +1,5 @@
+Change nav bar to mobile access.
+
 Image distorced on product item.
 
 Price with same size.
@@ -5,6 +7,8 @@ Price with same size.
 When cancel order, ask if is to return to stock quantity.
 
 Db backup (mongo and redis).
+
+put pm2 to start on boot.
 
 Verify certbot.service log.
 

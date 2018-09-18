@@ -29,6 +29,10 @@ html(lang="en")
                 h4.title {{ product.storeProductTitle }}
                 h3.price
                   sup R$
+                  | {{ product.storeProductPrice | currency | currencyInt }}
+                  sup {{ product.storeProductPrice | currency | currencyCents }}                
+                //- h3.price
+                  sup R$
                   | {{ product.storeProductPrice | currencyInt }}
                   sup {{ product.storeProductPrice | currencyCents }}
   script.

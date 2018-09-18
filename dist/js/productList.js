@@ -58,21 +58,34 @@ var app = new Vue({
           console.error(`Error - getProducts(), err: ${err}`);
         });
       }
-    }
+    },
+    // currency(val){
+    //   return 'yR$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    // }
   },  
   filters: {
     // Format number to money format.
     formatMoney(val){
-      return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      return 'yR$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
-    currencyBr(value){
-      return accounting.formatMoney(value, 'R$ ', 2, '.', ',');
+    // Format number to money format.
+    currency(val){
+      return 'bR$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
-    currencyInt(value){
-      return accounting.formatMoney(accounting.parse(value, ','), '', 2, '.', ',').split(',')[0];
+    currencyBr(val){
+      return accounting.formatMoney(val, 'R$ ', 2, '.', ',');
     },
-    currencyCents(value){
-      return accounting.formatMoney(accounting.parse(value, ','), '', 2, '.', ',').split(',')[1];
+    currencyInt(val){
+      // return accounting.formatMoney(accounting.parse(val, ','), '', 2, '.', ',').split(',')[0];
+      // return this.currency(val).split(',')[0];
+
+      // return this.$options.filters.currency(val).split(',')[0];;
+      return val.split(',')[0];
+    },
+    currencyCents(val){
+      // return accounting.formatMoney(accounting.parse(val, ','), '', 2, '.', ',').split(',')[1];
+      // return this.currency(val).split(',')[1];
+      return val.split(',')[1];
     }
   },  
 });
