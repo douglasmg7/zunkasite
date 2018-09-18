@@ -32,6 +32,11 @@ html(lang="en")
                   | {{ product.storeProductPrice | currency | currencyInt }}
                   sup {{ product.storeProductPrice | currency | currencyCents }}                
                 h2 {{ product.storeProductPrice }}
+                h2 {{ product.storeProductPrice | currency }}
+                h2 {{ product.storeProductPrice | currency | currencyInt }}
+                h2 {{ product.storeProductPrice | currency | currencyCents }}                
+
+
   script.
     // Make available for vue.
     let csrfToken = !{JSON.stringify(csrfToken)};
