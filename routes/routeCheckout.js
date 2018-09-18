@@ -321,18 +321,6 @@ router.post('/payment/:order_id', (req, res, next)=>{
           }
           // Clean cart.
           req.cart.clean();
-          // // Send email.
-          // let mailOptions = {
-          //     from: '',
-          //     to: req.user.email,
-          //     subject: 'Confirmação de pedido.',
-          //     text: 'Seu pedido foi realizado com sucesso.\n\n' + 
-          //           'Número de pedido: ' + order._id + '\n\n' + 
-          //           'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' + 
-          //           'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
-          //           // 'Esta solicitação de redefinição expira em duas horas.\n' +
-          //           'Obrigado pelo seu pedido.'
-          // };
           // Send email.
           let mailOptions = {
               from: '',

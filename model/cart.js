@@ -98,13 +98,11 @@ module.exports = function Cart(cart) {
 
   // Clean cart.
   this.clean = function(){
-    log.debug('inside cart clean.');
     this.totalQtd = 0;
     this.totalPrice = 0;
     this.products = [];
     this.removedProducts = [];
     this.changed = true;
-    log.debug('get in out from cart clean.');
   }
 
   // Merge cart .
