@@ -77,7 +77,7 @@ var app = new Vue({
       console.log(`replace('.', ','): ${t2}`);
       // console.log(`replace('.', ','): ${t2}`);
 
-      return val.toFixed(2).replace('\.', '---');
+      return val.toFixed(2).replace('\.', ',');
       // return val.toFixed(2).replace('.', ',');
       // return val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
