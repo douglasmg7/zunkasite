@@ -4,6 +4,8 @@ function _search(text){
   app.getProducts();
 }
 
+console.log('productList log.');
+
 var app = new Vue({
   el: '#app',
   data: {
