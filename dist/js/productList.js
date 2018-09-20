@@ -4,8 +4,6 @@ function _search(text){
   app.getProducts();
 }
 
-console.log('productList--- log.');
-
 var app = new Vue({
   el: '#app',
   data: {
@@ -66,37 +64,16 @@ var app = new Vue({
     // }
   },  
   filters: {
-    // Format number to money format.
-    // formatMoney(val){
-    //   return 'yR$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    // },
-    // Format number to money format.
     currency(val){
-      console.log('0001');
-      let t1 = val.toFixed(2);
-      console.log(`toFixed(2): ${t1}`);
-
-      t2 = t1.replace('.', ',');
-      console.log(`replace('.', ','): ${t2}`);
-      // console.log(`replace('.', ','): ${t2}`);
-
-      return val.toFixed(2).replace('\.', ',');
-      // return val.toFixed(2).replace('.', ',');
-      // return val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      return val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
     // currencyBr(val){
     //   return accounting.formatMoney(val, 'R$ ', 2, '.', ',');
     // },
     currencyInt(val){
-      // return accounting.formatMoney(accounting.parse(val, ','), '', 2, '.', ',').split(',')[0];
-      // return this.currency(val).split(',')[0];
-
-      // return this.$options.filters.currency(val).split(',')[0];;
       return val.split(',')[0];
     },
     currencyCents(val){
-      // return accounting.formatMoney(accounting.parse(val, ','), '', 2, '.', ',').split(',')[1];
-      // return this.currency(val).split(',')[1];
       return val.split(',')[1];
     }
   },  
