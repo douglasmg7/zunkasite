@@ -31,8 +31,8 @@ html(lang="en")
                   sup R$
                   | {{ product.storeProductPrice | currency | currencyInt }}
                   sup {{ product.storeProductPrice | currency | currencyCents }}                
-                h2 {{ product.storeProductPrice }} - price
-                h2 {{ product.storeProductPrice | currency }} - price | currency 
+                h2 {{ product.storeProductPrice }}
+                h2 {{ product.storeProductPrice | currency }}
                 //- h2 {{ product.storeProductPrice | charCode }}
                 //- h2 {{ product.storeProductPrice | currency | currencyInt }} - price | currency | currencyInt 
                 //- h2 {{ product.storeProductPrice | currency | currencyCents }} - price | currency | currencyCents 
@@ -44,8 +44,7 @@ html(lang="en")
     let user = !{JSON.stringify(user)};
     let cart = !{JSON.stringify(cart)};
     let search = !{JSON.stringify(search)};
-    console.log('Script test log.');
   include components/axios.js.pug
   include components/vue.js.pug
   include components/accounting.js.pug
-  script(src='/js/productList.js')
+  script(src='/js/productList.js?0001')
