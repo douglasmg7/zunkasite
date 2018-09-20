@@ -28,6 +28,7 @@ var app = new Vue({
   methods: {
     // Get products.
     getProducts(page=1){
+      console.log('getting products.');
       axios({
         method: 'get',
         url: `/api/products/?page=${page}&search=${this.search}`,
@@ -80,16 +81,6 @@ var app = new Vue({
       return val.toFixed(2).replace('\.', ',');
       // return val.toFixed(2).replace('.', ',');
       // return val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    },
-    charCode(val){
-      let t1 = val.toFixed(2);
-      return '\" ' + t1[0] + '\n": ' + t1.charCodeAt(0) + '   ' + 
-      '\" ' + t1[1] + '\": ' + t1.charCodeAt(1) + '   ' + 
-      '\" ' + t1[2] + '\": ' + t1.charCodeAt(2) + '   ' + 
-      '\" ' + t1[3] + '\": ' + t1.charCodeAt(3) + '   ' + 
-      '\" ' + t1[4] + '\": ' + t1.charCodeAt(4) + '   ' + 
-      '\" ' + t1[5] + '\": ' + t1.charCodeAt(5) + '   ' + 
-      '\" ' + t1[6] + '\": ' + t1.charCodeAt(6);
     },
     // currencyBr(val){
     //   return accounting.formatMoney(val, 'R$ ', 2, '.', ',');
