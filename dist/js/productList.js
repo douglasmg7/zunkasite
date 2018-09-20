@@ -17,13 +17,18 @@ var app = new Vue({
     // Text for search products.
     search: search,
     // Cart.
-    cart: cart
+    cart: cart,
+    // Test.
+    test: '1234.45'
   },
   created() {
     // On reload page use the query string for search, not the input search.
     this.getProducts();
     // To show product added to cart.
     this.getPrdouctAddedToCart();
+    // Test.
+    this.test = this.test.replace('.', ',');
+    console.log(this.test);
   },
   methods: {
     // Get products.
