@@ -1,6 +1,8 @@
 Change nav bar to mobile access.
 
-Db backup (mongo and redis).
+Create a timer to backup (mongo and redis).
+
+set password to redis.
 
 put pm2 to start on boot.
 
@@ -24,9 +26,3 @@ Alterar a forma de remover o usurio, just set flag on user, to keep all informat
 After two months remove user and all information on other documents.
 
 run: "git secret hide" when change s.js
-
-mongodump
-https://docs.mongodb.com/manual/reference/program/mongodump/#bin.mongodump
-
-mongorestore
-https://docs.mongodb.com/manual/reference/program/mongorestore/#bin.mongorestore
