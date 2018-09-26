@@ -268,28 +268,12 @@ router.get('/payment/:order_id', (req, res, next)=>{
         { 
           order: order, 
           nav: {
-          }
+          },
+          env: (process.env.NODE_ENV === 'production' ? 'production': 'sandbox')
         }
       ); 
     }
   });  
-});
-
-// Only for test.
-router.post('/update-stock', (req, res, next)=>{
-  // Update stock.
-  log.debug('Inside update-stock');
-  for (var i = 0; i < req.cart.products.length; i++) {
-    log.debug(`req.cart.products.length: ${req.cart.products.length}`);
-    log.debug(`req.cart.products[i]._id: ${req.cart.products[i]._id}`);
-    log.debug(`req.cart.products[i].qtd: ${req.cart.products[i].qtd}`);
-    Product.update({ _id: req.cart.products[i]._id }, { $inc: { storeProductQtd: -1 * req.cart.products[i].qtd } }, err=>{
-      log.error(`err: ${err}`);
-    });
-  };  
-  // Clean cart.
-  req.cart.clean();
-  res.json({ success: true , cart: req.cart });
 });
 
 // Select payment page.
@@ -439,3 +423,25 @@ function estimateShipping(box, cb) {
     });
   });
 };
+
+
+/****************************************************************************** 
+/ TEST
+******************************************************************************/
+
+// Only for test.
+router.post('/update-stock', (req, res, next)=>{
+  // Update stock.
+  log.debug('Inside update-stock');
+  for (var i = 0; i < req.cart.products.length; i++) {
+    log.debug(`req.cart.products.length: ${req.cart.products.length}`);
+    log.debug(`req.cart.products[i]._id: ${req.cart.products[i]._id}`);
+    log.debug(`req.cart.products[i].qtd: ${req.cart.products[i].qtd}`);
+    Product.update({ _id: req.cart.products[i]._id }, { $inc: { storeProductQtd: -1 * req.cart.products[i].qtd } }, err=>{
+      log.error(`err: ${err}`);
+    });
+  };  
+  // Clean cart.
+  req.cart.clean();
+  res.json({ success: true , cart: req.cart });
+});

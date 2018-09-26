@@ -40,6 +40,7 @@ html(lang="en")
   script.
     let csrfToken = !{JSON.stringify(csrfToken)};
     let order = !{JSON.stringify(order)};
+    let env = !{JSON.stringify(env)};
   include ../components/vue.js.pug
   include ../components/axios.js.pug
   script(src='/js/checkout/payment.js') 
