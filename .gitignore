@@ -19,6 +19,4 @@ dist/css/*
 # Git secret.
 config/s.js
 config/email.js
-nginx/nginx.conf
-nginx/sites-enabled/zunka.conf
 .gitsecret/keys/random_seed
