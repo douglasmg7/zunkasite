@@ -83,8 +83,8 @@ let shippingAddress = {
 // Paypal Express Checkout. 
 // https://developer.paypal.com/docs/api/payments/
 paypal.Button.render({
-  // env: 'sandbox', // production or sandbox,
-  env: env, // production or sandbox,
+  env: 'sandbox', // production or sandbox,
+  // env: env, // production or sandbox,
   // env: 'production'
   commit: true, // Show a 'Pay Now' button.
   locale: 'pt_BR',
