@@ -1,19 +1,6 @@
-# ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
-# ssl_ciphers  HIGH:!aNULL:!MD5;
-# ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-
-# server {
-# listen 80;
-# server_name localhost;
-# return 301 https://$host$request_uri;
-# }
-
-server { # Uncomment to also listen for HTTP requests.
+server {
 	listen 443 ssl;
 	server_name www.zunka.com.br;
-
-#	ssl_certificate ssl/server.crt;
-#	ssl_certificate_key ssl/server.key;
 
 	location / {
 		proxy_pass http://localhost:3080;
@@ -27,20 +14,22 @@ server { # Uncomment to also listen for HTTP requests.
 		root /home/douglasmg7/zunka;
 	}
 
-    ssl_certificate /etc/letsencrypt/live/www.zunka.com.br/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/www.zunka.com.br/privkey.pem; # managed by Certbot
+  	ssl_certificate /etc/letsencrypt/live/www.zunka.com.br/fullchain.pem; # managed by Certbot
+  	ssl_certificate_key /etc/letsencrypt/live/www.zunka.com.br/privkey.pem; # managed by Certbot
 }
 
+server {
+	listen 443 ssl;
+	server_name zunka.com.br;
+
+    	return 301 https://www.$host$request_uri;
+
+  	ssl_certificate /etc/letsencrypt/live/www.zunka.com.br/fullchain.pem; # managed by Certbot
+  	ssl_certificate_key /etc/letsencrypt/live/www.zunka.com.br/privkey.pem; # managed by Certbot
+}
 
 server {
-    if ($host = www.zunka.com.br) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
-
-
-	listen 80;
-	server_name www.zunka.com.br;
-    return 404; # managed by Certbot
-
-
+  	listen 80;
+  	server_name zunka.com.br www.zunka.com.br;
+  	return 301 https://www.zunka.com.br$request_uri;
 }
