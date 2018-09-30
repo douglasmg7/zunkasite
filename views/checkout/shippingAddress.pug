@@ -12,10 +12,9 @@ html(lang="en")
     main#app(v-cloak)
       .container
         .address-add
-          h2.text-left Selecionar um endereço para envio
+          h2.text-left Selecione um endereço para envio
           p Ou voçê pode 
             a(href='#name') adicionar um novo endereço para envio.
-          hr
         //- Address list.
         .addresss
           .address(v-if='address' v-for='address in addresss' data-address-id='this.address._id')

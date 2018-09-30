@@ -95,13 +95,21 @@ paypal.Button.render({
     // size: 'responsive',
     // color: 'blue',
     color: 'gold',
-    // shape: 'rect',
-    shape: 'pill',
+    shape: 'rect',
+    // shape: 'pill',
     // label: 'checkout'
     // label: 'installment'
-    // label: 'paypal'
-    label: 'pay'
+    label: 'paypal',
+    // label: 'pay',
+    // label: 'buynow',
+    // layout: 'horizontal',
+    layout: 'vertical',
+    // fundingicons: 'true',  // Work if "layout: 'horizontal'"
   },
+  // funding: {
+  //  // allowed: [ paypal.FUNDING.CREDIT, paypal.FUNDING.CARD ],
+  //  // disallowed: [ paypal.FUNDING.CREDIT ]
+  // },
   client: {
       sandbox:    'ASpmuFYrAVJcuEiBR5kP8lBdfEJqz4b8hsPQ0fKV7spzkiYFQc2BtA2q7M5vyXTPFuUELBiOpGmfhSZw',
       production: 'xxxxxxxxx'

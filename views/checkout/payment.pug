@@ -12,7 +12,7 @@ html(lang="en")
         include ../main-nav.pug    
     main#app(v-cloak)
       .container
-        h2 Selecione a forma de pagamento
+        h2 Resumo
         hr
         //- Address complement exist.
         .address(v-if='order.shipping.address.addressComplement')
@@ -36,6 +36,8 @@ html(lang="en")
         .total
           span Valor total com frete: 
           span.price {{ order.totalPrice | formatMoney }}
+        h2 Selecione a forma de pagamento
+        hr
         #paypal-button
   script.
     let csrfToken = !{JSON.stringify(csrfToken)};

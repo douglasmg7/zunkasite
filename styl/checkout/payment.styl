@@ -6,23 +6,26 @@ main
   justify-content center
   margin 0 auto 3em auto
   max-width 1000px
-  .container
+  & > .container
     display flex
     flex-flow column nowrap
+    h2
+      margin-top 1em
     p
       margin-bottom .5em
     hr
+      margin-top .2em
       margin-bottom 1em
-    .price
+    & > .price
       color $RED_PRICE
-    .quantity
+    & > .quantity
       color $GRAY_TITLE
-    .shipment
+    & > .shipment
       display flex
       flex-flow row wrap
       span.deadline
         font-weight bold
-    .items
+    & > .items
       // margin-top 1em
       margin-left 2em
       ul
@@ -34,6 +37,6 @@ main
           color black
       button
         margin-top 2em
-    .total
+    & > .total
       margin-top .5em
       margin-bottom 1em
