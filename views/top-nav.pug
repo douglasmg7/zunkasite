@@ -1,0 +1,56 @@
+.menu
+  //- Home.
+  a.brand(href='/') Zunka
+  .search
+    input(id='search' onkeyup='__search(event)' placeholder='O que você procura?')
+    //- input(id='search' oninput='window.location="/admin/productList&search=" + getElementById("search").value' placeholder='Pesquisa')
+    input(onclick='__search()')
+  ul.menu
+    li: a(href='/user/account') Conta
+    li: a(href='/user/account') Admin
+    li: a(href='/user/account') Help
+  a(href='/cart')
+    svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px')
+  .toggle-nav
+    input(type='checkbox')
+    span
+    span
+    span
+  script.
+    function __search(event){
+      if (!event || event.key === 'Enter') {
+        // Must be implemented on parent module.
+        _search(document.getElementById('search').value);
+      }
+    }
+
+
+
+//- .main-nav
+//-   //- Home.
+//-   a(href='/') Zunka
+//-   .search
+//-     input(id='search' onkeyup='__search(event)' placeholder='O que você procura?')
+//-     //- input(id='search' oninput='window.location="/admin/productList&search=" + getElementById("search").value' placeholder='Pesquisa')
+//-     input(onclick='__search()')
+//-   //- User name.
+//-   a(href='/user/account') Sua conta
+//-   //- Cart.
+//-   a(href='/cart')
+//-     svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px')
+//-   .menu-toggle
+//-     input(type='checkbox')
+//-     span
+//-     span
+//-     span
+//-     ul.menu
+//-       a(href='/user/account'): li Option 1
+//-       a(href='/user/account'): li Option 2
+//-       a(href='/user/account'): li Option 3
+//-   script.
+//-     function __search(event){
+//-       if (!event || event.key === 'Enter') {
+//-         // Must be implemented on parent module.
+//-         _search(document.getElementById('search').value);
+//-       }
+//-     }
