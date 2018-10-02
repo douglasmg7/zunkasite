@@ -1,17 +1,26 @@
 .top-nav
-  label Label
-  //- #toggle-menu(onclick='toggleMenu()')
+  a.brand Zunka
   #toggle-menu
     span
     span
     span
+  a.cart(href='/cart')
+    svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px')  
   ul#menu
-    li primeiro
-    li segundo
-    li terceiro
-  div
-    input(type="text")      
+    li Sua conta
+    li: a(href='/user/orders') Pedidos
+  .search
+    input(id='search' onkeyup='__search(event)' placeholder='O que você procura?')
+    //- input(id='search' oninput='window.location="/admin/productList&search=" + getElementById("search").value' placeholder='Pesquisa')
+    input(onclick='__search()')
   script.
+    // Input search.
+    function __search(event){
+      if (!event || event.key === 'Enter') {
+        // Must be implemented on parent module.
+        _search(document.getElementById('search').value);
+      }
+    }
     // DOM loaded.
     document.addEventListener("DOMContentLoaded", function(event) { 
       // #menu. 
@@ -28,7 +37,7 @@
           elToggleMenu.className = ''
         } else {
           elMenu.className = 'show';
-          elToggleMenu.className = 'cross'
+          elToggleMenu.className = 'cross';
         }
         //- console.log(elMenu.className);
       };
@@ -43,42 +52,12 @@
         } else {
           // Viewport is more than than 600 pixels wide.
           elMenu.className = '';
+          elToggleMenu.className = '';
         }
       }
     });
 
 
-
-
-
-
-
-  //- //- Home.
-  //- a.brand(href='/') Zunka
-  //- .search
-  //-   input(id='search' onkeyup='__search(event)' placeholder='O que você procura?')
-  //-   //- input(id='search' oninput='window.location="/admin/productList&search=" + getElementById("search").value' placeholder='Pesquisa')
-  //-   input(onclick='__search()')
-  //- span 
-  //-   p aasdf
-  //- ul
-  //-   li: a(href='/user/account') Conta
-  //-   li: a(href='/user/account') Admin
-  //-   li: a(href='/user/account') Help
-  //- a(href='/cart')
-  //-   svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px')
-  //- .toggle-nav
-  //-   //- input(type='checkbox')
-  //-   span
-  //-   span
-  //-   span
-  //- script.
-  //-   function __search(event){
-  //-     if (!event || event.key === 'Enter') {
-  //-       // Must be implemented on parent module.
-  //-       _search(document.getElementById('search').value);
-  //-     }
-  //-   }
 
 
 

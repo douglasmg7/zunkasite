@@ -1,16 +1,63 @@
 .top-nav
   display block
-  padding 1em
+  padding .8em 0
   min-width 400px
-  label 
+  background #303030
+  font-size 1.1em
+  a.brand 
     float left
-    margin .2em
+    color #ccc
+    text-decoration none
+    margin .1em 2em .1em 1em
+    cursor pointer
+    &:hover
+      color #fff
+  a.cart
+    margin 0 1em
+    float right
+    cursor pointer
+    .icon
+      width 1.5em
+      height 1.5em
+      vertical-align middle
   #menu
     float right
     transition transform 0.1s ease
+    background #303030
     & > li
       display inline-block
-      margin .2em
+      color #ccc
+      margin 0 1em
+      cursor pointer
+      a
+        color #ccc
+        text-decoration none
+  .search
+    // The trick used to be width 100% inside a block.
+    display flex
+    input:first-child
+      height 2em
+      min-width 60px
+      border none
+      border-radius 2px 0 0 2px
+      padding-left .5em
+    input:last-child
+      height 2em
+      width 2.2em
+      margin-right 2em
+      border none
+      border-radius 0 2px 2px 0
+      background-image url('/icon/ic_search_black_24px.svg')
+      // background-image url('/icon/sprite.svg#ic_search_black_24px')
+      // background-size 8px 8px;
+      // background-position 0 0;
+      background-repeat no-repeat
+      background-color white
+      background-size 1.8em 1.8em
+      background-position 65% 50%  
+    input:last-child:hover
+      background-color lightgray
+      cursor pointer
   #toggle-menu
     float right
     display none
@@ -18,8 +65,10 @@
       display block
       width 28px
       height 2px
-      margin-bottom 5px
-      background black
+      margin 5px 1em 5px 1em
+      // margin-bottom 5px
+      // margin-top 5px
+      background #ccc
       transition transform 0.1s ease
     // #toggle-menu span:nth-last-child(3)
     //   transform-origin 50% 50%
@@ -35,15 +84,14 @@
       &.cross span
         &:nth-last-child(3)
           transform rotate(45deg) translate(6px, 6px)
-    #toggle-menu.cross span:nth-last-child(2)
-      opacity 0
-    #toggle-menu.cross span:nth-last-child(1)
-      transform rotate(-45deg) translate(6px, -5px)
-      // transform rotate(45deg)
+        &:nth-last-child(2)
+          opacity 0
+        &:nth-last-child(1)
+          transform rotate(-45deg) translate(6px, -5px)
     #menu
       position absolute
-      top 40px
-      right -40px
+      top 60px
+      right -70px
       & > li
         display block
       &.show
