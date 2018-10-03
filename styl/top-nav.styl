@@ -1,4 +1,5 @@
 .top-nav
+  z-index 11
   display block
   min-width 400px
   background #333
@@ -33,16 +34,18 @@
     float right
     transition transform 0.1s ease
     background #333
-    border 1px yellow solid 
+    // border 1px yellow solid 
     & > li
+      // border 1px green solid 
+      line-height 2.2em
       display inline-block
+      // vertical-align middle
       color #ccc
-      height 2.3em
+      height 2.4em
       margin 0 1em
-      vertical-align middle
       cursor pointer
-      border 1px green solid 
       a
+        // border 1px yellow solid
         display inline-block
         color #ccc
         text-decoration none
@@ -53,12 +56,14 @@
         vertical-align middle
     & > li.account
       ul
+        z-index 10
         display none
         position absolute
-        top 3em
+        top 2.2em
         right 11em
         background #777
         li 
+          z-index 10
           list-style none
           padding .2em 1em
     & > li.account:hover ul 
