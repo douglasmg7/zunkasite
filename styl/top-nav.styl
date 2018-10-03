@@ -1,20 +1,20 @@
 .top-nav
   display block
-  padding .8em 0
   min-width 400px
   background #333
   font-size 1.1em
+  height 2.5em
   a.brand 
     float left
     color #ccc
     text-decoration none
-    margin .1em 2em .1em 1em
+    margin .5em 2em .1em 1em
     cursor pointer
     &:hover
       color #fff
   a.cart
     float right
-    margin 0 1em
+    margin .35em 1em 0 1em
     text-decoration none
     cursor pointer
     .icon
@@ -33,41 +33,40 @@
     float right
     transition transform 0.1s ease
     background #333
-    padding-top .1em
-    // border 1px yellow solid 
+    border 1px yellow solid 
     & > li
       display inline-block
       color #ccc
+      height 2.3em
       margin 0 1em
+      vertical-align middle
       cursor pointer
-      // border 1px green solid 
+      border 1px green solid 
       a
+        display inline-block
         color #ccc
         text-decoration none
       .icon
         // border 1px pink solid 
         width 1.2em
         height 1.2em   
-        // position relative
-        // top -3px
         vertical-align middle
     & > li.account
       ul
         display none
         position absolute
-        top 40px
-        background #333
+        top 3em
+        right 11em
+        background #777
         li 
           list-style none
+          padding .2em 1em
     & > li.account:hover ul 
       display block
-      background blue    
-      // &:hover ul{display block}
-      //   background blue
-      // }
   .search
     // The trick used to be width 100% inside a block.
     display flex
+    padding-top .35em
     input:first-child
       height 2em
       min-width 60px
