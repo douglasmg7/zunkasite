@@ -2,7 +2,7 @@
   display block
   padding .8em 0
   min-width 400px
-  background #303030
+  background #333
   font-size 1.1em
   a.brand 
     float left
@@ -13,25 +13,58 @@
     &:hover
       color #fff
   a.cart
-    margin 0 1em
     float right
+    margin 0 1em
+    text-decoration none
     cursor pointer
     .icon
-      width 1.5em
-      height 1.5em
-      vertical-align middle
+      width 2.2em
+      height 2.2em   
+      position relative
+      top -.25em
+    #cart-qtd
+      position relative
+      top -1.5em
+      left -1.45em
+      font-size .9em
+      font-weight bold
+      color green
   #menu
     float right
     transition transform 0.1s ease
-    background #303030
+    background #333
+    padding-top .1em
+    // border 1px yellow solid 
     & > li
       display inline-block
       color #ccc
       margin 0 1em
       cursor pointer
+      // border 1px green solid 
       a
         color #ccc
         text-decoration none
+      .icon
+        // border 1px pink solid 
+        width 1.2em
+        height 1.2em   
+        // position relative
+        // top -3px
+        vertical-align middle
+    & > li.account
+      ul
+        display none
+        position absolute
+        top 40px
+        background #333
+        li 
+          list-style none
+    & > li.account:hover ul 
+      display block
+      background blue    
+      // &:hover ul{display block}
+      //   background blue
+      // }
   .search
     // The trick used to be width 100% inside a block.
     display flex

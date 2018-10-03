@@ -5,9 +5,17 @@
     span
     span
   a.cart(href='/cart')
-    svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px')  
+    svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px') 
+    //- span#cart-qtd= cart.totalQtd
+    span#cart-qtd #{cart.totalQtd} 
   ul#menu
-    li Sua conta
+    li.account 
+      | Sua conta
+      svg.icon: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
+      ul
+        li: a(href='/user/orders') Option 1
+        li: a(href='/user/orders') Option 2
+        li: a(href='/user/orders') Option 3
     li: a(href='/user/orders') Pedidos
   .search
     input(id='search' onkeyup='__search(event)' placeholder='O que você procura?')
@@ -58,7 +66,16 @@
     });
 
 
-
+    //- ul#menu
+    //-   li Sua conta
+    //-     // svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px') 
+    //-     // | Sua conta
+    //-   li: a(href='/user/orders') Pedidos
+    //- // ul#menu
+    //- //   li Sua conta
+    //- //     // svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px') 
+    //- //     // | Sua conta
+    //- //   li: a(href='/user/orders') Pedidos
 
 
 //- .main-nav
