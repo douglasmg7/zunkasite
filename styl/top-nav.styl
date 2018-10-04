@@ -1,5 +1,4 @@
 .top-nav
-  z-index 11
   display block
   min-width 400px
   background #333
@@ -31,43 +30,54 @@
       font-weight bold
       color green
   #menu
+    position relative
     float right
     transition transform 0.1s ease
     background #333
     // border 1px yellow solid 
-    & > li
-      // border 1px green solid 
-      line-height 2.2em
+  #menu > li
+    position relative
+    // border 1px green solid 
+    line-height 2.2em
+    display inline-block
+    color #ccc
+    height 2.4em
+    padding 0 1em
+    white-space: nowrap
+    cursor pointer
+    a
+      // border 1px yellow solid
       display inline-block
-      // vertical-align middle
       color #ccc
-      height 2.4em
-      margin 0 1em
-      cursor pointer
-      a
-        // border 1px yellow solid
-        display inline-block
-        color #ccc
-        text-decoration none
-      .icon
-        // border 1px pink solid 
-        width 1.2em
-        height 1.2em   
-        vertical-align middle
-    & > li.account
-      ul
-        z-index 10
-        display none
-        position absolute
-        top 2.2em
-        right 11em
-        background #777
-        li 
-          z-index 10
-          list-style none
-          padding .2em 1em
-    & > li.account:hover ul 
-      display block
+      text-decoration none
+    .icon
+      // border 1px pink solid 
+      width 1.2em
+      height 1.2em   
+      vertical-align middle
+  #menu > li.admin
+  #menu > li.account
+    ul
+      cursor default
+      position absolute
+      left 0
+      display none
+      background #444
+      border-radius 0 0 4px 4px
+      padding-bottom .8em
+      li 
+        font-size .9em
+        line-height normal
+        padding .8em 1em 0 1em
+        position relative
+        list-style none
+        a:hover
+          text-decoration underline 
+  #menu > li:hover
+    background #444
+  #menu > li.account:hover ul 
+  #menu > li.admin:hover ul 
+    display block
   .search
     // The trick used to be width 100% inside a block.
     display flex
@@ -109,6 +119,8 @@
       transition transform 0.1s ease
     // #toggle-menu span:nth-last-child(3)
     //   transform-origin 50% 50%
+    & > span:first-child
+      margin-top 13px
   div 
     overflow hidden
   input 
@@ -133,6 +145,24 @@
         display block
       &.show
         transform translate(-80px)
+    #menu > li.admin ul
+    #menu > li.account ul
+      cursor default
+      position absolute
+      top 10em
+      right 10em
+      display none
+      background #444
+      border-radius 0 0 4px 4px
+      padding-bottom .8em
+      li 
+        font-size .9em
+        line-height normal
+        padding .8em 1em 0 1em
+        position relative
+        list-style none
+        a:hover
+          text-decoration underline 
 
 
 

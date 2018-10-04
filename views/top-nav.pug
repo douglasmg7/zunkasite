@@ -9,14 +9,25 @@
     //- span#cart-qtd= cart.totalQtd
     span#cart-qtd #{cart.totalQtd} 
   ul#menu
+    if user.name && user.group.includes('admin')
+      li.admin
+        | Admin
+        svg.icon: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
+        ul
+          li: a(href='/admin/orders') Pedidos
+          li: a(href='/admin') Produtos
+          li: a(href='/admin/product/new') Criar produto    
     li.account
       | Sua conta
       svg.icon: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
       ul
-        li: a(href='/user/orders') Option 1
-        li: a(href='/user/orders') Option 2
-        li: a(href='/user/orders') Option 3
-    li: a(href='/user/orders') Pedidos
+        if !user.name
+          li: a(href='/user/signin') Entrar
+        if user.name
+          li: a(href='/user/orders') Pedidos
+          li: a(href='/user/address') Endereços
+          li: a(href='/user/access') Autenticação
+          li: a(href='/user/signout') Não é #{user.name}? Sair
   .search
     input(id='search' onkeyup='__search(event)' placeholder='O que você procura?')
     //- input(id='search' oninput='window.location="/admin/productList&search=" + getElementById("search").value' placeholder='Pesquisa')
