@@ -4,6 +4,10 @@
   background #333
   font-size 1.1em
   height 2.5em
+  div 
+    overflow hidden
+  input 
+    width 100%  
   a.brand 
     float left
     color #ccc
@@ -32,54 +36,52 @@
   #menu
     position relative
     float right
-    transition transform 0.1s ease
+    transition transform 0.2s ease
     background #333
     // border 1px yellow solid 
-  #menu > li
-    position relative
-    // border 1px green solid 
-    line-height 2.2em
-    display inline-block
-    color #ccc
-    height 2.4em
-    padding 0 1em
-    white-space: nowrap
-    cursor pointer
-    a
-      // border 1px yellow solid
+    li.back-main-menu
+      display none
+    > li
+      position relative
+      // border 1px green solid 
+      line-height 2.2em
       display inline-block
       color #ccc
-      text-decoration none
-    .icon
-      // border 1px pink solid 
-      width 1.2em
-      height 1.2em   
-      vertical-align middle
-  #menu li.back-main-menu
-    display none
-  #menu > li.admin
-  #menu > li.account
-    ul
-      cursor default
-      position absolute
-      left 0
-      display none
+      height 2.4em
+      padding 0 1em
+      white-space: nowrap
+      cursor pointer
+      a
+        // border 1px yellow solid
+        display inline-block
+        color #ccc
+        text-decoration none
+      .icon
+        // border 1px pink solid 
+        width 1.2em
+        height 1.2em   
+        vertical-align middle
+      ul
+        cursor default
+        position absolute
+        left 0
+        display none
+        background #444
+        border-radius 0 0 4px 4px
+        padding-bottom .8em
+        transition transform 0.2s ease
+        li 
+          // font-size .9em
+          line-height normal
+          padding .8em 1em 0 1em
+          position relative
+          list-style none
+          a:hover
+            text-decoration underline 
+    > li:hover
       background #444
-      border-radius 0 0 4px 4px
-      padding-bottom .8em
-      li 
-        font-size .9em
-        line-height normal
-        padding .8em 1em 0 1em
-        position relative
-        list-style none
-        a:hover
-          text-decoration underline 
-  #menu > li:hover
-    background #444
-  #menu > li.account:hover ul 
-  #menu > li.admin:hover ul 
-    display block
+    > li:hover ul 
+      display block
   .search
     // The trick used to be width 100% inside a block.
     display flex
@@ -110,7 +112,7 @@
   #toggle-menu
     float right
     display none
-    & > span
+    > span
       display block
       width 28px
       height 2px
@@ -121,44 +123,49 @@
       transition transform 0.1s ease
     // #toggle-menu span:nth-last-child(3)
     //   transform-origin 50% 50%
-    & > span:first-child
+    > span:first-child
       margin-top 13px
-  div 
-    overflow hidden
-  input 
-    width 100%  
 // Mobile.
 @media screen and (max-width 600px)
   .top-nav
     #toggle-menu
       display block
-      &.cross span
-        &:nth-last-child(3)
-          transform rotate(45deg) translate(6px, 6px)
-        &:nth-last-child(2)
-          opacity 0
-        &:nth-last-child(1)
-          transform rotate(-45deg) translate(6px, -5px)
+    #toggle-menu.cross
+      span:nth-last-child(3)
+        transform rotate(45deg) translate(6px, 6px)
+      span:nth-last-child(2)
+        opacity 0
+      span:nth-last-child(1)
+        transform rotate(-45deg) translate(6px, -5px)
     #menu
       position absolute
       top 44px
-      right -134px
-      & > li
+      right -10em
+      width 15em
+      li.back-main-menu
         display block
-      &.show
-        transform translate(-120px)
-    #menu li.back-main-menu
-      display block
-    #menu > li.admin ul 
-      display block
-      top 5em
-    #menu > li.admin.show ul 
-      transform translate(-120px)
-    #menu > li.account ul 
-      display block
-      top 10em
-    #menu > li.account.show ul 
-      transform translate(-120px)
+      > li
+        display block
+        > ul.show
+          transform translate(-60px)
+        ul 
+          position absolute
+          display block
+      > li.admin > ul 
+        top 5em
+      > li.account > ul 
+        top 12em
+    #menu.show
+      transform translate(-360px)   
+      
+
+    // #menu > li.admin > ul.show 
+    //   transform translate(-120px)
+    // #menu > li.account ul 
+    //   display block
+    //   top 10em
+    // #menu > li.account.show ul 
+    //   transform translate(-120px)
 
 
 
