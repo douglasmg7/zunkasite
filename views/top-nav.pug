@@ -14,6 +14,7 @@
         | Admin
         svg.icon: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
         ul
+          li.back-main-menu Menu principal
           li: a(href='/admin/orders') Pedidos
           li: a(href='/admin') Produtos
           li: a(href='/admin/product/new') Criar produto    
@@ -21,6 +22,7 @@
       | Sua conta
       svg.icon: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
       ul
+        li.back-main-menu Menu principal
         if !user.name
           li: a(href='/user/signin') Entrar
         if user.name
@@ -42,25 +44,37 @@
     }
     // DOM loaded.
     document.addEventListener("DOMContentLoaded", function(event) { 
-      // #menu. 
+      // Elements. 
       let elMenu = document.getElementById('menu');
       let elToggleMenu = document.getElementById('toggle-menu');
-      // #toggle-menu click.
+      let elAdmin = document.querySelectorAll('li.admin')[0];
+      let elAccount = document.querySelectorAll('li.account')[0];
+      let elBackMainMenu = document.querySelectorAll('li.back-main-menu')[0];
+      // Main menu.
       elToggleMenu.addEventListener('click', e=>{
-        toggleMenu();
+        elToggleMenu.classList.toggle('cross');
+        elMenu.classList.toggle('show');
       });
-      // Show-hide menu on small screen.
-      function toggleMenu(){
-        if (elMenu.className === 'show') {
-          elMenu.className = '';
-          elToggleMenu.className = ''
-        } else {
-          elMenu.className = 'show';
-          elToggleMenu.className = 'cross';
+      // Admin menu.
+      elAdmin.addEventListener('click', e=>{
+        // Not children events.
+        if(e.target.classList.contains('admin')){
+          elAdmin.classList.add('show');
         }
-        //- console.log(elMenu.className);
-      };
-
+      });
+      // Account menu.
+      elAccount.addEventListener('click', e=>{
+        // Not children events.
+        if(e.target.classList.contains('account')){
+          elAccount.classList.add('show');
+        }
+        //- console.log(e.target);
+      });
+      // Back to main menu.
+      elBackMainMenu.addEventListener('click', e=>{
+        elAdmin.classList.remove('show');
+        console.log('mainMenu');
+      });
       // Get media query.
       var mql = window.matchMedia('(max-width: 600px)');
       mql.addListener(screenTest);
