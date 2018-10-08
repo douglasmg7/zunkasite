@@ -11,25 +11,27 @@
   ul#menu
     if user.name && user.group.includes('admin')
       li.niv1.admin
-        | Admin
-        svg.icon.niv1: use.niv1(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
+        .title
+          | Admin
+          svg.icon: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
         ul
           li.back-main-menu Menu principal
-          li: a(href='/admin/orders') Pedidos
-          li: a(href='/admin') Produtos
-          li: a(href='/admin/product/new') Criar produto    
+          li(onclick='window.location="/admin/orders"') Pedidos
+          li(onclick='window.location="/admin"') Produtos
+          li(onclick='window.location="/admin/product/new"') Criar produto   
     li.niv1.account
-      | Sua conta
-      svg.icon: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
+      .title
+        | Sua conta
+        svg.icon: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
       ul
         li.back-main-menu Menu principal
         if !user.name
-          li: a(href='/user/signin') Entrar
+          li(onclick='window.location="/user/signin"') Entrar
         if user.name
-          li: a(href='/user/orders') Pedidos
-          li: a(href='/user/address') Endereços
-          li: a(href='/user/access') Autenticação
-          li: a(href='/user/signout') Não é #{user.name}? Sair
+          li(onclick='window.location="/user/orders"') Pedidos
+          li(onclick='window.location="/user/address"') Endereços
+          li(onclick='window.location="/user/access"') Autenticação
+          li(onclick='window.location="/user/signout"') Não é #{user.name}? Sair
   .search
     input(id='search' onkeyup='__search(event)' placeholder='O que você procura?')
     //- input(id='search' oninput='window.location="/admin/productList&search=" + getElementById("search").value' placeholder='Pesquisa')
@@ -47,7 +49,7 @@
       // Elements. 
       let elMenu = document.getElementById('menu');
       let elToggleMenu = document.getElementById('toggle-menu');
-      let elSubMenu = document.querySelectorAll('#menu > li');
+      let elSubMenu = document.querySelectorAll('#menu > li > .title');
       let elBackMainMenu = document.querySelectorAll('li.back-main-menu');
       // Show main menu.
       elToggleMenu.addEventListener('click', e=>{
@@ -56,12 +58,8 @@
       });
       // Show submenu.
       elSubMenu.forEach(el=>{
-        el.addEventListener('click', e=>{
-          // Not children events.
-          console.log(e.target);
-          if(e.target.classList.contains('niv1')){
-            e.target.querySelector('ul').classList.add('show');
-          }
+        el.addEventListener('click', function(e){
+          this.parentElement.querySelector('ul').classList.add('show');
         });
       })
       // Back to main menu.
