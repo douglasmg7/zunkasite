@@ -4,8 +4,8 @@
   background #333
   font-size 1.1em
   height 2.5em
-  div 
-    overflow hidden
+  // div 
+  //   overflow hidden
   input 
     width 100%  
   a.brand 
@@ -34,9 +34,7 @@
       font-weight bold
       color green
   #menu
-    position relative
     float right
-    transition transform 0.2s ease
     background #333
     // border 1px yellow solid 
     li.back-main-menu
@@ -108,6 +106,7 @@
       margin-right 2em
       border none
       border-radius 0 2px 2px 0
+      background-image url('/icon/ic_search_black_24px.svg')
       // background-image url('/icon/sprite.svg#ic_search_black_24px')
       // background-size 8px 8px;
       // background-position 0 0;
@@ -150,14 +149,18 @@
     #menu
       position absolute
       z-index 10
+      transform-origin: 0% 0%;
+      transform: translate(100%, 0);
+      transition transform 0.2s ease
       top 44px
-      right -22em
+      right 0
       width 16em
       .icon.menu
         transform rotate(-90deg)
       .back-main-menu .icon.menu
         transform rotate(90deg)
       > li
+        // overflow hidden
         display block
         border-top solid 1px #555
         border-right solid 1px #777
@@ -185,4 +188,4 @@
       > li.account > ul 
         top -2.6em
     #menu.show
-      transform translate(-20em)   
+      transform none 
