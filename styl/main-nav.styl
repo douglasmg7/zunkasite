@@ -1,6 +1,5 @@
 .main-nav
   display block
-  min-width 400px
   background #333
   font-size 1.1em
   height 2.5em
@@ -35,61 +34,53 @@
       color green
   #menu
     float right
-    background #333
-    // border 1px yellow solid 
-    li.back-main-menu
-      display none
-    > li
-      position relative
-      // border 1px green solid 
-      line-height 2.2em
-      display inline-block
-      color #ccc
-      height 2.5em
-      // padding 0 1em
-      white-space: nowrap
-      cursor pointer
-      .title
-        padding 0 1em
-      a
-        // border 1px yellow solid
+    > ul
+      background #333
+      li.back-main-menu
+        display none
+      > li
+        position relative
+        line-height 2.2em
         display inline-block
         color #ccc
-        text-decoration none
-      .icon
-        // border 1px pink solid 
-        width 1.2em
-        height 1.2em   
-        vertical-align middle
-      > ul
-        cursor default
-        position absolute
-        left 0
-        top 2.5em
-        display none
-        background #333
-        // border-radius 0 0 4px 4px
-        transition transform 0.2s ease
-        > li 
-          // font-size .9em
-          // line-height normal
-          line-height 1.7em
-          padding .4em 1em .4em 1em
-          position relative
-          list-style none
-          border-bottom solid 1px #555
-          border-left solid 1px #777
-          border-right solid 1px #777
-        > li:nth-child(2) 
-          border-top solid 1px #777
-        > li:last-child 
-          border-bottom solid 1px #777
-        > li:hover
-          background #444
-    > li:hover
-      background #444
-    > li:hover ul 
-      display block
+        height 2.5em
+        white-space: nowrap
+        cursor pointer
+        .title
+          padding 0 1em
+        .icon
+          width 1.2em
+          height 1.2em   
+          vertical-align middle
+        > ul
+          cursor default
+          position absolute
+          left 0
+          top 2.5em
+          display none
+          background #333
+          transition transform 0.2s ease
+          > li 
+            cursor pointer
+            // font-size .9em
+            // line-height normal
+            display block
+            line-height 1.7em
+            padding .4em 1em .4em 1em
+            list-style none
+            border-bottom solid 1px #555
+            border-left solid 1px #777
+            border-right solid 1px #777
+          > li:nth-child(2) 
+            border-top solid 1px #777
+          > li:last-child 
+            border-bottom solid 1px #777
+          > li:hover
+            background #444
+      > li:hover
+        background #444
+      > li:hover > ul 
+        display block
   .search
     // The trick used to be width 100% inside a block.
     display flex
@@ -146,46 +137,57 @@
         opacity 0
       span:nth-last-child(1)
         transform rotate(-45deg) translate(4px, -4px)
+    #menu.show > ul
+      transition transform 0.2s ease
+      transform none 
     #menu
       position absolute
-      z-index 10
-      transform-origin: 0% 0%;
-      transform: translate(100%, 0);
-      transition transform 0.2s ease
-      top 44px
-      right 0
-      width 16em
-      .icon.menu
-        transform rotate(-90deg)
-      .back-main-menu .icon.menu
-        transform rotate(90deg)
-      > li
-        // overflow hidden
-        display block
-        border-top solid 1px #555
-        border-right solid 1px #777
-        border-left solid 1px #777
-        > ul 
-          z-index 12
+      width 98%
+      height 30em
+      // overflow hidden
+      background-color rgba(0,0,0,0.5)
+      top 2.5em
+      > ul
+        // display inline-block
+        position absolute
+        right 0
+        transform-origin: 0% 0%;
+        transform: translate(100%, 0);
+        .icon.menu
+          transform rotate(-90deg)
+        .back-main-menu .icon.menu
+          transform rotate(90deg)
+        > li
+          // transform-origin: 0% 0%;
+          // transform: translate(50%, 0);
+          // transition transform 0.2s ease
+          // overflow hidden
           width 16em
-          position absolute
           display block
-          > li.back-main-menu
+          border-top solid 1px #555
+          border-right solid 1px #777
+          border-left solid 1px #777
+          > ul 
+            z-index 12
+            position relative
             display block
-          > li:nth-child(2) 
-            border-top none
-          > li:nth-child(1) 
-            border-top solid 1px #555
-        > ul.show
-          transform translate(-22em)
-      > li:last-child
-        border-bottom solid 1px #777
-      > li.admin > ul
-      > li.account > ul 
-        left 21.9em
-      > li.admin > ul 
-        top -.05em
-      > li.account > ul 
-        top -2.6em
-    #menu.show
-      transform none 
+            > li
+              width 16em
+            > li.back-main-menu
+              display block
+            > li:nth-child(2) 
+              border-top none
+            > li:nth-child(1) 
+              border-top solid 1px #555
+          > ul.show
+            transform translate(-16em)
+        > li:last-child
+          border-bottom solid 1px #777
+        // > li.admin > ul
+        // > li.account > ul 
+        //   left .9em
+        // > li.admin > ul 
+        //   top 0
+        > li.account > ul 
+          top 15em
+ 

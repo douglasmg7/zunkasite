@@ -8,38 +8,43 @@
     svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px') 
     //- span#cart-qtd= cart.totalQtd
     span#cart-qtd #{cart.totalQtd} 
-  ul#menu
-    if user.name && user.group.includes('admin')
-      li.niv1.admin
+  //- div.t
+  #menu
+    ul
+      if user.name && user.group.includes('admin')
+        li.niv1.admin
+          .title
+            | Admin
+            svg.icon.menu: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
+          ul
+            li.back-main-menu 
+              svg.icon.menu: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
+              | Menu principal
+            li(onclick='window.location="/admin/orders"') Pedidos
+            li(onclick='window.location="/admin"') Produtos
+            li(onclick='window.location="/admin/product/new"') Criar produto   
+      li.niv1.account
         .title
-          | Admin
+          | Sua conta
           svg.icon.menu: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
         ul
           li.back-main-menu 
             svg.icon.menu: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
             | Menu principal
-          li(onclick='window.location="/admin/orders"') Pedidos
-          li(onclick='window.location="/admin"') Produtos
-          li(onclick='window.location="/admin/product/new"') Criar produto   
-    li.niv1.account
-      .title
-        | Sua conta
-        svg.icon.menu: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
-      ul
-        li.back-main-menu 
-          svg.icon.menu: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
-          | Menu principal
-        if !user.name
-          li(onclick='window.location="/user/signin"') Entrar
-        if user.name
-          li(onclick='window.location="/user/orders"') Pedidos
-          li(onclick='window.location="/user/address"') Endereços
-          li(onclick='window.location="/user/access"') Autenticação
-          li(onclick='window.location="/user/signout"') Não é #{user.name}? Sair
+          if !user.name
+            li(onclick='window.location="/user/signin"') Entrar
+          if user.name
+            li(onclick='window.location="/user/orders"') Pedidos
+            li(onclick='window.location="/user/address"') Endereços
+            li(onclick='window.location="/user/access"') Autenticação
+            li(onclick='window.location="/user/signout"') Não é #{user.name}? Sair
   .search
     input(id='search' onkeyup='__search(event)' placeholder='O que você procura?')
     //- input(id='search' oninput='window.location="/admin/productList&search=" + getElementById("search").value' placeholder='Pesquisa')
     input(onclick='__search()')
+  //- .test
+  //-   .a
+  //-   .b
   script.
     // Input search.
     function __search(event){
@@ -53,7 +58,7 @@
       // Elements. 
       let elMenu = document.getElementById('menu');
       let elToggleMenu = document.getElementById('toggle-menu');
-      let elSubMenu = document.querySelectorAll('#menu > li > .title');
+      let elSubMenu = document.querySelectorAll('#menu > ul > li > .title');
       let elBackMainMenu = document.querySelectorAll('li.back-main-menu');
       // Show main menu.
       elToggleMenu.addEventListener('click', e=>{
@@ -63,6 +68,7 @@
       // Show submenu.
       elSubMenu.forEach(el=>{
         el.addEventListener('click', function(e){
+          console.log('clicked');
           this.parentElement.querySelector('ul').classList.add('show');
         });
       })
