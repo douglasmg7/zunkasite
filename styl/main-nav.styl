@@ -1,3 +1,5 @@
+$BORDER_COLOR = #777
+$DIVISION_COLOR = #555
 .main-nav
   display block
   background #333
@@ -68,13 +70,13 @@
             line-height 1.7em
             padding .4em 1em .4em 1em
             list-style none
-            border-bottom solid 1px #555
-            border-left solid 1px #777
-            border-right solid 1px #777
+            border-bottom solid 1px $DIVISION_COLOR
+            border-left solid 2px $BORDER_COLOR
+            border-right solid 2px $BORDER_COLOR
           > li:nth-child(2) 
-            border-top solid 1px #777
+            border-top solid 2px $BORDER_COLOR
           > li:last-child 
-            border-bottom solid 1px #777
+            border-bottom solid 2px $BORDER_COLOR
           > li:hover
             background #444
       > li:hover
@@ -137,57 +139,54 @@
         opacity 0
       span:nth-last-child(1)
         transform rotate(-45deg) translate(4px, -4px)
-    #menu.show > ul
-      transition transform 0.2s ease
-      transform none 
-    #menu
-      position absolute
-      width 98%
-      height 30em
-      // overflow hidden
+    #menu.show
+      visibility visible
       background-color rgba(0,0,0,0.5)
+    #menu.show > ul
+      transform-origin: 0% 0%;
+      transition transform 0.5s ease
+      transform: translate(-95%, 0);
+    #menu
+      visibility hidden
+      background-color rgba(0,0,0,0.5)
+      position absolute
+      width 100%
+      height 200%
+      overflow hidden
       top 2.5em
       > ul
-        // display inline-block
         position absolute
-        right 0
-        transform-origin: 0% 0%;
-        transform: translate(100%, 0);
+        width 16em
+        right -16em
+        transition transform 0.2s ease
         .icon.menu
           transform rotate(-90deg)
         .back-main-menu .icon.menu
           transform rotate(90deg)
         > li
-          // transform-origin: 0% 0%;
-          // transform: translate(50%, 0);
-          // transition transform 0.2s ease
-          // overflow hidden
-          width 16em
           display block
-          border-top solid 1px #555
-          border-right solid 1px #777
-          border-left solid 1px #777
+          border-top solid 1px $DIVISION_COLOR
+          border-right solid 2px $BORDER_COLOR
+          border-left solid 2px $BORDER_COLOR
+          &:last-child
+            border-bottom solid 1px $BORDER_COLOR
           > ul 
             z-index 12
             position relative
             display block
-            > li
-              width 16em
             > li.back-main-menu
               display block
+            > li:nth-child(1) 
+              border-top solid 1px $DIVISION_COLOR
             > li:nth-child(2) 
               border-top none
-            > li:nth-child(1) 
-              border-top solid 1px #555
           > ul.show
-            transform translate(-16em)
-        > li:last-child
-          border-bottom solid 1px #777
-        // > li.admin > ul
-        // > li.account > ul 
-        //   left .9em
-        // > li.admin > ul 
-        //   top 0
+            transform translate(-16.2em)
+        > li.admin > ul 
+          top -2.2em
+          left 16em
         > li.account > ul 
-          top 15em
+          top -4.8em
+          left 16em
+          
  
