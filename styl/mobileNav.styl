@@ -1,6 +1,3 @@
-$BORDER_COLOR = #777 //7976
-$DIVISION_COLOR = #555
-$BLACK_COLOR = #111
 #mobile-nav
   display block
   background $BLACK_COLOR
@@ -79,32 +76,28 @@ $BLACK_COLOR = #111
   background $BLACK_COLOR
   transition 0.2s
   overflow-x hidden   // Not show links when closed.
-#sidenav a
-    padding .2em .5em .2em 1em
+  a
+    padding .2em .5em .2em 2em
     text-decoration none
     font-size 25px
     color #818181
     display block
     transition 0.2s
-#sidenav a:hover
-  color #f1f1f1
-#sidenav .closebtn
-  position absolute
-  padding 0
-  top 0em
-  right .4em
-  font-size 3em      
-// Mobile.
-// @media screen and (max-width 600px)
-//   .main-nav
-//     #toggle-menu
-//       display block
-//     #toggle-menu.cross
-//       span:nth-last-child(3)
-//         transform rotate(45deg) translate(6px, 6px)
-//       span:nth-last-child(2)
-//         opacity 0
-//       span:nth-last-child(1)
-//         transform rotate(-45deg) translate(4px, -4px)
+  a.root
+    padding 1em .5em .2em 1em
+    &:hover
+      color #818181
+  a:hover
+    color #f1f1f1
+  .closebtn
+    position absolute
+    padding 0
+    top 0em
+    right .4em
+    font-size 3em      
+// Desktop.
+@media screen and (min-width 601px)
+  #mobile-nav
+    display none
           
  

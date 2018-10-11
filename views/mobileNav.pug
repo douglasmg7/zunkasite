@@ -15,9 +15,19 @@
     input(onclick='__search()')
 #sidenav
   a.closebtn(href="javascript:void(0)" onclick="closeNav()") &times;
-  a(href="#") About
-  a(href="#") Service
-  a(href="#") Client
+  if user.name && user.group.includes('admin')
+    a.root Admin
+    a(href='/admin/orders') Pedidos
+    a(href='/admin') Produtos
+    a(href='/admin/product/new') Criar produto 
+    a.root Sua conta
+    if !user.name
+      a(href='/users/signin') Entrar
+    if user.name
+      a(href='/users/orders') Pedidos
+      a(href='/users/address') Endereços
+      a(href='/users/access') Autenticação
+      a(href='/users/signout') Não é #{user.name}? Sair
 script.
   function __search(event){
     if (!event || event.key === 'Enter') {

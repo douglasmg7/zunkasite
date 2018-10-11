@@ -17,9 +17,6 @@
             | Admin
             svg.icon.menu: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
           ul
-            li.back-main-menu 
-              svg.icon.menu: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
-              | Menu principal
             li(onclick='window.location="/admin/orders"') Pedidos
             li(onclick='window.location="/admin"') Produtos
             li(onclick='window.location="/admin/product/new"') Criar produto   
@@ -28,9 +25,6 @@
           | Sua conta
           svg.icon.menu: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
         ul
-          li.back-main-menu 
-            svg.icon.menu: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
-            | Menu principal
           if !user.name
             li(onclick='window.location="/user/signin"') Entrar
           if user.name
