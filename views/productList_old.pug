@@ -6,8 +6,9 @@ html(lang="en")
     title Zunka - Produtos
     link(rel="stylesheet" href="/css/productList.css" charset="utf-8")
   body
-    include mobileNav.pug 
-    //-     include main-nav.pug
+    header
+      nav
+        include main-nav.pug
     main
       #app(v-cloak)
         .container

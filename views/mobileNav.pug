@@ -1,0 +1,49 @@
+#mobile-nav
+  .top
+    a.brand(href='/') Zunka
+    a.cart(href='/cart')
+      svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px') 
+      //- span#cart-qtd= cart.totalQtd
+      span#cart-qtd #{cart.totalQtd} 
+    #toggle-menu(onclick='openNav()')
+      span
+      span
+      span
+  .search
+    input(id='search' onkeyup='__search(event)' placeholder='O que você procura?')
+    //- input(id='search' oninput='window.location="/admin/productList&search=" + getElementById("search").value' placeholder='Pesquisa')
+    input(onclick='__search()')
+#sidenav
+  a.closebtn(href="javascript:void(0)" onclick="closeNav()") &times;
+  a(href="#") About
+  a(href="#") Service
+  a(href="#") Client
+script.
+  function __search(event){
+    if (!event || event.key === 'Enter') {
+      // Must be implemented on parent module.
+      _search(document.getElementById('search').value);
+    }
+  }
+  function openNav() {
+    document.getElementById("sidenav").style.width = "250px";
+  }
+  function closeNav() {
+    document.getElementById("sidenav").style.width = "0";
+  } 
+  // DOM loaded.
+  document.addEventListener("DOMContentLoaded", function(event) { 
+    // Get media query.
+    var mql = window.matchMedia('(max-width: 600px)');
+    mql.addListener(screenTest);
+    // Hide menu, so when back to small screen not start showing menu.
+    function screenTest(e) {
+      if (e.matches) {
+        // Viewport is 600 pixels wide or less.
+      } else {
+        // Viewport is more than than 600 pixels wide.
+        //- elMenu.className = '';
+        //- elToggleMenu.className = '';
+      }
+    }
+  });
