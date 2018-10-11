@@ -1,0 +1,52 @@
+#desktopnav
+  a.brand(href='/') Zunka
+  #toggle-menu
+    span
+    span
+    span
+  a.cart(href='/cart')
+    svg.icon: use(xlink:href='/icon/sprite.svg#ic_shopping_cart_white_24px') 
+    //- span#cart-qtd= cart.totalQtd
+    span#cart-qtd #{cart.totalQtd} 
+  //- div.t
+  #menu
+    ul
+      if user.name && user.group.includes('admin')
+        li.niv1.admin
+          .title
+            | Admin
+            svg.icon.menu: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
+          ul
+            li.back-main-menu 
+              svg.icon.menu: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
+              | Menu principal
+            li(onclick='window.location="/admin/orders"') Pedidos
+            li(onclick='window.location="/admin"') Produtos
+            li(onclick='window.location="/admin/product/new"') Criar produto   
+      li.niv1.account
+        .title
+          | Sua conta
+          svg.icon.menu: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
+        ul
+          li.back-main-menu 
+            svg.icon.menu: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
+            | Menu principal
+          if !user.name
+            li(onclick='window.location="/user/signin"') Entrar
+          if user.name
+            li(onclick='window.location="/user/orders"') Pedidos
+            li(onclick='window.location="/user/address"') Endereços
+            li(onclick='window.location="/user/access"') Autenticação
+            li(onclick='window.location="/user/signout"') Não é #{user.name}? Sair
+  .search
+    input(id='search' onkeyup='__search(event)' placeholder='O que você procura?')
+    //- input(id='search' oninput='window.location="/admin/productList&search=" + getElementById("search").value' placeholder='Pesquisa')
+    input(onclick='__search()')
+  script.
+    // Input search.
+    function __search(event){
+      if (!event || event.key === 'Enter') {
+        // Must be implemented on parent module.
+        _search(document.getElementById('search').value);
+      }
+    }
