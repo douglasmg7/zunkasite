@@ -1,4 +1,4 @@
-#desktopnav
+#desktop-nav
   a.brand(href='/') Zunka
   #toggle-menu
     span
@@ -33,14 +33,12 @@
             li(onclick='window.location="/user/access"') Autenticação
             li(onclick='window.location="/user/signout"') Não é #{user.name}? Sair
   .search
-    input(id='search' onkeyup='__search(event)' placeholder='O que você procura?')
-    //- input(id='search' oninput='window.location="/admin/productList&search=" + getElementById("search").value' placeholder='Pesquisa')
-    input(onclick='__search()')
-  script.
-    // Input search.
-    function __search(event){
-      if (!event || event.key === 'Enter') {
-        // Must be implemented on parent module.
-        _search(document.getElementById('search').value);
-      }
+    input(id='search' onkeyup='searchDesktop(event)' placeholder='O que você procura?')
+    input(onclick='searchDesktop()')
+script.
+  function searchDesktop(event){
+    if (!event || event.key === 'Enter') {
+      // Must be implemented on parent module.
+      _search(document.querySelectorAll('#desktop-nav #search')[0].value);
     }
+  }
