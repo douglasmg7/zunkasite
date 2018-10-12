@@ -6,9 +6,8 @@ html(lang="en")
     title Conta.
     link(rel="stylesheet" href="/css/user/account.css" charset="utf-8")
   body
-    header
-      nav
-        include ../main-nav.pug
+    include ../desktopNav.pug
+    include ../mobileNav.pug 
     main#app(v-cloak)
       //- Orders.
       .panel

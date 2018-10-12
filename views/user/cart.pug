@@ -6,9 +6,8 @@ html(lang="en")
     title Carrinho de compras
     link(rel="stylesheet" href="/css/user/cart.css" charset="utf-8")
   body
-    header
-      nav
-        include ../main-nav.pug
+    include ../desktopNav.pug
+    include ../mobileNav.pug 
     main#app(v-cloak)
       .cart-empty(v-if='!cart.products.length')
         h2 Ainda não existem produtos no seu carrinho de compras

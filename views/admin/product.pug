@@ -8,8 +8,8 @@ html(lang="en")
     link(rel="stylesheet" href="/css/admin/product.css" charset="utf-8")
     //- include ../../dist/icon/sprite2.svg
   body
-    header
-      include ../main-nav.pug
+    include ../desktopNav.pug
+    include ../mobileNav.pug 
     main
       #app(v-cloak)
         form(method='post' id='frmProduct')

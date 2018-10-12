@@ -7,9 +7,8 @@ html(lang="en")
     link(rel="stylesheet" href="/css/checkout/payment.css" charset="utf-8")
     include ../components/paypal.js.pug
   body
-    header
-      nav
-        include ../main-nav.pug    
+    include ../desktopNav.pug
+    include ../mobileNav.pug 
     main#app(v-cloak)
       .container
         h2 Resumo

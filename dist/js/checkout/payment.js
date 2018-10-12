@@ -106,10 +106,10 @@ paypal.Button.render({
     layout: 'vertical',
     // fundingicons: 'true',  // Work if "layout: 'horizontal'"
   },
-  // funding: {
-  //  // allowed: [ paypal.FUNDING.CREDIT, paypal.FUNDING.CARD ],
-  //  // disallowed: [ paypal.FUNDING.CREDIT ]
-  // },
+  funding: {
+   // allowed: [ paypal.FUNDING.CREDIT, paypal.FUNDING.CARD ],
+    disallowed: [ paypal.FUNDING.CREDIT ]
+  },
   client: {
       sandbox:    'ASpmuFYrAVJcuEiBR5kP8lBdfEJqz4b8hsPQ0fKV7spzkiYFQc2BtA2q7M5vyXTPFuUELBiOpGmfhSZw',
       production: 'xxxxxxxxx'

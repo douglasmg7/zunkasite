@@ -6,9 +6,8 @@ html(lang="en")
     title Signin
     link(rel="stylesheet" href="/css/user/signin.css" charset="utf-8")
   body
-    header
-      nav
-        include ../main-nav.pug
+    include ../desktopNav.pug
+    include ../mobileNav.pug 
     main#app(v-cloak)
       .login
         h1 Identificação              
