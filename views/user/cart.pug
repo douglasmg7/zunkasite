@@ -36,7 +36,7 @@ html(lang="en")
           h3
             strong Subtotal ({{ cart.totalQtd }} {{ cart.totalQtd > 1 ? 'itens): ' : 'item): ' }}
             span {{ cart.totalPrice | currencyBr }}
-            input.green(type='button' value='Continuar' @click='selectAddress()')
+            input.green(type='button' value='Finalizar compra' @click='selectAddress()')
             //- Used for test.
             //- input.green(type='button' value='Update stock' @click='updateStock()')
           p O preço e a disponibilidade dos itens na loja estão sujetios a mudanças. O carrinho é um local temporário para guardar a lista de seus ítens e reflete o preço mais recente.
