@@ -5,7 +5,7 @@ let app = new Vue({
     order: order
   },
   created() {
-    console.log(`env: ${env}`);
+    // console.log(`env: ${env}`);
   },
   methods: {
     // Close de order.
@@ -83,9 +83,9 @@ let shippingAddress = {
 // Paypal Express Checkout. 
 // https://developer.paypal.com/docs/api/payments/
 paypal.Button.render({
-  env: 'sandbox', // production or sandbox,
-  // env: env, // production or sandbox,
+  // env: 'sandbox', // production or sandbox,
   // env: 'production'
+  env: env, // production or sandbox,
   commit: true, // Show a 'Pay Now' button.
   locale: 'pt_BR',
   style: {
@@ -112,7 +112,7 @@ paypal.Button.render({
   },
   client: {
       sandbox:    'ASpmuFYrAVJcuEiBR5kP8lBdfEJqz4b8hsPQ0fKV7spzkiYFQc2BtA2q7M5vyXTPFuUELBiOpGmfhSZw',
-      production: 'xxxxxxxxx'
+      production: 'AS_j3TPURVruBoT5aGQlyiSmvUH5s-q7y998n139LNrroOchlIGxK9BCWM0AcMxP2O9w_q-cZT00qDgi'
   },
   // Set up the payment.
   payment: function(data, actions) {

@@ -2,7 +2,7 @@ remove
 order.shipping.price = 0;
 from routeCheckout.js
 
-Change nav bar to mobile access.
+cart and orders not breaking on mobile.
 
 Create a timer to backup (mongo and redis).
 
@@ -11,11 +11,6 @@ set password to redis.
 put pm2 to start on boot.
 
 Certbot will expire on 2018-11-29.
-
-Setup product and productList page format.
-
-Point zunka.com.br to https://www.zunka.com.br
-Point https://zunka.com.br to https://www.zunka.com.br
 
 block 3080 port
 
