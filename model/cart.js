@@ -150,6 +150,13 @@ module.exports = function Cart(cart) {
       // Verify itens with diferent price and out of stock.
       for (let i = 0; i < this.products.length; i++) {
         let dbProduct = productsDbMap.get(this.products[i]._id.toString());
+        // Product on db deleted or disabled.
+        if (!dbProduct || !dbProduct.storeProductCommercialize) {
+          this.removedProducts.push(this.products[i]);
+          this.products.splice(i, 1);
+          i--;
+          continue;
+        }
         // Update stock quantity, restrict to max 10.
         this.products[i].stockQtd = (dbProduct.storeProductQtd <= 10) ? dbProduct.storeProductQtd : 10;
         // Out of stock.

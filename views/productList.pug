@@ -16,10 +16,12 @@ html(lang="en")
               span Adicionado ao carrinho
             .sub-total
               span Subtotal ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}}) :
-              span {{ cart.totalPrice | currencyBr }}
+              span {{ cart.totalPrice | currency }}
             .buttons
-              a(href='/cart') Carrinho
-              a(href='/checkout/shipping-address') Continuar ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
+              button(onclick='window.location="/cart"') Carrinho
+              button(onclick='window.location="/checkout/shipping-address"') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
+              //- a(href='/cart') Carrinho
+              //- a(href='/checkout/shipping-address') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
           .products
             .product(v-for='product in products')
               a(:href='"/product/" + product._id')

@@ -49,11 +49,9 @@ script.
     function screenTest(e) {
       // Mobile.
       if (e.matches) {
-        console.log('to Mobile')
         document.querySelectorAll('#mobile-nav #search')[0].value = document.querySelectorAll('#desktop-nav #search')[0].value
       // Desktop.
       } else {
-        console.log('to Desktop')
         document.querySelectorAll('#desktop-nav #search')[0].value = document.querySelectorAll('#mobile-nav #search')[0].value
       }
     }
