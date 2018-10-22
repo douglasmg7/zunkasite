@@ -3,6 +3,11 @@
 // Brasilian months names.
 const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
+// Search for Products.
+function _search(text){
+  window.location.href = `/?page=1&search=${text}`;
+}
+
 // Vue.
 var app = new Vue({
   el: '#app',
@@ -109,23 +114,23 @@ var app = new Vue({
       // Config window.
       switch (status){
         case 'paid':
-          this.setStatusWindow.message = 'Confirma alteração do status para pago?'
+          this.setStatusWindow.message = 'Confirma alteração do status para pago?';
           this.setStatusWindow.showCheckboxUpdateStock = false;
           this.setStatusWindow.show = true;
           break;
         case 'shipped':
-          this.setStatusWindow.message = 'Confirma alteração do status para enviado?'
+          this.setStatusWindow.message = 'Confirma alteração do status para enviado?';
           this.setStatusWindow.showCheckboxUpdateStock = false;
           this.setStatusWindow.show = true;
           break;
         case 'delivered':
-          this.setStatusWindow.message = 'Confirma alteração do status para entregue?'
+          this.setStatusWindow.message = 'Confirma alteração do status para entregue?';
           this.setStatusWindow.showCheckboxUpdateStock = false;
           this.setStatusWindow.show = true;
           break;
         case 'canceled':
-          console.debug('canceled hit')
-          this.setStatusWindow.message = 'Confirma alteração do status para cancelado?'
+          console.debug('canceled hit');
+          this.setStatusWindow.message = 'Confirma alteração do status para cancelado?';
           this.setStatusWindow.showCheckboxUpdateStock = true;
           this.setStatusWindow.updateStock = true;
           this.setStatusWindow.show = true;

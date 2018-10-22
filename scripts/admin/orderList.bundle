@@ -1,9 +1,6 @@
 import MONTHS from '../lib/month-names'
+import _search from '../lib/_search';
 
-// Search for orders.
-function _search(text){
-  window.location.href = `/?page=1&search=${text}`;
-}
 // Vue.
 var app = new Vue({
   el: '#app',
@@ -22,6 +19,16 @@ var app = new Vue({
     searchOrder: '',
     // Show modal.
     showModal: false,
+    // Window to change status.
+    setStatusWindow: {
+      show: false,
+      message: '',
+      showCheckboxUpdateStock: false,
+      // Change to this status.
+      status: '',
+      // Update stock quantity when intem is canceled.
+      updateStock: false,
+    },
     // Filter.
     filter: {
       placed: true,
@@ -82,7 +89,7 @@ var app = new Vue({
         case 'canceled':
           return 'Cancelado';
         case 'delivered':
-          return 'Entrege';
+          return 'Entregue';
         case 'shipped':
           return 'Enviado';
         case 'paid':
@@ -94,23 +101,56 @@ var app = new Vue({
       }
     },
     // Set order status from selected order.
-    setStatus(status){
-      if(window.confirm('Confirma alteração do status?')){
-        axios({
-          method: 'post',
-          url: `/admin/api/order/status/${this.orderSelec._id}/${status}`,
-          headers:{'csrf-token' : csrfToken}
-        })
-        .then((res)=>{
-          // Update selected order and orders.
-          // console.log(`data: ${JSON.stringify(res.data)}`);
-          this.orderSelec = res.data.order;
-          this.$set(this.orders, this.orderSelecIndex, res.data.order);
-        })
-        .catch((err)=>{
-          console.error(`Error - setStatus(), err: ${err}`);
-        });
+    showSetStatusWindow(status){
+      // Status to change.
+      this.setStatusWindow.status = status;
+      // Config window.
+      switch (status){
+        case 'paid':
+          this.setStatusWindow.message = 'Confirma alteração do status para pago?'
+          this.setStatusWindow.showCheckboxUpdateStock = false;
+          this.setStatusWindow.show = true;
+          break;
+        case 'shipped':
+          this.setStatusWindow.message = 'Confirma alteração do status para enviado?'
+          this.setStatusWindow.showCheckboxUpdateStock = false;
+          this.setStatusWindow.show = true;
+          break;
+        case 'delivered':
+          this.setStatusWindow.message = 'Confirma alteração do status para entregue?'
+          this.setStatusWindow.showCheckboxUpdateStock = false;
+          this.setStatusWindow.show = true;
+          break;
+        case 'canceled':
+          console.debug('canceled hit')
+          this.setStatusWindow.message = 'Confirma alteração do status para cancelado?'
+          this.setStatusWindow.showCheckboxUpdateStock = true;
+          this.setStatusWindow.updateStock = true;
+          this.setStatusWindow.show = true;
+          break;
+        default:
+          return;
       }
+    },
+    // Set order status from selected order.
+    setStatus(){
+      axios({
+        method: 'post',
+        url: `/admin/api/order/status/${this.orderSelec._id}/${this.setStatusWindow.status}`,
+        headers:{'csrf-token' : csrfToken},
+        params: {updateStock: this.setStatusWindow.updateStock}
+      })
+      .then((res)=>{
+        // Update selected order and orders.
+        // console.log(`data: ${JSON.stringify(res.data)}`);
+        this.orderSelec = res.data.order;
+        this.$set(this.orders, this.orderSelecIndex, res.data.order);
+        this.setStatusWindow.show = false;
+      })
+      .catch((err)=>{
+        console.error(`Error - setStatus(), err: ${err}`);
+        this.setStatusWindow.show = false;
+      });
     }
   },
   filters: {

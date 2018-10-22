@@ -1,9 +1,6 @@
-// Brasilian months names.
-import MONTHS from '../lib/month-names'
-// Search for orders.
-function _search(text){
-  window.location.href = `/?page=1&search=${text}`;
-}
+import MONTHS from '../lib/month-names';
+import _search from '../lib/_search';
+
 // Vue.
 var app = new Vue({
   el: '#app',
@@ -20,7 +17,7 @@ var app = new Vue({
     // Text for search orders.
     searchOrder: '',
     // Show modal.
-    showModal: false,
+    showModal: false
   },
   created() {
     // On reload page use the query string for search, not the input search.
@@ -31,7 +28,7 @@ var app = new Vue({
     getOrders(page=1){
       axios({
         method: 'get',
-        url: `/users/api/orders?page=${page}&search=${this.searchOrder}`,
+        url: `/user/api/orders?page=${page}&search=${this.searchOrder}`,
         headers:{'csrf-token' : csrfToken}
       })
       .then((res)=>{

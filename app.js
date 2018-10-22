@@ -113,7 +113,9 @@ app.use(rollup({
   dest: 'dist/js',
   root: __dirname,
   prefix: '/js',
-  bundleOpts: { format: 'cjs' }
+  bundleOpts: { format: 'cjs' },
+  // Import mode in not use too.
+  rollupOpts: { treeshake: false }
 }));
 
 // Statics files.

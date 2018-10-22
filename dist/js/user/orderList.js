@@ -1,10 +1,13 @@
-(function () {
 'use strict';
 
 // Brasilian months names.
 const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
-// Brasilian months names.
+// Search for Products.
+function _search(text){
+  window.location.href = `/?page=1&search=${text}`;
+}
+
 // Vue.
 var app = new Vue({
   el: '#app',
@@ -21,7 +24,7 @@ var app = new Vue({
     // Text for search orders.
     searchOrder: '',
     // Show modal.
-    showModal: false,
+    showModal: false
   },
   created() {
     // On reload page use the query string for search, not the input search.
@@ -66,5 +69,3 @@ var app = new Vue({
     }
   }
 });
-
-}());
