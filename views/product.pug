@@ -43,17 +43,19 @@ html(lang="en")
                 //- Label(type='text' for='cep') CEP
       .description(v-if='product.storeProductDescription.trim() !== ""')
         //- Description.
-        hr
         h3.title Descrição do produto
-        p {{product.storeProductDescription}}
+        //- p {{product.storeProductDescription}}
+        p(v-for='prodDescItem in productDescription') 
+          | {{ prodDescItem }}
+          br
       .info(v-if='productInformationTechnical.length > 0 || productInformationAdditional.length > 0')
-        //- Informations.
-        hr
-        h3.title Informaçẽs do produto
+        //- //- Informations.
+        //- h3.title Informaçẽs do produto
+        //- hr
         //- Technical information.
         .infos
           .info-tech(v-if='productInformationTechnical.length > 0')
-            p Detalhe técnico
+            h3.title Detalhe técnico
             table
               tbody
                 tr(v-for='infoTech in productInformationTechnical')
@@ -61,7 +63,7 @@ html(lang="en")
                   td {{infoTech[1]}}
           //- Additional information.
           .info-add(v-if='productInformationAdditional.length > 0')
-            p Informações adicionais
+            h3.title Informações adicionais
             table
               tbody
                 tr(v-for='infoAdd in productInformationAdditional')

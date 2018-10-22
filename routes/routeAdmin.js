@@ -150,6 +150,9 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
       return;
     }
   }
+  // Trim some itens.
+  req.body.product.storeProductTechnicalInformation = req.body.product.storeProductTechnicalInformation.trim();
+  req.body.product.storeProductAdditionalInformation = req.body.product.storeProductAdditionalInformation.trim();
   // New product.
   if (req.params.productId === 'new') {
     let product = new Product(req.body.product);

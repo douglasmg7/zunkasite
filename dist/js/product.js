@@ -78,6 +78,13 @@ var app = new Vue({
       }
       return this.product.storeProductDetail.split('\n');
     },
+    // Each line become one array item.
+    productDescription(){
+      if (this.product.storeProductDescription.trim() === '') {
+        return new Array();
+      }
+      return this.product.storeProductDescription.split('\n');
+    },
     // Each line of technical information become a array item, each item in line separeted by ; become array item.
     productInformationTechnical(){
       let infoTech = [];
