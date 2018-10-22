@@ -3,9 +3,11 @@ Bug de pedidos.
 Contato formatado para direita.
 Fornecedor esta salvando.
 20 produtos por pagina.
-Break line
+Break line na página de produto
 Correção da formatação da informação técnica e informação adicional.
 Remoção do título informações do produto.
+Correção do cadastro do Computador All-In-One Dell Inspiron iOne 3277-M20 para você usar como exemplo.
+Correção do ponto e virgula do campo preço do carrinho e pagina de produto.
 
 backup db timer.
 
