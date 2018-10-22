@@ -1,3 +1,9 @@
+Feito
+Bug de pedidos.
+Contato formatado para direita.
+Fornecedor esta salvando.
+20 produtos por pagina.
+
 make db backup
 
 remove

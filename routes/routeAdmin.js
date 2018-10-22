@@ -12,9 +12,9 @@ const ProductMaker = require('../model/productMaker');
 const ProductCategorie = require('../model/productCategorie');
 const Order = require('../model/order');
 // Max product quantity by Page.
-const PRODUCT_QTD_BY_PAGE = 5;
+const PRODUCT_QTD_BY_PAGE = 20;
 // Max order quantity by Page.
-const ORDER_QTD_BY_PAGE = 5;
+const ORDER_QTD_BY_PAGE = 20;
 
 // Check permission.
 function checkPermission (req, res, next) {

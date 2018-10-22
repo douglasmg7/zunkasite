@@ -16,7 +16,7 @@ const Address = require('../model/address');
 const Order = require('../model/order');
 
 // Quantity of orders per page.
-const ORDER_QTD_BY_PAGE = 10;
+const ORDER_QTD_BY_PAGE = 20;
 
 
 /****************************************************************************** 
