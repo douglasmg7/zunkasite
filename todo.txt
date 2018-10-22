@@ -1,3 +1,5 @@
+make db backup
+
 remove
 order.shipping.price = 0;
 from routeCheckout.js
