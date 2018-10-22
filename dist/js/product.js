@@ -111,12 +111,8 @@ var app = new Vue({
     }
   },    
   filters: { 
-    currencyBr(value){ return accounting.formatMoney(value, "R$", 2, ".", ","); },
-    // currencyInt(value){
-    //   return accounting.formatMoney(accounting.parse(value, ','), '', 2, '.', ',').split(',')[0];
-    // },
-    // currencyCents(value){
-    //   return accounting.formatMoney(accounting.parse(value, ','), '', 2, '.', ',').split(',')[1];
-    // }
+    currency(val){
+      return val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
   },
 });

@@ -3,8 +3,11 @@ Bug de pedidos.
 Contato formatado para direita.
 Fornecedor esta salvando.
 20 produtos por pagina.
+Break line
+Correção da formatação da informação técnica e informação adicional.
+Remoção do título informações do produto.
 
-make db backup
+backup db timer.
 
 remove
 order.shipping.price = 0;

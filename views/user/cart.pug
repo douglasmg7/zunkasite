@@ -30,12 +30,12 @@ html(lang="en")
                 .dropdown
                   select(v-model='product.qtd' v-on:change='changeProductQtd(product)')
                     option(v-for='item in product.stockQtd', :value='item') {{ item }}
-              td: p.product-price {{ product.price | currencyBr }}
-              td: p.product-price {{ product.price * product.qtd | currencyBr }}
+              td: p.product-price {{ product.price | currency }}
+              td: p.product-price {{ product.price * product.qtd | currency }}
         .subtotal
           h3
             strong Subtotal ({{ cart.totalQtd }} {{ cart.totalQtd > 1 ? 'itens): ' : 'item): ' }}
-            span {{ cart.totalPrice | currencyBr }}
+            span {{ cart.totalPrice | currency }}
             input.green(type='button' value='Finalizar compra' @click='selectAddress()')
             //- Used for test.
             //- input.green(type='button' value='Update stock' @click='updateStock()')
@@ -52,9 +52,9 @@ html(lang="en")
                   td: p.title {{ product.title }}
                   td
                     span De&nbsp
-                    span.price {{ product.oldPrice | currencyBr }} 
+                    span.price {{ product.oldPrice | currency }} 
                     span para 
-                    span.price {{ product.price | currencyBr }}
+                    span.price {{ product.price | currency }}
           .products-qtd-changed(v-if='productsQtdChanged')
             h3 Produto(s) com alteração de quantidade devido ao estoque
             table
