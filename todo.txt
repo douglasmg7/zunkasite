@@ -1,5 +1,3 @@
-Not showing pagination at main page.
-
 backup db system timer.
 
 cart and orders not breaking on mobile.

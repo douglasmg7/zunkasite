@@ -29,7 +29,10 @@ html(lang="en")
                 h3.price
                   sup R$
                   | {{ product.storeProductPrice | currency | currencyInt }}
-                  sup {{ product.storeProductPrice | currency | currencyCents }}                
+                  sup {{ product.storeProductPrice | currency | currencyCents }}   
+          .pagination
+            a(v-for='p in pageCount', @click='getProducts(p)', :page='page==p', :p='p', :active='page==p') {{p}}
+             
   script.
     // Make available for vue.
     let csrfToken = !{JSON.stringify(csrfToken)};
