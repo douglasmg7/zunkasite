@@ -220,7 +220,7 @@ router.get('/shipping-method/:order_id', (req, res, next)=>{
           }
         }
         // Uncomment to test with free shipping todo.
-        order.shipping.price = 0;
+        // order.shipping.price = 0;
         // Save correio result.
         order.save((err, newAddress) => {
           if (err) {

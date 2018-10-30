@@ -2,10 +2,6 @@ Not showing pagination at main page.
 
 backup db system timer.
 
-remove
-order.shipping.price = 0;
-from routeCheckout.js
-
 cart and orders not breaking on mobile.
 
 Create a timer to backup (mongo and redis).
