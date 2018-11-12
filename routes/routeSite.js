@@ -22,6 +22,16 @@ router.get('/', function(req, res, next) {
   });   
 });
 
+// Get products page by class (news, more selled...).
+router.get('/class', function(req, res, next) {
+  res.render('productListClass', {
+    nav: {
+    },
+    search: req.query.search ? req.query.search : '',
+  });   
+});
+
+
 // Get product page.
 router.get('/product/:_id', function(req, res, next) {
   Product.findById(req.params._id)
@@ -61,7 +71,37 @@ router.get('/api/products', function (req, res) {
   });
 });
 
-// Get product.
+// Get news products.
+router.get('/api/new-products', function (req, res) {
+  const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
+  const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
+  const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
+  // Find products.
+  let productPromise = Product.find(search).sort({'createdAt': 1}).limit(4).exec();
+  Promise.all([productPromise])
+  .then(([products])=>{    
+    res.json({products});
+  }).catch(err=>{
+    return next(err);
+  });
+});
+
+// Get best selling products.
+router.get('/api/best-selling-products', function (req, res) {
+  const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
+  const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
+  const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
+  // Find products.
+  let productPromise = Product.find(search).sort({'createdAt': -1}).limit(4).exec();
+  Promise.all([productPromise])
+  .then(([products])=>{    
+    res.json({products});
+  }).catch(err=>{
+    return next(err);
+  });
+});
+
+// Get product by id.
 router.get('/api/product/:_id', function(req, res, next) {
   Product.findById(req.params._id)
   .then(product=>{
