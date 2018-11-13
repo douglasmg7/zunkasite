@@ -125,6 +125,7 @@ app.use('/node_modules', express.static(path.join(__dirname, 'node_modules/')));
 
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'dist', 'favicon.jpeg')));
 
 // // webpack HMR
 // app.use(webpackDevMiddleware);
