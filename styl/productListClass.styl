@@ -2,10 +2,12 @@
 @import 'topMenu'
 // @import 'pagination'
 main
+  background-color lightgray
   padding-bottom 2em
   .container
-    max-width 1500px
-    background-color lightgray
+    width 100%
+    // max-width 1500px
+    // background-color lightgray
     overflow-x hidden
     > .cart
       border 1px solid #ddd
@@ -53,30 +55,32 @@ main
       margin 1em
       > .title
         padding .5em 0 .5em 1em
-        font-size 1.2em
+        font-size 1.6em
         color black
         font-weight 500
         // line-height 2.1
       > .products
         display flex
         flex-flow row wrap
-        // justify-content space-around
+        justify-content space-around
         // justify-content space-between
-        justify-content center
+        // justify-content center
         // background blue
         > .product
-          width 300px
+          // width 400px
           // height 300px
           // border 1px solid #ddd
+          box-shadow: 10px 10px 30px -15px rgba(0,0,0,0.75);
           // border-radius .3em
-          margin 1em
+          padding 1em
+          margin .5em 1em 1.5em 1em
           // flex 1 0 14em
           text-decoration none
           color black
           > a
             text-decoration none
             > img
-              max-width 200px
+              max-width 300px
               border-radius .3em
             > .title
               font-size 1.2em

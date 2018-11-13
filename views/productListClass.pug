@@ -23,7 +23,7 @@ html(lang="en")
               //- a(href='/checkout/shipping-address') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
           .banner
           .new-products
-            h3.title Produtos adicionados recentemente
+            h3.title Novidades na loja
             .products
               .product(v-for='product in newProducts')
                 a(:href='"/product/" + product._id')
