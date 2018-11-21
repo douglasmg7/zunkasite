@@ -30,8 +30,7 @@ html(lang="en")
               .product(v-for='product in newProducts')
                 a(:href='"/product/" + product._id')
                   img(:src='`/img/${product._id}/${product.images[0]}`', v-if='product.images[0]')
-                  p.title {{ product.storeProductTitle }}
-                  //- h4.title {{ product.storeProductTitle }}
+                  h4.title {{ product.storeProductTitle }}
                   h3.price
                     sup R$
                     | {{ product.storeProductPrice | currency | currencyInt }}
