@@ -22,13 +22,16 @@ html(lang="en")
               //- a(href='/cart') Carrinho
               //- a(href='/checkout/shipping-address') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
           .banner
+            img(src="/banner/7567.jpg")
+            //- img(src="/banner/banner-dell.jpg")
           .new-products
             h3.title Novidades na loja
             .products
               .product(v-for='product in newProducts')
                 a(:href='"/product/" + product._id')
                   img(:src='`/img/${product._id}/${product.images[0]}`', v-if='product.images[0]')
-                  h4.title {{ product.storeProductTitle }}
+                  p.title {{ product.storeProductTitle }}
+                  //- h4.title {{ product.storeProductTitle }}
                   h3.price
                     sup R$
                     | {{ product.storeProductPrice | currency | currencyInt }}

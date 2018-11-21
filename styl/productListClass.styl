@@ -2,7 +2,7 @@
 @import 'topMenu'
 // @import 'pagination'
 main
-  background-color lightgray
+  background-color #f5f5f5
   padding-bottom 2em
   .container
     width 100%
@@ -46,53 +46,62 @@ main
         button:nth-child(1)
           margin-right 1em
     > .banner
-      height 200px
-      // width 600px
-      background-color #444
+      max-height 300px
+      img
+        display block
+        margin 0 auto
     > .best-selling-products      
     > .new-products  
-      background-color #fff
-      margin 1em
+      max-width 1200px
+      margin 1em auto
+      // border 1px black solid
       > .title
-        padding .5em 0 .5em 1em
-        font-size 1.2em
-        color black
-        font-weight 600
-        // line-height 2.1
+        padding 1em 0 0 0
+        font-size 1.6em
+        color #666
+        font-weight 300
+        line-height 2
       > .products
         display flex
         flex-flow row wrap
-        justify-content space-around
-        // justify-content space-between
+        // justify-content space-around
+        justify-content space-between
         // justify-content center
         // background blue
         > .product
           // width 400px
           // height 300px
           // border 1px solid #ddd
-          box-shadow: 8px 8px 30px -12px rgba(0,0,0,0.75);
-          // border-radius .3em
-          padding 1em
-          margin .5em 1em 1.5em 1em
+          // box-shadow: 8px 8px 30px -12px rgba(0,0,0,0.75);
+          box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+          border-radius 4px
+          padding .5em
+          margin .5em 0
           // flex 1 0 14em
           text-decoration none
+          background-color #fff
           color black
           > a
             text-decoration none
             > img
-              max-width 300px
+              max-width 240px
               border-radius .3em
             > .title
-              font-size 1.2em
+              font-size 1.1em
               color green
-              font-weight 500
-              line-height 1.1
+              font-weight 400
+              line-height 1.4
+              padding 0 .5em
+              max-width 240px
+              // white-space wrap
+              word-wrap:break-word
             > .price
               margin-top .5em
-              font-size 1.4em
+              font-size 1.3em
               color black
-              font-weight 500
+              font-weight 400
               line-height 1.1
+              padding 0 .5em
               > sup
                 font-size: 0.5em
                 top: -0.6em
