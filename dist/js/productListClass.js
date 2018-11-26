@@ -7,6 +7,11 @@ function _search(text){
 var app = new Vue({
   el: '#app',
   data: {
+    // Banners
+    banners: [
+      '7567.jpg',
+      'banner-dell.jpg'
+    ],
     // Products.
     products: [],
     // New products.

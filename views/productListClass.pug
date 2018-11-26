@@ -21,9 +21,10 @@ html(lang="en")
               button(onclick='window.location="/checkout/shipping-address"') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
               //- a(href='/cart') Carrinho
               //- a(href='/checkout/shipping-address') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
-          .banner
-            img(src="/banner/7567.jpg")
-            //- img(src="/banner/banner-dell.jpg")
+          .banners
+            img.banner(v-for="(banner, index) in banners", :src="'/banner/' + banner", :key='index')
+            //- img.banner(src="/banner/7567.jpg")
+            //- img.banner(src="/banner/banner-dell.jpg")
           .new-products
             h3.title Novidades na loja
             .products
