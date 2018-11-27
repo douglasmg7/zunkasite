@@ -9,9 +9,14 @@ var app = new Vue({
   data: {
     // Banners
     banners: [
-      '7567.jpg',
-      'banner-dell.jpg'
+      {img: 'banner-7567.jpg', link: 'https://www.zunka.com.br/product/5bc9b0f94253f81781fac9d8'},
+      {img: 'banner-dell.jpg', link: 'none'},
+      {img: 'banner-manutencao-domicilio.png', link: 'none'}
     ],
+    // Visible banner.
+    visibleBanner: 0,
+    // Change banner automaticly.
+    bannerAutoChange: true, 
     // Products.
     products: [],
     // New products.
@@ -36,6 +41,8 @@ var app = new Vue({
     this.getBestSellingProducts();
     // To show product added to cart.
     this.getPrdouctAddedToCart();
+    // Timer for change banner.
+    setInterval(this.changeBanner, 3000);
   },
   methods: {
     // Get products.
@@ -102,6 +109,34 @@ var app = new Vue({
     // currency(val){
     //   return 'yR$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     // }
+    changeBanner(mode){
+      if (mode == 1){
+        this.visibleBanner++;
+        if (this.visibleBanner >= this.banners.length) {
+          this.visibleBanner = 0;
+        }
+        this.bannerAutoChange = false;
+      } else if(mode == -1){
+        this.visibleBanner--;
+        if (this.visibleBanner < 0) {
+          this.visibleBanner = this.banners.length -1;
+        }
+        this.bannerAutoChange = false;
+      } else {
+        if (this.bannerAutoChange) {
+          this.visibleBanner++;
+          if (this.visibleBanner >= this.banners.length) {
+            this.visibleBanner = 0;
+          }
+        }
+      }
+    },
+    selectBanner(index){
+      if ((this.visibleBanner >= 0) && (this.visibleBanner < this.banners.length)) {
+        this.visibleBanner = index;
+      }
+      this.bannerAutoChange = false;
+    }
   },  
   filters: {
     currency(val){
