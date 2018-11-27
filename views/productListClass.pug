@@ -19,23 +19,14 @@ html(lang="en")
             .buttons
               button(onclick='window.location="/cart"') Carrinho
               button(onclick='window.location="/checkout/shipping-address"') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
-              //- a(href='/cart') Carrinho
-              //- a(href='/checkout/shipping-address') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
           .banners
-            //- a(v-for="(banner, index) in banners", :index='index' v-show='index == visibleBanner', :href='banner.link')
-            //- a(v-for="(banner, index) in banners", :index='index' v-show='index == visibleBanner', :href=none)
-            //- a(v-for="(banner, index) in banners", :index='index' v-show='index == visibleBanner', :href='[banner.link == "none" ? "none" : banner.link]')
-            a(v-for="(banner, index) in banners", :index='index' v-show='index == visibleBanner', :href="banner.link || ''")
+            a(v-for="(banner, index) in banners", :index='index' v-show='index == visibleBanner', :href="banner.link || false")
               img.banner(:src="'/banner/' + banner.img")
-              //- img.banner(v-for="(banner, index) in banners", :src="'/banner/' + banner.img", :index='index' v-show='index == visibleBanner')
             .banner-menu
               .arrow.left(@click='changeBanner(-1)') &#10094;
               .dots
                 .dot(v-for="(banner, index) in banners", :index='index' @click='selectBanner(index)', :class='[index == visibleBanner ? "selected" : ""]')
               .arrow.right(@click='changeBanner(1)') &#10095;
-              //- .right-arrow(@click=manualChangeBanner(1)) asdf
-            //- img.banner(src="/banner/7567.jpg")
-            //- img.banner(src="/banner/banner-dell.jpg")
           .new-products
             h3.title Novidades na loja
             .products
