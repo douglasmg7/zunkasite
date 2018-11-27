@@ -11,6 +11,7 @@ const Product = require('../model/product');
 const ProductMaker = require('../model/productMaker');
 const ProductCategorie = require('../model/productCategorie');
 const Order = require('../model/order');
+const Banners = require('../model/banners');
 // Max product quantity by Page.
 const PRODUCT_QTD_BY_PAGE = 20;
 // Max order quantity by Page.
@@ -267,6 +268,108 @@ router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
   });
 });
 
+
+/****************************************************************************** 
+/   BANNERS
+******************************************************************************/
+
+// Get banners page.
+router.get('/banners', (req, res, next)=>{
+  Banners.findOne({}, (err, banners)=>{
+    console.log(`Banners: ${banners}`);
+    // Internal error.
+    if (err) { 
+      log.error(err.stack);
+      return res.render('/error', { message: 'Não foi possível encontrar os banners.', error: err });
+    }  
+    // Banners  
+    return res.render('admin/banners', { banners: banners || [] });
+    // return res.render('admin/banners', { banners: [] });
+  })     
+});
+
+// Save banners.
+router.post('/banners', checkPermission, (req, res, next)=>{
+  console.log(`req.body.banners: ${JSON.stringify(req.body.banners)}`)
+  Banners.findOneAndUpdate({}, req.body.banners, {upsert: true}, function(err, banner){
+    if (err) { 
+      res.json({err});
+      return next(err); 
+    } else {
+      log.info(`Banners updated.`);
+      res.json({});
+      // Sync upladed images with product.images.
+      // Get list of uploaded images.
+      fse.readdir(path.join(__dirname, '..', 'dist/banner'), (err, files)=>{
+        if (err) {
+          log.error(err.stack);
+        } 
+        else {
+          // Remove uploaded images not in product images.
+          let exist;
+          files.forEach(function(file) {
+            exist = false;
+            req.body.banners.forEach(function(banner) {
+              if (file === banner.file) {
+                exist = true;
+              }  
+            });
+            // Uploaded image not in product images.
+            if (!exist) {
+              // Remove uploaded image.
+              let fileToRemove = file;
+              fse.remove(path.join(__dirname, '..', 'dist/banner', fileToRemove), err=>{
+                if (err) { log.error(err.stack); }
+              });
+            }
+          });
+        }
+      }); 
+    }
+  });    
+});
+
+// Upload banner images.
+router.put('/upload-banner-images', checkPermission, (req, res)=>{
+  const form = formidable.IncomingForm();
+  const DIR_IMG_BANNER = path.join(__dirname, '..', 'dist/banner');
+  const MAX_FILE_SIZE_UPLOAD = 10 * 1024 * 1024;
+  form.uploadDir = DIR_IMG_BANNER;
+  form.keepExtensions = true;
+  form.multiples = true;
+  form.images = [];
+  // Verifiy file size.
+  form.on('fileBegin', function(name, file){
+    if (form.bytesExpected > MAX_FILE_SIZE_UPLOAD) {
+      this.emit('error', `"${file.name}" too big (${(form.bytesExpected / (1024 * 1024)).toFixed(1)}mb)`);
+    }
+  });
+  // Received name and file.
+  form.on('file', function(name, file) {
+    log.info(`"${file.name}" uploaded to "${file.path}"`);
+    form.images.push(path.basename(file.path));
+  });
+  // Err.
+  form.on('error', function(err) {
+    log.error(err.stack);
+    res.writeHead(413, {'connection': 'close', 'content-type': 'text/plain'});
+    res.end(err);
+    req.connection.destroy();
+  });
+  // All files have been uploaded.
+  form.on('end', function() {
+    res.json({images: form.images});
+  });
+  // Create folder if not exist and start upload.
+  fse.ensureDir(DIR_IMG_BANNER, err=>{
+    // Other erro than file alredy exist.
+    if (err && err.code !== 'EEXIST') {
+      log.error(err.stack);
+    } else {
+      form.parse(req);
+    }
+  });
+});
 
 
 /****************************************************************************** 

@@ -1,0 +1,42 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Zunka - Banners
+    link(rel="stylesheet" href="/css/admin/banners.css" charset="utf-8")
+  body
+    include ../topMenu
+    main
+      #app(v-cloak)
+        form
+          .field
+            label Banners
+            .images 
+              .wrapper-image(v-for='banner, index in banners')
+                img.ui.small.image.product-image(:src='`/banner/${banner.fileName}`')
+                .right-arrow(@click='moveImage(index, "r")')
+                .left-arrow(@click='moveImage(index, "l")')
+                p.delete-image(@click=`deleteImage(index)`) x      
+                .link
+                  label(for='link') Link
+                  input(type='text' id='link' v-model='banner.link')
+            .upload-image
+              label(for='uploadImage') 
+                //- svg.icon: use(xlink:href='#ic_file_upload_black_24px')
+                svg.icon: use(xlink:href='/icon/sprite.svg#ic_file_upload_black_24px')
+                | Carregar imagem(s)
+              input(type='file' id='uploadImage' accept='image/*' multiple v-on:change=`uploadImage()`)      
+          .field.buttons
+            button.green(type='button' v-on:click='saveBanners()') Salvar
+            button.blue(type='button' onclick='window.location.href="/admin"') Sair
+  script.
+    let banners = !{JSON.stringify(banners)};
+    let user = !{JSON.stringify(user)};
+    let csrfToken = !{JSON.stringify(csrfToken)};
+  include ../components/axios.js.pug
+  include ../components/vue.js.pug
+  script(src='/js/admin/banners.js')
+
+
+
