@@ -2,14 +2,14 @@
 const mongoose = require('mongoose');
 
 // Banner item.
-let banner = new mongoose.Schema({
+let bannerItem = new mongoose.Schema({
   fileName: { type: String, required: true },
   link: { type: String, required: true },
 });
 
 // Banners.
-let banners = new mongoose.Schema({
-  banner: [banner]
+let banner = new mongoose.Schema({
+  items: [bannerItem]
 },
 {
   timestamps: true
@@ -17,4 +17,4 @@ let banners = new mongoose.Schema({
 
 
 
-module.exports = mongoose.model('banners', banners, 'banners');
+module.exports = mongoose.model('banner', banner, 'banners');

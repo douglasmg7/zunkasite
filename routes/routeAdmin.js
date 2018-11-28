@@ -11,7 +11,7 @@ const Product = require('../model/product');
 const ProductMaker = require('../model/productMaker');
 const ProductCategorie = require('../model/productCategorie');
 const Order = require('../model/order');
-const Banners = require('../model/banners');
+const Banner = require('../model/banner');
 // Max product quantity by Page.
 const PRODUCT_QTD_BY_PAGE = 20;
 // Max order quantity by Page.
@@ -274,30 +274,29 @@ router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
 ******************************************************************************/
 
 // Get banners page.
-router.get('/banners', (req, res, next)=>{
-  Banners.findOne({}, (err, banners)=>{
-    console.log(`Banners: ${banners}`);
+router.get('/banner', (req, res, next)=>{
+  Banner.findOne({}, (err, banner)=>{
+    console.log(`Banner: ${banner.items}`);
     // Internal error.
     if (err) { 
       log.error(err.stack);
       return res.render('/error', { message: 'Não foi possível encontrar os banners.', error: err });
     }  
     // Banners  
-    return res.render('admin/banners', { banners: banners || [] });
+    return res.render('admin/banner', { banners: banner.items || [] });
     // return res.render('admin/banners', { banners: [] });
   })     
 });
 
 // Save banners.
-router.post('/banners', checkPermission, (req, res, next)=>{
-  console.log(`req.body.banners: ${JSON.stringify(req.body.banners)}`)
-  Banners.findOneAndUpdate({}, req.body.banners, {upsert: true}, function(err, banner){
+router.post('/banner', checkPermission, (req, res, next)=>{
+  Banner.findOneAndUpdate({}, { items: req.body.banners }, {upsert: true}, function(err, banner){
     if (err) { 
       res.json({err});
       return next(err); 
     } else {
-      log.info(`Banners updated.`);
-      res.json({});
+      log.info(`Banner updated.`);
+      res.json({ success: true });
       // Sync upladed images with product.images.
       // Get list of uploaded images.
       fse.readdir(path.join(__dirname, '..', 'dist/banner'), (err, files)=>{
@@ -309,8 +308,8 @@ router.post('/banners', checkPermission, (req, res, next)=>{
           let exist;
           files.forEach(function(file) {
             exist = false;
-            req.body.banners.forEach(function(banner) {
-              if (file === banner.file) {
+            req.body.banners.forEach(function(item) {
+              if (file === item.fileName) {
                 exist = true;
               }  
             });
@@ -327,6 +326,9 @@ router.post('/banners', checkPermission, (req, res, next)=>{
       }); 
     }
   });    
+
+
+
 });
 
 // Upload banner images.

@@ -1,0 +1,107 @@
+@import '../reset'
+@import '../topMenu'
+body
+  background-color #f5f5f5
+#app
+  max-width 600px
+  margin 0 auto
+main
+  margin 0 5em 2em 5em
+  margin-top 1em
+  input
+    margin-bottom .6em
+    width 100%
+  .title
+    font-size 1.5em
+    margin-bottom 1em
+  .sub-title
+    font-size 1.2em
+    margin-bottom: .2em
+  .wrapper-image
+    position relative
+    display block
+    margin 0 auto
+    margin-bottom 1em
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+    border-radius 4px
+    background-color #fff
+    padding 1em
+    > img
+      max-width 100%
+    &:hover 
+      background-color rgba(0, 0, 0, .05)
+      .left-arrow
+      .right-arrow
+      p.delete-image
+        display block
+    > .left-arrow
+      position absolute
+      top 50%
+      left 3%
+      width 0
+      height 0
+      border-right 30px solid orange
+      border-top 30px solid transparent
+      border-bottom 30px solid transparent
+      opacity 1
+      cursor pointer
+      display none 
+    > .right-arrow
+      position absolute
+      top 50%
+      right 3%
+      width 0
+      height 0
+      border-left 30px solid orange
+      border-top 30px solid transparent
+      border-bottom 30px solid transparent
+      opacity 1
+      cursor pointer
+      display none
+    > p.delete-image
+      position absolute
+      top 46%
+      right 50%
+      opacity 1
+      color orange
+      font-size 5em
+      // font-weight bold
+      cursor pointer
+      display none
+  .upload-image
+    margin 2em 0
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+    border-radius 4px
+    background-color #fff
+    padding 1em
+    &:hover
+      background-color rgba(0, 0, 0, .05)
+    > label
+      font-size 1.5em
+      cursor pointer   
+      > svg
+        vertical-align text-bottom
+    > input
+      // display none  
+    .icon
+      width 1.5em
+      height 1.5em
+  // .upload-image
+  //   margin 2em 0
+  //   box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+  //   border-radius 4px
+  //   background-color #fff
+  //   padding 1em
+  //   &:hover
+  //     background-color rgba(0, 0, 0, .05)
+  //   > label
+  //     font-size 1.5em
+  //     cursor pointer   
+  //     > svg
+  //       vertical-align text-bottom
+  //   > input
+  //     display none  
+  //   .icon
+  //     width 1.5em
+  //     height 1.5em
+

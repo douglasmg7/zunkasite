@@ -11,7 +11,7 @@ var app = new Vue({
     saveBanners(){
       axios({
         method: 'post',
-        url: '/admin/banners',
+        url: '/admin/banner',
         headers:{'csrf-token' : csrfToken},
         data: { banners: banners }
       })
