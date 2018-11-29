@@ -4,6 +4,8 @@ const router = express.Router();
 const log = require('../config/log');
 // Models.
 const Product = require('../model/product');
+// Redis.
+const redis = require('../db/redis');
 // Max product quantity by Page.
 const PRODUCT_QTD_BY_PAGE  = 10;
 // const stringify = require('js-stringify')
@@ -24,11 +26,20 @@ router.get('/', function(req, res, next) {
 
 // Get products page by class (news, more selled...).
 router.get('/class', function(req, res, next) {
-  res.render('productListClass', {
-    nav: {
-    },
-    search: req.query.search ? req.query.search : '',
-  });   
+  redis.get('banners', (err, banners)=>{
+    // Internal error.
+    if (err) { 
+      log.error(err.stack);
+      return res.render('/error', { message: 'Não foi possível encontrar os banners.', error: err });
+    } 
+    // Render page.  
+    return res.render('productListClass', {
+      nav: {
+      },
+      search: req.query.search ? req.query.search : '',
+      banners: JSON.parse(banners) || [],
+    }); 
+  }); 
 });
 
 

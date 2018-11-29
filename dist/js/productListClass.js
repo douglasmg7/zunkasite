@@ -8,11 +8,7 @@ var app = new Vue({
   el: '#app',
   data: {
     // Banners
-    banners: [
-      {img: 'banner-7567.jpg', link: 'https://www.zunka.com.br/product/5bc9b0f94253f81781fac9d8'},
-      {img: 'banner-dell.jpg', link: ''},
-      {img: 'banner-manutencao-domicilio.png', link: ''}
-    ],
+    banners: banners,
     // Visible banner.
     visibleBanner: 0,
     // Change banner automaticly.
