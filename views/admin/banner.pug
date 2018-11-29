@@ -28,8 +28,9 @@ html(lang="en")
             svg.icon: use(xlink:href='/icon/sprite.svg#ic_file_upload_black_24px')
             | Carregar imagem(s)
           input(type='file' id='uploadImage' accept='image/*' multiple v-on:change=`uploadImage()`)
-        button.green(type='button' v-on:click='saveBanners()') Salvar
-        button.blue(type='button' onclick='window.location.href="/admin"') Sair
+        .buttons
+          input.green(type='button' v-on:click='saveBanners()' value='Salvar')
+          input.blue(type='button' onclick='window.location.href="/admin"' value='Sair')
   script.
     let banners = !{JSON.stringify(banners)};
     let user = !{JSON.stringify(user)};
