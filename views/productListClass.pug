@@ -49,6 +49,7 @@ html(lang="en")
                     sup R$
                     | {{ product.storeProductPrice | currency | currencyInt }}
                     sup {{ product.storeProductPrice | currency | currencyCents }} 
+    include footer
   script.
     // Make available for vue.
     let csrfToken = !{JSON.stringify(csrfToken)};
