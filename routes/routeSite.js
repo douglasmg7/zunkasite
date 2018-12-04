@@ -190,4 +190,16 @@ router.post('/cart/clean-alert-msg', (req, res, next)=>{
   });
 })
 
+/****************************************************************************** 
+/  INFO
+******************************************************************************/
+// About company.
+router.get('/about-company', (req, res, next)=>{
+  res.render('info/aboutCompany', {
+    nav: {},
+    // user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined }, 
+  });
+})
+
+// Get product list.
 module.exports = router;
