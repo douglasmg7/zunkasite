@@ -1,0 +1,25 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    block title
+    block css
+  body
+    include topMenu
+    main
+      #app(v-cloak)
+        .container
+          block content
+    include footer
+  script.
+    // Make available for vue.
+    let csrfToken = !{JSON.stringify(csrfToken)};
+  block vars
+
+    //- let user = !{JSON.stringify(user)};
+  include components/axios.js.pug
+  include components/vue.js.pug
+
+  block scripts
+  //- //- script(src='/js/productList.js?0001')
