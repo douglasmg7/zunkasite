@@ -69,6 +69,7 @@ html(lang="en")
                 tr(v-for='infoAdd in productInformationAdditional')
                   td {{infoAdd[0]}}
                   td {{infoAdd[1]}}
+    include footer
   script.
     // Make available for vue.
     let product = !{JSON.stringify(product)};

@@ -60,6 +60,7 @@ const app = express();
 // Routes.
 const routeUser = require('./routes/routeUser');
 const routeSite = require('./routes/routeSite');
+const routeInfo = require('./routes/routeInfo');
 const routeCheckout = require('./routes/routeCheckout');
 // const routeWsAllNations = require('./routes/routeWsAllNations');
 // const routeWsStore = require('./routes/routeWsStore');
@@ -210,15 +211,11 @@ app.use(function(req, res, next) {
 // Routes.
 // Users.
 app.use('/user', routeUser);
-// Products configuration.
 app.use('/configProducts', routeConfigProducts);
-// Test.
 app.use('/test', routeTest);
-// Site.
 app.use('/', routeSite);
-// Checkout
+app.use('/info', routeInfo);
 app.use('/checkout', routeCheckout);
-// Admin. 
 app.use('/admin', routeAdmin);
 // CSRF error handler.
 app.use(function (err, req, res, next) {

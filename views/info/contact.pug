@@ -1,0 +1,37 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title Contato
+    link(rel="stylesheet" href="/css/info/contact.css" charset="utf-8")
+  body
+    include ../topMenu
+    main
+      app
+        .container
+          .info
+            .title
+              h3 Contato
+            .content
+              p Fundada por dois irmãos, a ZUNKA é uma empresa mineira com sede na cidade de Belo Horizonte que desde 2012 oferece serviços de manutenção e vendas de notebooks e computadores. 
+              p Por utilizar uma sistema virtual, os preços praticados e os prazos de entregas são reduzidos
+              br
+              p Por adotar produtos de qualidade superior, os custos e as demandas por manutenções dentro e fora da garantia também são reduzidos, trazendo uma economia a médio e longo prazo tanto para a ZUNKA quanto para os clientes e fornecedores.
+              br
+              p A ZUNKA não possui uma loja física para receber os seus clientes, pois isso aumentaria consideravelmente os custos de operação e consequentemente aumentando os preços dos produtos comercializados.
+              br
+              p Todo o processo de compra é automatizado pelo site 
+                a(href='/') www.zunka.com.br
+                | .
+    include ../footer
+  script.
+    // Make available for vue.
+    let csrfToken = !{JSON.stringify(csrfToken)};
+    //- let user = !{JSON.stringify(user)};
+    //- let cart = !{JSON.stringify(cart)};
+    //- let search = !{JSON.stringify(search)};
+  //- include components/axios.js.pug
+  //- include components/vue.js.pug
+  //- include components/accounting.js.pug
+  //- script(src='/js/productListClass.js?0001')

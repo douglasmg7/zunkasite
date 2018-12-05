@@ -11,3 +11,5 @@ mkdir -p ../dist/css/checkout
 stylus ../styl/checkout --out ../dist/css/checkout/
 mkdir -p ../dist/css/user
 stylus ../styl/user --out ../dist/css/user/
+mkdir -p ../dist/css/info
+stylus ../styl/info --out ../dist/css/info/

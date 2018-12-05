@@ -1,13 +1,23 @@
 // Search for products.
 function _search(text){
-  app.search = text;
-  app.getProducts();
+  window.location.href = `/search?page=1&search=${text}`;
 }
 
 var app = new Vue({
   el: '#app',
   data: {
+    // Banners
+    banners: banners,
+    // Visible banner.
+    visibleBanner: 0,
+    // Change banner automaticly.
+    bannerAutoChange: true, 
+    // Products.
     products: [],
+    // New products.
+    newProducts: [],
+    // Best selling products.
+    bestSellingProducts: [],
     // Product added to cart.
     productAddedToCart: {},
     // Curret page for pagination.
@@ -21,9 +31,13 @@ var app = new Vue({
   },
   created() {
     // On reload page use the query string for search, not the input search.
-    this.getProducts();
+    // this.getProducts();
+    this.getNewProducts();
+    this.getBestSellingProducts();
     // To show product added to cart.
     this.getPrdouctAddedToCart();
+    // Timer for change banner.
+    setInterval(this.changeBanner, 3000);
   },
   methods: {
     // Get products.
@@ -40,6 +54,34 @@ var app = new Vue({
       })
       .catch((err)=>{
         console.error(`Error - getProducts(), err: ${err}`);
+      });
+    },
+    // Get new products.
+    getNewProducts(page=1){
+      axios({
+        method: 'get',
+        url: `/api/new-products/`,
+        headers:{'csrf-token' : csrfToken}
+      })
+      .then((res)=>{
+        this.newProducts = res.data.products;
+      })
+      .catch((err)=>{
+        console.error(`Error - getNewProducts(), err: ${err}`);
+      });
+    },
+    // Get best selling products.
+    getBestSellingProducts(page=1){
+      axios({
+        method: 'get',
+        url: `/api/best-selling-products/`,
+        headers:{'csrf-token' : csrfToken}
+      })
+      .then((res)=>{
+        this.bestSellingProducts = res.data.products;
+      })
+      .catch((err)=>{
+        console.error(`Error - getBestSellingProducts(), err: ${err}`);
       });
     },
     getPrdouctAddedToCart(){
@@ -62,6 +104,34 @@ var app = new Vue({
     // currency(val){
     //   return 'yR$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     // }
+    changeBanner(mode){
+      if (mode == 1){
+        this.visibleBanner++;
+        if (this.visibleBanner >= this.banners.length) {
+          this.visibleBanner = 0;
+        }
+        this.bannerAutoChange = false;
+      } else if(mode == -1){
+        this.visibleBanner--;
+        if (this.visibleBanner < 0) {
+          this.visibleBanner = this.banners.length -1;
+        }
+        this.bannerAutoChange = false;
+      } else {
+        if (this.bannerAutoChange) {
+          this.visibleBanner++;
+          if (this.visibleBanner >= this.banners.length) {
+            this.visibleBanner = 0;
+          }
+        }
+      }
+    },
+    selectBanner(index){
+      if ((this.visibleBanner >= 0) && (this.visibleBanner < this.banners.length)) {
+        this.visibleBanner = index;
+      }
+      this.bannerAutoChange = false;
+    }
   },  
   filters: {
     currency(val){

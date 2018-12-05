@@ -15,17 +15,8 @@ function formatMoney(val){
   return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
-// Get products page.
-router.get('/', function(req, res, next) {
-  res.render('productList', {
-    nav: {
-    },
-    search: req.query.search ? req.query.search : '',
-  });   
-});
-
 // Get products page by class (news, more selled...).
-router.get('/class', function(req, res, next) {
+router.get('/', function(req, res, next) {
   redis.get('banners', (err, banners)=>{
     // Internal error.
     if (err) { 
@@ -33,13 +24,22 @@ router.get('/class', function(req, res, next) {
       return res.render('/error', { message: 'Não foi possível encontrar os banners.', error: err });
     } 
     // Render page.  
-    return res.render('productListClass', {
+    return res.render('productList', {
       nav: {
       },
       search: req.query.search ? req.query.search : '',
       banners: JSON.parse(banners) || [],
     }); 
   }); 
+});
+
+// Get products page.
+router.get('/search', function(req, res, next) {
+  res.render('productListSearch', {
+    nav: {
+    },
+    search: req.query.search ? req.query.search : '',
+  });   
 });
 
 
@@ -187,17 +187,6 @@ router.put('/cart/remove/:_id', (req, res, next)=>{
 router.post('/cart/clean-alert-msg', (req, res, next)=>{
   req.cart.cleanAlertMsg(()=>{
     res.json({success: true, cart: req.cart});
-  });
-})
-
-/****************************************************************************** 
-/  INFO
-******************************************************************************/
-// About company.
-router.get('/about-company', (req, res, next)=>{
-  res.render('info/aboutCompany', {
-    nav: {},
-    // user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined }, 
   });
 })
 
