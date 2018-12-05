@@ -12,14 +12,12 @@ html(lang="en")
         .container
           block content
     include footer
-  script.
-    // Make available for vue.
-    let csrfToken = !{JSON.stringify(csrfToken)};
-  block vars
 
-    //- let user = !{JSON.stringify(user)};
-  include components/axios.js.pug
-  include components/vue.js.pug
+  block internal_scripts
+    script.
+      // Make available for vue.
+      let csrfToken = !{JSON.stringify(csrfToken)};
 
-  block scripts
-  //- //- script(src='/js/productList.js?0001')
+  block external_scripts
+    include components/axios.js.pug
+    include components/vue.js.pug
