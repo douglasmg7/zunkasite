@@ -4,7 +4,7 @@ cd $(dirname "$0")
 # Compile stylus to css.
 stylus ../styl/product.styl --out ../dist/css/
 stylus ../styl/productList.styl --out ../dist/css/
-stylus ../styl/productListClass.styl --out ../dist/css/
+stylus ../styl/productListSearch.styl --out ../dist/css/
 mkdir -p ../dist/css/admin
 stylus ../styl/admin --out ../dist/css/admin/
 mkdir -p ../dist/css/checkout
