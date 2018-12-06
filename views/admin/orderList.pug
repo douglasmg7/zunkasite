@@ -7,11 +7,11 @@ block css
   link(rel="stylesheet" href="/css/admin/orderList.css" charset="utf-8")
 
 block content 
-  .breadlink
-    a(href='/admin') Admin
-    a &nbsp> Pedidos
+  //- .breadlink
+  //-   a(href='/admin') Admin
+  //-   a &nbsp> Pedidos
   header
-    h2 Seus Pedidos
+    h2 Pedidos
     .search-order
       input(type='text' v-model='searchOrder' @keyup.enter='getOrders()' placeholder='Pesquise em todas as ordens')
       button(@click='getOrders()') Pesquisar ordens

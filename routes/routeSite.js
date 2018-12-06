@@ -7,7 +7,7 @@ const Product = require('../model/product');
 // Redis.
 const redis = require('../db/redis');
 // Max product quantity by Page.
-const PRODUCT_QTD_BY_PAGE  = 10;
+const PRODUCT_QTD_BY_PAGE  = 8;
 // const stringify = require('js-stringify')
 
 // Format number to money format.

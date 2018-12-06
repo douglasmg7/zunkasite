@@ -5,11 +5,8 @@ $lightGray = #ccc
 $BLACK_COLOR = #111
 $BORDER_COLOR = #777
 $DIVISION_COLOR = #555
-$MAX_WIDTH = 1200px
-// html, body
-//   max-width 100%
-//   overflow-x hidden
-//   min-width 320px
+max_width = 1200px
+max_width_info = 800px
 [v-cloak]
   display none
 html, body, div, form, ul, li, p, h1, h2, h3, h4, hr
@@ -22,17 +19,21 @@ h1, h2, h3, h4, h5
 hr
   border 0
   border-top 1px solid #eee
+html
 body
-  .container
-    width 95%
-    margin 0 auto
-  // font-family: 'Helvetica Neue','Helvetica', 'Arial', 'sans-serif'
-  // font-family: 'Arial'
+  height 100%
+body
+  display flex
+  flex-direction column
+  background-color #f5f5f5
   font-family:
       '-apple-system', 'BlinkMacSystemFont',
       'Segoe UI', 'Roboto', 'Oxygen',
       'Ubuntu', 'Cantarell', 'Fira Sans',
       'Droid Sans', 'Helvetica Neue', 'sans-serif'
+main
+  flex 1 0 auto
+  margin-bottom: 2em
 button
 input
   box-sizing border-box

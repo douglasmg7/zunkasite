@@ -9,9 +9,8 @@ html(lang="en")
     include ../menu/contact.pug
     include ../menu/desktopNav.pug
     include ../menu/mobileNav.pug 
-    main
-      #app(v-cloak)
-        block content
+    main#app(v-cloak)
+      block content
     block footer
       include ../menu/footer
 

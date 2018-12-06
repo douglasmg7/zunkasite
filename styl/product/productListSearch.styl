@@ -1,79 +1,77 @@
 @import '../menu/reset_menu_footer'
 @import '../menu/pagination'
-main
-  #app
-    overflow-x hidden
-    > .cart
-      border 1px solid #ddd
-      background-color #f3f3f3
+#app
+  width max_width
+  margin 0 auto
+  margin-bottom 1em
+  overflow-x hidden
+  > .cart
+    border 1px solid #ddd
+    background-color #f3f3f3
+    display flex
+    flex-flow row wrap
+    margin 1em .5em .5em .5em
+    span
+      font-size 1.2em
+    img
+      max-width 6em
+      max-height 4em
+    .item, .sub-total, .buttons
       display flex
-      flex-flow row wrap
-      margin 1em .5em .5em .5em
+      flex-flow row nowrap
       span
-        font-size 1.2em
-      img
-        max-width 6em
-        max-height 4em
-      .item, .sub-total, .buttons
-        display flex
-        flex-flow row nowrap
-        span
-          padding 0 .5em 0 .5em
-      .item
-        align-items center
-        span
-          color green
-          font-weight bold
-      .sub-total
-        flex 1 1 auto
-        justify-content center
-        align-items center
-        padding 1em
-        & > span:nth-child(2)
-          padding-left 0
-          font-weight bold
-          color green
-      .buttons
-        flex 1 1 auto
-        justify-content center
-        padding 1em
-        button:nth-child(1)
-          margin-right 1em
-    > .products
-      display flex
-      flex-flow row wrap
-      // justify-content space-around
-      // justify-content space-between
+        padding 0 .5em 0 .5em
+    .item
+      align-items center
+      span
+        color green
+        font-weight bold
+    .sub-total
+      flex 1 1 auto
       justify-content center
-      // background blue
-      > .product
-        width 300px
-        // height 300px
-        // border 1px solid #ddd
-        // border-radius .3em
-        margin 1em
-        // flex 1 0 14em
+      align-items center
+      padding 1em
+      & > span:nth-child(2)
+        padding-left 0
+        font-weight bold
+        color green
+    .buttons
+      flex 1 1 auto
+      justify-content center
+      padding 1em
+      button:nth-child(1)
+        margin-right 1em
+  > .products
+    display flex
+    flex-flow row wrap
+    justify-content space-around
+    margin-top: 2em
+    // margin-bottom: 2em
+    > .product
+      box-shadow: 3px 3px 3px 0 rgba(0,0,0,.1);
+      border-radius 4px
+      background-color #fff
+      max-width 260px
+      padding 1em
+      margin .5em 0
+      > a
         text-decoration none
-        color black
-        > a
-          text-decoration none
-          > img
-            max-width 300px
-            border-radius .3em
-          > .title
-            font-size 1.2em
-            color green
-            font-weight 500
-            line-height 1.1
-          > .price
-            margin-top .5em
-            font-size 1.4em
-            color black
-            font-weight 500
-            line-height 1.1
-            > sup
-              font-size: 0.5em
-              top: -0.6em
-              padding-right: 0.3em
-              padding-left: 0.2em
-
+        > img
+          max-width 100%
+        > .title
+          font-size 1em
+          color green
+          font-weight 400
+          line-height 1.4
+          display block
+          margin-bottom .6em
+        > .price
+          font-size 1.3em
+          color black
+          font-weight 400
+          line-height 1.1
+          > sup
+            font-size: 0.5em
+            top: -0.6em
+            padding-right: 0.3em
+            padding-left: 0.2em

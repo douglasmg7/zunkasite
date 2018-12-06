@@ -16,7 +16,7 @@ block content
       //- Title.
       h2.product-title {{product.storeProductTitle}}
       //- Price
-      h2.product-price(v-if='accountingParse(this.product.storeProductPrice, ",") > 0') {{ product.storeProductPrice | currency}}
+      h2.product-price(v-if='accountingParse(this.product.storeProductPrice, ",") > 0') R$ {{ product.storeProductPrice | currency}}
       //- Detail.
       ul.product-detail(v-if='productDetail.length > 0')
         li(v-for='detail in productDetail') {{detail}}
