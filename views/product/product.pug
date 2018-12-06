@@ -1,4 +1,4 @@
-extends layout_vue
+extends ../layout/layout_vue
 
 block title
   title Zunka - Produto
@@ -76,5 +76,5 @@ append internal_scripts
     //- let banners = !{JSON.stringify(banners)};
 
 append external_scripts
-  include components/accounting.js.pug
+  include ../components/accounting.js.pug
   script(src='/js/product.js?0001')

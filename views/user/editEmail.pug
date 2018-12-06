@@ -1,36 +1,38 @@
-doctype html
-html(lang="en")
-  head
-    meta(charset='utf-8')
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Alterar o e-mail
-    link(rel="stylesheet" href="/css/user/editEmail.css" charset="utf-8")
-  body
-    include ../topMenu
-    main#app(v-cloak)
-      .breadlink
-        a(href='/user/account') Sua conta
-        a &nbsp> Altere seu e-mail
-      .edit-email
-        h2.text-left Altere seu e-mail
-        //- Warn message.
-        p.warn-message {{ warnMessage }}   
-        label E-mail antigo
-        p {{ email }}
-        //- New email.
-        label(for='email') Novo e-mail
-        input(type='text' name='email' id='email' v-model='newEmail')
-        //- New email confirmation.
-        label(for='emailConfirm') Insira o novo e-mail novamente
-        input(type='text' name='emailConfirm' id='emailConfirm' v-model='newEmailConfirm')      
-        //- Password.
-        label(for='password') Senha
-        input(type='password' name='password' id='password' v-model='password')        
-        input(type='button' value='Salvar Alterações' @click='save()')               
+extends ../layout/layout_vue
+
+block title
+  title Zunka - Alteração de e-mail
+
+block css
+  link(rel="stylesheet" href="/css/user/editEmail.css" charset="utf-8")
+
+block content 
+  .breadlink
+    a(href='/user/account') Sua conta
+    a &nbsp> Altere seu e-mail
+  .edit-email
+    h2.text-left Altere seu e-mail
+    //- Warn message.
+    p.warn-message {{ warnMessage }}   
+    label E-mail antigo
+    p {{ email }}
+    //- New email.
+    label(for='email') Novo e-mail
+    input(type='text' name='email' id='email' v-model='newEmail')
+    //- New email confirmation.
+    label(for='emailConfirm') Insira o novo e-mail novamente
+    input(type='text' name='emailConfirm' id='emailConfirm' v-model='newEmailConfirm')      
+    //- Password.
+    label(for='password') Senha
+    input(type='password' name='password' id='password' v-model='password')        
+    input(type='button' value='Salvar Alterações' @click='save()')
+
+block footer
+
+append internal_scripts
   script.
-    // Make available for vue.
-    let csrfToken = !{JSON.stringify(csrfToken)};
     let email = !{JSON.stringify(email)};
-  include ../components/axios.js.pug
-  include ../components/vue.js.pug
+
+append external_scripts
+  include ../components/accounting.js.pug
   script(src='/js/user/editEmail.js')  

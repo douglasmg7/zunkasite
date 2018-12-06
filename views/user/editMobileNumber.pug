@@ -1,27 +1,28 @@
-doctype html
-html(lang="en")
-  head
-    meta(charset='utf-8')
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Altere seu número de celular.
-    link(rel="stylesheet" href="/css/user/editMobileNumber.css" charset="utf-8")
-  body
-    include ../topMenu
-    main#app(v-cloak)
-      .breadlink
-        a(href='/user/account') Sua conta
-        a &nbsp> Altere seu número de celular
-      .edit-mobile
-        h2.text-left Altere seu súmero de celular 
-        //- Warn message.
-        p.warn-message {{ warnMessage }}   
-        label(for='mobileNumber') Novo Número de Celular
-        input(type='text' name='mobileNumber' id='mobileNumber' v-model='mobileNumber')
-        input(type='button' value='Salvar Alterações' @click='save()')  
+extends ../layout/layout_vue
+
+block title
+  title Zunka - Alteração do número do celular
+
+block css
+  link(rel="stylesheet" href="/css/user/editMobileNumber.css" charset="utf-8")
+
+block content 
+  .breadlink
+    a(href='/user/account') Sua conta
+    a &nbsp> Altere seu número de celular
+  .edit-mobile
+    h2.text-left Altere seu súmero de celular 
+    //- Warn message.
+    p.warn-message {{ warnMessage }}   
+    label(for='mobileNumber') Novo Número de Celular
+    input(type='text' name='mobileNumber' id='mobileNumber' v-model='mobileNumber')
+    input(type='button' value='Salvar Alterações' @click='save()') 
+
+block footer
+
+append internal_scripts
   script.
-    // Make available for vue.
-    let csrfToken = !{JSON.stringify(csrfToken)};
     let mobileNumber = !{JSON.stringify(mobileNumber)};
-  include ../components/axios.js.pug
-  include ../components/vue.js.pug
+
+append external_scripts
   script(src='/js/user/editMobileNumber.js')  

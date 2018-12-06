@@ -1,4 +1,4 @@
-extends layout_vue
+extends ../layout/layout_vue
 
 block title
   title Produtos
@@ -13,5 +13,5 @@ append internal_scripts
     let cart = !{JSON.stringify(cart)};
 
 append external_scripts
-  include components/accounting.js.pug
+  include ../components/accounting.js.pug
   script(src='/js/productList.js?0001')

@@ -1,4 +1,4 @@
-extends ../layout_admin_vue
+extends ../layout/layout_vue
 
 block title
   title Admin - Produto
@@ -133,6 +133,9 @@ block content
       button.red(type='button' v-on:click='deleteProduct()') Apagar
       button.green(type='button' v-on:click='saveProduct()') Salvar
       button.blue(type='button' onclick='window.location.href="/admin"') Sair
+
+block footer
+  
 append internal_scripts
   script.
    let product = !{JSON.stringify(product)};

@@ -1,35 +1,33 @@
-doctype html
-html(lang='en')
-  head
-    meta(charset='utf-8')
-    meta(name='viewport' content='width=device-width, initial-scale=1')
-    title Cadastro de usuario.
-    link(rel="stylesheet" href="/css/user/signup.css" charset="utf-8")
-  body
-    include ../topMenu
-    main#app(v-cloak)
-      .login
-        h1 Cadastro 
-        //- Warn message.
-        p.warn-message {{ warnMessage }}
-        //- Name.
-        label(for='name') Nome
-        input(type='text' id='name' v-model='name')                              
-        //- Email.
-        label(for='email') E-mail
-        input(type='email' id='email' v-model='email')
-        //- Password.
-        label(for='password') Senha
-        input(type='password' placeholder='Pelo menos 8 caracteres' id='password' v-model='password')
-        //- Confirm password.
-        label(for='passwordConfirm') Confirme a senha
-        input(type='password' id='passwordConfirm' v-model='passwordConfirm')           
-        //- Signup.           
-        input.signup(type='submit' value='Cadastrar' @click='signup()')
-        p.success-message {{ successMessage }}
-    script.
-      // Make available for vue.
-      let csrfToken = !{JSON.stringify(csrfToken)};
-    include ../components/axios.js.pug
-    include ../components/vue.js.pug
-    script(src='/js/user/signup.js')         
+extends ../layout/layout_vue
+
+block title
+  title Zunka - Cadastro de usuário
+
+block css
+  link(rel="stylesheet" href="/css/user/signup.css" charset="utf-8")
+
+block content 
+  .login
+    h1 Cadastro 
+    //- Warn message.
+    p.warn-message {{ warnMessage }}
+    //- Name.
+    label(for='name') Nome
+    input(type='text' id='name' v-model='name')                              
+    //- Email.
+    label(for='email') E-mail
+    input(type='email' id='email' v-model='email')
+    //- Password.
+    label(for='password') Senha
+    input(type='password' placeholder='Pelo menos 8 caracteres' id='password' v-model='password')
+    //- Confirm password.
+    label(for='passwordConfirm') Confirme a senha
+    input(type='password' id='passwordConfirm' v-model='passwordConfirm')           
+    //- Signup.           
+    input.signup(type='submit' value='Cadastrar' @click='signup()')
+    p.success-message {{ successMessage }}
+
+block footer
+
+append external_scripts
+  script(src='/js/user/signup.js')         

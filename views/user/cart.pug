@@ -1,88 +1,88 @@
-doctype html
-html(lang="en")
-  head
-    meta(charset='utf-8')
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Carrinho de compras
-    link(rel="stylesheet" href="/css/user/cart.css" charset="utf-8")
-  body
-    include ../topMenu
-    main#app(v-cloak)
-      .cart-empty(v-if='!cart.products.length')
-        h2 Ainda não existem produtos no seu carrinho de compras
-      .cart(v-if='cart.products.length')
-        h2 Carrinho de compras          
+extends ../layout/layout_vue
+
+block title
+  title Zunka - Carrinho de compras
+
+block css
+  link(rel="stylesheet" href="/css/user/cart.css" charset="utf-8")
+
+block content 
+  .cart-empty(v-if='!cart.products.length')
+    h2 Ainda não existem produtos no seu carrinho de compras
+  .cart(v-if='cart.products.length')
+    h2 Carrinho de compras          
+    table
+      thead
+        tr
+          td
+          td
+          td Quantidade
+          td Valor unitário
+          td Valor total
+      tbody
+        tr(v-for='product in cart.products' data-product_id='product._id')
+          td: a(:href='`/product/${product._id}`'): img.product(:src='`/img/${product._id}/${product.image}`')
+          td 
+            a.product-title(:href='`/product/${product._id}`') {{ product.title }}
+            p.remove-product(@click='removeProduct(product)') Remover
+          td.product-qtd
+            .dropdown
+              select(v-model='product.qtd' v-on:change='changeProductQtd(product)')
+                option(v-for='item in product.stockQtd', :value='item') {{ item }}
+          td: p.product-price {{ product.price | currency }}
+          td: p.product-price {{ product.price * product.qtd | currency }}
+    .subtotal
+      h3
+        strong Subtotal ({{ cart.totalQtd }} {{ cart.totalQtd > 1 ? 'itens): ' : 'item): ' }}
+        span {{ cart.totalPrice | currency }}
+        input.green(type='button' value='Finalizar compra' @click='selectAddress()')
+        //- Used for test.
+        //- input.green(type='button' value='Update stock' @click='updateStock()')
+      p O preço e a disponibilidade dos itens na loja estão sujetios a mudanças. O carrinho é um local temporário para guardar a lista de seus ítens e reflete o preço mais recente.
+  .modal(v-if='showModal')
+    .modal-content
+      h2 Alteração no carrinho de compras
+      .products-price-changed(v-if='productsPriceChanged')
+        h3 Produto(s) com alteração de preço
         table
-          thead
-            tr
-              td
-              td
-              td Quantidade
-              td Valor unitário
-              td Valor total
           tbody
-            tr(v-for='product in cart.products' data-product_id='product._id')
+            tr(v-for='product in cart.products' v-if='product.showMsgPriceChanged')
               td: a(:href='`/product/${product._id}`'): img.product(:src='`/img/${product._id}/${product.image}`')
-              td 
-                a.product-title(:href='`/product/${product._id}`') {{ product.title }}
-                p.remove-product(@click='removeProduct(product)') Remover
-              td.product-qtd
-                .dropdown
-                  select(v-model='product.qtd' v-on:change='changeProductQtd(product)')
-                    option(v-for='item in product.stockQtd', :value='item') {{ item }}
-              td: p.product-price {{ product.price | currency }}
-              td: p.product-price {{ product.price * product.qtd | currency }}
-        .subtotal
-          h3
-            strong Subtotal ({{ cart.totalQtd }} {{ cart.totalQtd > 1 ? 'itens): ' : 'item): ' }}
-            span {{ cart.totalPrice | currency }}
-            input.green(type='button' value='Finalizar compra' @click='selectAddress()')
-            //- Used for test.
-            //- input.green(type='button' value='Update stock' @click='updateStock()')
-          p O preço e a disponibilidade dos itens na loja estão sujetios a mudanças. O carrinho é um local temporário para guardar a lista de seus ítens e reflete o preço mais recente.
-      .modal(v-if='showModal')
-        .modal-content
-          h2 Alteração no carrinho de compras
-          .products-price-changed(v-if='productsPriceChanged')
-            h3 Produto(s) com alteração de preço
-            table
-              tbody
-                tr(v-for='product in cart.products' v-if='product.showMsgPriceChanged')
-                  td: a(:href='`/product/${product._id}`'): img.product(:src='`/img/${product._id}/${product.image}`')
-                  td: p.title {{ product.title }}
-                  td
-                    span De&nbsp
-                    span.price {{ product.oldPrice | currency }} 
-                    span para 
-                    span.price {{ product.price | currency }}
-          .products-qtd-changed(v-if='productsQtdChanged')
-            h3 Produto(s) com alteração de quantidade devido ao estoque
-            table
-              tbody
-                tr(v-for='product in cart.products' v-if='product.showMsgQtdChanged')
-                  td: a(:href='`/product/${product._id}`'): img.product(:src='`/img/${product._id}/${product.image}`')
-                  td: p.title {{ product.title }}
-                  td
-                    span De
-                    span.qtd &nbsp {{ product.oldQtd }} &nbsp
-                    span para 
-                    span.qtd &nbsp {{ product.qtd }} &nbsp
-                    span unidade(s).
-          .products-removed(v-if='cart.removedProducts.length')
-            h3 Produto(s) removido(s) por falta de estoque
-            table
-              tbody
-                tr(v-for='removedProduct in cart.removedProducts')
-                  td: a(:href='`/product/${removedProduct._id}`'): img.product(:src='`/img/${removedProduct._id}/${removedProduct.image}`')
-                  td: p.title {{ removedProduct.title }}
-          input.green(type='button' @click='userReceiveMsgCartChanged()' value='Ok')
+              td: p.title {{ product.title }}
+              td
+                span De&nbsp
+                span.price {{ product.oldPrice | currency }} 
+                span para 
+                span.price {{ product.price | currency }}
+      .products-qtd-changed(v-if='productsQtdChanged')
+        h3 Produto(s) com alteração de quantidade devido ao estoque
+        table
+          tbody
+            tr(v-for='product in cart.products' v-if='product.showMsgQtdChanged')
+              td: a(:href='`/product/${product._id}`'): img.product(:src='`/img/${product._id}/${product.image}`')
+              td: p.title {{ product.title }}
+              td
+                span De
+                span.qtd &nbsp {{ product.oldQtd }} &nbsp
+                span para 
+                span.qtd &nbsp {{ product.qtd }} &nbsp
+                span unidade(s).
+      .products-removed(v-if='cart.removedProducts.length')
+        h3 Produto(s) removido(s) por falta de estoque
+        table
+          tbody
+            tr(v-for='removedProduct in cart.removedProducts')
+              td: a(:href='`/product/${removedProduct._id}`'): img.product(:src='`/img/${removedProduct._id}/${removedProduct.image}`')
+              td: p.title {{ removedProduct.title }}
+      input.green(type='button' @click='userReceiveMsgCartChanged()' value='Ok')
+
+block footer
+  
+append internal_scripts
   script.
-    // Make available for vue.
-    let csrfToken = !{JSON.stringify(csrfToken)};
     let user = !{JSON.stringify(user)};
     let cart = !{JSON.stringify(cart)};
-  include ../components/axios.js.pug
-  include ../components/vue.js.pug
+
+append external_scripts
   include ../components/accounting.js.pug
   script(src='/js/user/cart.js') 
-

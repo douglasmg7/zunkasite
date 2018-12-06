@@ -1,63 +1,28 @@
-doctype html
-html(lang="en")
-  head
-    meta(charset='utf-8')
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Dados de acesso.
-    link(rel="stylesheet" href="/css/user/editCpf.css" charset="utf-8")
-  body
-    include ../topMenu
-    main#app(v-cloak)
-      .breadlink
-        a(href='/user/account') Sua conta
-        a &nbsp> Altere seu CPF  
-      .edit-cpf
-        h2.text-left Altere Seu CPF
-        //- Warn message.
-        p.warn-message {{ warnMessage }}  
-        label(for='cpf') CPF
-        input(type='text' name='cpf' id='cpf' v-model='cpf')
-        input(type='button' value='Salvar Alterações' @click='save()')               
-  script.
-    // Make available for vue.
-    let csrfToken = !{JSON.stringify(csrfToken)};
-    let cpf = !{JSON.stringify(cpf)};
-  include ../components/axios.js.pug
-  include ../components/vue.js.pug
-  //- include ../components/cpf.js.pug
-  script(src='/js/user/editCpf.js')  
+extends ../layout/layout_vue
 
-  //-   script.
-  //-     jQuery(function($){
-  //-       // Maskedinput.
-  //-       $('#cpf').mask('999.999.999-99');
-  //-       // Validator method for cpf.
-  //-       $.validator.addMethod('cpf', function(value, element){ return CPF.validate(value); }, 'Por favor, forneça um CPF válido.');        
-  //-       // Form validation.
-  //-       $('#form-edit-cpf').validate({
-  //-         rules:{
-  //-           cpf: {
-  //-             cpf: true,
-  //-           }
-  //-         },      
-  //-         messages: {
-  //-         },
-  //-         highlight: function (element) {
-  //-             $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-  //-         },
-  //-         success: function (element) {
-  //-           // Remove erros.
-  //-           element.closest('.form-group').removeClass('has-error').addClass('has-success');
-  //-         }          
-  //-       });
-  //-     });     
-  //- style.
-  //-   a.not-decoration {
-  //-     text-decoration: none;
-  //-   }
-  //-   /* Panel */
-  //-   .z-panel{
-  //-     border: 1px solid lightgray;
-  //-     border-radius: 5px;
-  //-     padding: 1em;
-  //-   }
+block title
+  title Zunka - Alteração de CPF
+
+block css
+  link(rel="stylesheet" href="/css/user/editCpf.css" charset="utf-8")
+
+block content 
+  .breadlink
+    a(href='/user/account') Sua conta
+    a &nbsp> Altere seu CPF  
+  .edit-cpf
+    h2.text-left Altere Seu CPF
+    //- Warn message.
+    p.warn-message {{ warnMessage }}  
+    label(for='cpf') CPF
+    input(type='text' name='cpf' id='cpf' v-model='cpf')
+    input(type='button' value='Salvar Alterações' @click='save()') 
+
+block footer
+
+append internal_scripts
+  script.
+    let cpf = !{JSON.stringify(cpf)};
+
+append external_scripts
+  script(src='/js/user/editCpf.js')  

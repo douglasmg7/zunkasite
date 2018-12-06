@@ -6,13 +6,14 @@ html(lang="en")
     block title
     block css
   body
-    include contact.pug
-    include desktopNav.pug
-    include mobileNav.pug 
+    include ../menu/contact.pug
+    include ../menu/desktopNav.pug
+    include ../menu/mobileNav.pug 
     main
       #app(v-cloak)
         block content
-    //- include footer
+    block footer
+      include ../menu/footer
 
   block internal_scripts
     script.
@@ -20,5 +21,5 @@ html(lang="en")
       let csrfToken = !{JSON.stringify(csrfToken)};
 
   block external_scripts
-    include components/axios.js.pug
-    include components/vue.js.pug
+    include ../components/axios.js.pug
+    include ../components/vue.js.pug

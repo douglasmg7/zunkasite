@@ -1,13 +1,18 @@
-doctype html
-html(lang="en")
-  head
-    meta(charset='utf-8')
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Mensagem
-    link(rel="stylesheet" href="/css/user/messageLink.css" charset="utf-8")
-  body
-    include ../topMenu
-    main
-      .message-link
-        h3 #{message} 
-        a(href=linkUrl) #{linkMessage}
+extends ../layout/layout_vue
+
+block title
+  title Zunka - Mensagem
+
+block css
+  link(rel="stylesheet" href="/css/user/messageLink.css" charset="utf-8")
+
+block content 
+  .message-link
+    h3 #{message} 
+    a(href=linkUrl) #{linkMessage}
+
+block footer
+
+append internal_scripts
+
+append external_scripts

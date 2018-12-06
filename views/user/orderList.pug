@@ -1,80 +1,76 @@
-doctype html
-html(lang="en")
-  head
-    meta(charset='utf-8')
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Zunka - Pedidos
-    link(rel="stylesheet" href="/css/user/orderList.css" charset="utf-8")
-  body
-    include ../topMenu 
-    main#app(v-cloak)
-      .breadlink
-        a(href='/user/account') Sua conta
-        a &nbsp> Seus Pedidos
-      header
-        h2 Seus Pedidos
-        .search-order
-          input(type='text' v-model='searchOrder' @keyup.enter='getOrders()' placeholder='Pesquise em todas as ordens')
-          button(@click='getOrders()') Pesquisar ordens
-      table
-        thead
-          tr
-            th Data do pedido
-            th Total
-            th Enviado para
-            th Número
-        tbody
-          tr(v-for='order, index in orders' @click='showOrderDetail(index)')
-            td {{order.timestamps.shippingAddressSelectedAt | formatDate}}
-            td {{order.totalPrice | formatMoney}}
-            td {{order.shipping.address.name}}
-            td {{order._id}}
-      nav.pagination
-        a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
-      div.modal(v-if='showModal')
-        .modal-content
-          .pedido
-            p.title Número do pedido
-            P {{orderSelec._id}}
-          .clientdetail
-            p.title Cliente.
-            p Nome: {{orderSelec.name}}
-            p Email: {{orderSelec.email}}
-          .address
-            p.title Endereço de entrega.
-            p Nome: {{orderSelec.shipping.address.name}}
-            p Telefone: {{orderSelec.shipping.address.phone}}
-            p {{orderSelec.shipping.address.address}},  {{orderSelec.shipping.address.addressNumber}} {{orderSelec.shipping.address.addressComplement}}
-            p {{orderSelec.shipping.address.district}}
-            p {{orderSelec.shipping.address.city}} - {{orderSelec.shipping.address.state}} - Brasil
-            p {{orderSelec.shipping.address.cep}} 
-          .shipment
-            p.title Frete
-            p Envio padrão
-            span Prazo: 
-            span.deadline {{orderSelec.shipping.deadline}} dia(s)
-            br
-            span Valor do frete: 
-            span.price R${{orderSelec.shipping.price}}
-          .items(v-if='orderSelec.items.length > 0')
-            p.title Itens
-            ul
-              li(v-for='item in orderSelec.items')
-                p 
-                  strong {{item.name}}
-                p 
-                  span.price {{item.price | formatMoney}} 
-                  span.quantity - Quantidade: {{item.quantity}}
-          .total
-            p.title Valor total com frete
-            p.price {{ orderSelec.totalPrice | formatMoney }}
-          .button
-            button(@click='hideOrderDetail()') Fechar
-    script.
-      // Make available for vue.
-      let csrfToken = !{JSON.stringify(csrfToken)};
-      //- let search = !{JSON.stringify(search)};
-      //- let page = !{JSON.stringify(page)};   //  Selected page.
-    include ../components/axios.js.pug
-    include ../components/vue.js.pug
-    script(src='/js/user/orderList.js')
+extends ../layout/layout_vue
+
+block title
+  title Zunka - Pedidos
+
+block css
+  link(rel="stylesheet" href="/css/user/orderList.css" charset="utf-8")
+
+block content 
+  .breadlink
+    a(href='/user/account') Sua conta
+    a &nbsp> Seus Pedidos
+  header
+    h2 Seus Pedidos
+    .search-order
+      input(type='text' v-model='searchOrder' @keyup.enter='getOrders()' placeholder='Pesquise em todas as ordens')
+      button(@click='getOrders()') Pesquisar ordens
+  table
+    thead
+      tr
+        th Data do pedido
+        th Total
+        th Enviado para
+        th Número
+    tbody
+      tr(v-for='order, index in orders' @click='showOrderDetail(index)')
+        td {{order.timestamps.shippingAddressSelectedAt | formatDate}}
+        td {{order.totalPrice | formatMoney}}
+        td {{order.shipping.address.name}}
+        td {{order._id}}
+  nav.pagination
+    a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
+  div.modal(v-if='showModal')
+    .modal-content
+      .pedido
+        p.title Número do pedido
+        P {{orderSelec._id}}
+      .clientdetail
+        p.title Cliente.
+        p Nome: {{orderSelec.name}}
+        p Email: {{orderSelec.email}}
+      .address
+        p.title Endereço de entrega.
+        p Nome: {{orderSelec.shipping.address.name}}
+        p Telefone: {{orderSelec.shipping.address.phone}}
+        p {{orderSelec.shipping.address.address}},  {{orderSelec.shipping.address.addressNumber}} {{orderSelec.shipping.address.addressComplement}}
+        p {{orderSelec.shipping.address.district}}
+        p {{orderSelec.shipping.address.city}} - {{orderSelec.shipping.address.state}} - Brasil
+        p {{orderSelec.shipping.address.cep}} 
+      .shipment
+        p.title Frete
+        p Envio padrão
+        span Prazo: 
+        span.deadline {{orderSelec.shipping.deadline}} dia(s)
+        br
+        span Valor do frete: 
+        span.price R${{orderSelec.shipping.price}}
+      .items(v-if='orderSelec.items.length > 0')
+        p.title Itens
+        ul
+          li(v-for='item in orderSelec.items')
+            p 
+              strong {{item.name}}
+            p 
+              span.price {{item.price | formatMoney}} 
+              span.quantity - Quantidade: {{item.quantity}}
+      .total
+        p.title Valor total com frete
+        p.price {{ orderSelec.totalPrice | formatMoney }}
+      .button
+        button(@click='hideOrderDetail()') Fechar
+
+block footer
+
+append external_scripts
+  script(src='/js/user/orderList.js')

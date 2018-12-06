@@ -1,49 +1,51 @@
-doctype html
-html(lang='en')
-  head
-    meta(charset='utf-8')
-    meta(name='viewport' content='width=device-width, initial-scale=1')
-    title Dados de acesso
+extends ../layout/layout_vue
+
+block title
+  title Zunka - Dados de acesso
+
+block css
     link(rel="stylesheet" href="/css/user/access.css" charset="utf-8")
-  body
-    include ../topMenu
-    main#app(v-cloak)
-      .breadlink
-        a(href='/user/account') Sua conta
-        a &nbsp> Autenticação
-      .auth
-        //- Name
-        p.title Nome completo
-        p {{ user.name }}
-        a(href='access/edit-name') Editar
-        hr
-        //- E-mail.
-        p.title E-mail
-        p {{ user.email }} 
-        a(href='access/edit-email') Editar
-        hr
-        //- Cell phone.
-        p.title Número de telefone celular
-        p {{ user.mobileNumber ? user.mobileNumber : '********' }}
-        a(href='access/edit-mobile-number') Editar
-        hr
-        //- Password.
-        p.title Senha
-        p ********
-        a(href='access/edit-password') Editar
-        hr
-        //- CPF.
-        p.title CPF
-        p {{ user.cpf ? user.cpf : '********' }}
-        a(href='access/edit-cpf') Editar
-        hr
-        //- Remove account.
-        p.title Apagar conta
-        a(href='access/delete-account') Apagar
-      input(type='button' @click='exit()' value='Concluído')             
+
+block content 
+  .breadlink
+    a(href='/user/account') Sua conta
+    a &nbsp> Autenticação
+  .auth
+    //- Name
+    p.title Nome completo
+    p {{ user.name }}
+    a(href='access/edit-name') Editar
+    hr
+    //- E-mail.
+    p.title E-mail
+    p {{ user.email }} 
+    a(href='access/edit-email') Editar
+    hr
+    //- Cell phone.
+    p.title Número de telefone celular
+    p {{ user.mobileNumber ? user.mobileNumber : '********' }}
+    a(href='access/edit-mobile-number') Editar
+    hr
+    //- Password.
+    p.title Senha
+    p ********
+    a(href='access/edit-password') Editar
+    hr
+    //- CPF.
+    p.title CPF
+    p {{ user.cpf ? user.cpf : '********' }}
+    a(href='access/edit-cpf') Editar
+    hr
+    //- Remove account.
+    p.title Apagar conta
+    a(href='access/delete-account') Apagar
+  input(type='button' @click='exit()' value='Concluído')  
+
+block footer
+
+append internal_scripts
   script.
-    // Make available for vue.
-    let csrfToken = !{JSON.stringify(csrfToken)};
     let user = !{JSON.stringify(user)};
-  include ../components/vue.js.pug
+
+append external_scripts
   script(src='/js/user/access.js')        

@@ -24,7 +24,7 @@ router.get('/', function(req, res, next) {
       return res.render('/error', { message: 'Não foi possível encontrar os banners.', error: err });
     } 
     // Render page.  
-    return res.render('productList', {
+    return res.render('product/productList', {
       nav: {
       },
       search: req.query.search ? req.query.search : '',
@@ -35,7 +35,7 @@ router.get('/', function(req, res, next) {
 
 // Get products page.
 router.get('/search', function(req, res, next) {
-  res.render('productListSearch', {
+  res.render('product/productListSearch', {
     nav: {
     },
     search: req.query.search ? req.query.search : '',
@@ -49,7 +49,7 @@ router.get('/product/:_id', function(req, res, next) {
   .then(product=>{
     if (product._id) {
       // console.log(JSON.stringify(result));
-      res.render('product', {
+      res.render('product/product', {
         nav: {
         },
         product

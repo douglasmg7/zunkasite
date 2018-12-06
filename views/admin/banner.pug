@@ -1,4 +1,4 @@
-extends ../layout_admin_vue
+extends ../layout/layout_vue
 
 block title
   title Zunka - Banners
@@ -24,6 +24,9 @@ block content
   .buttons
     input.green(type='button' v-on:click='saveBanners()' value='Salvar')
     input.blue(type='button' onclick='window.location.href="/admin"' value='Sair')
+
+block footer
+  
 append internal_scripts
   script.
     let banners = !{JSON.stringify(banners)};

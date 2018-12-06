@@ -1,33 +1,33 @@
-doctype html
-html(lang="en")
-  head
-    meta(charset='utf-8')
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Signin
-    link(rel="stylesheet" href="/css/user/signin.css" charset="utf-8")
-  body
-    include ../topMenu
-    main#app(v-cloak)
-      .login
-        h1 Identificação              
-        p.success-message {{successMessage}}
-        label(for='email') E-mail
-        input(type='text' id='email' v-model='email')
-        label(for='password') Senha
-        input(type='password' id='password' v-model='password')
-        p 
-          a.find-password(href='/user/forgottenPassword') Esqueceu a senha?
-        input.log(type='submit' value='Entrar' @click='signin()')
-        p.warn-message {{warnMessage}}
-        hr/
-        p Não tem cadastro?
-        input.signup(type='submit' value='Cadastrar' @click='signup()')
-        //- a(href='/users/signup') Cadastrar
+extends ../layout/layout_vue
+
+block title
+  title Zunka - Autenticação
+
+block css
+  link(rel="stylesheet" href="/css/user/signin.css" charset="utf-8")
+
+block content 
+  .login
+    h1 Identificação              
+    p.success-message {{successMessage}}
+    label(for='email') E-mail
+    input(type='text' id='email' v-model='email')
+    label(for='password') Senha
+    input(type='password' id='password' v-model='password')
+    p 
+      a.find-password(href='/user/forgottenPassword') Esqueceu a senha?
+    input.log(type='submit' value='Entrar' @click='signin()')
+    p.warn-message {{warnMessage}}
+    hr/
+    p Não tem cadastro?
+    input.signup(type='submit' value='Cadastrar' @click='signup()')
+
+block footer
+
+append internal_scripts
   script.
-    // Make available for vue.
-    let csrfToken = !{JSON.stringify(csrfToken)};
     let warnMessage = !{JSON.stringify(warnMessage)};
     let successMessage = !{JSON.stringify(successMessage)};
-  include ../components/axios.js.pug
-  include ../components/vue.js.pug
+
+append external_scripts
   script(src='/js/user/signin.js')        

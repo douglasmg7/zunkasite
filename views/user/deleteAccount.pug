@@ -1,27 +1,29 @@
-doctype html
-html(lang="en")
-  head
-    meta(charset='utf-8')
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Apagar conta
-    link(rel="stylesheet" href="/css/user/deleteAccount.css" charset="utf-8")
-  body
-    include ../topMenu
-    main#app(v-cloak)
-      .breadlink
-        a(href='/user/account') Sua conta
-        a &nbsp> Apagar conta
-      .delete-account
-        h2 Apagar Conta
-        label(for='email') E-mail
-        input(type='text' id='email' v-model='email')
-        label(for='password') Senha
-        input(type='password' id='password' v-model='password')        
-        input(type='button' value='Apagar Conta' @click='deleteAccount()')
-        p.warn-message {{warnMessage}}
+extends ../layout/layout_vue
+
+block title
+  title Zunka - Apagar conta
+
+block css
+  link(rel="stylesheet" href="/css/user/deleteAccount.css" charset="utf-8")
+
+block content 
+  .breadlink
+    a(href='/user/account') Sua conta
+    a &nbsp> Apagar conta
+  .delete-account
+    h2 Apagar Conta
+    label(for='email') E-mail
+    input(type='text' id='email' v-model='email')
+    label(for='password') Senha
+    input(type='password' id='password' v-model='password')        
+    input(type='button' value='Apagar Conta' @click='deleteAccount()')
+    p.warn-message {{warnMessage}}
+
+block footer
+
+append internal_scripts
   script.
-    // Make available for vue.
-    let csrfToken = !{JSON.stringify(csrfToken)};
-  include ../components/axios.js.pug
-  include ../components/vue.js.pug
+    let cart = !{JSON.stringify(cart)};
+
+append external_scripts
   script(src='/js/user/deleteAccount.js')

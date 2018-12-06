@@ -1,3 +1,7 @@
+include layout
+  accountDeleted.pug
+  
+
 create template to use top menu and footer.
 
 create filed quantity sold for product, to show best selling products.

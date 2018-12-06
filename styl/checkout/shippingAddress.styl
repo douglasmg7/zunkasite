@@ -5,34 +5,35 @@ main
   flex-flow column nowrap
   justify-content center
   margin 0 auto 3em auto
-  max-width 1000px
-  & > .container
-    & > .address-add
-      h2
-        margin-top 1em
-    & > .addresss
-      // background-color red
-      display flex
-      flex-flow row wrap
-      & > .address
-        flex 0 1 18em
-        padding 1.5em .5em
-        button
-          margin-top 1em
-        p.name
-          font-weight bold
-    & > .form
+  width 95%
+  max-width $MAX_WIDTH
+#app
+  & > .address-add
+    h2
+      margin-top 1em
+  & > .addresss
+    // background-color red
+    display flex
+    flex-flow row wrap
+    & > .address
+      flex 0 1 18em
+      padding 1.5em .5em
       button
-        margin-top 1em    
-      & > .field
-        display flex
-        flex-flow column wrap
         margin-top 1em
-        label
-          font-weight bold
-        input
-          height 2em
-        textarea
-          height 10em
-        & > .validation
-          color red
+      p.name
+        font-weight bold
+  & > .form
+    button
+      margin-top 1em    
+    & > .field
+      display flex
+      flex-flow column wrap
+      margin-top 1em
+      label
+        font-weight bold
+      input
+        height 2em
+      textarea
+        height 10em
+      & > .validation
+        color red

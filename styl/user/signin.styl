@@ -1,6 +1,6 @@
 @import '../reset'
 @import '../topMenu'
-main
+#app
   display flex
   flex-flow column nowrap
   justify-content center
@@ -8,51 +8,51 @@ main
   margin 2em auto
   width 95%
   max-width 300px
-& > .login
-  // background-color red
-  display flex
-  flex-flow column
-  padding 1em
-  border 1px solid lightgray
-  border-radius 4px  
-  hr
-    margin .5em 0 .5em 0
-  p.warn-message
-    color red
-    margin-top 0
-  p.success-message
-    color green
-  input
-  button
-    height 2em
+  > .login
+    // background-color red
+    display flex
+    flex-flow column
+    padding 1em
     border 1px solid lightgray
-    margin-top .2em
-    margin-bottom .5em
-    padding-left 1em
-    padding-right 1em
-    border-radius 4px
-  input.log
-    color #fff
-    background-color #337ab7
-    border-color #2e6da4
-    &:hover
-      background-color #286090
-      border-color #204d74
-  input.signup
-    // margin-top .2em
-    color #fff
-    background-color #5bc0de;
-    border-color #46b8da
-    &:hover
-      background-color #31b0d5
-      border-color #269abc
-  p  
-    margin-top .2em
-  a.find-password
-    color #337ab7
-    text-decoration none
-    &:hover
-      color #23527c
-      text-decoration underline
+    border-radius 4px  
+    hr
+      margin .5em 0 .5em 0
+    p.warn-message
+      color red
+      margin-top 0
+    p.success-message
+      color green
+    input
+    button
+      height 2em
+      border 1px solid lightgray
+      margin-top .2em
+      margin-bottom .5em
+      padding-left 1em
+      padding-right 1em
+      border-radius 4px
+    input.log
+      color #fff
+      background-color #337ab7
+      border-color #2e6da4
+      &:hover
+        background-color #286090
+        border-color #204d74
+    input.signup
+      // margin-top .2em
+      color #fff
+      background-color #5bc0de;
+      border-color #46b8da
+      &:hover
+        background-color #31b0d5
+        border-color #269abc
+    p  
+      margin-top .2em
+    a.find-password
+      color #337ab7
+      text-decoration none
+      &:hover
+        color #23527c
+        text-decoration underline
       
       

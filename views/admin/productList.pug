@@ -1,4 +1,4 @@
-extends ../layout_admin_vue
+extends ../layout/layout_vue
 
 block title
   title Admin - Produtos
@@ -30,6 +30,9 @@ block content
         td {{product.storeProductPrice | formatMoney}}    
   nav.pagination
     a(v-for='p in pageCount', @click='getProducts(p)', :page='page==p', :p='p', :active='page==p') {{p}}
+
+block footer
+  
 append internal_scripts
   script.
     let search = !{JSON.stringify(search)};

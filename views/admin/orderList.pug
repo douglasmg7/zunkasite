@@ -1,4 +1,4 @@
-extends ../layout_admin_vue
+extends ../layout/layout_vue
 
 block title
   title Admin - Pedidos
@@ -111,6 +111,8 @@ block content
       .buttons
         button(@click='setStatus()') Sim
         button(@click='setStatusWindow.show=false') Não
+
+block footer
 
 append internal_scripts
   script.

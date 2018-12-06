@@ -1,44 +1,45 @@
-doctype html
-html(lang="en")
-  head
-    meta(charset='utf-8')
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Envio
-    link(rel="stylesheet" href="/css/checkout/shippingMethod.css" charset="utf-8")
-  body
-    include ../topMenu
-    main#app(v-cloak)
-      .container
-        h2 Forma de envio
-        hr
-        //- Address complement exist.
-        .address(v-if='order.shipping.address.addressComplement')
-          p.shipping.address Enviar para: {{order.shipping.address.name}}, {{order.shipping.address.address}} {{order.shipping.address.addressNumber}}, {{order.shipping.address.addressComplement}} - {{order.shipping.address.district}}, {{order.shipping.address.city}}, {{order.shipping.address.state}}, {{order.shipping.address.cep}} Brasil   
-        //- Addres complement not exist.
-        .address(v-if='!order.shipping.address.addressComplement')
-          p.shipping.address Enviar para: {{order.shipping.address.name}}, {{order.shipping.address.address}} {{order.shipping.address.addressNumber}} - {{order.shipping.address.district}}, {{order.shipping.address.city}}, {{order.shipping.address.state}}, {{order.shipping.address.cep}} Brasil   
-        .items(v-if='order.items.length > 0')
-          ul
-            li(v-for='item in order.items')
-              p 
-                strong {{item.name}}
-              p 
-                span.price {{item.price | formatMoney}} 
-                span.quantity - Quantidade: {{item.quantity}}
-        .form
-          .radio
-            h3.shipmentOption Tipo de entrega
-            label
-              input(type='radio' name='shipmentOption' id='default' value='default' checked)/ 
-              span Envio padrão 
-              p Prazo de entrega: 
-                span.deadline {{deliveryDeadline}} dia(s)
-              p Valor: 
-                span.price R${{deliveryPrice}}
-          input.green(type='button' @click='shipmentSelected()' value='Continuar')
+extends ../layout/layout_vue
+
+block title
+  title Zunka - Modo de envio
+
+block css
+  link(rel="stylesheet" href="/css/checkout/shippingMethod.css" charset="utf-8")
+
+block content 
+  h2 Forma de envio
+  hr
+  //- Address complement exist.
+  .address(v-if='order.shipping.address.addressComplement')
+    p.shipping.address Enviar para: {{order.shipping.address.name}}, {{order.shipping.address.address}} {{order.shipping.address.addressNumber}}, {{order.shipping.address.addressComplement}} - {{order.shipping.address.district}}, {{order.shipping.address.city}}, {{order.shipping.address.state}}, {{order.shipping.address.cep}} Brasil   
+  //- Addres complement not exist.
+  .address(v-if='!order.shipping.address.addressComplement')
+    p.shipping.address Enviar para: {{order.shipping.address.name}}, {{order.shipping.address.address}} {{order.shipping.address.addressNumber}} - {{order.shipping.address.district}}, {{order.shipping.address.city}}, {{order.shipping.address.state}}, {{order.shipping.address.cep}} Brasil   
+  .items(v-if='order.items.length > 0')
+    ul
+      li(v-for='item in order.items')
+        p 
+          strong {{item.name}}
+        p 
+          span.price {{item.price | formatMoney}} 
+          span.quantity - Quantidade: {{item.quantity}}
+  .form
+    .radio
+      h3.shipmentOption Tipo de entrega
+      label
+        input(type='radio' name='shipmentOption' id='default' value='default' checked)/ 
+        span Envio padrão 
+        p Prazo de entrega: 
+          span.deadline {{deliveryDeadline}} dia(s)
+        p Valor: 
+          span.price R${{deliveryPrice}}
+    input.green(type='button' @click='shipmentSelected()' value='Continuar')
+
+block footer
+
+append internal_scripts
   script.
-    let csrfToken = !{JSON.stringify(csrfToken)};
     let order = !{JSON.stringify(order)};
-  include ../components/axios.js.pug
-  include ../components/vue.js.pug
+
+append external_scripts
   script(src='/js/checkout/shippingMethod.js')            
