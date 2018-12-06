@@ -4,7 +4,7 @@ block title
   title Zunka - Produtos
 
 block css
-  link(rel="stylesheet" href="/css/productList.css" charset="utf-8")
+  link(rel="stylesheet" href="/css/product/productList.css" charset="utf-8")
 
 block content
   .cart(v-if='this.productAddedToCart._id')
@@ -55,4 +55,4 @@ append internal_scripts
     let banners = !{JSON.stringify(banners)};
 
 append external_scripts
-  script(src='/js/productList.js?0001')
+  script(src='/js/product/productList.js?0001')

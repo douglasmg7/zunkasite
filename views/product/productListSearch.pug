@@ -1,45 +1,41 @@
-doctype html
-html(lang="en")
-  head
-    meta(charset='utf-8')
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    link(rel="stylesheet" href="/css/productListSearch.css" charset="utf-8")
-  body
-    include ../menu/topMenu
-    main
-      #app(v-cloak)
-        .container
-          .cart(v-if='this.productAddedToCart._id')
-            .item
-              img(:src='"/img/" + this.productAddedToCart._id + "/" + this.productAddedToCart.images[0]')
-              span Adicionado ao carrinho
-            .sub-total
-              span Subtotal ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}}) :
-              span {{ cart.totalPrice | currency }}
-            .buttons
-              button(onclick='window.location="/cart"') Carrinho
-              button(onclick='window.location="/checkout/shipping-address"') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
-              //- a(href='/cart') Carrinho
-              //- a(href='/checkout/shipping-address') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
-          .products
-            .product(v-for='product in products')
-              a(:href='"/product/" + product._id')
-                img(:src='`/img/${product._id}/${product.images[0]}`', v-if='product.images[0]')
-                h4.title {{ product.storeProductTitle }}
-                h3.price
-                  sup R$
-                  | {{ product.storeProductPrice | currency | currencyInt }}
-                  sup {{ product.storeProductPrice | currency | currencyCents }}   
-          .pagination
-            a(v-for='p in pageCount', @click='getProducts(p)', :page='page==p', :p='p', :active='page==p') {{p}}
-    include ../menu/footer             
+extends ../layout/layout_vue
+
+block title
+  title Produtos
+
+block css
+  link(rel="stylesheet" href="/css/product/productListSearch.css" charset="utf-8")
+
+block content 
+  .cart(v-if='this.productAddedToCart._id')
+    .item
+      img(:src='"/img/" + this.productAddedToCart._id + "/" + this.productAddedToCart.images[0]')
+      span Adicionado ao carrinho
+    .sub-total
+      span Subtotal ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}}) :
+      span {{ cart.totalPrice | currency }}
+    .buttons
+      button(onclick='window.location="/cart"') Carrinho
+      button(onclick='window.location="/checkout/shipping-address"') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
+      //- a(href='/cart') Carrinho
+      //- a(href='/checkout/shipping-address') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
+  .products
+    .product(v-for='product in products')
+      a(:href='"/product/" + product._id')
+        img(:src='`/img/${product._id}/${product.images[0]}`', v-if='product.images[0]')
+        h4.title {{ product.storeProductTitle }}
+        h3.price
+          sup R$
+          | {{ product.storeProductPrice | currency | currencyInt }}
+          sup {{ product.storeProductPrice | currency | currencyCents }}   
+  .pagination
+    a(v-for='p in pageCount', @click='getProducts(p)', :page='page==p', :p='p', :active='page==p') {{p}}
+
+append internal_scripts
   script.
-    // Make available for vue.
-    let csrfToken = !{JSON.stringify(csrfToken)};
     let user = !{JSON.stringify(user)};
     let cart = !{JSON.stringify(cart)};
     let search = !{JSON.stringify(search)};
-  include ../components/axios.js.pug
-  include ../components/vue.js.pug
-  //- include components/accounting.js.pug
-  script(src='/js/productListSearch.js?0001')
+
+append external_scripts
+  script(src='/js/product/productListSearch.js?0001')
