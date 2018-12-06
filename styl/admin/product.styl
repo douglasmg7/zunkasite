@@ -1,128 +1,129 @@
 @import '../reset'
 @import '../topMenu'
-form
-  margin 0 5em 2em 5em
-h2
-h3
-  margin-top 2em
-  margin-bottom .2em
-button
-  margin-top 2em
-  margin-left 3em
-  min-width 5em
-input
-textarea
-  border-radius .2em
-  border solid 1px #aaa
-  outline none
-  padding .5em
-  margin-top .2em
-  &:not([readonly]):focus
-    box-shadow 0 0 3px rgba(81, 203, 238, 1)
-    border 1px solid rgba(81, 203, 238, 1)   
-    // border 2px solid #4A90D9    
-  &[readonly]
-    background-color lightgray
-input
-  height 2em
-textarea
-  height 10em
-.field
-  display flex
-  flex-flow column wrap
-  margin-top 1em
-  // flex-wrap wrap
-  > label
-    font-weight bold
-  > .upload-image
-    margin-top .3em
-    > label
-      cursor pointer   
-      > svg
-        vertical-align text-bottom
-    > input
-      display none  
-    .icon
-      width 1.5em
-      height 1.5em
-  &.checkbox 
-    flex-flow row wrap
-    align-items flex-start
-    input[type='checkbox']
-      height: auto
-  .discount
-    flex 1 1 auto
+#app
+  form
+    margin 0 5em 2em 5em
+  h2
+  h3
+    margin-top 2em
+    margin-bottom .2em
+  button
+    margin-top 2em
+    margin-left 3em
+    min-width 5em
+  input
+  textarea
+    border-radius .2em
+    border solid 1px #aaa
+    outline none
+    padding .5em
+    margin-top .2em
+    &:not([readonly]):focus
+      box-shadow 0 0 3px rgba(81, 203, 238, 1)
+      border 1px solid rgba(81, 203, 238, 1)   
+      // border 2px solid #4A90D9    
+    &[readonly]
+      background-color lightgray
+  input
+    height 2em
+  textarea
+    height 10em
+  .field
     display flex
-    align-items flex-end
-    input
-      flex 5 10 auto
-      border-radius .2em 0 0 .2em
-    select
+    flex-flow column wrap
+    margin-top 1em
+    // flex-wrap wrap
+    > label
+      font-weight bold
+    > .upload-image
+      margin-top .3em
+      > label
+        cursor pointer   
+        > svg
+          vertical-align text-bottom
+      > input
+        display none  
+      .icon
+        width 1.5em
+        height 1.5em
+    &.checkbox 
+      flex-flow row wrap
+      align-items flex-start
+      input[type='checkbox']
+        height: auto
+    .discount
       flex 1 1 auto
-      height 2em
-      border 1px solid #aaaaaa
-      border-radius 0 .2em .2em 0
-      border-left none
-      // appearance none
-      // -moz-appearance none
-      // -webkit-appearance none
-      text-align center
-  &.buttons
-    flex-flow row wrap
-    justify-content flex-end
-.validation
-  margin-top: 0
-  margin-bottom: 0
-  color red
-.images
-  border 1px solid #aaa
-  border-radius .2em
-  padding .4em
-  display flex
-  flex-wrap wrap
-  min-height 4em
-.wrapper-image
-  position relative
-  display inline-block
-  margin .4em
-  border .5em solid transparent
-  > img
-    max-width 180px
-.wrapper-image:hover 
-  .left-arrow{display: block}
-  .right-arrow{display: block}
-  p.delete-image{display: block}
-.left-arrow
-  position absolute
-  bottom 5px
-  left 0
-  width 0
-  height 0
-  border-right 15px solid orange
-  border-top 15px solid transparent
-  border-bottom 15px solid transparent
-  opacity 1
-  cursor pointer
-  display none 
-.right-arrow
-  position absolute
-  bottom 5px
-  right 0
-  width 0
-  height 0
-  border-left 15px solid orange
-  border-top 15px solid transparent
-  border-bottom 15px solid transparent
-  opacity 1
-  cursor pointer
-  display none
-p.delete-image
-  position absolute
-  top -8px
-  right 4px
-  opacity 1
-  color orange
-  font-size 1.5em
-  font-weight bold
-  cursor pointer
-  display none
+      display flex
+      align-items flex-end
+      input
+        flex 5 10 auto
+        border-radius .2em 0 0 .2em
+      select
+        flex 1 1 auto
+        height 2em
+        border 1px solid #aaaaaa
+        border-radius 0 .2em .2em 0
+        border-left none
+        // appearance none
+        // -moz-appearance none
+        // -webkit-appearance none
+        text-align center
+    &.buttons
+      flex-flow row wrap
+      justify-content flex-end
+  .validation
+    margin-top: 0
+    margin-bottom: 0
+    color red
+  .images
+    border 1px solid #aaa
+    border-radius .2em
+    padding .4em
+    display flex
+    flex-wrap wrap
+    min-height 4em
+  .wrapper-image
+    position relative
+    display inline-block
+    margin .4em
+    border .5em solid transparent
+    > img
+      max-width 180px
+  .wrapper-image:hover 
+    .left-arrow{display: block}
+    .right-arrow{display: block}
+    p.delete-image{display: block}
+  .left-arrow
+    position absolute
+    bottom 5px
+    left 0
+    width 0
+    height 0
+    border-right 15px solid orange
+    border-top 15px solid transparent
+    border-bottom 15px solid transparent
+    opacity 1
+    cursor pointer
+    display none 
+  .right-arrow
+    position absolute
+    bottom 5px
+    right 0
+    width 0
+    height 0
+    border-left 15px solid orange
+    border-top 15px solid transparent
+    border-bottom 15px solid transparent
+    opacity 1
+    cursor pointer
+    display none
+  p.delete-image
+    position absolute
+    top -8px
+    right 4px
+    opacity 1
+    color orange
+    font-size 1.5em
+    font-weight bold
+    cursor pointer
+    display none

@@ -1,80 +1,80 @@
-doctype html
-html(lang="en")
-  head
-    meta(charset='utf-8')
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    //- link(rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato")
-    title Zunka - Produtos
-    link(rel="stylesheet" href="/css/product.css" charset="utf-8")
-  body
-    include topMenu
-    main#app(v-cloak)
-      .product
-        .image
-          img(:src='`/img/${product._id}/${product.images[selectedThumbnail]}`' v-if='product.images.length > 0')
-          .thumbnail
-            img(v-for='image, index in product.images', :src='`/img/${product._id}/${product.images[index]}`' @click='selectedThumbnail=index')
-        .info
-          //- Title.
-          h2.product-title {{product.storeProductTitle}}
-          //- Price
-          h2.product-price(v-if='accountingParse(this.product.storeProductPrice, ",") > 0') {{ product.storeProductPrice | currency}}
-          //- Detail.
-          ul.product-detail(v-if='productDetail.length > 0')
-            li(v-for='detail in productDetail') {{detail}}
-          input.green(type='button' @click='addToCart' value='Adicionar ao carrinho')
-          .estimate-ship
-            p Estimar frete e prazo (Entre com o CEP)
-            input(type='text' id='cep' size='7' v-model='cepDestiny')
-            button(@click='estimateShipment') Calcular
-            span.loader(v-show='loadingEstimateShipment')
-            p.errMsg {{cepErrMsg}}
-            table(v-if='showEstimatedShipment')
-              thead
-                tr
-                  th Entrega
-                  th Frete
-                  th Prazo
-              tbody
-                tr
-                  td {{deliveryMethod}}
-                  td {{deliveryPrice}}
-                  td {{deliveryTime}}
-                //- Label(type='text' for='cep') CEP
-      .description(v-if='product.storeProductDescription.trim() !== ""')
-        //- Description.
-        h3.title Descrição do produto
-        //- p {{product.storeProductDescription}}
-        p(v-for='prodDescItem in productDescription') 
-          | {{ prodDescItem }}
-          br
-      .info(v-if='productInformationTechnical.length > 0 || productInformationAdditional.length > 0')
-        //- //- Informations.
-        //- h3.title Informaçẽs do produto
-        //- hr
-        //- Technical information.
-        .infos
-          .info-tech(v-if='productInformationTechnical.length > 0')
-            h3.title Detalhe técnico
-            table
-              tbody
-                tr(v-for='infoTech in productInformationTechnical')
-                  td {{infoTech[0]}}
-                  td {{infoTech[1]}}
-          //- Additional information.
-          .info-add(v-if='productInformationAdditional.length > 0')
-            h3.title Informações adicionais
-            table
-              tbody
-                tr(v-for='infoAdd in productInformationAdditional')
-                  td {{infoAdd[0]}}
-                  td {{infoAdd[1]}}
-    include footer
+extends layout_vue
+
+block title
+  title Zunka - Produto
+
+block css
+  link(rel="stylesheet" href="/css/product.css" charset="utf-8")
+
+block content
+  .product
+    .image
+      img(:src='`/img/${product._id}/${product.images[selectedThumbnail]}`' v-if='product.images.length > 0')
+      .thumbnail
+        img(v-for='image, index in product.images', :src='`/img/${product._id}/${product.images[index]}`' @click='selectedThumbnail=index')
+    .info
+      //- Title.
+      h2.product-title {{product.storeProductTitle}}
+      //- Price
+      h2.product-price(v-if='accountingParse(this.product.storeProductPrice, ",") > 0') {{ product.storeProductPrice | currency}}
+      //- Detail.
+      ul.product-detail(v-if='productDetail.length > 0')
+        li(v-for='detail in productDetail') {{detail}}
+      input.green(type='button' @click='addToCart' value='Adicionar ao carrinho')
+      .estimate-ship
+        p Estimar frete e prazo (Entre com o CEP)
+        input(type='text' id='cep' size='7' v-model='cepDestiny')
+        button(@click='estimateShipment') Calcular
+        span.loader(v-show='loadingEstimateShipment')
+        p.errMsg {{cepErrMsg}}
+        table(v-if='showEstimatedShipment')
+          thead
+            tr
+              th Entrega
+              th Frete
+              th Prazo
+          tbody
+            tr
+              td {{deliveryMethod}}
+              td {{deliveryPrice}}
+              td {{deliveryTime}}
+            //- Label(type='text' for='cep') CEP
+  .description(v-if='product.storeProductDescription.trim() !== ""')
+    //- Description.
+    h3.title Descrição do produto
+    //- p {{product.storeProductDescription}}
+    p(v-for='prodDescItem in productDescription') 
+      | {{ prodDescItem }}
+      br
+  .info(v-if='productInformationTechnical.length > 0 || productInformationAdditional.length > 0')
+    //- //- Informations.
+    //- h3.title Informaçẽs do produto
+    //- hr
+    //- Technical information.
+    .infos
+      .info-tech(v-if='productInformationTechnical.length > 0')
+        h3.title Detalhe técnico
+        table
+          tbody
+            tr(v-for='infoTech in productInformationTechnical')
+              td {{infoTech[0]}}
+              td {{infoTech[1]}}
+      //- Additional information.
+      .info-add(v-if='productInformationAdditional.length > 0')
+        h3.title Informações adicionais
+        table
+          tbody
+            tr(v-for='infoAdd in productInformationAdditional')
+              td {{infoAdd[0]}}
+              td {{infoAdd[1]}}
+
+append internal_scripts
   script.
-    // Make available for vue.
     let product = !{JSON.stringify(product)};
-    let csrfToken = !{JSON.stringify(csrfToken)};
-  include components/axios.js.pug
-  include components/vue.js.pug
+    //- let cart = !{JSON.stringify(cart)};
+    //- let search = !{JSON.stringify(search)};
+    //- let banners = !{JSON.stringify(banners)};
+
+append external_scripts
   include components/accounting.js.pug
-  script(src='/js/product.js')
+  script(src='/js/product.js?0001')

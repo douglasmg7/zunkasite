@@ -1,0 +1,17 @@
+extends ../layout_admin_vue
+
+block title
+  title Produtos
+
+block css
+  link(rel="stylesheet" href="/css/productList.css" charset="utf-8")
+
+block content 
+
+append internal_scripts
+  script.
+    let cart = !{JSON.stringify(cart)};
+
+append external_scripts
+  include ../components/accounting.js.pug
+  script(src='/js/productList.js?0001')

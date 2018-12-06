@@ -1,151 +1,144 @@
-doctype html
-html(lang="en")
-  head
-    meta(charset='utf-8')
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    //- link(rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato")
-    title Zunka - Produto
-    link(rel="stylesheet" href="/css/admin/product.css" charset="utf-8")
-    //- include ../../dist/icon/sprite2.svg
-  body
-    include ../topMenu
-    main
-      #app(v-cloak)
-        form(method='post' id='frmProduct')
-          .field
-            label(for='id') Código
-            input(type='text' id='id' v-model='product.storeProductId')
-          .field
-            label(for='title') Título
-            input(type='text' id='title' v-model='product.storeProductTitle')
-          .field
-            label(for='dealer') Fornecedor   
-            input(type='text' id='dealer' v-model='product.dealerName')   
-          .field
-            label Imagens 
-            .images 
-              .wrapper-image(v-for='image, index in product.images')
-                img.ui.small.image.product-image(:src='`/img/${product._id}/${image}`')
-                .right-arrow(@click='moveImage(index, "r")')
-                .left-arrow(@click='moveImage(index, "l")')
-                p.delete-image(@click=`deleteImage(index)`) x             
-            .upload-image
-              label(for='uploadImage') 
-                //- svg.icon: use(xlink:href='#ic_file_upload_black_24px')
-                svg.icon: use(xlink:href='/icon/sprite.svg#ic_file_upload_black_24px')
-                | Carregar imagem(s)
-              input(type='file' id='uploadImage' accept='image/*' multiple v-on:change=`uploadImage()`)
-              //- label.ui.labeled.icon.button(@click='downloadDealerImages(product)')
-          .field
-            label(for='detail') Detalhes
-            textarea(id='detail' rows='8' v-model='product.storeProductDetail')
-          .field
-            label(for='description') Descrição
-            textarea(id='description' rows='8' v-model='product.storeProductDescription')
-          .field
-            label(for='tecInfo') Informações técnicas
-            textarea(id='tecInfo' rows='8' v-model='product.storeProductTechnicalInformation')
-          .field
-            label(for='extraInfo') Informações adicionais
-            textarea(id='extraInfo' rows='8' v-model='product.storeProductAdditionalInformation')
-          //- Maker.
-          //- .field
-            label(for='maker') Fabricante
-            select(id='maker')
-              option(v-for='maker in productMakers', :value='maker.value', :selected='maker.name === product.storeProductMaker') {{maker.name}}
-          .field
-            label(for='maker') Fabricante
-            select(id='maker' v-model='product.storeProductMaker')
-              option(v-for='maker in productMakers', :value='maker.value') {{maker.name}}              
-          .field
-            label(for='category') Categoria
-            select(id='category' v-model='product.storeProductCategory')
-              option(v-for='category in productCategories', :value='category.value') {{category.name}}       
-          //- Warranty.
-          h2 Garantia
-          hr
-          .field
-            label(for='dealerWarrantyDays') Fornecedor (dias)
-            input.input-integer(type='text' id='dealerWarrantyDays' v-model='product.dealerProductWarrantyDays')
-          .field
-            label(for='storeWarrantyDays') Loja (dias)
-            input.input-integer(type='text' id='storeWarrantyDays' v-model='product.storeProductWarrantyDays')
-          .field
-            label(for='storeWarratyDetail') Observação
-            input(type='text' id='storeWarratyDetail' v-model='product.storeProductWarrantyDetail')        
-          //- Dimensions.
-          h2 Dimensões
-          hr
-          .field
-            label(for='length') Comprimento (cm) 
-            input.input-integer(type='text' id='length' v-model='product.storeProductLength')
-            p.validation(v-if='validation.storeProductLength') {{validation.storeProductLength}}
-          .field
-            label(for='height') Altura (cm)
-            input.input-integer(type='text' id='height' v-model='product.storeProductHeight')
-            p.validation(v-if='validation.storeProductHeight') {{validation.storeProductHeight}}
-          .field
-            label(for='width') Largura (cm)
-            input(type='text' id='width' v-model='product.storeProductWidth')        
-            p.validation(v-if='validation.storeProductWidth') {{validation.storeProductWidth}}
-          .field
-            label(for='weight') Peso (gramas)
-            input(type='text' id='weight' v-model='product.storeProductWeight')        
-            p.validation(v-if='validation.storeProductWeight') {{validation.storeProductWeight}}
-          //- Price.
-          h2 Preço
-          hr
-          //- Enable discount.
-          .field.checkbox
-            input(type='checkbox' id='discountEnable' v-on:change='calcFinalPrice()', v-model:checked='product.storeProductDiscountEnable')
-            label(for='discountEnable') Habilitar desconto
-          //- Dealer price.
-          .field
-            label(for='dealerPrice') Fornecedor (R$)
-            input.input-money(type='text' id='dealerPrice' v-model='product.dealerProductPrice' v-on:input='calcFinalPrice()')
-            p.validation(v-if='validation.dealerProductPrice') {{validation.dealerProductPrice}}
-          //- Markup.
-          .field
-            label(for='markup') Lucro (%)
-            input.input-money(type='text' id='markup' v-model='product.storeProductMarkup', v-on:input='calcFinalPrice()')
-            p.validation(v-if='validation.storeProductMarkup') {{validation.storeProductMarkup}}
-          //- Discount config.
-          .field
-            label(for='discount') Desconto
-            .discount
-              //- Discount value.
-              input.input-money(type='text' id='discount' v-model='product.storeProductDiscountValue', v-on:input='calcFinalPrice()')
-              //- Discount mode.
-              select(v-model='product.storeProductDiscountType' v-on:change='calcFinalPrice()')
-                option(value='%') %
-                option(value='R$') R$
-            p.validation(v-if='validation.storeProductDiscountValue') {{validation.storeProductDiscountValue}}
-          //- Final price.
-          .field
-            label(for='finalPrice') Valor final (R$)
-            input(type='text' id='finalPrice', :value='product.storeProductPrice', readonly)
-          h2 Status
-          hr
-          .field.checkbox
-            input(type='checkbox' id='commercialize' v-model:checked='product.storeProductCommercialize')
-            label(for='commercialize') Comercializar produto
-          .field
-            label(for='stock') Estoque (Unidade)
-            input(type='text' id='stock' v-model='product.storeProductQtd')
-            p.validation(v-if='validation.storeProductQtd') {{validation.storeProductQtd}}
-          .field.buttons
-            button.red(type='button' v-on:click='deleteProduct()') Apagar
-            button.green(type='button' v-on:click='saveProduct()') Salvar
-            button.blue(type='button' onclick='window.location.href="/admin"') Sair
+extends ../layout_admin_vue
+
+block title
+  title Admin - Produto
+
+block css
+  link(rel="stylesheet" href="/css/admin/product.css" charset="utf-8")
+
+block content 
+  form(method='post' id='frmProduct')
+    .field
+      label(for='id') Código
+      input(type='text' id='id' v-model='product.storeProductId')
+    .field
+      label(for='title') Título
+      input(type='text' id='title' v-model='product.storeProductTitle')
+    .field
+      label(for='dealer') Fornecedor   
+      input(type='text' id='dealer' v-model='product.dealerName')   
+    .field
+      label Imagens 
+      .images 
+        .wrapper-image(v-for='image, index in product.images')
+          img.ui.small.image.product-image(:src='`/img/${product._id}/${image}`')
+          .right-arrow(@click='moveImage(index, "r")')
+          .left-arrow(@click='moveImage(index, "l")')
+          p.delete-image(@click=`deleteImage(index)`) x             
+      .upload-image
+        label(for='uploadImage') 
+          //- svg.icon: use(xlink:href='#ic_file_upload_black_24px')
+          svg.icon: use(xlink:href='/icon/sprite.svg#ic_file_upload_black_24px')
+          | Carregar imagem(s)
+        input(type='file' id='uploadImage' accept='image/*' multiple v-on:change=`uploadImage()`)
+        //- label.ui.labeled.icon.button(@click='downloadDealerImages(product)')
+    .field
+      label(for='detail') Detalhes
+      textarea(id='detail' rows='8' v-model='product.storeProductDetail')
+    .field
+      label(for='description') Descrição
+      textarea(id='description' rows='8' v-model='product.storeProductDescription')
+    .field
+      label(for='tecInfo') Informações técnicas
+      textarea(id='tecInfo' rows='8' v-model='product.storeProductTechnicalInformation')
+    .field
+      label(for='extraInfo') Informações adicionais
+      textarea(id='extraInfo' rows='8' v-model='product.storeProductAdditionalInformation')
+    //- Maker.
+    //- .field
+      label(for='maker') Fabricante
+      select(id='maker')
+        option(v-for='maker in productMakers', :value='maker.value', :selected='maker.name === product.storeProductMaker') {{maker.name}}
+    .field
+      label(for='maker') Fabricante
+      select(id='maker' v-model='product.storeProductMaker')
+        option(v-for='maker in productMakers', :value='maker.value') {{maker.name}}              
+    .field
+      label(for='category') Categoria
+      select(id='category' v-model='product.storeProductCategory')
+        option(v-for='category in productCategories', :value='category.value') {{category.name}}       
+    //- Warranty.
+    h2 Garantia
+    hr
+    .field
+      label(for='dealerWarrantyDays') Fornecedor (dias)
+      input.input-integer(type='text' id='dealerWarrantyDays' v-model='product.dealerProductWarrantyDays')
+    .field
+      label(for='storeWarrantyDays') Loja (dias)
+      input.input-integer(type='text' id='storeWarrantyDays' v-model='product.storeProductWarrantyDays')
+    .field
+      label(for='storeWarratyDetail') Observação
+      input(type='text' id='storeWarratyDetail' v-model='product.storeProductWarrantyDetail')        
+    //- Dimensions.
+    h2 Dimensões
+    hr
+    .field
+      label(for='length') Comprimento (cm) 
+      input.input-integer(type='text' id='length' v-model='product.storeProductLength')
+      p.validation(v-if='validation.storeProductLength') {{validation.storeProductLength}}
+    .field
+      label(for='height') Altura (cm)
+      input.input-integer(type='text' id='height' v-model='product.storeProductHeight')
+      p.validation(v-if='validation.storeProductHeight') {{validation.storeProductHeight}}
+    .field
+      label(for='width') Largura (cm)
+      input(type='text' id='width' v-model='product.storeProductWidth')        
+      p.validation(v-if='validation.storeProductWidth') {{validation.storeProductWidth}}
+    .field
+      label(for='weight') Peso (gramas)
+      input(type='text' id='weight' v-model='product.storeProductWeight')        
+      p.validation(v-if='validation.storeProductWeight') {{validation.storeProductWeight}}
+    //- Price.
+    h2 Preço
+    hr
+    //- Enable discount.
+    .field.checkbox
+      input(type='checkbox' id='discountEnable' v-on:change='calcFinalPrice()', v-model:checked='product.storeProductDiscountEnable')
+      label(for='discountEnable') Habilitar desconto
+    //- Dealer price.
+    .field
+      label(for='dealerPrice') Fornecedor (R$)
+      input.input-money(type='text' id='dealerPrice' v-model='product.dealerProductPrice' v-on:input='calcFinalPrice()')
+      p.validation(v-if='validation.dealerProductPrice') {{validation.dealerProductPrice}}
+    //- Markup.
+    .field
+      label(for='markup') Lucro (%)
+      input.input-money(type='text' id='markup' v-model='product.storeProductMarkup', v-on:input='calcFinalPrice()')
+      p.validation(v-if='validation.storeProductMarkup') {{validation.storeProductMarkup}}
+    //- Discount config.
+    .field
+      label(for='discount') Desconto
+      .discount
+        //- Discount value.
+        input.input-money(type='text' id='discount' v-model='product.storeProductDiscountValue', v-on:input='calcFinalPrice()')
+        //- Discount mode.
+        select(v-model='product.storeProductDiscountType' v-on:change='calcFinalPrice()')
+          option(value='%') %
+          option(value='R$') R$
+      p.validation(v-if='validation.storeProductDiscountValue') {{validation.storeProductDiscountValue}}
+    //- Final price.
+    .field
+      label(for='finalPrice') Valor final (R$)
+      input(type='text' id='finalPrice', :value='product.storeProductPrice', readonly)
+    h2 Status
+    hr
+    .field.checkbox
+      input(type='checkbox' id='commercialize' v-model:checked='product.storeProductCommercialize')
+      label(for='commercialize') Comercializar produto
+    .field
+      label(for='stock') Estoque (Unidade)
+      input(type='text' id='stock' v-model='product.storeProductQtd')
+      p.validation(v-if='validation.storeProductQtd') {{validation.storeProductQtd}}
+    .field.buttons
+      button.red(type='button' v-on:click='deleteProduct()') Apagar
+      button.green(type='button' v-on:click='saveProduct()') Salvar
+      button.blue(type='button' onclick='window.location.href="/admin"') Sair
+append internal_scripts
   script.
-    let product = !{JSON.stringify(product)};
-    let productMakers = !{JSON.stringify(productMakers)};
-    let productCategories = !{JSON.stringify(productCategories)};
-    let user = !{JSON.stringify(user)};
-    let csrfToken = !{JSON.stringify(csrfToken)};
-  include ../components/axios.js.pug
-  include ../components/vue.js.pug
+   let product = !{JSON.stringify(product)};
+   let productMakers = !{JSON.stringify(productMakers)};
+   let productCategories = !{JSON.stringify(productCategories)};
+   let user = !{JSON.stringify(user)}; 
+
+append external_scripts
   script(src='/js/admin/product.js')
-
-
-

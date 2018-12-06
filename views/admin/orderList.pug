@@ -1,122 +1,120 @@
-doctype html
-html(lang="en")
-  head
-    meta(charset='utf-8')
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    title Zunka - Pedidos
-    link(rel="stylesheet" href="/css/admin/orderList.css" charset="utf-8")
-  body
-    include ../topMenu
-    main#app(v-cloak)
-      .breadlink
-        a(href='/admin') Admin
-        a &nbsp> Pedidos
-      header
-        h2 Seus Pedidos
-        .search-order
-          input(type='text' v-model='searchOrder' @keyup.enter='getOrders()' placeholder='Pesquise em todas as ordens')
-          button(@click='getOrders()') Pesquisar ordens
-      .filter
-        //- h3 Exibir
-        //- Show placed.
-        input(type='checkbox' id='showPlaced' v-model:checked='filter.placed')
-        label(for='showPlaced') Aberto
-        //- Show paid.
-        input(type='checkbox' id='showPaid' v-model:checked='filter.paid')
-        label(for='showPaid') Pagos
-        //- Show shipped.
-        input(type='checkbox' id='showShipped' v-model:checked='filter.shipped')
-        label(for='showShipped') Enviados
-        //- Show delivered.
-        input(type='checkbox' id='showDelivered' v-model:checked='filter.delivered')
-        label(for='showDelivered') Entregues
-        //- Show canceled.
-        input(type='checkbox' id='showCanceled' v-model:checked='filter.canceled')
-        label(for='showCanceled') Cancelados
-      table
-        thead
-          tr
-            th Data do pedido
-            th Cliente
-            th Total
-            th Número
-            th Status
-        tbody
-          tr(v-for='order, index in orders' @click='showOrderDetail(index)')
-            td {{order.timestamps.shippingAddressSelectedAt | formatDate}}
-            td {{order.name}}
-            td {{order.totalPrice | formatMoney}}
-            td {{order._id}}
-            td {{status(order)}}
-      nav.pagination
-        a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
-      div.modal(v-if='showModal')
-        .modal-content
-          .pedido
-            p.title Número do pedido
-            P {{orderSelec._id}}
-          .clientdetail
-            p.title Cliente.
-            p Nome: {{orderSelec.name}}
-            p Email: {{orderSelec.email}}
-          .address
-            p.title Endereço de entrega.
-            p Nome: {{orderSelec.shipping.address.name}}
-            p Telefone: {{orderSelec.shipping.address.phone}}
-            p {{orderSelec.shipping.address.address}},  {{orderSelec.shipping.address.addressNumber}} {{orderSelec.shipping.address.addressComplement}}
-            p {{orderSelec.shipping.address.district}}
-            p {{orderSelec.shipping.address.city}} - {{orderSelec.shipping.address.state}} - Brasil
-            p {{orderSelec.shipping.address.cep}} 
-          .shipment
-            p.title Frete
-            p Envio padrão
-            span Prazo: 
-            span.deadline {{orderSelec.shipping.deadline}} dia(s)
-            br
-            span Valor do frete: 
-            span.price R${{orderSelec.shipping.price}}
-          .items(v-if='orderSelec.items.length > 0')
-            p.title Itens
-            ul
-              li(v-for='item in orderSelec.items')
-                p 
-                  strong {{item.name}}
-                p 
-                  span.price {{item.price | formatMoney}} 
-                  span.quantity - Quantidade: {{item.quantity}}
-          .total
-            p.title Valor total com frete
-            p.price {{ orderSelec.totalPrice | formatMoney }}
-          .status
-            p.title Status
-            p {{status(orderSelec)}}
-          .change-status(v-if='status(orderSelec) !== "Cancelado"')
-            p.title Alterar status para
-            button(v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("paid")') Pago
-            button(v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("shipped")') Enviado
-            button(v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("delivered")') Entregue
-            button(v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")') Cancelado
-            //- button(v-if='status(orderSelec) === "Aberto"' @click='setStatus("paid")') Pago
-            //- button(v-if='status(orderSelec) === "Pago"' @click='setStatus("shipped")') Enviado
-            //- button(v-if='status(orderSelec) === "Enviado"' @click='setStatus("delivered")') Entregue
-            //- button(v-if='status(orderSelec) !== "Cancelado"' @click='setStatus("canceled")') Cancelado
-          .close-modal
-            button(@click='hideOrderDetail()') Fechar
-      div.set-status(v-if='setStatusWindow.show')
-        .content
-          .message
-            h3 {{ setStatusWindow.message }}
-          .options(v-if='setStatusWindow.showCheckboxUpdateStock')
-            input(type='checkbox' id='updateStock' v-model:checked='setStatusWindow.updateStock')
-            label(for='updateStock') Voltar com o produto para o estoque
-          .buttons
-            button(@click='setStatus()') Sim
-            button(@click='setStatusWindow.show=false') Não
-    script.
-      // Make available for vue.
-      let csrfToken = !{JSON.stringify(csrfToken)};
-      //- let search = !{JSON.stringify(search)};
-      //- let page = !{JSON.stringify(page)};   //  Selected page.
-    include ../components/axios.js.pug
-    include ../components/vue.js.pug
-    script(src='/js/admin/orderList.js')
+extends ../layout_admin_vue
+
+block title
+  title Admin - Pedidos
+
+block css
+  link(rel="stylesheet" href="/css/admin/orderList.css" charset="utf-8")
+
+block content 
+  .breadlink
+    a(href='/admin') Admin
+    a &nbsp> Pedidos
+  header
+    h2 Seus Pedidos
+    .search-order
+      input(type='text' v-model='searchOrder' @keyup.enter='getOrders()' placeholder='Pesquise em todas as ordens')
+      button(@click='getOrders()') Pesquisar ordens
+  .filter
+    //- h3 Exibir
+    //- Show placed.
+    input(type='checkbox' id='showPlaced' v-model:checked='filter.placed')
+    label(for='showPlaced') Aberto
+    //- Show paid.
+    input(type='checkbox' id='showPaid' v-model:checked='filter.paid')
+    label(for='showPaid') Pagos
+    //- Show shipped.
+    input(type='checkbox' id='showShipped' v-model:checked='filter.shipped')
+    label(for='showShipped') Enviados
+    //- Show delivered.
+    input(type='checkbox' id='showDelivered' v-model:checked='filter.delivered')
+    label(for='showDelivered') Entregues
+    //- Show canceled.
+    input(type='checkbox' id='showCanceled' v-model:checked='filter.canceled')
+    label(for='showCanceled') Cancelados
+  table
+    thead
+      tr
+        th Data do pedido
+        th Cliente
+        th Total
+        th Número
+        th Status
+    tbody
+      tr(v-for='order, index in orders' @click='showOrderDetail(index)')
+        td {{order.timestamps.shippingAddressSelectedAt | formatDate}}
+        td {{order.name}}
+        td {{order.totalPrice | formatMoney}}
+        td {{order._id}}
+        td {{status(order)}}
+  nav.pagination
+    a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
+  div.modal(v-if='showModal')
+    .modal-content
+      .pedido
+        p.title Número do pedido
+        P {{orderSelec._id}}
+      .clientdetail
+        p.title Cliente.
+        p Nome: {{orderSelec.name}}
+        p Email: {{orderSelec.email}}
+      .address
+        p.title Endereço de entrega.
+        p Nome: {{orderSelec.shipping.address.name}}
+        p Telefone: {{orderSelec.shipping.address.phone}}
+        p {{orderSelec.shipping.address.address}},  {{orderSelec.shipping.address.addressNumber}} {{orderSelec.shipping.address.addressComplement}}
+        p {{orderSelec.shipping.address.district}}
+        p {{orderSelec.shipping.address.city}} - {{orderSelec.shipping.address.state}} - Brasil
+        p {{orderSelec.shipping.address.cep}} 
+      .shipment
+        p.title Frete
+        p Envio padrão
+        span Prazo: 
+        span.deadline {{orderSelec.shipping.deadline}} dia(s)
+        br
+        span Valor do frete: 
+        span.price R${{orderSelec.shipping.price}}
+      .items(v-if='orderSelec.items.length > 0')
+        p.title Itens
+        ul
+          li(v-for='item in orderSelec.items')
+            p 
+              strong {{item.name}}
+            p 
+              span.price {{item.price | formatMoney}} 
+              span.quantity - Quantidade: {{item.quantity}}
+      .total
+        p.title Valor total com frete
+        p.price {{ orderSelec.totalPrice | formatMoney }}
+      .status
+        p.title Status
+        p {{status(orderSelec)}}
+      .change-status(v-if='status(orderSelec) !== "Cancelado"')
+        p.title Alterar status para
+        button(v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("paid")') Pago
+        button(v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("shipped")') Enviado
+        button(v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("delivered")') Entregue
+        button(v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")') Cancelado
+        //- button(v-if='status(orderSelec) === "Aberto"' @click='setStatus("paid")') Pago
+        //- button(v-if='status(orderSelec) === "Pago"' @click='setStatus("shipped")') Enviado
+        //- button(v-if='status(orderSelec) === "Enviado"' @click='setStatus("delivered")') Entregue
+        //- button(v-if='status(orderSelec) !== "Cancelado"' @click='setStatus("canceled")') Cancelado
+      .close-modal
+        button(@click='hideOrderDetail()') Fechar
+  div.set-status(v-if='setStatusWindow.show')
+    .content
+      .message
+        h3 {{ setStatusWindow.message }}
+      .options(v-if='setStatusWindow.showCheckboxUpdateStock')
+        input(type='checkbox' id='updateStock' v-model:checked='setStatusWindow.updateStock')
+        label(for='updateStock') Voltar com o produto para o estoque
+      .buttons
+        button(@click='setStatus()') Sim
+        button(@click='setStatusWindow.show=false') Não
+
+append internal_scripts
+  script.
+    let cart = !{JSON.stringify(cart)};
+
+append external_scripts
+  script(src='/js/admin/orderList.js')

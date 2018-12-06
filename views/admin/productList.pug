@@ -1,44 +1,39 @@
-doctype html
-html(lang="en")
-  head
-    meta(charset='utf-8')
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    //- link(rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato")
-    title Zunka - Produtos
-    link(rel="stylesheet" href="/css/admin/productList.css" charset="utf-8")
-  body
-    include ../topMenu
-    main
-      #app(v-cloak)
-        table
-          thead
-            tr
-              th Código
-              th Título
-              th Fornecedor
-              th Local
-              th Estoque
-              th Preço
-          tbody
-            tr(
-              v-for='product in products', 
-              @click='goToProductPage(product._id)',
-              :class='{"product-commercialize": product.storeProductCommercialize, "product-active": product.storeProductActive && (product.storeProductQtd > 0) && (product.storeProductPrice > 0)}'
-            )
-              td {{product.storeProductId}}
-              td {{product.storeProductTitle}}
-              td {{product.dealerName}}
-              td {{product.storeProductLocation}}
-              td {{product.storeProductQtd}}
-              td {{product.storeProductPrice | formatMoney}}    
-        nav.pagination
-          a(v-for='p in pageCount', @click='getProducts(p)', :page='page==p', :p='p', :active='page==p') {{p}}
-          //- a(v-for='p in pageCount', :href='`/admin?page=${p}&search=${search}`', :page='page==p', :p='p', :active='page==p') {{p}}
-    script.
-      // Make available for vue.
-      let csrfToken = !{JSON.stringify(csrfToken)};
-      let search = !{JSON.stringify(search)};
-      let page = !{JSON.stringify(page)};   //  Selected page.
-    include ../components/axios.js.pug
-    include ../components/vue.js.pug
-    script(src='/js/admin/productList.js')
+extends ../layout_admin_vue
+
+block title
+  title Admin - Produtos
+
+block css
+  link(rel="stylesheet" href="/css/admin/productList.css" charset="utf-8")
+
+block content 
+  table
+    thead
+      tr
+        th Código
+        th Título
+        th Fornecedor
+        th Local
+        th Estoque
+        th Preço
+    tbody
+      tr(
+        v-for='product in products', 
+        @click='goToProductPage(product._id)',
+        :class='{"product-commercialize": product.storeProductCommercialize, "product-active": product.storeProductActive && (product.storeProductQtd > 0) && (product.storeProductPrice > 0)}'
+      )
+        td {{product.storeProductId}}
+        td {{product.storeProductTitle}}
+        td {{product.dealerName}}
+        td {{product.storeProductLocation}}
+        td {{product.storeProductQtd}}
+        td {{product.storeProductPrice | formatMoney}}    
+  nav.pagination
+    a(v-for='p in pageCount', @click='getProducts(p)', :page='page==p', :p='p', :active='page==p') {{p}}
+append internal_scripts
+  script.
+    let search = !{JSON.stringify(search)};
+    let page = !{JSON.stringify(page)};
+
+append external_scripts
+  script(src='/js/admin/productList.js')
