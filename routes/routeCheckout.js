@@ -299,7 +299,13 @@ router.post('/payment/:order_id', (req, res, next)=>{
         else {
           // Update stock.
           for (var i = 0; i < req.cart.products.length; i++) {
-            Product.update({ _id: req.cart.products[i]._id }, { $inc: { storeProductQtd: -1 * req.cart.products[i].qtd } }, err=>{
+            // Product.update({ _id: req.cart.products[i]._id }, { $inc: { storeProductQtd: -1 * req.cart.products[i].qtd } }, err=>{
+            Product.update(
+              { _id: req.cart.products[i]._id }, 
+              { $inc: { 
+                storeProductQtd: -1 * req.cart.products[i].qtd, 
+                storeProductQtdSold: 1 * req.cart.products[i].qtd
+              } }, err=>{
               if (err) {
                 log.error(err.stack);
               }

@@ -88,7 +88,7 @@ router.get('/api/new-products', function (req, res) {
   const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
   const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
   // Find products.
-  let productPromise = Product.find(search).sort({'createdAt': 1}).limit(4).exec();
+  let productPromise = Product.find(search).sort({'createdAt': -1}).limit(4).exec();
   Promise.all([productPromise])
   .then(([products])=>{    
     res.json({products});
@@ -102,8 +102,10 @@ router.get('/api/best-selling-products', function (req, res) {
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
   const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
   const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
+  // const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductQtdSold': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
   // Find products.
-  let productPromise = Product.find(search).sort({'createdAt': -1}).limit(4).exec();
+  // let productPromise = Product.find(search).sort({'createdAt': -1}).limit(4).exec();
+  let productPromise = Product.find(search).sort({'storeProductQtdSold': -1, 'storeProductQtd': 1}).limit(4).exec();
   Promise.all([productPromise])
   .then(([products])=>{    
     res.json({products});

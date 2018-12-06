@@ -42,6 +42,7 @@ let product = new mongoose.Schema({
   storeProductDiscountType: { type: String },
   storeProductDiscountValue: { type: Number },
   storeProductQtd: { type: Number, required: true},
+  storeProductQtdSold: { type: Number, default: 0 },   // To filter by best selling products.
   images: [String]
 },
 {
