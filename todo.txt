@@ -1,5 +1,7 @@
 incluir produtos com zero estoque, ativos e comercializar para venda, informar produto indisponível.
 
+test quilljs.com
+
 backup db system timer.
 
 cart and orders not breaking on mobile.
