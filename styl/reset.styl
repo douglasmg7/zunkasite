@@ -1,24 +1,7 @@
-$RED_PRICE = #C45D43
-$GRAY_TITLE = #7D7D7D
-$veryLightGray = #eee
-$lightGray = #ccc
-$BLACK_COLOR = #111
-$BORDER_COLOR = #777
-$DIVISION_COLOR = #555
+@import './colors'
 max_width = 1200px
 max_width_info = 800px
-panel_bgc = #fff
-// Colors.
-c_green = green
-c_black = #333
-c_gray = #666
-c_very_light_gray = #ccc
-c_white = #fff
-// Semantic.
-c_footer_text = c_very_light_gray
-c_info_text = c_gray
-c_info_head = c_black
-bgc_panel = c_white
+max_width_auth = 300px
 [v-cloak]
   display none
 html, body, div, form, ul, li
@@ -67,35 +50,53 @@ main
   flex 1 0 auto
   margin-bottom: 2em
 #app
-  max-width max_width
+  // max-width max_width
   margin 0 auto
   margin-bottom 1em
   overflow-x hidden
-button
-input
-  box-sizing border-box
-  padding-left .5em
-  border-radius .2em
-  border solid 1px #aaa
-  height 2em
-  &[type='button']
-    color #fff
-    margin-top 1em
-    &.green
-      background-color hsl(120 56 46)
-      border-color hsl(120 56 41)
-      &:hover
-        background-color hsl(120 56 36)
-        border-color hsl(120 56 29)   
-    &.blue
-      background-color hsl(210 56 46)
-      border-color hsl(210 56 41)
-      &:hover
-        background-color hsl(210 56 36)
-        border-color hsl(210 56 29)   
-    &.red
-      background-color hsl(0 56 46)
-      border-color hsl(0 56 41)
-      &:hover
-        background-color hsl(0 56 36)
-        border-color hsl(0 56 29)       
+.panel
+  background-color panel_bgc
+  margin 1em
+  :first-child
+    margin-top 0
+  padding 1em
+  border-radius 4px  
+  box-shadow: 3px 3px 3px 0 rgba(0,0,0,.3);
+a
+  color #337ab7
+  text-decoration none
+  &:hover
+    color #23527c
+    text-decoration underline
+label
+  display inline-block
+  margin-bottom .2em
+// button
+// input
+//   box-sizing border-box
+//   padding-left .5em
+//   border-radius .2em
+//   border solid 1px #aaa
+//   height 2em
+//   &[type='button']
+//     color #fff
+//     margin-top 1em
+//     &.green
+//       background-color hsl(120 56 46)
+//       border-color hsl(120 56 41)
+//       &:hover
+//         background-color hsl(120 56 36)
+//         border-color hsl(120 56 29)   
+//     &.blue
+//       background-color hsl(210 56 46)
+//       border-color hsl(210 56 41)
+//       &:hover
+//         background-color hsl(210 56 36)
+//         border-color hsl(210 56 29)   
+//     &.red
+//       background-color hsl(0 56 46)
+//       border-color hsl(0 56 41)
+//       &:hover
+//         background-color hsl(0 56 36)
+//         border-color hsl(0 56 29)  
+

@@ -7,8 +7,8 @@ block css
   link(rel="stylesheet" href="/css/user/signup.css" charset="utf-8")
 
 block content 
-  .login
-    h1 Cadastro 
+  .panel
+    h2 Cadastro 
     //- Warn message.
     p.warn-message {{ warnMessage }}
     //- Name.
@@ -24,7 +24,7 @@ block content
     label(for='passwordConfirm') Confirme a senha
     input(type='password' id='passwordConfirm' v-model='passwordConfirm')           
     //- Signup.           
-    input.signup(type='submit' value='Cadastrar' @click='signup()')
+    input.dark-blue(type='submit' value='Cadastrar' @click='signup()')
     p.success-message {{ successMessage }}
 
 block footer

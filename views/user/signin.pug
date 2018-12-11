@@ -8,19 +8,19 @@ block css
 
 block content 
   .panel
-    h1 Identificação              
+    h2.title Identificação              
     p.success-message {{successMessage}}
     label(for='email') E-mail
     input(type='text' id='email' v-model='email')
     label(for='password') Senha
     input(type='password' id='password' v-model='password')
-    p 
+    label 
       a.find-password(href='/user/forgottenPassword') Esqueceu a senha?
-    input.log(type='submit' value='Entrar' @click='signin()')
+    input.dark-blue(type='submit' value='Entrar' @click='signin()')
     p.warn-message {{warnMessage}}
     hr/
-    p Não tem cadastro?
-    input.signup(type='submit' value='Cadastrar' @click='signup()')
+    label Não tem cadastro?
+    input.light-blue(type='submit' value='Cadastrar' @click='signup()')
 
 block footer
 
