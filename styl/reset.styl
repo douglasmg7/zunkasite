@@ -14,16 +14,20 @@ c_black = #333
 c_gray = #666
 c_very_light_gray = #ccc
 c_white = #fff
-c_footer = c_very_light_gray
+// Semantic.
+c_footer_text = c_very_light_gray
+c_info_text = c_gray
+c_info_head = c_black
+bgc_panel = c_white
 [v-cloak]
   display none
-html, body, div, form, ul, li, p, h1, h2, h3, h4, hr
+html, body, div, form, ul, li
   margin 0
   padding 0
   font-weight 500
-  // line-height: 1.1;
-// h1, h2, h3, h4, h5
-//   margin 0
+h1, h2, h3, h4, h5, h6, p, hr
+  padding 0
+  font-weight 500
 h1
   font-size 2em
   margin .67em 0
@@ -45,6 +49,8 @@ h6
 hr
   border 0
   border-top 1px solid #eee
+a
+  text-decoration none
 html
 body
   height 100%
@@ -60,6 +66,11 @@ body
 main
   flex 1 0 auto
   margin-bottom: 2em
+#app
+  max-width max_width
+  margin 0 auto
+  margin-bottom 1em
+  overflow-x hidden
 button
 input
   box-sizing border-box

@@ -1,29 +1,42 @@
 @import '../menu/reset_menu_footer'
 #app
   display block
-  width 100%
-  overflow-x hidden
-  > .info
-    max-width max_width_info
-    margin 0 auto
-    color c_gray
-    > .title
-      padding 1em 0 0 0
-      font-size 1.6em
-      font-weight 400
-      line-height 2
-    > .content
-      box-shadow: 3px 3px 3px 0 rgba(0,0,0,.1);
-      border-radius 4px
-      background-color #fff
-      padding 1em
-      margin 2px 5px 5px 2px 
-      h4
-        font-weight 600
-        &:first-child
-          margin-top 0em
-      a
-        text-decoration none
-      // p
-        // margin-bottom .7em
-        // line-height 1.5em
+.panel
+  max-width max_width_info
+  margin 1em
+  padding 1em
+  color c_gray
+  background-color bgc_panel
+  box-shadow: 3px 3px 3px 0 rgba(0,0,0,.1)
+  border-radius 4px
+  > h2.title
+    margin-top 0
+    color c_info_head
+    font-weight 500
+  > h4
+    font-weight 600
+      
+
+// @import '../menu/reset_menu_footer'
+// #app
+//   display block
+// .info
+//   max-width max_width_info
+//   margin 0 auto
+//   color c_gray
+//   > .title
+//     color c_info_head
+//     font-weight 400
+//     line-height 2
+//   > .content
+//     box-shadow: 3px 3px 3px 0 rgba(0,0,0,.1);
+//     border-radius 4px
+//     background-color #fff
+//     padding 1em
+//     margin 2px 5px 5px 2px 
+//     h4
+//       font-weight 600
+//       &:first-child
+//         margin-top 0em
+//     a
+//       text-decoration none
