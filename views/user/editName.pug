@@ -7,17 +7,14 @@ block css
   link(rel="stylesheet" href="/css/user/editName.css" charset="utf-8")
 
 block content 
-  .breadlink
-    a(href='/user/account') Sua conta
-    a &nbsp> Altere seu nome
-  .edit-name
+  .panel
     h2 Altere Seu Nome
     //- Warn message.
-    p.warn-message {{ warnMessage }}   
+    p.warn-message(v-show='this.warnMessage !== ""') {{ warnMessage }}   
     //- Name.
     label(for='name') Novo nome
     input(type='text' name='name' id='name' v-model='name')
-    input(type='button' value='Salvar Alterações' @click='save()') 
+    input.dark-blue(type='button' value='Salvar Alterações' @click='save()') 
 
 block footer
 

@@ -7,15 +7,12 @@ block css
   link(rel="stylesheet" href="/css/user/editEmail.css" charset="utf-8")
 
 block content 
-  .breadlink
-    a(href='/user/account') Sua conta
-    a &nbsp> Altere seu e-mail
-  .edit-email
-    h2.text-left Altere seu e-mail
+  .panel
+    h2.text-left Altereção de e-mail
     //- Warn message.
-    p.warn-message {{ warnMessage }}   
+    p.warn-message(v-show='this.warnMessage !== ""') {{ warnMessage }}   
     label E-mail antigo
-    p {{ email }}
+    p.alert {{ email }}
     //- New email.
     label(for='email') Novo e-mail
     input(type='text' name='email' id='email' v-model='newEmail')
@@ -25,7 +22,7 @@ block content
     //- Password.
     label(for='password') Senha
     input(type='password' name='password' id='password' v-model='password')        
-    input(type='button' value='Salvar Alterações' @click='save()')
+    input.dark-blue(type='button' value='Salvar Alterações' @click='save()')
 
 block footer
 

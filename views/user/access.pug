@@ -7,10 +7,7 @@ block css
     link(rel="stylesheet" href="/css/user/access.css" charset="utf-8")
 
 block content 
-  //- .breadlink
-  //-   a(href='/user/account') Sua conta
-  //-   a &nbsp> Autenticação
-  .auth
+  .panel
     //- Name
     p.title Nome completo
     p {{ user.name }}
@@ -39,7 +36,8 @@ block content
     //- Remove account.
     p.title Apagar conta
     a(href='access/delete-account') Apagar
-  input(type='button' @click='exit()' value='Concluído')  
+    //- hr
+    input.dark-blue(type='submit' @click='exit()' value='Sair')  
 
 block footer
 

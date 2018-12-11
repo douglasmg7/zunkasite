@@ -7,16 +7,13 @@ block css
   link(rel="stylesheet" href="/css/user/editCpf.css" charset="utf-8")
 
 block content 
-  .breadlink
-    a(href='/user/account') Sua conta
-    a &nbsp> Altere seu CPF  
-  .edit-cpf
-    h2.text-left Altere Seu CPF
+  .panel
+    h2 Altere Seu CPF
     //- Warn message.
-    p.warn-message {{ warnMessage }}  
+    p.warn-message(v-show='this.warnMessage !== ""') {{ warnMessage }}  
     label(for='cpf') CPF
     input(type='text' name='cpf' id='cpf' v-model='cpf')
-    input(type='button' value='Salvar Alterações' @click='save()') 
+    input.dark-blue(type='button' value='Salvar Alterações' @click='save()') 
 
 block footer
 

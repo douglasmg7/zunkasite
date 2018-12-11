@@ -11,7 +11,7 @@ var app = new Vue({
   },
   methods: {
     exit(){
-      window.location.href = '/user/account';
+      window.location.href = '/';
     },
   },
 });

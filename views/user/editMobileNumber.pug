@@ -7,16 +7,13 @@ block css
   link(rel="stylesheet" href="/css/user/editMobileNumber.css" charset="utf-8")
 
 block content 
-  .breadlink
-    a(href='/user/account') Sua conta
-    a &nbsp> Altere seu número de celular
-  .edit-mobile
-    h2.text-left Altere seu súmero de celular 
+  .panel
+    h2.text-left Alteração do número de celular 
     //- Warn message.
-    p.warn-message {{ warnMessage }}   
+    p.warn-message(v-show='this.warnMessage !== ""') {{ warnMessage }}   
     label(for='mobileNumber') Novo Número de Celular
     input(type='text' name='mobileNumber' id='mobileNumber' v-model='mobileNumber')
-    input(type='button' value='Salvar Alterações' @click='save()') 
+    input.dark-blue(type='button' value='Salvar Alterações' @click='save()') 
 
 block footer
 

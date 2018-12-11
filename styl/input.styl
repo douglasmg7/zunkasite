@@ -3,13 +3,14 @@ input
   width 100%
   height 2em
   border 1px solid lightgray
-  margin-bottom 1em
+  // margin-bottom .5em
   padding-left 1em
   padding-right 1em
   border-radius 4px
   
 input-dark-blue()
-  .dark-blue
+  input[type='submit'].dark-blue
+  input[type='button'].dark-blue
     color c_btn_dark_blue
     background-color bgc_btn_dark_blue
     border-color bc_btn_dark_blue
@@ -18,7 +19,8 @@ input-dark-blue()
       border-color bc_btn_dark_blue_hover
       
 input-light-blue()
-  .light-blue
+  input[type='submit'].light-blue
+  input[type='button'].light-blue
     color c_btn_light_blue
     background-color bgc_btn_light_blue
     border-color bc_btn_light_blue

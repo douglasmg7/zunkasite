@@ -7,17 +7,14 @@ block css
   link(rel="stylesheet" href="/css/user/deleteAccount.css" charset="utf-8")
 
 block content 
-  .breadlink
-    a(href='/user/account') Sua conta
-    a &nbsp> Apagar conta
-  .delete-account
+  .panel
     h2 Apagar Conta
     label(for='email') E-mail
     input(type='text' id='email' v-model='email')
     label(for='password') Senha
     input(type='password' id='password' v-model='password')        
-    input(type='button' value='Apagar Conta' @click='deleteAccount()')
-    p.warn-message {{warnMessage}}
+    input.dark-blue(type='button' value='Apagar Conta' @click='deleteAccount()')
+    p.warn-message(v-show='this.warnMessage !== ""') {{warnMessage}}
 
 block footer
 

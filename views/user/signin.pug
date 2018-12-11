@@ -9,7 +9,7 @@ block css
 block content 
   .panel
     h2.title Identificação              
-    p.success-message {{successMessage}}
+    p.success-message(v-show='this.successMessage !== ""') {{successMessage}}
     label(for='email') E-mail
     input(type='text' id='email' v-model='email')
     label(for='password') Senha
@@ -17,8 +17,8 @@ block content
     label 
       a.find-password(href='/user/forgottenPassword') Esqueceu a senha?
     input.dark-blue(type='submit' value='Entrar' @click='signin()')
-    p.warn-message {{warnMessage}}
-    hr/
+    p.warn-message(v-show='this.warnMessage !== ""') {{warnMessage}}
+    hr
     label Não tem cadastro?
     input.light-blue(type='submit' value='Cadastrar' @click='signup()')
 

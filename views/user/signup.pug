@@ -10,7 +10,7 @@ block content
   .panel
     h2 Cadastro 
     //- Warn message.
-    p.warn-message {{ warnMessage }}
+    p.warn-message(v-show='this.warnMessage !== ""') {{ warnMessage }}
     //- Name.
     label(for='name') Nome
     input(type='text' id='name' v-model='name')                              
@@ -23,9 +23,9 @@ block content
     //- Confirm password.
     label(for='passwordConfirm') Confirme a senha
     input(type='password' id='passwordConfirm' v-model='passwordConfirm')           
-    //- Signup.           
+    //- Signup.     
     input.dark-blue(type='submit' value='Cadastrar' @click='signup()')
-    p.success-message {{ successMessage }}
+    p.success-message(v-show='this.successMessage !== ""') {{ successMessage }}
 
 block footer
 

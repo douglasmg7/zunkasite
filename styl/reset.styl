@@ -33,7 +33,11 @@ hr
   border 0
   border-top 1px solid #eee
 a
+  color c_link
   text-decoration none
+  &:hover
+    color c_link_hover
+    text-decoration underline
 html
 body
   height 100%
@@ -62,15 +66,16 @@ main
   padding 1em
   border-radius 4px  
   box-shadow: 3px 3px 3px 0 rgba(0,0,0,.3);
-a
-  color #337ab7
-  text-decoration none
-  &:hover
-    color #23527c
-    text-decoration underline
 label
   display inline-block
   margin-bottom .2em
+  margin-top 1em
+p.alert
+  font-style italic
+  background-color: c_very_light_gray
+  padding .4em 1em
+  margin 0
+  border-radius 4px
 // button
 // input
 //   box-sizing border-box

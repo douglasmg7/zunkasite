@@ -294,17 +294,17 @@ router.post('/reset-password/:token', (req, res, next)=>{
 ******************************************************************************/
 
 // Account page.
-router.get('/account', (req, res, next)=>{
+router.get('/account', checkPermission, (req, res, next)=>{
   res.render('user/account', { nav: {} } );
 });
 
 // Access page.
-router.get('/access', (req, res, next)=>{
+router.get('/access', checkPermission, (req, res, next)=>{
   res.render('user/access', { nav: {}, user: req.user });
 });
 
 // Edit name page.
-router.get('/access/edit-name', (req, res, next)=>{
+router.get('/access/edit-name', checkPermission, (req, res, next)=>{
   res.render('user/editName', { nav: {}, name: req.user.name });
 });
 // Edit name.
@@ -335,7 +335,7 @@ router.post('/access/edit-name', checkPermission, (req, res, next)=>{
 });
 
 // Edit email page.
-router.get('/access/edit-email', (req, res, next)=>{
+router.get('/access/edit-email', checkPermission, (req, res, next)=>{
   res.render('user/editEmail', { nav: {}, email: req.user.email });
 });
 // Edit email.
@@ -375,7 +375,7 @@ router.post('/access/edit-email', checkPermission, (req, res, next)=>{
 });
 
 // Edit cell phone page.
-router.get('/access/edit-mobile-number', (req, res, next)=>{
+router.get('/access/edit-mobile-number', checkPermission,(req, res, next)=>{
   res.render('user/editMobileNumber', { nav: {}, mobileNumber: req.user.mobileNumber});
 });
 
@@ -406,7 +406,7 @@ router.post('/access/edit-mobile-number', checkPermission, (req, res, next)=>{
 });
 
 // Edit password page.
-router.get('/access/edit-password', (req, res, next)=>{
+router.get('/access/edit-password', checkPermission, (req, res, next)=>{
   res.render('user/editPassword', { nav: {} });
 });
 
@@ -446,7 +446,7 @@ router.post('/access/edit-password', checkPermission, (req, res, next)=>{
 });
 
 // Edit CPF page.
-router.get('/access/edit-cpf', (req, res, next)=>{
+router.get('/access/edit-cpf', checkPermission, (req, res, next)=>{
   res.render('user/editCpf', { nav: {}, cpf: req.user.cpf });
 });
 
@@ -543,12 +543,12 @@ router.post('/access/delete-account', checkPermission, (req, res, next)=>{
 });
 
 // Account deleted.
-router.get('/access/account-deleted', (req, res, next)=>{
+router.get('/access/account-deleted', checkPermission, (req, res, next)=>{
   res.render('user/accountDeleted', { nav: {} } );
 });
 
 // Address page.
-router.get('/address', (req, res, next)=>{
+router.get('/address', checkPermission, (req, res, next)=>{
   Address.find({ user_id: req.user._id }, (err, addresses)=>{
     if (err) return next(err);
     res.render('user/address', { nav: {}, addresses: addresses }); 
@@ -556,7 +556,7 @@ router.get('/address', (req, res, next)=>{
 });
 
 // Edit address page.
-router.get('/address/edit', (req, res, next)=>{
+router.get('/address/edit', checkPermission, (req, res, next)=>{
   if (req.query.addressId === 'new') {
     let address = new Address();
     res.render('user/editAddress', { nav: {}, isNewAddress: true, address: address });
