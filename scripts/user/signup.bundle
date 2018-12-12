@@ -1,49 +1,46 @@
-'use strict';
-
-// Search for products.
-function _search(text){
-  window.location.href = `/search?page=1&search=${text}`;
-}
+import _search from '../lib/_search';
 
 // Vue.
 var app = new Vue({
   el: '#app',
   data: {
-    // Authentication error.
-    warnMessage: warnMessage,
+    // Warn message.
+    warnMessage: '',
     // Success message.
-    successMessage: successMessage,
+    successMessage: '',
+    // Name.
+    name: '',
     // Email.
     email: '',
     // Password.
-    password: ''
+    password: '',
+    // Confirm password.
+    passwordConfirm: '',
   },
   methods: {
     // Get products.
-    signin(){
+    signup(){
       axios({
         method: 'post',
-        url: `/user/api/signin`,
+        url: `/user/api/signup`,
         headers: {'csrf-token' : csrfToken},
-        data: {email: this.email, password: this.password}
+        data: {name: this.name, email: this.email, password: this.password, passwordConfirm: this.passwordConfirm}
       })
       .then((res)=>{
         // Singin successful.
         if (res.data.success) {
           this.warnMessage = '';
-          window.location.href = res.data.redirect;
+          this.successMessage = res.data.message;
         }
         // Not success on signin.
         else {
+          console.log(res.data.message);
           this.warnMessage = res.data.message;
         }
       })
       .catch((err)=>{
-        console.error(`Error - signin(), err: ${err}`);
+        console.error(`Error - signup(), err: ${err}`);
       });
-    },
-    signup(){
-      window.location.href = '/user/signup';
     }
   } 
 });

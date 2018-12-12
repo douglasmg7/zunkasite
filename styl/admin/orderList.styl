@@ -1,13 +1,14 @@
 @import '../menu/reset_menu'
 @import '../menu/pagination'
-#app
-  display flex
-  flex-flow column nowrap
-  margin 1em auto
-  width 95%
-  // > .breadlink
-  //   a
-  //     text-decoration none
+
+@import '../menu/reset_menu'
+@import '../input'
+@import '../message'
+@import '../menu/pagination'
+input-dark-blue()
+message()
+.panel
+  min-width min_width_order_list
   > header
     // background-color lightyellow
     margin-bottom 1em
@@ -18,20 +19,23 @@
     h2
       margin .5em 0 0 0
     .search-order
-      button
+      display flex
+      flex-flow row nowrap
+      justify-content start-end
+      align-items flex-end
+      input
         margin-left .5em
-        // height 2em
   > .filter
     background-color $veryLightGray
     display flex
     align-items center
+    padding .5em
     input
-      margin 0 .4em
-      height 2em
-      &:first-child
-       margin-left .8em
+      width 1em
+      height .5em
+      margin 0 .2em 0 0
     label
-      margin-right 1em        
+      margin 0 1em 0 0      
   > table
     margin-top 1em
     border-bottom solid 1px lightgray

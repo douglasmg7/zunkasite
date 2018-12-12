@@ -1,9 +1,4 @@
-'use strict';
-
-// Search for products.
-function _search(text){
-  window.location.href = `/search?page=1&search=${text}`;
-}
+import _search from '../lib/_search';
 
 // Vue.
 var app = new Vue({
@@ -11,18 +6,16 @@ var app = new Vue({
   data: {
     // Warn message.
     warnMessage: '',
-    // Mobile number.
-    mobileNumber: mobileNumber,
-    // Password.
-    password: ''
+    // Cpf.
+    cpf: cpf,
   },
   methods: {
     save(){
       axios({
         method: 'post',
-        url: `/user/access/edit-mobile-number`,
+        url: `/user/access/edit-cpf`,
         headers: {'csrf-token' : csrfToken},
-        data: { mobileNumber: this.mobileNumber, password: this.password }
+        data: { cpf: this.cpf }
       })
       .then((res)=>{
         // Successful change the name.
@@ -40,4 +33,4 @@ var app = new Vue({
       });
     }
   },
-});
+});  

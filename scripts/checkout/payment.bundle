@@ -1,9 +1,4 @@
-'use strict';
-
-// Search for products.
-function _search(text){
-  window.location.href = `/search?page=1&search=${text}`;
-}
+import _search from '../lib/_search';
 
 // Vue.
 let app = new Vue({
@@ -28,12 +23,12 @@ let app = new Vue({
         if (response.data.err) {
           console.log(response.data.err);
         } else {
-          window.location.href = `/checkout/order-confirmation/${order._id}`;
+          window.location.href = `/checkout/order-confirmation/${order._id}`
         }
       })
       .catch(err => {
         console.error(err);
-      }); 
+      }) 
     },
   },
   computed: {

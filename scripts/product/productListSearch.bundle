@@ -1,5 +1,3 @@
-'use strict';
-
 // Search for products.
 function _search(text){
   app.search = text;

@@ -1,9 +1,4 @@
-'use strict';
-
-// Search for products.
-function _search(text){
-  window.location.href = `/search?page=1&search=${text}`;
-}
+import _search from '../lib/_search';
 
 // Vue.
 var app = new Vue({
@@ -11,8 +6,12 @@ var app = new Vue({
   data: {
     // Warn message.
     warnMessage: '',
-    // Mobile number.
-    mobileNumber: mobileNumber,
+    // Email.
+    email: email,
+    // New email.
+    newEmail: '',
+    // Email confirmation.
+    newEmailConfirm: '',
     // Password.
     password: ''
   },
@@ -20,14 +19,14 @@ var app = new Vue({
     save(){
       axios({
         method: 'post',
-        url: `/user/access/edit-mobile-number`,
+        url: `/user/access/edit-email`,
         headers: {'csrf-token' : csrfToken},
-        data: { mobileNumber: this.mobileNumber, password: this.password }
+        data: { newEmail: this.newEmail, newEmailConfirm: this.newEmailConfirm, password: this.password }
       })
       .then((res)=>{
         // Successful change the name.
         if (res.data.success) {
-          window.location.href = '/user/access';
+          window.location.href = '/user/signin';
         }
         // Something wrong.
         else
@@ -40,4 +39,4 @@ var app = new Vue({
       });
     }
   },
-});
+});  

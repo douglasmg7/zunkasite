@@ -1,9 +1,4 @@
-'use strict';
-
-// Search for products.
-function _search(text){
-  window.location.href = `/search?page=1&search=${text}`;
-}
+import _search from '../lib/_search';
 
 // Vue.
 var app = new Vue({
@@ -40,4 +35,4 @@ var app = new Vue({
       });
     }
   },
-});
+});  

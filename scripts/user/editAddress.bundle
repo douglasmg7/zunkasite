@@ -1,9 +1,4 @@
-'use strict';
-
-// Search for products.
-function _search(text){
-  window.location.href = `/search?page=1&search=${text}`;
-}
+import _search from '../lib/_search';
 
 // Vue.
 var app = new Vue({
@@ -42,7 +37,7 @@ var app = new Vue({
     saveAddress(addressId){
       // Verify CEP.
       if (!this.address.cep.match(/^\d{5}\D?\d{3}$/)) {
-        this.warnMessage = 'CEP inválido.';
+        this.warnMessage = 'CEP inválido.'
         console.log('cep invalido.');
         return;
       }

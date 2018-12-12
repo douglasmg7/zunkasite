@@ -1,9 +1,4 @@
-'use strict';
-
-// Search for products.
-function _search(text){
-  window.location.href = `/search?page=1&search=${text}`;
-}
+import _search from '../lib/_search';
 
 // Vue.
 var app = new Vue({
@@ -56,7 +51,7 @@ var app = new Vue({
       .catch(err => {
         alert('Não foi possível selecionar o endereço');
         console.error(err);
-      });       
+      })       
     },
     // Create new address selected.
     newAddressSelected(){
@@ -94,7 +89,7 @@ var app = new Vue({
       .catch(err => {
         alert('Não foi possível selecionar o endereço');
         console.error(err);
-      });       
+      })       
     },
     // Get CEP information.
     getCepInfo() {
@@ -125,7 +120,7 @@ var app = new Vue({
         .catch(err => {
           this.validation.cep = 'CEP inválido.';
           console.error(err);
-        });  
+        })  
       } 
       // Wrong size.
       else if(this.newAddress.cep.length > 0) {
