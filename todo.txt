@@ -3,12 +3,11 @@ to change layout
   http://localhost:3080/checkout/order-confirmation/5c10e5322032141d361a5ec2
 
 search page
-  show what was searched
+  inlcude title with what was searched
+
+include border o main imagen on product page
 
 image zoom
-
-css framework
-  bulma, pure, http://getskeleton.com/
 
 incluir produtos com zero estoque, ativos e comercializar para venda, informar produto indisponível.
 

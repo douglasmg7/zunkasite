@@ -1,45 +1,28 @@
 @import '../menu/reset_menu'
-#app
-  display flex
-  flex-flow column nowrap
-  // justify-content center
-  // margin 2em 4em
-  margin 2em auto
-  width 95%
-  max-width max_width
-  // > .breadlink
-  //   margin-left 1em
-  //   a
-  //     text-decoration none
+@import '../input'
+@import '../message'
+input-dark-blue()
+.panel
+  margin-bottom 4em
   > .title
-    margin 0 1em 1em 1em  
   > .addresses
+    flex 1 1 auto
     display flex
-    flex-flow row wrap
+    flex-flow column wrap
     justify-content space-between
-    border-radius 4px  
-    > .address-panel.add
-      display flex
-      flex row nowrap
-      justify-content center
-      align-items center
-      border 2px dashed lightgray
-      &:hover
-        cursor pointer
     > .address-panel
       display flex
       flex-flow column nowrap
-      border 1px solid #eee
-      border-radius 5px
-      margin 1em
+      border 1px solid b_ineer_panel
+      border-radius 4px
       min-height 300px
-      width: 350px
-      background-color #fcfcfc
-      justify-content space-between // flex-end
+      min-width 450px
+      margin-bottom 1em
       > .address-header
-        background-color #f4f4f4
+        background-color bgc_body
         h3
-          padding .5em
+          margin .5em 0
+          padding-left .8em
         hr
           margin 0
       > .address-body, 

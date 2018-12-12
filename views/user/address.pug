@@ -6,37 +6,34 @@ block title
 block css
   link(rel="stylesheet" href="/css/user/address.css" charset="utf-8")
 
-block content 
-  //- .breadlink
-  //-   a(href='/user/account') Sua conta
-  //-   a &nbsp> Seus Endereços
-  .title
-    h2 Seus endereços
-  .addresses
-    .address-panel.add(@click='addAddress()')
-      h2 Adicionar endereço
-    //- Addresses list.
-    .address-panel(v-for='address in addresses' data-address-id='address._id')
-      .address-header(v-if='address.default')
-        h3 Padrão
-        hr
-      .address-body      
-        p.name {{address.name}}                                                                                                
-        p {{address.phone}}                                                                                                
-        p {{address.cep}}                                                                                                
-        p {{address.address}}                                                                                                
-        p {{address.addressNumber}}                                                                                                
-        p {{address.addressComplement}}                                                                                                
-        p {{address.district}}                                                                                                
-        p {{address.city}}                                                                                                
-        p {{address.state}}
-      .address-footer    
-        span
-          a.edit-address(@click='editAddress(address._id)') Editar 
-          strong &nbsp | &nbsp                                                                                       
-          a.remove-address(@click='removeAddress(address._id)') Apagar
-          strong &nbsp | &nbsp
-          a.set-default-address(@click='setDefaultAddress(address._id)') Marcar como padrão                   
+block content
+  .panel
+    .title
+      h2 Seus endereços
+    .addresses
+      //- Addresses list.
+      .address-panel(v-for='address in addresses' data-address-id='address._id')
+        .address-header(v-if='address.default')
+          h3 Padrão
+          hr
+        .address-body      
+          p.name {{address.name}}                                                                                                
+          p {{address.phone}}                                                                                                
+          p {{address.cep}}                                                                                                
+          p {{address.address}}                                                                                                
+          p {{address.addressNumber}}                                                                                                
+          p {{address.addressComplement}}                                                                                                
+          p {{address.district}}                                                                                                
+          p {{address.city}}                                                                                                
+          p {{address.state}}
+        .address-footer    
+          span
+            a.edit-address(@click='editAddress(address._id)') Editar 
+            strong &nbsp | &nbsp                                                                                       
+            a.remove-address(@click='removeAddress(address._id)') Apagar
+            strong &nbsp | &nbsp
+            a.set-default-address(@click='setDefaultAddress(address._id)') Marcar como padrão
+      input.dark-blue(type='button' @click='addAddress()' value='Adicionar novo endereço')
 
 block footer
 

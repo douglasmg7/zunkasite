@@ -7,11 +7,7 @@ block css
   link(rel="stylesheet" href="/css/user/editAddress.css" charset="utf-8")
 
 block content 
-  .breadlink
-    a(href='/user/account') Sua conta
-    a(href='/user/address') &nbsp> Endereços
-    a &nbsp> Adicione Seu Endereço
-  .form
+  .panel
     //- title.
     h2 Adicione Seu Endereço
     //- Warn message.
@@ -46,7 +42,7 @@ block content
     //- Phone.
     label(for='phone') Telefone
     input(type='text' id='phone' v-model='address.phone')                                                                                        
-    input.green(type='button', :value='isNewAddress ? "Criar novo Endereço": "Salvar"' @click='saveAddress()')
+    input.dark-blue(type='button', :value='isNewAddress ? "Criar novo Endereço": "Salvar"' @click='saveAddress()')
 
 block footer
 
