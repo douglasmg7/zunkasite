@@ -13,7 +13,7 @@ block content
     p.warn-message(v-show='this.warnMessage !== ""') {{ warnMessage }}   
     label(for='mobileNumber') Novo Número de Celular
     input(type='text' name='mobileNumber' id='mobileNumber' v-model='mobileNumber')
-    input.dark-blue(type='button' value='Salvar Alterações' @click='save()') 
+    input.btn-primary(type='button' value='Salvar Alterações' @click='save()') 
 
 block footer
 

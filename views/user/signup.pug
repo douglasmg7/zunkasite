@@ -24,7 +24,7 @@ block content
     label(for='passwordConfirm') Confirme a senha
     input(type='password' id='passwordConfirm' v-model='passwordConfirm')           
     //- Signup.     
-    input.dark-blue(type='submit' value='Cadastrar' @click='signup()')
+    input.btn-primary(type='submit' value='Cadastrar' @click='signup()')
     p.success-message(v-show='this.successMessage !== ""') {{ successMessage }}
 
 block footer

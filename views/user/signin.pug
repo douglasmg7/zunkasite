@@ -16,11 +16,11 @@ block content
     input(type='password' id='password' v-model='password')
     label 
       a.find-password(href='/user/forgottenPassword') Esqueceu a senha?
-    input.dark-blue(type='submit' value='Entrar' @click='signin()')
+    input.btn-primary(type='submit' value='Entrar' @click='signin()')
     p.warn-message(v-show='this.warnMessage !== ""') {{warnMessage}}
     hr
     label Não tem cadastro?
-    input.light-blue(type='submit' value='Cadastrar' @click='signup()')
+    input.btn-secondary(type='submit' value='Cadastrar' @click='signup()')
 
 block footer
 

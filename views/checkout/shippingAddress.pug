@@ -7,14 +7,13 @@ block css
   link(rel="stylesheet" href="/css/checkout/shippingAddress.css" charset="utf-8")
 
 block content 
-  .address-add
-    h2.text-left Selecione um endereço para envio
+  .panel
+    h2 Selecione um endereço para envio
     p Ou voçê pode 
       a(href='#name') adicionar um novo endereço para envio.
-  //- Address list.
-  .addresss
+    //- Address list.
     .address(v-if='address' v-for='address in addresss' data-address-id='this.address._id')
-      p.name {{address.name}}
+      h3 {{address.name}}
       p {{address.phone}}
       p {{address.cep}}
       p {{address.address}}
@@ -23,60 +22,48 @@ block content
       p {{address.district}}
       p {{address.city}}
       p {{address.state}}
-      input.green(type='button' @click='selectAddress(address._id)' value='Enviar para este endereço') 
-  .form
-    hr
-    .field
-      //- input(type='hidden' name='_csrf' value=csrfToken)       
-      h3.text-left
-        strong Cadastrar novo endereço para envio.    
-    //- Name.                              
-    .field
+      input.btn-primary(type='button' @click='selectAddress(address._id)' value='Enviar para este endereço') 
+    .form
+      hr
+      h3 Cadastrar novo endereço para envio    
+      //- Name.                              
       label(for='name') Nome
       input(type='text' name='name' id='name' v-model='newAddress.name')
       p.validation(v-if='validation.name') {{validation.name}}    
-    //- Cep.      
-    .field
+      //- Cep.      
       label(for='cep') CEP
       input(@blur='getCepInfo' type='text' name='cep' id='cep' v-model='newAddress.cep')
       p.validation(v-if='validation.cep') {{validation.cep}}          
       a(href='http://www.buscacep.correios.com.br' target='_blank') Não sei meu CEP
-    //- Address.
-    .field
+      //- Address.
       label(for='address') Endereço
       input(type='text' name='address' id='address' v-model='newAddress.address')
       p.validation(v-if='validation.address') {{validation.address}} 
-    //- Adress number.
-    .field
+      //- Adress number.
       label(for='addressNumber') Número
       input(type='text' name='addressNumber' id='addressNumber' v-model='newAddress.addressNumber')
       p.validation(v-if='validation.addressNumber') {{validation.addressNumber}} 
-    //- Address complement.
-    .field
+      //- Address complement.
       label(for='addressComplement') Complemento
       input(type='text' name='addressComplement' id='addressComplement' v-model='newAddress.addressComplement')
       p.validation(v-if='validation.addressComplement') {{validation.addressComplement}} 
-    //- District.
-    .field
+      //- District.
       label(for='district') Bairro
       input(type='text' name='district' id='district' v-model='newAddress.district')   
       p.validation(v-if='validation.district') {{validation.district}} 
-    //- City.    
-    .field
+      //- City.    
       label(for='city') Cidade
       input(type='text' name='city' id='city' v-model='newAddress.city')  
       p.validation(v-if='validation.city') {{validation.city}} 
-    //- State.
-    .field
+      //- State.
       label(for='state') Estado
       input(type='text' name='state' id='state' v-model='newAddress.state')  
       p.validation(v-if='validation.state') {{validation.state}} 
-    //- Phone.                   
-    .field
+      //- Phone.                   
       label(for='phone') Telefone
       input(type='text' name='phone' id='phone' v-model='newAddress.phone')                                                                                        
       p.validation(v-if='validation.phone') {{validation.phone}} 
-    input.green(type='button' @click='newAddressSelected()' value='Enviar para este endereço') 
+      input.btn-primary(type='button' @click='newAddressSelected()' value='Enviar para este endereço') 
 
 block footer
 

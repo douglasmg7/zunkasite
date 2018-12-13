@@ -36,7 +36,7 @@ block content
         h3
           strong Subtotal ({{ cart.totalQtd }} {{ cart.totalQtd > 1 ? 'itens): ' : 'item): ' }}
           span R$ {{ cart.totalPrice | currency }}
-          input.dark-blue(type='button' value='Finalizar compra' @click='selectAddress()')
+          input.btn-primary(type='button' value='Finalizar compra' @click='selectAddress()')
           //- Used for test.
           //- input.green(type='button' value='Update stock' @click='updateStock()')
       h5.info O preço e a disponibilidade dos itens na loja estão sujetios a mudanças. O carrinho é um local temporário para guardar a lista de seus ítens e reflete o preço mais recente.
@@ -75,7 +75,7 @@ block content
               tr(v-for='removedProduct in cart.removedProducts')
                 td: a(:href='`/product/${removedProduct._id}`'): img.product(:src='`/img/${removedProduct._id}/${removedProduct.image}`')
                 td: p.title {{ removedProduct.title }}
-        input.dark-blue(type='button' @click='userReceiveMsgCartChanged()' value='Ok')
+        input.btn-primary(type='button' @click='userReceiveMsgCartChanged()' value='Ok')
 
 block footer
   

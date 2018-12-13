@@ -12,7 +12,7 @@ block content
       h2 Seus Pedidos
       .search-order
         input(type='text' v-model='searchOrder' @keyup.enter='getOrders()' placeholder='Pesquise em todas as ordens')
-        input.dark-blue(type='button' @click='getOrders()' value='Pesquisar ordens') 
+        input.btn-primary(type='button' @click='getOrders()' value='Pesquisar ordens') 
     table
       thead
         tr
