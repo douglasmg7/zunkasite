@@ -4,7 +4,6 @@
 btn-primary()
 .panel
   margin-bottom 4em
-  > .title
   > .addresses
     flex 1 1 auto
     display flex
@@ -28,11 +27,10 @@ btn-primary()
       > .address-body, 
       > .address-footer
         padding .8em
-      > .address-body > p
-        margin-bottom .3em
-      > .address-body > p.name
-        font-weight bold
-        margin-bottom .5em
+      > .address-body 
+        :first-child
+          font-weight bold
+          margin-top 0
       > .address-footer
         color green
         a:hover

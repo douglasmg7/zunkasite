@@ -8,8 +8,7 @@ block css
 
 block content
   .panel
-    .title
-      h2 Seus endereços
+    h2 Seus endereços
     .addresses
       //- Addresses list.
       .address-panel(v-for='address in addresses' data-address-id='address._id')
@@ -17,7 +16,7 @@ block content
           h3 Padrão
           hr
         .address-body      
-          p.name {{address.name}}                                                                                                
+          p {{address.name}}                                                                                                
           p {{address.phone}}                                                                                                
           p {{address.cep}}                                                                                                
           p {{address.address}}                                                                                                
