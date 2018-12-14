@@ -1,42 +1,87 @@
 @import '../menu/reset_menu'
-main
-  display flex
-  flex-flow column nowrap
-  justify-content center
-  margin 0 auto 3em auto
-  width 95%
-  max-width $MAX_WIDTH
-#app
-  display flex
-  flex-flow column nowrap
-  h2
-    margin-top 1em
+@import '../input'
+@import '../message'
+btn-primary()
+.panel
+  max-width max_width_address
   p
+  span
+    color c_gray
     margin-bottom .5em
-  hr
-    margin-top .2em
-    margin-bottom 1em
-  & > .price
+  .price
     color c_price
-  & > .quantity
+  .quantity
     color $c_quantity
-  & > .shipment
-    display flex
-    flex-flow row wrap
-    span.deadline
-      font-weight bold
-  & > .items
-    // margin-top 1em
-    margin-left 2em
+  h3
+    margin-bottom 0
+  hr
+    margin-top .5em
+    margin-bottom 1em
+  .address
+  .shipment
+  .items
+  .total
+    margin-top 2em
+    p
     ul
+      margin .4em 0 .4em 0
+  .shipment
+    span.deadline
+      color c_black
+      font-weight bold
+  .items
+    ul
+      margin-left .4em
       li
         color $c_quantity
-      margin-top .5em
       p
         margin-top .2em
         color black
-    button
-      margin-top 2em
-  & > .total
+  .total
     margin-top .5em
     margin-bottom 1em
+  .payment
+    margin-top 3em
+
+// @import '../menu/reset_menu'
+// main
+//   display flex
+//   flex-flow column nowrap
+//   justify-content center
+//   margin 0 auto 3em auto
+//   width 95%
+//   max-width $MAX_WIDTH
+// #app
+//   display flex
+//   flex-flow column nowrap
+//   h2
+//     margin-top 1em
+//   p
+//     margin-bottom .5em
+//   hr
+//     margin-top .2em
+//     margin-bottom 1em
+//   & > .price
+//     color c_price
+//   & > .quantity
+//     color $c_quantity
+//   & > .shipment
+//     display flex
+//     flex-flow row wrap
+//     span.deadline
+//       font-weight bold
+//   & > .items
+//     // margin-top 1em
+//     margin-left 2em
+//     ul
+//       li
+//         color $c_quantity
+//       margin-top .5em
+//       p
+//         margin-top .2em
+//         color black
+//     button
+//       margin-top 2em
+//   & > .total
+//     margin-top .5em
+//     margin-bottom 1em
