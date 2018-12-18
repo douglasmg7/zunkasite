@@ -42,8 +42,7 @@ block content
       h3 Ítens
       ul
         li(v-for='item in order.items')
-          p 
-            strong {{item.name}}
+          p {{item.name}}
           p 
             span.price {{item.price | formatMoney}} 
             span.quantity - Quantidade: {{item.quantity}}

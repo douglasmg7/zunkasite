@@ -1,32 +1,32 @@
 @import '../menu/reset_menu'
-main
-  display flex
-  flex-flow column nowrap
-  justify-content center
-  margin 0 auto 3em auto
-  width 95%
-  max-width $MAX_WIDTH
-#app
-  display flex
-  flex-flow column nowrap
-  margin-top 1em
+.panel
+  max-width max_width_address
+  p
+  span
+    color c_gray
+    margin-bottom .5em
   hr
-    margin-bottom 1em
-  h4
-    margin-top 0.8em
-    margin-bottom 0.2em
-    font-weight bold
+    margin-top 2em
+    margin-bottom 2em
   .price
     color c_price
   .quantity
     color $c_quantity
-  .title
-    font-weight bold
-    margin-top .5em
   .deadline
+    color c_black
     font-weight bold
+  .order
+  .client
+  .address
+  .shipment
   .items
-    // margin-top 1em
+  .total
+    margin-top 2em
+    p
+    ul
+      margin .4em 0 .4em 0
+  .items
+    margin-bottom: 2em
     ul
       margin-left 2em
       li
@@ -35,8 +35,50 @@ main
       p
         margin-top .2em
         color black
-    button
-      margin-top 2em
   .total
     margin-top .5em
     margin-bottom 1em
+    
+
+// @import '../menu/reset_menu'
+// main
+//   display flex
+//   flex-flow column nowrap
+//   justify-content center
+//   margin 0 auto 3em auto
+//   width 95%
+//   max-width $MAX_WIDTH
+// #app
+//   display flex
+//   flex-flow column nowrap
+//   margin-top 1em
+//   hr
+//     margin-bottom 1em
+//   h4
+//     margin-top 0.8em
+//     margin-bottom 0.2em
+//     font-weight bold
+//   .price
+//     color c_price
+//   .quantity
+//     color $c_quantity
+//   .title
+//     font-weight bold
+//     margin-top .5em
+//   .deadline
+//     font-weight bold
+//   .items
+//     // margin-top 1em
+//     ul
+//       margin-left 2em
+//       li
+//         color $c_quantity
+//       margin-top .5em
+//       p
+//         margin-top .2em
+//         color black
+//     button
+//       margin-top 2em
+//   .total
+//     margin-top .5em
+//     margin-bottom 1em
