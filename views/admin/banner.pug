@@ -7,23 +7,24 @@ block css
   link(rel="stylesheet" href="/css/admin/banner.css" charset="utf-8")
 
 block content 
-  h2.title Banners
-  .wrapper-image(v-for='banner, index in banners')
-    h4.sub-title Link
-    input(type='text' id='link' v-model='banner.link')
-    h4.sub-title Imagem
-    img.image.product-image(:src='`/banner/${banner.fileName}`')
-    .right-arrow(@click='moveImage(index, "r")')
-    .left-arrow(@click='moveImage(index, "l")')
-    p.delete-image(@click=`deleteImage(index)`) x          
-  .upload-image
-    label(for='uploadImage') 
-      svg.icon: use(xlink:href='/icon/sprite.svg#ic_file_upload_black_24px')
-      | Carregar imagem(s)
-    input(type='file' id='uploadImage' accept='image/*' multiple v-on:change=`uploadImage()`)
-  .buttons
-    input.green(type='button' v-on:click='saveBanners()' value='Salvar')
-    input.blue(type='button' onclick='window.location.href="/admin"' value='Sair')
+  .panel
+    h2 Banners
+    .wrapper-image(v-for='banner, index in banners')
+      h4.sub-title Link
+      input(type='text' id='link' v-model='banner.link')
+      h4.sub-title Imagem
+      img.image.product-image(:src='`/banner/${banner.fileName}`')
+      .right-arrow(@click='moveImage(index, "r")')
+      .left-arrow(@click='moveImage(index, "l")')
+      p.delete-image(@click=`deleteImage(index)`) x          
+    .upload-image
+      label(for='uploadImage') 
+        svg.icon: use(xlink:href='/icon/sprite.svg#ic_file_upload_black_24px')
+        | Carregar imagem(s)
+      input(type='file' id='uploadImage' accept='image/*' multiple v-on:change=`uploadImage()`)
+    .buttons
+      input.btn-primary(type='button' v-on:click='saveBanners()' value='Salvar')
+      input.btn-secondary(type='button' onclick='window.location.href="/admin"' value='Sair')
 
 block footer
   

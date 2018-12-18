@@ -1,22 +1,29 @@
 @import '../menu/reset_menu'
 @import '../menu/pagination'
-#app
+.panel
   table
-    border-bottom: solid 1px lightgray
-    border-spacing: 0
-    width: 100%
-    text-align: left
-  td
-    border-top: solid 1px lightgray
-  th, td
-    padding: .3em .2em .3em .5em
-  // th.clickable, td.clickable
-  td
-    cursor: pointer
-    a
-      text-decoration none
-      color black
-  tr.product-commercialize
-    background-color: #F2DEDE
-  tr.product-commercialize.product-active
-    background-color: #bdffbd
+    border-bottom solid 1px lightgray
+    // border solid 1px lightgray
+    border-spacing 0
+    width 100%
+    text-align left
+  thead, tbody
+    th, td
+      padding .3em .5em 
+  tbody
+    tr
+      border solid 3px lightgray
+      :first-child
+        border-left solid 1px lightgray
+      :last-child
+        border-right solid 1px lightgray
+      td
+        border-top solid 1px lightgray
+        cursor pointer
+        a
+          text-decoration none
+          color black
+    tr.product-commercialize
+      background-color #F2DEDE
+    tr.product-commercialize.product-active
+      background-color #bdffbd

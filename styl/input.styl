@@ -1,32 +1,91 @@
 input
+textarea
   box-sizing border-box
   width 100%
   height 2em
-  border 1px solid lightgray
+  border 1px solid c_very_light_gray
   // margin-bottom .5em
   padding-left .5em
   padding-right .5em
   border-radius 4px
+  &:not([readonly]):focus
+    border 1px solid rgba(81, 203, 238, 1)   
+  &[readonly]
+    background-color lightgray
+textarea
+  height 10em
+  // outline none
   
+c_btn_primary = btn_dark_green
+c_btn_primary_hover = darken(c_btn_primary, 20%)
 btn-primary()
   input[type='submit'].btn-primary
   input[type='button'].btn-primary
-    color c_btn_dark_green
-    background-color bgc_btn_dark_green
-    border-color bc_btn_dark_green
+    color c_white
+    background-color c_btn_primary
+    border-color darken(c_btn_primary, 10%)
     &:hover
-      background-color bgc_btn_dark_green_hover
-      border-color bc_btn_dark_green_hover
+      background-color c_btn_primary_hover
+      border-color darken(c_btn_primary_hover, 10%)
       
+c_btn_secondary = btn_light_green
+c_btn_secondary_hover = darken(c_btn_secondary, 20%)
 btn-secondary()
   input[type='submit'].btn-secondary
   input[type='button'].btn-secondary
-    color c_btn_light_green
-    background-color bgc_btn_light_green
-    border-color bc_btn_light_green
+    color c_white
+    background-color c_btn_secondary
+    border-color darken(c_btn_secondary, 10%)
     &:hover
-      background-color bgc_btn_light_green_hover
-      border-color bc_btn_light_green_hover
+      background-color c_btn_secondary_hover
+      border-color darken(c_btn_secondary_hover, 10%)
+
+// btn-secondary()
+//   input[type='submit'].btn-secondary
+//   input[type='button'].btn-secondary
+//     color c_btn_light_green
+//     background-color bgc_btn_light_green
+//     border-color bc_btn_light_green
+//     &:hover
+//       background-color bgc_btn_light_green_hover
+//       border-color bc_btn_light_green_hover
+
+c_btn_success = green
+c_btn_success_hover = darken(c_btn_success, 20%)
+btn-success()
+  input[type='submit'].btn-success
+  input[type='button'].btn-success
+    color c_white
+    background-color c_btn_success
+    border-color darken(c_btn_success, 10%)
+    &:hover
+      background-color c_btn_success_hover
+      border-color darken(c_btn_success_hover, 10%)
+     
+c_btn_warn = red
+c_btn_warn_hover = darken(c_btn_warn, 20%)
+btn-warn()
+  input[type='submit'].btn-warn
+  input[type='button'].btn-warn
+    color c_white
+    background-color c_btn_warn
+    border-color darken(c_btn_warn, 10%)
+    &:hover
+      background-color c_btn_warn_hover
+      border-color darken(c_btn_warn_hover, 10%)      
+
+c_btn_alert = yellow
+c_btn_alert_hover = darken(c_btn_alert, 20%)
+btn-alert()
+  input[type='submit'].btn-alert
+  input[type='button'].btn-alert
+    color c_white
+    background-color c_btn_alert
+    border-color darken(c_btn_alert, 10%)
+    &:hover
+      background-color c_btn_alert_hover
+      border-color darken(c_btn_alert_hover, 10%)            
+
       
 
 

@@ -1,76 +1,55 @@
-@import '../menu/reset_menu'
-body
-  background-color #f5f5f5
-#app
-  max-width $MAX_WIDTH
-  margin 0 auto
-main
-  margin 0 5em 2em 5em
-  margin-top 1em
+@import '../menu/reset_menu_footer'
+@import '../input'
+@import '../message'
+btn-primary()
+btn-secondary()
+.panel
+  color c_gray
   input
-    margin-bottom .6em
-    width 100%
-  .title
-    font-size 1.6em
-    color #666
-    font-weight 400
-    line-height 2
-  .sub-title
-    font-size 1.3em
-    color #666
-    font-weight 400
-    line-height 1.6
+    margin-top: 1em
   .wrapper-image
     position relative
     // display block
     margin 0 auto
     margin-bottom 1em
-    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+    border 1px solid b_ineer_panel
     border-radius 4px
     background-color #fff
     padding 1em
     > img
       max-width 100%
     &:hover 
-      background-color rgba(0, 0, 0, .05)
+      background-color bgc_body
       .left-arrow
       .right-arrow
       p.delete-image
         display block
-    > .left-arrow
-      position absolute
-      top 50%
-      left 3%
-      width 0
-      height 0
-      border-right 30px solid orange
-      border-top 30px solid transparent
-      border-bottom 30px solid transparent
-      opacity 1
-      cursor pointer
-      display none 
-    > .right-arrow
-      position absolute
-      top 50%
-      right 3%
-      width 0
-      height 0
-      border-left 30px solid orange
-      border-top 30px solid transparent
-      border-bottom 30px solid transparent
+    .left-arrow
+    .right-arrow
+    .delete-image
       opacity 1
       cursor pointer
       display none
+    .left-arrow
+    .right-arrow
+      position absolute
+      top 58%
+      width 0
+      height 0
+      border-top 30px solid transparent
+      border-bottom 30px solid transparent
+    > .left-arrow
+      left 3%
+      border-right 30px solid orange
+    > .right-arrow
+      right 3%
+      border-left 30px solid orange
     > p.delete-image
       position absolute
-      top 46%
+      top 35%
       right 50%
-      opacity 1
       color orange
       font-size 5em
-      // font-weight bold
-      cursor pointer
-      display none
   .upload-image
     > label
       color #666
@@ -91,9 +70,120 @@ main
     .icon
       width 1.5em
       height 1.5em
-  input[type='button']
-    float right
-    max-width 6em
-    margin 3em 0 2em 2em
-    &:hover
-      cursor pointer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// @import '../menu/reset_menu'
+// body
+//   background-color #f5f5f5
+// #app
+//   max-width $MAX_WIDTH
+//   margin 0 auto
+// main
+//   margin 0 5em 2em 5em
+//   margin-top 1em
+//   input
+//     margin-bottom .6em
+//     width 100%
+//   .title
+//     font-size 1.6em
+//     color #666
+//     font-weight 400
+//     line-height 2
+//   .sub-title
+//     font-size 1.3em
+//     color #666
+//     font-weight 400
+//     line-height 1.6
+//   .wrapper-image
+//     position relative
+//     // display block
+//     margin 0 auto
+//     margin-bottom 1em
+//     box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+//     border-radius 4px
+//     background-color #fff
+//     padding 1em
+//     > img
+//       max-width 100%
+//     &:hover 
+//       background-color rgba(0, 0, 0, .05)
+//       .left-arrow
+//       .right-arrow
+//       p.delete-image
+//         display block
+//     > .left-arrow
+//       position absolute
+//       top 50%
+//       left 3%
+//       width 0
+//       height 0
+//       border-right 30px solid orange
+//       border-top 30px solid transparent
+//       border-bottom 30px solid transparent
+//       opacity 1
+//       cursor pointer
+//       display none 
+//     > .right-arrow
+//       position absolute
+//       top 50%
+//       right 3%
+//       width 0
+//       height 0
+//       border-left 30px solid orange
+//       border-top 30px solid transparent
+//       border-bottom 30px solid transparent
+//       opacity 1
+//       cursor pointer
+//       display none
+//     > p.delete-image
+//       position absolute
+//       top 46%
+//       right 50%
+//       opacity 1
+//       color orange
+//       font-size 5em
+//       // font-weight bold
+//       cursor pointer
+//       display none
+//   .upload-image
+//     > label
+//       color #666
+//       font-weight 400
+//       font-size 1.5em
+//       cursor pointer   
+//       display block
+//       box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+//       border-radius 4px
+//       background-color #fff
+//       padding 1em
+//       > svg
+//         vertical-align text-bottom
+//       &:hover
+//         background-color rgba(0, 0, 0, .05)
+//     > input
+//       display none  
+//     .icon
+//       width 1.5em
+//       height 1.5em
+//   input[type='button']
+//     float right
+//     max-width 6em
+//     margin 3em 0 2em 2em
+//     &:hover
+//       cursor pointer
