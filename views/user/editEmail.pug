@@ -24,8 +24,6 @@ block content
     input(type='password' name='password' id='password' v-model='password')        
     input.btn-primary(type='button' value='Salvar Alterações' @click='save()')
 
-block footer
-
 append internal_scripts
   script.
     let email = !{JSON.stringify(email)};

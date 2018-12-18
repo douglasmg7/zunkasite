@@ -1,9 +1,12 @@
-@import '../menu/reset_menu'
+@import '../menu/reset_menu_footer'
 @import '../input'
 @import '../message'
 btn-primary()
 .panel
-  margin-bottom 4em
+  p
+    color c_gray
+    margin 0
+    line-height 1.7
   > .addresses
     flex 1 1 auto
     display flex
@@ -28,6 +31,8 @@ btn-primary()
       > .address-footer
         padding .8em
       > .address-body 
+        h4
+          margin-bottom .5em
         :first-child
           font-weight bold
           margin-top 0

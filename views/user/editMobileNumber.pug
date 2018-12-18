@@ -15,8 +15,6 @@ block content
     input(type='text' name='mobileNumber' id='mobileNumber' v-model='mobileNumber')
     input.btn-primary(type='button' value='Salvar Alterações' @click='save()') 
 
-block footer
-
 append internal_scripts
   script.
     let mobileNumber = !{JSON.stringify(mobileNumber)};

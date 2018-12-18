@@ -16,8 +16,6 @@ block content
     input.btn-primary(type='button' value='Apagar Conta' @click='deleteAccount()')
     p.warn-message(v-show='this.warnMessage !== ""') {{warnMessage}}
 
-block footer
-
 append internal_scripts
   script.
     let cart = !{JSON.stringify(cart)};

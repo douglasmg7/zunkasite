@@ -15,8 +15,6 @@ block content
     input(type='text' name='cpf' id='cpf' v-model='cpf')
     input.btn-primary(type='button' value='Salvar Alterações' @click='save()') 
 
-block footer
-
 append internal_scripts
   script.
     let cpf = !{JSON.stringify(cpf)};

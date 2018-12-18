@@ -65,8 +65,6 @@ block content
       p.validation(v-if='validation.phone') {{validation.phone}} 
       input.btn-primary(type='button' @click='newAddressSelected()' value='Enviar para este endereço') 
 
-block footer
-
 append internal_scripts
   script.
     let addresss = !{JSON.stringify(addresss)};

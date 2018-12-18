@@ -77,8 +77,6 @@ block content
                 td: p.title {{ removedProduct.title }}
         input.btn-primary(type='button' @click='userReceiveMsgCartChanged()' value='Ok')
 
-block footer
-  
 append internal_scripts
   script.
     let user = !{JSON.stringify(user)};

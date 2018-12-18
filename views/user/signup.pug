@@ -27,7 +27,5 @@ block content
     input.btn-primary(type='submit' value='Cadastrar' @click='signup()')
     p.success-message(v-show='this.successMessage !== ""') {{ successMessage }}
 
-block footer
-
 append external_scripts
   script(src='/js/user/signup.js')         

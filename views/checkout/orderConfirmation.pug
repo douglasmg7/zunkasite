@@ -47,8 +47,6 @@ block content
       h3 Valor total com frete
       p.price {{ order.totalPrice | formatMoney }}
 
-block footer
-
 append internal_scripts
   script.
     let order = !{JSON.stringify(order)};

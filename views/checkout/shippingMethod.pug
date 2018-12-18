@@ -36,8 +36,6 @@ block content
             span.price R${{deliveryPrice}}
       input.btn-primary(type='button' @click='shipmentSelected()' value='Continuar')
 
-block footer
-
 append internal_scripts
   script.
     let order = !{JSON.stringify(order)};

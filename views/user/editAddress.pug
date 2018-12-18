@@ -1,7 +1,7 @@
 extends ../layout/layout_vue
 
 block title
-  title Zunka - Cadastro de usário
+  title Zunka - Cadastro de endereço
 
 block css
   link(rel="stylesheet" href="/css/user/editAddress.css" charset="utf-8")
@@ -43,8 +43,6 @@ block content
     label(for='phone') Telefone
     input(type='text' id='phone' v-model='address.phone')                                                                                        
     input.btn-primary(type='button', :value='isNewAddress ? "Criar novo Endereço": "Salvar"' @click='saveAddress()')
-
-block footer
 
 append internal_scripts
   script.

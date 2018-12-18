@@ -1,9 +1,11 @@
-@import '../menu/reset_menu'
+@import '../menu/reset_menu_footer'
 @import '../input'
 @import '../message'
 btn-primary()
 .panel
   width width_address_page
+  p
+    color c_gray
   .address
   .form
     display flex
@@ -12,10 +14,12 @@ btn-primary()
     border-radius 4px
     min-width 450px
     padding 0 .7em .7em .7em 
+    input
+      margin-top 1em
   .address
     p
       margin 0
-      line-height 2em
+      line-height 1.7em
     h3
       font-weight 600
     margin-bottom 1em

@@ -16,7 +16,7 @@ block content
           h3 Padrão
           hr
         .address-body      
-          p {{address.name}}                                                                                                
+          h4 {{address.name}}                                                                                                
           p {{address.phone}}                                                                                                
           p {{address.cep}}                                                                                                
           p {{address.address}}                                                                                                
@@ -33,8 +33,6 @@ block content
             strong &nbsp | &nbsp
             a.set-default-address(@click='setDefaultAddress(address._id)') Marcar como padrão
       input.btn-primary(type='button' @click='addAddress()' value='Adicionar novo endereço')
-
-block footer
 
 append internal_scripts
   script.

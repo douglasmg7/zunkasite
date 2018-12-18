@@ -22,8 +22,6 @@ block content
     label Não tem cadastro?
     input.btn-secondary(type='submit' value='Cadastrar' @click='signup()')
 
-block footer
-
 append internal_scripts
   script.
     let warnMessage = !{JSON.stringify(warnMessage)};
