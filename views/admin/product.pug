@@ -126,9 +126,9 @@ block content
     input(type='text' id='stock' v-model='product.storeProductQtd')
     p.validation(v-if='validation.storeProductQtd') {{validation.storeProductQtd}}
     .buttons
-      input.btn-warn(type='button' v-on:click='deleteProduct()' value='Apagar') 
+      input.btn-danger(type='button' v-on:click='deleteProduct()' value='Apagar') 
       input.btn-success(type='button' v-on:click='saveProduct()' value='Salvar')
-      input.btn-alert(type='button' onclick='window.location.href="/admin"' value='Sair') 
+      input.btn-info(type='button' onclick='window.location.href="/admin"' value='Sair') 
 
 block footer
   

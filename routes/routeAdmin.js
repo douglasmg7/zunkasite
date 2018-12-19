@@ -128,26 +128,30 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
   // Form validation, true for valid value.
   let validation = {};
   // Dealer price.
-  validation.dealerProductPrice = req.body.product.dealerProductPrice >= 0 ? undefined : 'Valor inválido';
+  validation.dealerProductPrice = parseFloat(req.body.product.dealerProductPrice) >= 0 ? undefined : 'Valor inválido';
   // Price.
-  validation.storeProductPrice = req.body.product.storeProductPrice >= 0 ? undefined : 'Valor inválido';
+  validation.storeProductPrice = parseFloat(req.body.product.storeProductPrice) >= 0 ? undefined : 'Valor inválido';
   // Markup.
-  validation.storeProductMarkup = req.body.product.storeProductMarkup >= 0 ? undefined : 'Valor inválido'; 
+  validation.storeProductMarkup = parseFloat(req.body.product.storeProductMarkup) >= 0 ? undefined : 'Valor inválido'; 
   // Discount.
-  validation.storeProductDiscountValue = req.body.product.storeProductDiscountValue >= 0 ? undefined: 'Valor inválido';
+  validation.storeProductDiscountValue = parseFloat(req.body.product.storeProductDiscountValue) >= 0 ? undefined: 'Valor inválido';
   // Quantity.
-  validation.storeProductQtd = req.body.product.storeProductQtd >= 0 ? undefined: 'Valor inválido';
+  validation.storeProductQtd = parseFloat(req.body.product.storeProductQtd) >= 0 ? undefined: 'Valor inválido';
   // Length.
-  validation.storeProductLength = req.body.product.storeProductLength >= 0 ? undefined: 'Valor inválido';
+  validation.storeProductLength = req.body.product.storeProductLength > 0 ? undefined: 'Valor inválido';
   // Height.
-  validation.storeProductHeight = req.body.product.storeProductHeight >= 0 ? undefined: 'Valor inválido';
+  validation.storeProductHeight = req.body.product.storeProductHeight > 0 ? undefined: 'Valor inválido';
   // Width.
-  validation.storeProductWidth = req.body.product.storeProductWidth >= 0 ? undefined: 'Valor inválido';
+  validation.storeProductWidth = req.body.product.storeProductWidth > 0 ? undefined: 'Valor inválido';
   // Weight.
-  validation.storeProductWeight = req.body.product.storeProductWeight >= 0 ? undefined: 'Valor inválido';
+  validation.storeProductWeight = req.body.product.storeProductWeight > 0 ? undefined: 'Valor inválido';
   // Send validation erros if some.
+  log.debug(req.body.product.storeProductLength);
+  log.debug(validation.storeProductLength);
+  log.debug(typeof req.body.product.storeProductLength);
   for (let key in validation){
     if (validation[key]) {
+      // log.debug(validation)
       res.json({validation});
       return;
     }

@@ -53,13 +53,13 @@ var app = new Vue({
       .then(response => {
         // Validation error.
         if (response.data.validation) {
-          for (key in this.validation){
+          for (let key in this.validation){
             this.validation[key] = response.data.validation[key];
           }
         // No error validation.
         } else {
         // Clean error validation.
-          for (key in this.validation){
+          for (let key in this.validation){
             this.validation[key] = '';
           }
         }
