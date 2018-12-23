@@ -28,7 +28,7 @@ var app = new Vue({
   },
   created() {
     // On reload page use the query string for search, not the input search.
-    // this.getProducts();
+    this.getProducts();
     this.getNewProducts();
     this.getBestSellingProducts();
     // To show product added to cart.

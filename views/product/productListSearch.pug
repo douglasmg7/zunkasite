@@ -7,6 +7,7 @@ block css
   link(rel="stylesheet" href="/css/product/productListSearch.css" charset="utf-8")
 
 block content 
+  h2 Sua pesquisa por "{{search}}"
   .cart(v-if='this.productAddedToCart._id')
     .item
       img(:src='"/img/" + this.productAddedToCart._id + "/" + this.productAddedToCart.images[0]')

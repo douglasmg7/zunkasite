@@ -47,6 +47,19 @@ block content
             sup R$
             | {{ product.storeProductPrice | currency | currencyInt }}
             sup {{ product.storeProductPrice | currency | currencyCents }} 
+  .all-products
+    h3.title Todos os produtos
+    .products
+      .product(v-for='product in products')
+        a(:href='"/product/" + product._id')
+          img(:src='`/img/${product._id}/${product.images[0]}`', v-if='product.images[0]')
+          h4.title {{ product.storeProductTitle }}
+          h3.price
+            sup R$
+            | {{ product.storeProductPrice | currency | currencyInt }}
+            sup {{ product.storeProductPrice | currency | currencyCents }} 
+  .pagination
+    a(v-for='p in pageCount', @click='getProducts(p)', :page='page==p', :p='p', :active='page==p') {{p}}
 
 append internal_scripts
   script.

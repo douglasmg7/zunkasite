@@ -7,7 +7,7 @@ const Product = require('../model/product');
 // Redis.
 const redis = require('../db/redis');
 // Max product quantity by Page.
-const PRODUCT_QTD_BY_PAGE  = 8;
+const PRODUCT_QTD_BY_PAGE  = 4;
 // const stringify = require('js-stringify')
 
 // Format number to money format.
@@ -85,7 +85,7 @@ router.get('/api/products', function (req, res) {
 // Get news products.
 router.get('/api/new-products', function (req, res) {
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
-  const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
+  // const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
   const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
   // Find products.
   let productPromise = Product.find(search).sort({'createdAt': -1}).limit(4).exec();
@@ -100,7 +100,7 @@ router.get('/api/new-products', function (req, res) {
 // Get best selling products.
 router.get('/api/best-selling-products', function (req, res) {
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
-  const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
+  // const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
   const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
   // const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductQtdSold': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
   // Find products.
