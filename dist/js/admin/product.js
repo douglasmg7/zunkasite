@@ -44,6 +44,7 @@ var app = new Vue({
     },
     // Save product.
     saveProduct(){
+      // console.debug(product.storeProductCategory);
       axios({
         method: 'post',
         url: window.location.pathname,

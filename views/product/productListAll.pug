@@ -18,8 +18,11 @@ block content
       .buttons
         button(onclick='window.location="/cart"') Carrinho
         button(onclick='window.location="/checkout/shipping-address"') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
-    h3.title Todos os produtos
+    h2.title(v-show='search && products.length') Sua pesquisa por "{{search}}"
+    h2.title(v-show='search && !products.length') Nenhum resultado encontrado para "{{search}}"
+    h2.title(v-show='!search') Todos os produtos
     .all-products
+      //- .left-bar(v-show='products.length')
       .left-bar
         select(id='prduct-order' v-model='sort')
           option(value='alfa') Ordem alfabética

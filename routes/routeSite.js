@@ -75,11 +75,37 @@ router.get('/product/:_id', function(req, res, next) {
 router.get('/api/products', function (req, res) {
   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
   const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
-  const search = req.query.search
-    ? {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}, 'storeProductTitle': {$regex: req.query.search, $options: 'i'}}
-    : {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};    
+  // log.debug(JSON.stringify(req.query.sort));
+  const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
+  // Text search.
+  if (req.query.search) {
+    search.storeProductTitle = {$regex: req.query.search, $options: 'i'};
+  }
+  // const search = req.query.search
+  //   ? {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}, 'storeProductTitle': {$regex: req.query.search, $options: 'i'}}
+  //   : {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};    
+  // log.debug(JSON.stringify(req.query.categoriesFilter));
+  // Categories search.
+  if (req.query.categoriesFilter && req.query.categoriesFilter.length) {
+    // log.debug(JSON.stringify(req.query.categoriesFilter.length));
+    search.storeProductCategory = {$in: req.query.categoriesFilter};
+  }
+  // Sort.
+  let sort = {storeProductTitle: 1};
+  switch(req.query.sort) {
+    case 'best-selling':
+      sort = {storeProductQtdSold: -1};
+      break;
+    case 'price-low':
+      sort = {storeProductPrice: 1};
+      break;
+    case 'price-high':
+      sort = {storeProductPrice: -1};
+      break;
+  }
   // Find products.
-  let productPromise = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
+  let productPromise = Product.find(search).sort(sort).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
+  // let productPromise = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
   // Product count.
   let productCountPromise = Product.count(search).exec();
   Promise.all([productPromise, productCountPromise])

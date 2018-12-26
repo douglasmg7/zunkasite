@@ -47,16 +47,19 @@ block content
     //- Maker.
     .maker
       label(for='maker') Fabricante
-      select(id='maker')
-        option(v-for='maker in productMakers', :value='maker.value', :selected='maker.name === product.storeProductMaker') {{maker.name}}
-    //- label(for='maker') Fabricante
-    //- select(id='maker' v-model='product.storeProductMaker')
-    //-   option(v-for='maker in productMakers', :value='maker.value') {{maker.name}}              
+      select(id='maker' v-model='product.storeProductMaker')
+        option(v-for='maker in productMakers') {{maker.name}}           
+      //- label(for='maker') Fabricante
+      //- select(id='maker')
+      //-   option(v-for='maker in productMakers', :value='maker.value', :selected='maker.name === product.storeProductMaker') {{maker.name}}           
     //- Categories.
     .category
       label(for='category') Categoria
       select(id='category' v-model='product.storeProductCategory')
-        option(v-for='category in productCategories', :value='category.value') {{category.name}}       
+        option(v-for='category in productCategories') {{category.name}}       
+      //- label(for='category') Categoria
+      //- select(id='category' v-model='product.storeProductCategory')
+      //-   option(v-for='category in productCategories', :value='category.value') {{category.name}}       
     //- Warranty.
     h2 Garantia
     hr

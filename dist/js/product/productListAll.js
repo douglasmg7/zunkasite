@@ -2,7 +2,7 @@
 
 // Search for products.
 function _search(text){
-  window.location.href = `/search?page=1&search=${text}`;
+  window.location.href = `/all?page=1&search=${text}`;
 }
 
 var app = new Vue({
@@ -50,6 +50,7 @@ var app = new Vue({
   methods: {
     // Get products.
     getProducts(page=1){
+      // console.debug(this.categoriesFilter);
       axios({
         method: 'get',
         url: `/api/products`,
@@ -57,7 +58,8 @@ var app = new Vue({
         params: {
           page: page,
           search: this.search,
-          categoriesFilter: this.categoriesFilter
+          categoriesFilter: this.categoriesFilter,
+          sort: this.sort
         },
         headers:{'csrf-token' : csrfToken}
       })
@@ -92,6 +94,20 @@ var app = new Vue({
       }
     }
   },  
+  watch: {
+    categoriesFilter: {
+      handler(val){
+        this.getProducts(1);
+      },
+      deep: true
+    },
+    sort: {
+      handler(val){
+        this.getProducts(1);
+      },
+      deep: true
+    }
+  },
   filters: {
     currency(val){
       return val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");

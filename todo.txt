@@ -1,7 +1,3 @@
-save product only save categoreis on second click.
-
-scroll to top on search page.
-
 image zoom
 
 incluir produtos com zero estoque, ativos e comercializar para venda, informar produto indisponível.

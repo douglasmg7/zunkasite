@@ -166,6 +166,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
       } else {
         log.info(`Produto ${newProduct._id} saved.`);
         res.json({ isNew: true, product: newProduct });
+        updateCategoriesInUse();
       }
     });
   }
@@ -179,6 +180,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
       } else {
         log.info(`Produto ${product._id} updated.`);
         res.json({});
+        updateCategoriesInUse();
         // Sync upladed images with product.images.
         // Get list of uploaded images.
         fse.readdir(path.join(__dirname, '..', 'dist/img/', req.body.product._id), (err, files)=>{
@@ -209,7 +211,6 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
       }
     });    
   }
-  updateCategoriesInUse();
 });
 
 // Delete a product.
@@ -531,7 +532,7 @@ function updateCategoriesInUse(){
     if (index > -1) {
       categories.splice(index, 1);
     }
-    log.debug(JSON.stringify(categories));
+    // log.debug(JSON.stringify(categories));
     redis.set('categoriesInUse', JSON.stringify(categories), (err)=>{
       if (err) { 
         log.error(new Error(err).stack);
