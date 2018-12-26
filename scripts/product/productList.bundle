@@ -9,8 +9,8 @@ var app = new Vue({
     visibleBanner: 0,
     // Change banner automaticly.
     bannerAutoChange: true, 
-    // Products.
-    products: [],
+    // // Products.
+    // products: [],
     // New products.
     newProducts: [],
     // Best selling products.
@@ -28,7 +28,7 @@ var app = new Vue({
   },
   created() {
     // On reload page use the query string for search, not the input search.
-    this.getProducts();
+    // this.getProducts();
     this.getNewProducts();
     this.getBestSellingProducts();
     // To show product added to cart.
@@ -37,22 +37,22 @@ var app = new Vue({
     setInterval(this.changeBanner, 3000);
   },
   methods: {
-    // Get products.
-    getProducts(page=1){
-      axios({
-        method: 'get',
-        url: `/api/products/?page=${page}&search=${this.search}`,
-        headers:{'csrf-token' : csrfToken}
-      })
-      .then((res)=>{
-        this.products = res.data.products;
-        this.page = res.data.page;
-        this.pageCount = res.data.pageCount;
-      })
-      .catch((err)=>{
-        console.error(`Error - getProducts(), err: ${err}`);
-      });
-    },
+    // // Get products.
+    // getProducts(page=1){
+    //   axios({
+    //     method: 'get',
+    //     url: `/api/products/?page=${page}&search=${this.search}`,
+    //     headers:{'csrf-token' : csrfToken}
+    //   })
+    //   .then((res)=>{
+    //     this.products = res.data.products;
+    //     this.page = res.data.page;
+    //     this.pageCount = res.data.pageCount;
+    //   })
+    //   .catch((err)=>{
+    //     console.error(`Error - getProducts(), err: ${err}`);
+    //   });
+    // },
     // Get new products.
     getNewProducts(page=1){
       axios({

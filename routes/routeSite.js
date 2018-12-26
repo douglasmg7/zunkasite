@@ -7,7 +7,7 @@ const Product = require('../model/product');
 // Redis.
 const redis = require('../db/redis');
 // Max product quantity by Page.
-const PRODUCT_QTD_BY_PAGE  = 4;
+const PRODUCT_QTD_BY_PAGE  = 18;
 // const stringify = require('js-stringify')
 
 // Format number to money format.
@@ -42,6 +42,14 @@ router.get('/search', function(req, res, next) {
   });   
 });
 
+// Get all products page.
+router.get('/all', function(req, res, next) {
+  res.render('product/productListAll', {
+    nav: {
+    },
+    search: req.query.search ? req.query.search : '',
+  });   
+});
 
 // Get product page.
 router.get('/product/:_id', function(req, res, next) {
@@ -76,11 +84,38 @@ router.get('/api/products', function (req, res) {
   let productCountPromise = Product.count(search).exec();
   Promise.all([productPromise, productCountPromise])
   .then(([products, count])=>{    
-    res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)});
+    redis.get('categoriesInUse', (err, categories)=>{
+      // Internal error.
+      if (err) { 
+        log.error(err.stack);
+        return res.render('/error', { message: 'Não foi possível encontrar as categorias.', error: err });
+      } 
+      // Render page.  
+      res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE), categories: JSON.parse(categories) || []});
+    });  
   }).catch(err=>{
     return next(err);
   });
 });
+
+// // Get products.
+// router.get('/api/products', function (req, res) {
+//   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
+//   const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
+//   const search = req.query.search
+//     ? {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}, 'storeProductTitle': {$regex: req.query.search, $options: 'i'}}
+//     : {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};    
+//   // Find products.
+//   let productPromise = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
+//   // Product count.
+//   let productCountPromise = Product.count(search).exec();
+//   Promise.all([productPromise, productCountPromise])
+//   .then(([products, count])=>{    
+//     res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)});
+//   }).catch(err=>{
+//     return next(err);
+//   });
+// });
 
 // Get news products.
 router.get('/api/new-products', function (req, res) {

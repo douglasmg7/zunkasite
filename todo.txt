@@ -1,7 +1,6 @@
-search page
-  inlcude title with what was searched
+save product only save categoreis on second click.
 
-include border o main imagen on product page
+scroll to top on search page.
 
 image zoom
 

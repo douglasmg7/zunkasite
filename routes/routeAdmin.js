@@ -146,9 +146,6 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
   // Weight.
   validation.storeProductWeight = req.body.product.storeProductWeight > 0 ? undefined: 'Valor inválido';
   // Send validation erros if some.
-  log.debug(req.body.product.storeProductLength);
-  log.debug(validation.storeProductLength);
-  log.debug(typeof req.body.product.storeProductLength);
   for (let key in validation){
     if (validation[key]) {
       // log.debug(validation)
@@ -212,6 +209,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
       }
     });    
   }
+  updateCategoriesInUse();
 });
 
 // Delete a product.
@@ -520,3 +518,24 @@ router.put('/upload-banner-images', checkPermission, (req, res)=>{
     }
   });
 });
+
+// Update list of categories in use.
+function updateCategoriesInUse(){
+  // mongoose.connection.db.collection('products').distinct("storeProductCategory")
+  Product.find().distinct('storeProductCategory', (err, categories)=>{
+    if (err) {
+      log.error(new Error(err).stack);
+      return;
+    }
+    let index = categories.indexOf("");
+    if (index > -1) {
+      categories.splice(index, 1);
+    }
+    log.debug(JSON.stringify(categories));
+    redis.set('categoriesInUse', JSON.stringify(categories), (err)=>{
+      if (err) { 
+        log.error(new Error(err).stack);
+      }
+    });
+  })
+}
