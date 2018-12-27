@@ -136,9 +136,8 @@ var app = new Vue({
     },
     srcImg0200(product){
       let regExpResult = product.images[0].match(/\.[0-9a-z]+$/i);
-      let fileName = '/img/' + product._id + '/' + product.images[0].slice(0, regExpResult.index) + '_0200px' + regExpResult[0];
-      console.debug(fileName);
-      return fileName;
+      // console.debug(fileName);
+      return '/img/' + product._id + '/' + product.images[0].slice(0, regExpResult.index) + '_0200px' + regExpResult[0]
     }
   },  
   filters: {

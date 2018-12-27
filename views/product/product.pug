@@ -9,9 +9,11 @@ block css
 block content
   .product
     .image
-      img(:src='`/img/${product._id}/${product.images[selectedThumbnail]}`' v-if='product.images.length > 0')
+      img(:src='srcImg0300(product, selectedThumbnail)' v-if='product.images.length > 0')
+      //- img(:src='`/img/${product._id}/${product.images[selectedThumbnail]}`' v-if='product.images.length > 0')
       .thumbnail
-        img(v-for='image, index in product.images', :src='`/img/${product._id}/${product.images[index]}`' @click='selectedThumbnail=index')
+        img(v-for='image, index in product.images', :src='srcImg0080(product, index)' @click='selectedThumbnail=index')
+        //- img(v-for='image, index in product.images', :src='`/img/${product._id}/${product.images[index]}`' @click='selectedThumbnail=index')
     .info
       //- Title.
       h2.product-title {{product.storeProductTitle}}

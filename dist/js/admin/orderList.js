@@ -5,7 +5,7 @@ const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', '
 
 // Search for products.
 function _search(text){
-  window.location.href = `/search?page=1&search=${text}`;
+  window.location.href = `/all?page=1&search=${text}`;
 }
 
 // Vue.

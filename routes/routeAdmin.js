@@ -6,6 +6,8 @@ const path = require('path');
 const fse = require('fs-extra');
 // File upload.
 const formidable = require('formidable');
+// Resize images.
+const sharp = require('sharp');
 // Models.
 const Product = require('../model/product');
 const ProductMaker = require('../model/productMaker');
@@ -193,7 +195,12 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
             files.forEach(function(file) {
               exist = false;
               req.body.product.images.forEach(function(image) {
-                if (file === image) {
+                // Not remove resized images.
+                let pathObj = path.parse(image);
+                let img_0080 = pathObj.name + '_0080px' + pathObj.ext; 
+                let img_0200 = pathObj.name + '_0200px' + pathObj.ext; 
+                let img_0300 = pathObj.name + '_0300px' + pathObj.ext; 
+                if ((file === image) || (file === img_0080) || (file === img_0200) || (file === img_0300)) {
                   exist = true;
                 }  
               });
@@ -239,6 +246,7 @@ router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
   form.keepExtensions = true;
   form.multiples = true;
   form.images = [];
+  let uploadedImgPath = [];
   // Verifiy file size.
   form.on('fileBegin', function(name, file){
     if (form.bytesExpected > MAX_FILE_SIZE_UPLOAD) {
@@ -248,6 +256,7 @@ router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
   // Received name and file.
   form.on('file', function(name, file) {
     log.info(`"${file.name}" uploaded to "${file.path}"`);
+    uploadedImgPath.push(file.path);
     form.images.push(path.basename(file.path));
   });
   // Err.
@@ -260,6 +269,8 @@ router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
   // All files have been uploaded.
   form.on('end', function() {
     res.json({images: form.images});
+    // log.info(JSON.stringify(uploadedImgPath));
+    createResizedImgs(uploadedImgPath);
   });
   // Create folder if not exist and start upload.
   fse.ensureDir(DIR_IMG_PRODUCT, err=>{
@@ -540,3 +551,46 @@ function updateCategoriesInUse(){
     });
   })
 }
+
+
+function createResizedImgs(images){
+  images.forEach(imgPath=>{
+    var ext = /_[0-9a-z]{1,6}\.[0-9a-z]+$/i;
+    let pathObj = path.parse(imgPath);
+    // File output.
+    let fileOut = {
+      _0080: path.format({dir: pathObj.dir, name: pathObj.name + '_0080px', ext: pathObj.ext }), 
+      _0200: path.format({dir: pathObj.dir, name: pathObj.name + '_0200px', ext: pathObj.ext }), 
+      _0300: path.format({dir: pathObj.dir, name: pathObj.name + '_0300px', ext: pathObj.ext }) 
+    }
+    // 0080 pixels.
+    sharp(imgPath)
+      .resize(80)
+      .toFile(fileOut._0080, (err, info)=>{
+        if (err) {
+          log.error(err);
+        }
+        log.info('Creted file: ' + fileOut._0080);
+      });
+    // 0200 pixels.
+    sharp(imgPath)
+      .resize(200)
+      .toFile(fileOut._0200, (err, info)=>{
+        if (err) {
+          log.error(err);
+        }
+        log.info('Creted file: ' + fileOut._0200);
+      });
+    // 0300 pixels.
+    sharp(imgPath)
+      .resize(300)
+      .toFile(fileOut._0300, (err, info)=>{
+        if (err) {
+          log.error(err);
+        }
+        log.info('Creted file: ' + fileOut._0300);
+      });
+  })
+}
+
+    

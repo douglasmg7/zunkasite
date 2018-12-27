@@ -36,7 +36,8 @@ block content
       .products
         .product(v-for='product in products')
           a(:href='"/product/" + product._id')
-            img(:src='`/img/${product._id}/${product.images[0]}`', v-if='product.images[0]')
+            img(:src='srcImg0200(product)', v-if='product.images[0]')
+            //- img(:src='`/img/${product._id}/${product.images[0]}`', v-if='product.images[0]')
             h4.title {{ product.storeProductTitle }}
             h3.price
               sup R$
