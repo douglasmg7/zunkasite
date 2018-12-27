@@ -17,7 +17,9 @@
     "install-certbot-service": "sudo ./bin/install-certbot-service",
     "start-mlab": "NODE_ENV=production DB=mlab nodemon ./bin/www",
     "test": "mocha test -u bdd -R spec -t 2000",
-    "testCompile": "mocha test -u bdd --compilers js:babel-core/register"
+    "testCompile": "mocha test -u bdd --compilers js:babel-core/register",
+    "createResizedImgs": "./bin/createResizedImgs.js",
+    "removeResizedImgs": "./bin/removeResizedImgs.js"
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
@@ -49,6 +51,7 @@
     "redis": "^2.8.0",
     "request": "^2.87.0",
     "serve-favicon": "^2.5.0",
+    "sharp": "^0.21.1",
     "soap": "^0.24.0",
     "svg-sprite": "^1.4.0",
     "winston": "^3.0.0",

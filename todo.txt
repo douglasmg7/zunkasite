@@ -1,3 +1,9 @@
+update node to version 10
+
+backup running system.
+
+detalhes técnicos -> especificação técnica
+
 image zoom
 
 incluir produtos com zero estoque, ativos e comercializar para venda, informar produto indisponível.
