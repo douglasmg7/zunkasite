@@ -1,5 +1,6 @@
 input
 textarea
+  font-size 1em
   box-sizing border-box
   width 100%
   height 2em
@@ -18,6 +19,10 @@ textarea
 input[type='submit']
 input[type='button']
   cursor: pointer  
+input[type='checkbox']
+  width 1em
+  height 1em
+  margin 0 .4em 0 0
 
 c_btn_primary = #080
 c_btn_primary_hover = darken(c_btn_primary, 20%)
@@ -90,5 +95,17 @@ btn-info()
     &:hover
       background-color c_btn_info_hover
       border-color darken(c_btn_info_hover, 10%) 
+      
+c_btn_exit = #138496
+c_btn_exit_hover = darken(c_btn_exit, 20%)
+btn-exit()
+  input[type='submit'].btn-exit
+  input[type='button'].btn-exit
+    color c_white
+    background-color c_btn_exit
+    border-color darken(c_btn_exit, 10%)
+    &:hover
+      background-color c_btn_exit_hover
+      border-color darken(c_btn_exit_hover, 10%) 
 
 

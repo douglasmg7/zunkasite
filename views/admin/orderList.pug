@@ -12,7 +12,7 @@ block content
       h2 Pedidos
       .search-order
         input(type='text' v-model='searchOrder' @keyup.enter='getOrders()' placeholder='Pesquise em todas as ordens')
-        input.btn-primary(type='button' @click='getOrders()' value='Pesquisar ordens')
+        input.btn-primary(type='button' @click='getOrders()' value='Pesquisar')
     .filter
       //- Show placed.
       input(type='checkbox' id='showPlaced' v-model:checked='filter.placed')
@@ -47,67 +47,67 @@ block content
     nav.pagination
       a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
     div.modal(v-if='showModal')
-      .modal-content
-        .pedido
-          p.title Número do pedido
+      .panel
+        .item
+          h2 Número do pedido
           P {{orderSelec._id}}
-        .clientdetail
-          p.title Cliente.
+        .item
+          h2 Cliente
           p Nome: {{orderSelec.name}}
           p Email: {{orderSelec.email}}
-        .address
-          p.title Endereço de entrega.
+          p CPF: {{orderSelec.cpf}}
+          p Celular: {{orderSelec.mobileNumber}}
+        .item
+          h2 Endereço de entrega
           p Nome: {{orderSelec.shipping.address.name}}
           p Telefone: {{orderSelec.shipping.address.phone}}
           p {{orderSelec.shipping.address.address}},  {{orderSelec.shipping.address.addressNumber}} {{orderSelec.shipping.address.addressComplement}}
           p {{orderSelec.shipping.address.district}}
           p {{orderSelec.shipping.address.city}} - {{orderSelec.shipping.address.state}} - Brasil
           p {{orderSelec.shipping.address.cep}} 
-        .shipment
-          p.title Frete
+        .item
+          h2 Frete
           p Envio padrão
-          span Prazo: 
-          span.deadline {{orderSelec.shipping.deadline}} dia(s)
-          br
-          span Valor do frete: 
-          span.price R${{orderSelec.shipping.price}}
-        .items(v-if='orderSelec.items.length > 0')
-          p.title Itens
+          p
+            span Prazo: 
+            span {{orderSelec.shipping.deadline}} dia(s)
+          p
+            span Valor: 
+            span.price R${{orderSelec.shipping.price}}
+        .item(v-if='orderSelec.items.length > 0')
+          h2 Itens
           ul
             li(v-for='item in orderSelec.items')
-              p 
-                strong {{item.name}}
+              p {{item.name}}
               p 
                 span.price {{item.price | formatMoney}} 
                 span.quantity - Quantidade: {{item.quantity}}
-        .total
-          p.title Valor total com frete
+        .item
+          h2 Valor total com frete
           p.price {{ orderSelec.totalPrice | formatMoney }}
-        .status
-          p.title Status
+        .item
+          h2 Status
           p {{status(orderSelec)}}
-        .change-status(v-if='status(orderSelec) !== "Cancelado"')
-          p.title Alterar status para
-          button(v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("paid")') Pago
-          button(v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("shipped")') Enviado
-          button(v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("delivered")') Entregue
-          button(v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")') Cancelado
-          //- button(v-if='status(orderSelec) === "Aberto"' @click='setStatus("paid")') Pago
-          //- button(v-if='status(orderSelec) === "Pago"' @click='setStatus("shipped")') Enviado
-          //- button(v-if='status(orderSelec) === "Enviado"' @click='setStatus("delivered")') Entregue
-          //- button(v-if='status(orderSelec) !== "Cancelado"' @click='setStatus("canceled")') Cancelado
+        //- .change-status(v-if='status(orderSelec) !== "Cancelado"')
+        .item(v-if='status(orderSelec) !== "Cancelado"')
+          h2 Alterar status
+          .buttons
+            input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("paid")' value='Pago')
+            input.btn-primary(type='button' v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("shipped")' value='Enviado')
+            input.btn-primary(type='button' v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("delivered")' value='Entregue')
+            input.btn-danger(type='button' v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')
         .close-modal
-          button(@click='hideOrderDetail()') Fechar
+          input.btn-exit(type='button' @click='hideOrderDetail()' value='Sair')
     div.set-status(v-if='setStatusWindow.show')
-      .content
-        .message
+      .panel
+        .item
           h3 {{ setStatusWindow.message }}
-        .options(v-if='setStatusWindow.showCheckboxUpdateStock')
-          input(type='checkbox' id='updateStock' v-model:checked='setStatusWindow.updateStock')
-          label(for='updateStock') Voltar com o produto para o estoque
+          .options(v-if='setStatusWindow.showCheckboxUpdateStock')
+            input(type='checkbox' id='updateStock' v-model:checked='setStatusWindow.updateStock')
+            label(for='updateStock') Voltar com o produto para o estoque
         .buttons
-          button(@click='setStatus()') Sim
-          button(@click='setStatusWindow.show=false') Não
+          input.btn-primary(type='button' @click='setStatus()' value='Sim')
+          input.btn-exit(type='button' @click='setStatusWindow.show=false' value='Não')
 
 block footer
 

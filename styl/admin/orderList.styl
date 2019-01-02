@@ -1,11 +1,11 @@
 @import '../menu/reset_menu'
-@import '../menu/pagination'
-
-@import '../menu/reset_menu'
 @import '../input'
 @import '../message'
 @import '../menu/pagination'
 btn-primary()
+btn-secondary()
+btn-danger()
+btn-exit()
 message()
 .panel
   min-width min_width_order_list
@@ -19,21 +19,22 @@ message()
     h2
       margin .5em 0 0 0
     .search-order
+      flex 1 1 auto
       display flex
       flex-flow row nowrap
-      justify-content start-end
+      justify-content flex-end
       align-items flex-end
       input
         margin-left .5em
+      input[type='text']
+        flex 0 1 20em
+      input[type='button']
+        flex 0 1 10em
   > .filter
     background-color $veryLightGray
     display flex
     align-items center
     padding .5em
-    input
-      width 1em
-      height .5em
-      margin 0 .2em 0 0
     label
       margin 0 1em 0 0      
   > table
@@ -57,9 +58,8 @@ message()
     tr.product-commercialize.product-active
       background-color #bdffbd
   > .modal
-    position fixed /* Stay in place */
+    position fixed
     z-index 1
-    // z-index 1 /* Sit on top */
     left 0
     top 0
     width 100% /* Full width */
@@ -67,50 +67,47 @@ message()
     overflow auto /* Enable scroll if needed */
     background-color rgb(0,0,0) /* Fallback color */
     background-color rgba(0,0,0,0.4) /* Black w/ opacity */ 
-    display flex
-    flex-flow column nowrap
-    align-items center
-    > .modal-content
-      background-color #fefefe
-      margin 10% auto
-      padding 1em
-      border-radius .1em
-      display flex
-      flex-flow column nowrap
-      justify-content flex-start
+    // display flex
+    // flex-flow column nowrap
+    // align-items center
+    > .panel
+      margin 1em auto
       min-width 400px
-      // justify-content center
-      // max-width 600px
+      max-width 600px
+      p
+        margin .7em 0
       .price
         color c_price
       .quantity
         color $c_quantity
-      .title
-        font-weight bold
+      .total
         margin-top .5em
-      .deadline
-        font-weight bold
-      .items
+      > .item
+        background-color: bgc_ineer_panel
+        border-radius 4px
+        padding 1em
+        margin-bottom 1em
+        :first-child
+          margin-top 0
+        :last-child
+          margin-bottom 0
         ul
-          margin-left 2em
+          margin-left 1em
           li
             color $c_quantity
           margin-top .5em
           p
             margin-top .2em
             color black
-        button
-          margin-top 2em
-      .total
-        margin-top .5em
-      .change-status
-        margin-bottom 2em
-        button
-          margin .4em 1em .2em 0
+        > .buttons
+          display flex
+          justify-content space-between
+          input
+            flex 0 1 48%
       .close-modal
         display flex
         justify-content flex-end
-  & > .set-status
+  > .set-status
     position fixed /* Stay in place */
     z-index 2
     left 0
@@ -123,29 +120,29 @@ message()
     display flex
     flex-flow column nowrap
     align-items center
-    & > .content
-      border solid 1px black
-      background-color #fefefe
+    > .panel
       margin 30% auto
-      border-radius .1em
-      display flex
-      flex-flow column nowrap
-      justify-content flex-start
+      // display flex
+      // flex-flow column nowrap
+      // justify-content flex-start
       min-width 100px
-      & > .message
+      > .item
+        background-color: bgc_ineer_panel
+        border-radius 4px
         padding 1em
-      & > .options
+        margin-bottom 1em
+        :first-child
+          margin-top 0
+        :last-child
+          margin-bottom 0
+        > .options
+          display flex
+          align-items center
+          label
+            margin 0 1em 0 0   
+      > .buttons
         display flex
-        align-items flex-start
-        padding 0 1em 1em 1em
-        input[type='checkbox']
-          height: auto
-      & > .buttons
-        display flex
-        justify-content center
-        background-color #f4f4f4
-        padding 1em
-        & > button
-          margin-left 1em
-          min-width 6em
+        justify-content space-between
+        input
+          flex 0 1 48%
 

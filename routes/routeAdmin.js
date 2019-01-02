@@ -28,7 +28,7 @@ function checkPermission (req, res, next) {
   }
   // log.warn(req.method, req.originalUrl, ' - permission denied');
   // res.json('status: permission denied');
-  res.redirect('/users/login');
+  res.redirect('/user/signin');
 };
 
 module.exports = router;

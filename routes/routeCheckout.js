@@ -33,7 +33,7 @@ function checkPermission (req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/users/login');
+  res.redirect('/user/signin');
 }
 
 // Check not logged.
@@ -143,6 +143,8 @@ router.post('/shipping-address', (req, res, next)=>{
         order.user_id = req.user._id;
         order.name = req.user.name;
         order.email = req.user.email;
+        order.cpf = req.user.cpf;
+        order.mobileNumber = req.user.mobileNumber;
         order.timestamps = { shippingAddressSelectedAt: new Date() };
         order.status = 'shippingAddressSelected';
         order.shipping = { address: {} };
