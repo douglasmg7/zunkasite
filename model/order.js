@@ -42,6 +42,12 @@ let correioResult = new mongoose.Schema({
   obsFim: { type: String },
 });
 
+// Schema - Correio result.
+let motoboyResult = new mongoose.Schema({
+  price: { type: String },
+  deadline: { type: String },
+});
+
 // Schema - Shipping box dimensions.
 let boxDimensions = new mongoose.Schema({
   length: { type: Number, required: true },
@@ -61,6 +67,7 @@ let shipping = new mongoose.Schema({
   address: address,
   deadline: { type: Number },
   correioResult: correioResult, // Result from correio search ws for shipment price and deadline.
+  motoboyResult: motoboyResult, // Result from motoboy search for shipment price and deadline.
 });
 
 // Schema - Payment.

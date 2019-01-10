@@ -28,13 +28,39 @@ block content
       .radio
         //- h3.shipmentOption Tipo de entrega
         label
-          input(type='radio' name='shipmentOption' id='default' value='default' checked)/ 
-          span Envio padrão 
+          input(type='radio' name='shipmentOption' id='correios' value='correios' v-model='shippingMethod')/ 
+          span Correios
           p Prazo de entrega: 
-            span.deadline {{deliveryDeadline}} dia(s)
+            span.deadline {{deliveryDeadline}} dia(s) após a confirmação de pagamento
           p Valor: 
             span.price R${{deliveryPrice}}
+        label(v-if='order.shipping.motoboyResult.price')
+          input(type='radio' name='shipmentOption' id='motoboy' value='motoboy' v-model='shippingMethod')/ 
+          span Motoboy
+          p Prazo de entrega: 
+            span.deadline {{order.shipping.motoboyResult.deadline}} dia(s) após a confirmação de pagamento
+          p Valor:
+            span.price R${{order.shipping.motoboyResult.price}}
       input.btn-primary(type='button' @click='shipmentSelected()' value='Continuar')
+
+        //- .form
+        //-   .radio
+        //-     //- h3.shipmentOption Tipo de entrega
+        //-     label
+        //-       input(type='radio' name='shipmentOption' id='correios' value='correios' v-model='shipmentMethod' checked)/ 
+        //-       span Envio padrão 
+        //-       p Prazo de entrega: 
+        //-         span.deadline {{deliveryDeadline}} dia(s) após a confirmação de pagamento
+        //-       p Valor: 
+        //-         span.price R${{deliveryPrice}}
+        //-     label
+        //-       input(type='radio' name='shipmentOption' id='motoboy' value='motoboy' v-model='shipmentMethod')/ 
+        //-       span Motoboy
+        //-       p Prazo de entrega: 
+        //-         span.deadline 1 dia após a confirmação de pagamento
+        //-       p Valor:
+        //-         span.price R$ 20,00
+        //-   input.btn-primary(type='button' @click='shipmentSelected()' value='Continuar')
 
 append internal_scripts
   script.

@@ -9,7 +9,8 @@ function _search(text){
 var app = new Vue({
   el: '#app',
   data: {
-    order: order
+    order: order,
+    shippingMethod: 'correios'
   },
   methods: { 
     shipmentSelected: function(){
@@ -17,7 +18,7 @@ var app = new Vue({
         method: 'post',
         url: window.location.pathname,
         headers: {'csrf-token' : csrfToken},
-        data: { shippingMethod: 'correios'}
+        data: {shippingMethod: this.shippingMethod}
       })
       .then(response => {
         // Validation error.

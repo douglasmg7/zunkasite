@@ -9,6 +9,7 @@
     "*/*.txt",
     "*/*.jpeg",
     "log/*",
+    "bin/*",
     "dist/*",
     "scripts/*",
     "views/*",

@@ -15,6 +15,9 @@ const Address = require('../model/address');
 const Order = require('../model/order');
 const Product = require('../model/product');
 
+// Redis.
+const redis = require('../db/redis');
+
 // CEP origin, Rua Bicas - 31030160.
 const CEP_ORIGIN = '31030160';
 const STANDARD_DELIVERY_DEADLINE = 10;
@@ -197,7 +200,7 @@ router.get('/shipping-method/:order_id', (req, res, next)=>{
         // Box shipping dimensions.
         order.shipping.box = shippingBox;
       }
-      estimateShipping(shippingBox, (err, result)=>{
+      estimateCorreiosShipping(shippingBox, (err, result)=>{
         // No Correio info.
         if (err) {
           order.shipping.correioResult = {};
@@ -221,21 +224,42 @@ router.get('/shipping-method/:order_id', (req, res, next)=>{
             order.shipping.deadline = STANDARD_DELIVERY_DEADLINE;
           }
         }
-        // Uncomment to test with free shipping todo.
-        // order.shipping.price = 0;
-        // Save correio result.
-        order.save((err, newAddress) => {
-          if (err) {
-            res.json({err});
-            return next(err); 
-          } else {
-            res.render('checkout/shippingMethod', { 
-              nav: {
-              },
-              order
-            });  
+        // Get motoboy shipping values.
+        // log.debug(JSON.stringify(order.address));
+        let motoboy_key = `motoboy_${order.shipping.address.state.toLowerCase().trim().replace(/\s+/g, '-')}_${order.shipping.address.city.toLowerCase().trim().replace(/\s+/g, '-')}`;
+        log.debug(`motoboy_key: ${motoboy_key}`);
+        redis.get(motoboy_key, (err, motoboyResult)=>{
+          order.shipping.motoboyResult = {
+            price: '',
+            deadline: ''
+          };
+          log.debug(JSON.stringify(order.shipping.motoboyResult));
+          // Internal error.
+          if (err) { 
+            log.error(err.stack);
+          } 
+          // A valid city.
+          else if(motoboyResult){
+            let motoboyResultParsed = JSON.parse(motoboyResult);
+            order.shipping.motoboyResult.price = motoboyResultParsed.price;
+            order.shipping.motoboyResult.deadline = motoboyResultParsed.deadline;
           }
-        });
+          // Uncomment to test with free shipping todo.
+          // order.shipping.price = 0;
+          // Save correio result.
+          order.save((err, newAddress) => {
+            if (err) {
+              res.json({err});
+              return next(err); 
+            } else {
+              res.render('checkout/shippingMethod', { 
+                nav: {
+                },
+                order
+              });  
+            }
+          });
+        }); 
       })
     }
   });
@@ -245,12 +269,18 @@ router.get('/shipping-method/:order_id', (req, res, next)=>{
 router.post('/shipping-method/:order_id', (req, res, next)=>{
   // Set shipment method to default.
   Order.findById(req.params.order_id, (err, order)=>{
-    // Only one option yet. Alredy set on get shippment.
-    // shipping.price: 
-    // shipping.daedline: 
-    order.shipping.method = 'standard';
     // console.log(`req.body: ${JSON.stringify(req.body)}`);
-    if (req.body.shippingMethod == 'correios') { order.shipping.carrier = 'correios'; }
+    if (req.body.shippingMethod == 'correios') { 
+      order.shipping.price = order.shipping.correioResult.price; 
+      order.shipping.deadline = order.shipping.correioResult.deadline; 
+      order.shipping.method = 'correios';
+      order.shipping.carrier = 'correios'; 
+    } else if (req.body.shippingMethod == 'motoboy'){
+      order.shipping.method = 'motoboy';
+      order.shipping.carrier = 'sergio_delivery'; 
+      order.shipping.price = order.shipping.motoboyResult.price; 
+      order.shipping.deadline = order.shipping.motoboyResult.deadline; 
+    }
     order.totalPrice = (parseFloat(order.subtotalPrice) + parseFloat(order.shipping.price)).toFixed(2);
     order.timestamps.shippingMethodSelectedAt = new Date();
     order.status = 'shippingMethodSelected';
@@ -373,7 +403,7 @@ router.get('/ship-estimate', (req, res, next)=>{
       weight: product.storeProductWeight 
     }
     console.log(`box: ${JSON.stringify(box)}`);
-    estimateShipping(box, (err, result)=>{
+    estimateCorreiosShipping(box, (err, result)=>{
       if (err) {
         res.json({ err: err });
         return;
@@ -387,7 +417,7 @@ router.get('/ship-estimate', (req, res, next)=>{
 // box = {lenght, height, wdith, weight}
 // length, height, width in cm.
 // weight in grams.
-function estimateShipping(box, cb) {
+function estimateCorreiosShipping(box, cb) {
   // Length can not be less than 16cm (correio error);
   if (box.length < 16) { box.length = 16 };
   // Height can not be less than 2cm (correio error);
