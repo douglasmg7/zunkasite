@@ -13,6 +13,7 @@ const Product = require('../model/product');
 const ProductMaker = require('../model/productMaker');
 const ProductCategorie = require('../model/productCategorie');
 const Order = require('../model/order');
+const MotoboyDelivery = require('../model/motoboyDelivery');
 // Redis.
 const redis = require('../db/redis');
 // Max product quantity by Page.
@@ -443,7 +444,7 @@ router.get('/banner', (req, res, next)=>{
     // Internal error.
     if (err) { 
       log.error(err.stack);
-      return res.render('/error', { message: 'Não foi possível encontrar os banners.', error: err });
+      return res.render('/error', { message: 'Can not find banners data.', error: err });
     } 
     // Render page.  
     return res.render('admin/banner', {  banners: JSON.parse(banners) || [] });
@@ -488,7 +489,6 @@ router.post('/banner', checkPermission, (req, res, next)=>{
   });
 });
 
-
 // Upload banner images.
 router.put('/upload-banner-images', checkPermission, (req, res)=>{
   const form = formidable.IncomingForm();
@@ -530,6 +530,91 @@ router.put('/upload-banner-images', checkPermission, (req, res)=>{
     }
   });
 });
+
+/****************************************************************************** 
+/   MOTOBY DELIVERY
+******************************************************************************/
+
+// Get motoboy delivery page.
+router.get('/motoboy-delivery', (req, res, next)=>{
+  redis.get('motoboy-delivery', (err, motoboyDeliveries)=>{
+    // Internal error.
+    if (err) { 
+      log.error(err.stack);
+      return res.render('/error', { message: 'Can not find motoboy delivery data.', error: err });
+    } 
+    // Render page.  
+    return res.render('admin/motoboyDelivery', {  motoboyDeliveries: JSON.parse(motoboyDeliveries) || [] });
+  });   
+});
+
+// Save motoboy delivery.
+router.post('/motoboy-delivery', checkPermission, (req, res, next)=>{
+  let motoboyDeliveries = JSON.stringify(req.body.motoboyDeliveries);
+  if (!motoboyDeliveries) {
+    motoboyDeliveries = [];
+  }
+  redis.set('motoboy-delivery', motoboyDeliveries, (err)=>{
+    if (err) { 
+      log.error(new Error(err).stack);
+      return;
+    }
+    else {
+      log.info(`Motoboy delivery updated.`);
+      res.json({ success: true });
+    }
+  });
+});
+// // Get motoboy delivery page.
+// router.get('/motoboy-delivery', (req, res, next)=>{
+//   MotoboyDelivery.find({}, (err, motoboyDeliveries)=>{
+//     // Internal error.
+//     if (err) { 
+//       log.error(err.stack);
+//       return res.render('/error', { message: 'Can not find motoboy delivery data.', error: err });
+//     } 
+//     // Render page.  
+//     return res.render('admin/motoboyDelivery', {  motoboyDeliveries: motoboyDeliveries });
+//   });   
+// });
+
+// // Save motoboy delivery.
+// router.post('/motoboy-delivery-add', checkPermission, (req, res, next)=>{
+//   // Form validation, true for valid value.
+//   let validation = {};
+//   log.info(`Price: ${req.body.price}`);
+//   // Delivery price.
+//   validation.price = parseFloat(req.body.price.trim()) >= 0 ? undefined : 'Valor inválido';
+//   // City.
+//   validation.city = req.body.city.trim() != "" ? undefined: 'Cidade inválida';
+//   // Send validation erros if some.
+//   for (let key in validation){
+//     if (validation[key]) {
+//       // log.debug(validation)
+//       res.json({validation});
+//       return;
+//     }
+//   }
+//   // Clean data.
+//   req.body.price = req.body.price.trim();
+//   req.body.city = req.body.city.trim();
+//   // Save.
+//   let motoboyDelivery = new MotoboyDelivery(req.body);
+//   motoboyDelivery.save((err, newMotoboyDelivery) => {
+//     if (err) {
+//       res.json({err});
+//       return next(err); 
+//     } else {
+//       log.info(`Motoboy Delivery ${newMotoboyDelivery.city} saved.`);
+//       res.json({ motoboyDelivery: newMotoboyDelivery });
+//     }
+//   });
+// });
+
+
+/****************************************************************************** 
+/   UTIL
+******************************************************************************/
 
 // Update list of categories in use.
 function updateCategoriesInUse(){

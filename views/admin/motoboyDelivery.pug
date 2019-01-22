@@ -1,0 +1,35 @@
+extends ../layout/layout_vue
+
+block title
+  title Zunka - Banners
+
+block css
+  link(rel="stylesheet" href="/css/admin/motoboyDelivery.css" charset="utf-8")
+
+block content 
+  .panel
+    h2 Motoboy delivery
+    .motoboy-delivery(v-for='motoboyDeliveriy, index in motoboyDeliveries')
+      label(for='city') Cidade
+      input(type='input' id='city' v-model='motoboyDeliveriy.city')
+      //- price.
+      label(for='price') Preço
+      input(type='input' id='price' v-model='motoboyDeliveriy.price')
+      p(v-if='motoboyDeliveriy.validation') {{ motoboyDeliveriy.validation }}
+      p aasdf
+      input.btn-danger(type='button' @click='deleteMotoboyDelivery(index)' value='Apagar')
+    .add-motoboy-delivery
+      h3(@click='addMotoboyDelivery()') Adicionar nova cidade
+    .buttons
+      input.btn-success(type='button' @click='saveMotoboyDelivery()' value='Salvar')
+      input.btn-exit(type='button' onclick='window.location.href="/admin"' value='Sair')
+
+block footer
+  
+append internal_scripts
+  script.
+    let motoboyDeliveries = !{JSON.stringify(motoboyDeliveries)};
+    let user = !{JSON.stringify(user)};
+
+append external_scripts
+  script(src='/js/admin/motoboyDelivery.js')
