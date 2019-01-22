@@ -33,11 +33,11 @@ block content
       p Brasil
     .shipment
       h3 Forma de envio
-      p Envio padrão 
+      p {{order.shipping.method}} 
       span Entrega em&nbsp 
-      span.deadline {{deliveryDeadline}} dia(s)
+      span.deadline {{order.shipping.deadline}} dia(s)
       P Valor do frete:&nbsp 
-        span.price R${{deliveryPrice}}
+        span.price {{order.shipping.price | formatMoney}}
     .items(v-if='order.items.length > 0')
       h3 Ítens
       ul
@@ -62,17 +62,3 @@ append internal_scripts
 append external_scripts
   include ../components/paypal.js.pug
   script(src='/js/checkout/payment.js') 
-
-//- doctype html
-//- html(lang="en")
-//-   head
-//-     meta(charset='utf-8')
-//-     meta(name="viewport" content="width=device-width, initial-scale=1")
-//-     title Pagamento
-//-     include ../components/paypal.js.pug
-//-   body
-//-     include ../menu/topMenu
-//-     main#app(v-cloak)
-//-       .container
-
-

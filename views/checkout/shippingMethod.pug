@@ -31,15 +31,15 @@ block content
           input(type='radio' name='shipmentOption' id='correios' value='correios' v-model='shippingMethod')/ 
           span Correios
           p Prazo de entrega: 
-            span.deadline {{deliveryDeadline}} dia(s) após a confirmação de pagamento
-          p Valor: 
+            span.deadline {{deliveryDeadline}} dia(s) após a confirmação do pagamento
+          p Valor:&nbsp
             span.price R${{deliveryPrice}}
         label(v-if='order.shipping.motoboyResult.price')
           input(type='radio' name='shipmentOption' id='motoboy' value='motoboy' v-model='shippingMethod')/ 
           span Motoboy
           p Prazo de entrega: 
-            span.deadline {{order.shipping.motoboyResult.deadline}} dia(s) após a confirmação de pagamento
-          p Valor:
+            span.deadline {{order.shipping.motoboyResult.deadline}} dia(s) após a confirmação do pagamento
+          p Valor:&nbsp
             span.price R${{order.shipping.motoboyResult.price}}
       input.btn-primary(type='button' @click='shipmentSelected()' value='Continuar')
 

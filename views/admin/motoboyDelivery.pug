@@ -12,14 +12,17 @@ block content
     .motoboy-delivery(v-for='motoboyDeliveriy, index in motoboyDeliveries')
       label(for='city') Cidade
       input(type='input' id='city' v-model='motoboyDeliveriy.city')
+      //- Deadline.
+      label(for='deadline') Prazo de entrega
+      input(type='input' id='deadline' v-model='motoboyDeliveriy.deadline' @input='validateDeadline(index)')
+      p.validation(v-if='!motoboyDeliveriy.deadlineValid') Valor inválido
       //- price.
-      label(for='price') Preço
-      input(type='input' id='price' v-model='motoboyDeliveriy.price')
-      p(v-if='motoboyDeliveriy.validation') {{ motoboyDeliveriy.validation }}
-      p aasdf
+      label(for='price') Valor
+      input(type='input' id='price' v-model='motoboyDeliveriy.price' @input='validatePrice(index)')
+      p.validation(v-if='!motoboyDeliveriy.priceValid') Valor inválido
       input.btn-danger(type='button' @click='deleteMotoboyDelivery(index)' value='Apagar')
-    .add-motoboy-delivery
-      h3(@click='addMotoboyDelivery()') Adicionar nova cidade
+    .add-motoboy-delivery(@click='addMotoboyDelivery()')
+      h3 Adicionar nova cidade
     .buttons
       input.btn-success(type='button' @click='saveMotoboyDelivery()' value='Salvar')
       input.btn-exit(type='button' onclick='window.location.href="/admin"' value='Sair')

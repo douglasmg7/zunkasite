@@ -210,40 +210,32 @@ router.get('/shipping-method/:order_id', (req, res, next)=>{
         // Got correio info. 
         else {
           order.shipping.correioResult = result;
-          // Shipping price.
-          if (order.shipping.correioResult.Valor) {
-            // Correio using ',' as decimal point.
-            order.shipping.price = order.shipping.correioResult.Valor.replace('.', '').replace(',', '.');
-          } else {
-            order.shipping.price = STANDARD_DELIVERY_PRICE;
-          }
-          // Shipping deadline.
-          if (order.shipping.correioResult.PrazoEntrega) {
-            order.shipping.deadline = parseInt(order.shipping.correioResult.PrazoEntrega);
-          } else {
-            order.shipping.deadline = STANDARD_DELIVERY_DEADLINE;
-          }
         }
         // Get motoboy shipping values.
         // log.debug(JSON.stringify(order.address));
-        let motoboy_key = `motoboy_${order.shipping.address.state.toLowerCase().trim().replace(/\s+/g, '-')}_${order.shipping.address.city.toLowerCase().trim().replace(/\s+/g, '-')}`;
-        log.debug(`motoboy_key: ${motoboy_key}`);
-        redis.get(motoboy_key, (err, motoboyResult)=>{
+        redis.get('motoboy-delivery', (err, motoboyDeliveries)=>{
+          // Internal error.
+          if (err) { 
+            log.error(err.stack);
+            return res.render('/error', { message: 'Can not find motoboy delivery data.', error: err });
+          } 
+          motoboyDeliveries = JSON.parse(motoboyDeliveries) || [];
+          // Find city.
           order.shipping.motoboyResult = {
             price: '',
             deadline: ''
           };
-          log.debug(JSON.stringify(order.shipping.motoboyResult));
-          // Internal error.
-          if (err) { 
-            log.error(err.stack);
-          } 
-          // A valid city.
-          else if(motoboyResult){
-            let motoboyResultParsed = JSON.parse(motoboyResult);
-            order.shipping.motoboyResult.price = motoboyResultParsed.price;
-            order.shipping.motoboyResult.deadline = motoboyResultParsed.deadline;
-          }
+          let cityNormalized = order.shipping.address.city.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '');
+          motoboyDeliveries.forEach(motoboyDelivery=>{
+            // log.info('--------');
+            // log.info(motoboyDelivery.cityNormalized);
+            // log.info(cityNormalized);
+            // log.info('--------');
+            if (motoboyDelivery.city.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '') === cityNormalized) {
+              order.shipping.motoboyResult.price = motoboyDelivery.price;
+              order.shipping.motoboyResult.deadline = motoboyDelivery.deadline;
+            }
+          });
           // Uncomment to test with free shipping todo.
           // order.shipping.price = 0;
           // Save correio result.
@@ -271,14 +263,26 @@ router.post('/shipping-method/:order_id', (req, res, next)=>{
   Order.findById(req.params.order_id, (err, order)=>{
     // console.log(`req.body: ${JSON.stringify(req.body)}`);
     if (req.body.shippingMethod == 'correios') { 
-      order.shipping.price = order.shipping.correioResult.price; 
-      order.shipping.deadline = order.shipping.correioResult.deadline; 
       order.shipping.method = 'correios';
       order.shipping.carrier = 'correios'; 
+      // Shipping price.
+      if (order.shipping.correioResult.Valor) {
+        // Correio using ',' as decimal point.
+        order.shipping.price = order.shipping.correioResult.Valor.replace('.', '').replace(',', '.');
+      } else {
+        order.shipping.price = STANDARD_DELIVERY_PRICE;
+      }
+      // Shipping deadline.
+      if (order.shipping.correioResult.PrazoEntrega) {
+        order.shipping.deadline = parseInt(order.shipping.correioResult.PrazoEntrega);
+      } else {
+        order.shipping.deadline = STANDARD_DELIVERY_DEADLINE;
+      }
     } else if (req.body.shippingMethod == 'motoboy'){
       order.shipping.method = 'motoboy';
       order.shipping.carrier = 'sergio_delivery'; 
-      order.shipping.price = order.shipping.motoboyResult.price; 
+      // Motoboy result using ',' as decimal point.
+      order.shipping.price = order.shipping.motoboyResult.price.replace('.', '').replace(',', '.'); 
       order.shipping.deadline = order.shipping.motoboyResult.deadline; 
     }
     order.totalPrice = (parseFloat(order.subtotalPrice) + parseFloat(order.shipping.price)).toFixed(2);
