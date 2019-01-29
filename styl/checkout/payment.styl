@@ -2,12 +2,17 @@
 @import '../input'
 @import '../message'
 btn-primary()
+btn-info()
 .panel
   max-width max_width_address
+  padding 0
+  overflow auto   // So inner element have the margin respected.
   p
   span
     color c_gray
     margin-bottom .5em
+  .title
+    margin-left 1em
   .price
     color c_price
   .quantity
@@ -15,13 +20,19 @@ btn-primary()
   h3
     margin-bottom 0
   hr
-    margin-top .5em
-    margin-bottom 2em
+    margin 1em
+    margin-top 2em
+  .row
+    display flex
+    flex-flow row wrap
+  //   justify-content space-between
+  .column
+    margin 0 1em 
   .address
   .shipment
   .items
   .total
-    margin-top 2em
+    // margin-top 2em
     p
     ul
       margin .4em 0 .4em 0
@@ -43,4 +54,18 @@ btn-primary()
   .total
     margin-top .5em
   .payment
-    margin-top 2em
+    display flex
+    flex-flow column nowrap
+    align-items center
+    margin 0 1em 1em 1em
+    input
+      margin-bottom 1em
+      max-width 250px
+      height: 35px
+      font-style: italic;
+      font-weight: 500
+    // .paypal
+    //   display flex
+    //   // flex-flow column
+    //   justify-content center
+    //   // background-color: lightblue      

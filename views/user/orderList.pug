@@ -45,6 +45,11 @@ block content
           p {{orderSelec.shipping.address.district}}
           p {{orderSelec.shipping.address.city}} - {{orderSelec.shipping.address.state}} - Brasil
           p {{orderSelec.shipping.address.cep}} 
+        .payment
+          p.title Forma de pagamento
+          p(v-if='orderSelec.payment.method === "paypal"') Paypal
+          p(v-if='orderSelec.payment.method === "money"') Pagamento em dinheiro no memento da entrega
+          p(v-if='orderSelec.payment.method === "transfer"') Transferência bancária
         .shipment
           p.title Frete
           p Envio padrão

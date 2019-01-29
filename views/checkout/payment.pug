@@ -8,50 +8,56 @@ block css
 
 block content
   .panel
-    h2 Resumo
+    .title
+      h2 Resumo
     //- hr
     //- Address complement exist.
-    .address(v-if='order.shipping.address.addressComplement')
-      h3 Enviar para
-      p {{order.shipping.address.name}}
-      p {{order.shipping.address.address}} {{order.shipping.address.addressNumber}}
-      p {{order.shipping.address.addressComplement}} 
-      p {{order.shipping.address.district}}
-      p {{order.shipping.address.city}}
-      p {{order.shipping.address.state}}
-      p {{order.shipping.address.cep}} 
-      p Brasil   
-    //- Addres complement not exist.
-    .address(v-if='!order.shipping.address.addressComplement')
-      h3 Enviar para
-      p {{order.shipping.address.name}}
-      p {{order.shipping.address.address}} {{order.shipping.address.addressNumber}}
-      p {{order.shipping.address.district}}
-      p {{order.shipping.address.city}}
-      p {{order.shipping.address.state}}
-      p {{order.shipping.address.cep}} 
-      p Brasil
-    .shipment
-      h3 Forma de envio
-      p {{order.shipping.method}} 
-      span Entrega em&nbsp 
-      span.deadline {{order.shipping.deadline}} dia(s)
-      P Valor do frete:&nbsp 
-        span.price {{order.shipping.price | formatMoney}}
-    .items(v-if='order.items.length > 0')
-      h3 Ítens
-      ul
-        li(v-for='item in order.items')
-          p {{item.name}}
-          p 
-            span.price {{item.price | formatMoney}} 
-            span.quantity - Quantidade: {{item.quantity}}
-    .total
-      h3 Valor total com frete
-      p.price {{ order.totalPrice | formatMoney }}
+    .row
+      .column
+        .address(v-if='order.shipping.address.addressComplement')
+          h3 Enviar para
+          p {{order.shipping.address.name}}
+          p {{order.shipping.address.address}} {{order.shipping.address.addressNumber}}
+          p {{order.shipping.address.addressComplement}} 
+          p {{order.shipping.address.district}}
+          p {{order.shipping.address.city}}
+          p {{order.shipping.address.state}}
+          p {{order.shipping.address.cep}} 
+          p Brasil   
+        //- Addres complement not exist.
+        .address(v-if='!order.shipping.address.addressComplement')
+          h3 Enviar para
+          p {{order.shipping.address.name}}
+          p {{order.shipping.address.address}} {{order.shipping.address.addressNumber}}
+          p {{order.shipping.address.district}}
+          p {{order.shipping.address.city}}
+          p {{order.shipping.address.state}}
+          p {{order.shipping.address.cep}} 
+          p Brasil
+        .shipment
+          h3 Forma de envio
+          p {{order.shipping.method}} 
+          span Entrega em&nbsp 
+          span.deadline {{order.shipping.deadline}} dia(s)
+          P Valor do frete:&nbsp 
+            span.price {{order.shipping.price | formatMoney}}
+      .column
+        .items(v-if='order.items.length > 0')
+          h3 Ítens
+          ul
+            li(v-for='item in order.items')
+              p {{item.name}}
+              p 
+                span.price {{item.price | formatMoney}} 
+                span.quantity - Quantidade: {{item.quantity}}
+        .total
+          h3 Valor total com frete
+          p.price {{ order.totalPrice | formatMoney }}
+    hr
     .payment
-      hr
       h2 Selecione a forma de pagamento
+      input.btn-primary(type='button' @click='closeOrder("money")' v-if='order.shipping.method === "motoboy"' value='Dinheiro')
+      input.btn-info(type='button' @click='closeOrder("transfer")' value='Transferência bancária')
       #paypal-button
 
 append internal_scripts

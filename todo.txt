@@ -1,3 +1,14 @@
+http://localhost:3080/checkout/order-confirmation/5c509da8c978c73a72c25140
+http://localhost:3080/checkout/order-confirmation/5c50622bc978c73a72c243b0
+
+include payment type on order confirmation
+
+correct shpping method o order pages (user and admin)
+
+use the same format from admin orders to user orders
+
+force user entry with cpf
+
 update node to version 10
 
 backup running system.

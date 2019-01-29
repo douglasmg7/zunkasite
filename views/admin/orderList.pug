@@ -37,6 +37,7 @@ block content
           th Total
           th Número
           th Status
+          th Ação
       tbody
         tr(v-for='order, index in orders' @click='showOrderDetail(index)')
           td {{order.timestamps.shippingAddressSelectedAt | formatDate}}
@@ -44,6 +45,7 @@ block content
           td {{order.totalPrice | formatMoney}}
           td {{order._id}}
           td {{status(order)}}
+          td {{action(order)}}
     nav.pagination
       a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
     div.modal(v-if='showModal')
@@ -66,8 +68,15 @@ block content
           p {{orderSelec.shipping.address.city}} - {{orderSelec.shipping.address.state}} - Brasil
           p {{orderSelec.shipping.address.cep}} 
         .item
-          h2 Frete
-          p Envio padrão
+          h2 Pagamento
+          p(v-if='orderSelec.payment.method === "paypal" || orderSelec.payment.method === undefined') Paypal
+          p(v-if='orderSelec.payment.method === "money"') Pagamento em dinheiro no memento da entrega
+          p(v-if='orderSelec.payment.method === "transfer"') Transferência bancária
+        .item
+          h2 Envio
+          //- p {{ orderSelec.shipping.method }}
+          p(v-if='orderSelec.shipping.method === "correios" || orderSelec.shipping.method === "standard"') Correios
+          p(v-if='orderSelec.shipping.method === "motoboy"') Motoboy
           p
             span Prazo: 
             span {{orderSelec.shipping.deadline}} dia(s)
@@ -88,14 +97,36 @@ block content
         .item
           h2 Status
           p {{status(orderSelec)}}
+        .item
+          h2 Ação
+          p {{action(orderSelec)}}
         //- .change-status(v-if='status(orderSelec) !== "Cancelado"')
         .item(v-if='status(orderSelec) !== "Cancelado"')
           h2 Alterar status
-          .buttons
+          //- No type (older orders).
+          .buttons(v-if='orderSelec.payment.method === undefined || orderSelec.payment.method === "paypal" || orderSelec.payment.method === "transfer"')
             input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("paid")' value='Pago')
             input.btn-primary(type='button' v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("shipped")' value='Enviado')
             input.btn-primary(type='button' v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("delivered")' value='Entregue')
+            input.btn-danger(type='button' v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')            
+          //- //- Paypal.
+          //- .buttons(v-if='orderSelec.payment.method === "paypal"')
+          //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("paid")' value='Pago')
+          //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("shipped")' value='Enviado')
+          //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("delivered")' value='Entregue')
+          //-   input.btn-danger(type='button' v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')
+          //- Money.   
+          .buttons(v-if='orderSelec.payment.method === "money"')
+            input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("shipped")' value='Enviado')
+            input.btn-primary(type='button' v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("paid")' value='Pago')
+            input.btn-primary(type='button' v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("delivered")' value='Entregue')
             input.btn-danger(type='button' v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')
+          //- //- transfer.   
+          //- .buttons(v-if='orderSelec.payment.method === "transfer"')
+          //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("paid")' value='Pago')
+          //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("shipped")' value='Enviado')
+          //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("delivered")' value='Entregue')
+          //-   input.btn-danger(type='button' v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')              
         .close-modal
           input.btn-exit(type='button' @click='hideOrderDetail()' value='Sair')
     div.set-status(v-if='setStatusWindow.show')

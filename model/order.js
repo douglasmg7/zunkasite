@@ -72,6 +72,7 @@ let shipping = new mongoose.Schema({
 
 // Schema - Payment.
 let payment = new mongoose.Schema({
+  method: { type: String }, // Identify the payment method.
   paypal: { type: Object },
 });
 

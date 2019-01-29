@@ -14,9 +14,31 @@ let app = new Vue({
     confirmPayment(payment){
       axios({
         method: 'post',
+        // url: `/checkout/payment/paypal/${order._id}`,
         url: window.location.href,
         headers:{'csrf-token' : csrfToken},
-        data: { payment: payment }
+        data: { payment: payment },
+        params: { method: 'paypal'}
+      })
+      .then(response => {
+        // Correio answer.
+        if (response.data.err) {
+          console.log(response.data.err);
+        } else {
+          window.location.href = `/checkout/order-confirmation/${order._id}`
+        }
+      })
+      .catch(err => {
+        console.error(err);
+      }) 
+    },
+    // Close de order.
+    closeOrder(method){
+      axios({
+        method: 'post',
+        url: window.location.href,
+        headers:{'csrf-token' : csrfToken},
+        params: { method: method}
       })
       .then(response => {
         // Correio answer.

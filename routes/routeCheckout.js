@@ -314,7 +314,69 @@ router.get('/payment/:order_id', (req, res, next)=>{
   });  
 });
 
-// Select payment page.
+// // Payed by paypal.
+// router.post('/payment/paypal/:order_id', (req, res, next)=>{
+//   Order.findById(req.params.order_id, (err, order)=>{
+//     if (err) { return next(err); }
+//     if (!order) {
+//       return next(new Error('No order to continue with payment.')); }
+//     else {
+//       order.timestamps.placedAt = new Date();
+//       order.timestamps.paidAt = new Date();
+//       order.status = 'paid';
+//       order.payment = {
+//         paypal: req.body.payment,
+//         method: 'paypal'
+//       };
+//       order.save(err=>{
+//         if (err) {
+//           res.json({err});
+//           return next(err); 
+//         } 
+//         else {
+//           // Update stock.
+//           for (var i = 0; i < req.cart.products.length; i++) {
+//             // Product.update({ _id: req.cart.products[i]._id }, { $inc: { storeProductQtd: -1 * req.cart.products[i].qtd } }, err=>{
+//             Product.update(
+//               { _id: req.cart.products[i]._id }, 
+//               { $inc: { 
+//                 storeProductQtd: -1 * req.cart.products[i].qtd, 
+//                 storeProductQtdSold: 1 * req.cart.products[i].qtd
+//               } }, err=>{
+//               if (err) {
+//                 log.error(err.stack);
+//               }
+//             });
+//           }
+//           // Clean cart.
+//           req.cart.clean();
+//           // Send email.
+//           let mailOptions = {
+//               from: '',
+//               to: req.user.email,
+//               subject: 'Confirmação de pedido.',
+//               text: 'Parabéns! Sua compra já foi concluída, agora é só aguardar o envio do produto.\n\n' + 
+//                     'Número de pedido: ' + order._id + '\n\n' + 
+//                     'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' + 
+//                     'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
+//                     'Muito obrigado por comprar na ZUNKA.'
+//           }; 
+//           emailSender.sendMail(mailOptions, err=>{
+//             if (err) {
+//               log.error(err.stack);
+//             } else {
+//               log.info(`Email with order confirmation sent to ${req.user.email}`);
+//             }
+//             res.json({});
+//           })
+//         }
+//       })
+//     }
+//   });  
+// });
+
+
+// Payment.
 router.post('/payment/:order_id', (req, res, next)=>{
   Order.findById(req.params.order_id, (err, order)=>{
     if (err) { return next(err); }
@@ -322,11 +384,28 @@ router.post('/payment/:order_id', (req, res, next)=>{
       return next(new Error('No order to continue with payment.')); }
     else {
       order.timestamps.placedAt = new Date();
-      order.timestamps.paidAt = new Date();
-      order.status = 'paid';
-      order.payment = {
-        paypal: req.body.payment
-      };
+      order.status = 'placed';
+      if (req.query.method === 'paypal') {
+        order.timestamps.paidAt = new Date();
+        order.status = 'paid';
+        order.payment = {
+          paypal: req.body.payment,
+          method: 'paypal'
+        };
+      } 
+      else if (req.query.method === 'money'){
+        order.payment = {
+          method: 'money'
+        };
+      }
+      else if (req.query.method === 'transfer'){
+        order.payment = {
+          method: 'transfer'
+        };
+      } 
+      else {
+        return next(new Error('No payment method selected.'));
+      }
       order.save(err=>{
         if (err) {
           res.json({err});
@@ -353,13 +432,30 @@ router.post('/payment/:order_id', (req, res, next)=>{
           let mailOptions = {
               from: '',
               to: req.user.email,
-              subject: 'Confirmação de pedido.',
-              text: 'Parabéns! Sua compra já foi concluída, agora é só aguardar o envio do produto.\n\n' + 
-                    'Número de pedido: ' + order._id + '\n\n' + 
-                    'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' + 
-                    'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
-                    'Muito obrigado por comprar na ZUNKA.'
+              subject: 'Confirmação de pedido.'
           }; 
+          if (req.query.method === 'paypal'){
+            mailOptions.text = 'Parabéns! Sua compra já foi concluída, agora é só aguardar o envio do produto.\n\n' + 
+             'Número de pedido: ' + order._id + '\n\n' + 
+             'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' + 
+             'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
+             'Muito obrigado por comprar na ZUNKA.'
+          }
+          if (req.query.method === 'money'){
+            mailOptions.text = 'Parabéns! Seu pedido foi realizado, agora é só aguardar o envio do produto.\n\n' + 
+             'O pagamento será realizado no momento do recebimento do produto.\n\n' + 
+             'Número de pedido: ' + order._id + '\n\n' + 
+             'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' + 
+             'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
+             'Muito obrigado por comprar na ZUNKA.'
+          }
+          else if (req.query.method === 'transfer'){
+            mailOptions.text = 'Parabéns! Seu pedido foi realizado, agora é só efetuar a transferência.\n\n' + 
+             'Número de pedido: ' + order._id + '\n\n' + 
+             'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' + 
+             'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
+             'Muito obrigado por seu pedido.'
+          } 
           emailSender.sendMail(mailOptions, err=>{
             if (err) {
               log.error(err.stack);
