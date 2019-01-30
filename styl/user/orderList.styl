@@ -3,30 +3,33 @@
 @import '../message'
 @import '../menu/pagination'
 btn-primary()
+btn-exit()
 message()
 .panel
   min-width min_width_order_list
-  // p
-  //   color c_gray
   > header
     // background-color lightyellow
-    margin-bottom 1.5em
+    margin-bottom 1em
     display flex
-    flex-flow row nowrap
+    flex-flow row wrap
     justify-content space-between
     align-items flex-end
     h2
-      // background-color lightblue
       margin .5em 0 0 0
     .search-order
+      flex 1 1 auto
       display flex
       flex-flow row nowrap
-      justify-content start-end
+      justify-content flex-end
       align-items flex-end
       input
         margin-left .5em
+      input[type='text']
+        flex 0 1 20em
+      input[type='button']
+        flex 0 1 10em
   > table
-    margin-top .5em
+    margin-top 1em
     border-bottom solid 1px lightgray
     border-spacing 0
     width 100%
@@ -40,14 +43,64 @@ message()
       cursor pointer
       a
         text-decoration none
-        // color black
+        color black
     tr.product-commercialize
       background-color #F2DEDE
     tr.product-commercialize.product-active
       background-color #bdffbd
   > .modal
+    position fixed
+    z-index 1
+    left 0
+    top 0
+    width 100% /* Full width */
+    height 100% /* Full height */
+    overflow auto /* Enable scroll if needed */
+    background-color rgb(0,0,0) /* Fallback color */
+    background-color rgba(0,0,0,0.4) /* Black w/ opacity */ 
+    // display flex
+    // flex-flow column nowrap
+    // align-items center
+    > .panel
+      margin 1em auto
+      min-width 400px
+      max-width 600px
+      p
+        margin .7em 0
+      .price
+        color c_price
+      .quantity
+        color $c_quantity
+      .total
+        margin-top .5em
+      > .item
+        background-color: bgc_ineer_panel
+        border-radius 4px
+        padding 1em
+        margin-bottom 1em
+        :first-child
+          margin-top 0
+        :last-child
+          margin-bottom 0
+        ul
+          margin-left 1em
+          li
+            color $c_quantity
+          margin-top .5em
+          p
+            margin-top .2em
+            color black
+        > .buttons
+          display flex
+          justify-content space-between
+          input
+            flex 0 1 48%
+      .close-modal
+        display flex
+        justify-content flex-end
+  > .set-status
     position fixed /* Stay in place */
-    z-index 1 /* Sit on top */
+    z-index 2
     left 0
     top 0
     width 100% /* Full width */
@@ -58,35 +111,28 @@ message()
     display flex
     flex-flow column nowrap
     align-items center
-    > .modal-content
-      background-color #fefefe
-      margin 10% auto
-      padding 1em
-      border-radius .1em
-      display flex
-      flex-flow column nowrap
-      justify-content center
-      min-width 400px
-      .price
-        color c_price
-      .quantity
-        color $c_quantity
-      .title
-        font-weight bold
-        margin-top .5em
-      .deadline
-        font-weight bold
-      .items
-        ul
-          margin-left 2em
-          li
-            color $c_quantity
-          margin-top .5em
-          p
-            margin-top .2em
-            color black
-        button
-          margin-top 2em
-      .total
-        margin-top .5em
+    > .panel
+      margin 30% auto
+      // display flex
+      // flex-flow column nowrap
+      // justify-content flex-start
+      min-width 100px
+      > .item
+        background-color: bgc_ineer_panel
+        border-radius 4px
+        padding 1em
         margin-bottom 1em
+        :first-child
+          margin-top 0
+        :last-child
+          margin-bottom 0
+        > .options
+          display flex
+          align-items center
+          label
+            margin 0 1em 0 0   
+      > .buttons
+        display flex
+        justify-content space-between
+        input
+          flex 0 1 48%

@@ -35,6 +35,9 @@ block content
       h3 
         span.title Conta:  
         span.info 13001412-1
+      h3 
+        span.title Valor a ser depositado:  
+        span.info {{ order.totalPrice | formatMoney }}
       hr
     .order
       h2 Informações do pedido

@@ -1,11 +1,17 @@
+Feito
+  Informações em duas colunas na página de resumo.
+  Opção de pagar em dinheiro, apenas quando forma de envio for por motoboy.
+  Opção de pagar por transferência.
+  Informações sobre a transferência na página de confirmação do pedido apenas quando o pagamento for por transferência.
+  E-mail com informações de transferência, apnas quando o pagamento for por transferência.
+  Pagina admin pedidos tem mais uma coluna ação.
+  Página user pedidos tem mais uma coluna status.
+  Página user pedidos com formato igual a admin pedidos.
+  Página de produto com formato padrão dos botões.
+
+
 http://localhost:3080/checkout/order-confirmation/5c509da8c978c73a72c25140
 http://localhost:3080/checkout/order-confirmation/5c50622bc978c73a72c243b0
-
-include payment type on order confirmation
-
-correct shpping method o order pages (user and admin)
-
-use the same format from admin orders to user orders
 
 force user entry with cpf
 
@@ -30,8 +36,6 @@ Create a timer to backup (mongo and redis).
 set password to redis.
 
 put pm2 to start on boot.
-
-Certbot will expire on 2018-11-29.
 
 block 3080 port
 

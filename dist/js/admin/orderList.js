@@ -111,14 +111,14 @@ var app = new Vue({
     action(order){
       switch(order.status) {
         case 'canceled':
-          return '-';
+          return '';
         case 'delivered':
-          return '-';
+          return '';
       }
-      if (order.payment.method === 'paypal') {
+      if (order.payment.method === 'paypal' || order.payment.method === undefined) {
         switch(order.status) {
           case 'shipped':
-            return '-';
+            return '';
           case 'paid':
             return 'Enviar';
           case 'placed':
@@ -131,7 +131,7 @@ var app = new Vue({
       else if(order.payment.method === 'money'){
         switch(order.status) {
           case 'shipped':
-            return '-';
+            return '';
           case 'paid':
             return 'Pago';
           case 'placed':
@@ -143,7 +143,7 @@ var app = new Vue({
       else if(order.payment.method === 'transfer'){
         switch(order.status) {
           case 'shipped':
-            return '-';
+            return '';
           case 'paid':
             return 'Enviar';
           case 'placed':

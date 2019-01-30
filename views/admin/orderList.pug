@@ -48,7 +48,7 @@ block content
           td {{action(order)}}
     nav.pagination
       a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
-    div.modal(v-if='showModal')
+    .modal(v-if='showModal')
       .panel
         .item
           h2 Número do pedido
@@ -129,7 +129,7 @@ block content
           //-   input.btn-danger(type='button' v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')              
         .close-modal
           input.btn-exit(type='button' @click='hideOrderDetail()' value='Sair')
-    div.set-status(v-if='setStatusWindow.show')
+    .set-status(v-if='setStatusWindow.show')
       .panel
         .item
           h3 {{ setStatusWindow.message }}

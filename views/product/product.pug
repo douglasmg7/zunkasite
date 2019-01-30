@@ -22,12 +22,13 @@ block content
       //- Detail.
       ul.product-detail(v-if='productDetail.length > 0')
         li(v-for='detail in productDetail') {{detail}}
-      input.green(type='button' @click='addToCart' value='Adicionar ao carrinho')
+      input.btn-primary(type='button' @click='addToCart' value='Adicionar ao carrinho')
       .estimate-ship
         p Estimar frete e prazo (Entre com o CEP)
-        input(type='text' id='cep' size='7' v-model='cepDestiny')
-        button(@click='estimateShipment') Calcular
-        span.loader(v-show='loadingEstimateShipment')
+        .join-buttons
+          input(type='text' id='cep' size='7' v-model='cepDestiny')
+          input.btn-info(type='button' @click='estimateShipment' value='Calcular')
+          span.loader(v-show='loadingEstimateShipment')
         p.errMsg {{cepErrMsg}}
         table(v-if='showEstimatedShipment')
           thead

@@ -1,4 +1,7 @@
 @import '../menu/reset_menu_footer'
+@import '../input'
+btn-primary()
+btn-info()
 #app
   max-width 1000px
   overflow-x hidden
@@ -20,7 +23,8 @@
     width 2em
     height 2em
     position relative
-    left -4em
+    right 5.2em
+    top -.25em
     vertical-align middle
     border 4px solid #f3f3f3
     border-top 4px solid #3498db
@@ -62,27 +66,29 @@
         margin-top .5em
         font-size 1.5em
       .product-detail
-        padding-top 1em
-        padding-left 1em
-      button
-        margin-top: 1em
+        padding 1em 0 .5em 1em
       .estimate-ship
         margin-top: 2em;
-        & > p 
-          margin 0
+        > p 
+          margin 0 0 .2em 0
           font-weight bold
-        input
-        button
-          height 2em
-          border 1px solid lightgray
-          margin-bottom .5em
-        input
-          border-right 0
-          border-radius 4px 0 0 4px
-          padding-left 1em
-          padding-right 1em
-        button
-          border-radius 0 4px 4px 0
+        .join-buttons
+          display flex
+          align-items center
+          input
+            border 1px solid lightgray
+            margin-bottom .5em
+          input[type='text']
+            flex-basis 14em
+            border-right 0
+            border-radius 4px 0 0 4px
+            padding-left 1em
+            padding-right 1em
+          input[type='button']
+            flex-basis 8em
+            height: 2.06em
+            // max-width 8em
+            border-radius 0 4px 4px 0
         table
           margin-top 1em
           border-radius 4px

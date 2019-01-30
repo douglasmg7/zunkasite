@@ -9,10 +9,10 @@ block css
 block content 
   .panel
     header
-      h2 Seus Pedidos
+      h2 Pedidos
       .search-order
         input(type='text' v-model='searchOrder' @keyup.enter='getOrders()' placeholder='Pesquise em todas as ordens')
-        input.btn-primary(type='button' @click='getOrders()' value='Pesquisar ordens') 
+        input.btn-primary(type='button' @click='getOrders()' value='Pesquisar') 
     table
       thead
         tr
@@ -20,58 +20,67 @@ block content
           th Total
           th Enviado para
           th Número
+          th Status
       tbody
         tr(v-for='order, index in orders' @click='showOrderDetail(index)')
           td {{order.timestamps.shippingAddressSelectedAt | formatDate}}
           td {{order.totalPrice | formatMoney}}
           td {{order.shipping.address.name}}
           td {{order._id}}
+          td {{status(order)}}
     nav.pagination
       a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
-    div.modal(v-if='showModal')
-      .modal-content
-        .pedido
-          p.title Número do pedido
+    .modal(v-if='showModal')
+      .panel
+        .item
+          h2 Número do pedido
           P {{orderSelec._id}}
-        .clientdetail
-          p.title Cliente.
+        .item
+          h2 Cliente
           p Nome: {{orderSelec.name}}
           p Email: {{orderSelec.email}}
-        .address
-          p.title Endereço de entrega.
+          p CPF: {{orderSelec.cpf}}
+          p Celular: {{orderSelec.mobileNumber}}
+        .item
+          h2 Endereço de entrega
           p Nome: {{orderSelec.shipping.address.name}}
           p Telefone: {{orderSelec.shipping.address.phone}}
           p {{orderSelec.shipping.address.address}},  {{orderSelec.shipping.address.addressNumber}} {{orderSelec.shipping.address.addressComplement}}
           p {{orderSelec.shipping.address.district}}
           p {{orderSelec.shipping.address.city}} - {{orderSelec.shipping.address.state}} - Brasil
           p {{orderSelec.shipping.address.cep}} 
-        .payment
-          p.title Forma de pagamento
-          p(v-if='orderSelec.payment.method === "paypal"') Paypal
+        .item
+          h2 Pagamento
+          p(v-if='orderSelec.payment.method === "paypal" || orderSelec.payment.method === undefined') Paypal
           p(v-if='orderSelec.payment.method === "money"') Pagamento em dinheiro no memento da entrega
           p(v-if='orderSelec.payment.method === "transfer"') Transferência bancária
-        .shipment
-          p.title Frete
-          p Envio padrão
-          span Prazo: 
-          span.deadline {{orderSelec.shipping.deadline}} dia(s)
-          br
-          span Valor do frete: 
-          span.price R${{orderSelec.shipping.price}}
-        .items(v-if='orderSelec.items.length > 0')
-          p.title Itens
+        .item
+          h2 Envio
+          //- p {{ orderSelec.shipping.method }}
+          p(v-if='orderSelec.shipping.method === "correios" || orderSelec.shipping.method === "standard"') Correios
+          p(v-if='orderSelec.shipping.method === "motoboy"') Motoboy
+          p
+            span Prazo: 
+            span {{orderSelec.shipping.deadline}} dia(s)
+          p
+            span Valor: 
+            span.price R${{orderSelec.shipping.price}}
+        .item(v-if='orderSelec.items.length > 0')
+          h2 Itens
           ul
             li(v-for='item in orderSelec.items')
-              p 
-                strong {{item.name}}
+              p {{item.name}}
               p 
                 span.price {{item.price | formatMoney}} 
                 span.quantity - Quantidade: {{item.quantity}}
-        .total
-          p.title Valor total com frete
+        .item
+          h2 Valor total com frete
           p.price {{ orderSelec.totalPrice | formatMoney }}
-        .button
-          button(@click='hideOrderDetail()') Fechar
+        .item
+          h2 Status
+          p {{status(orderSelec)}}
+        .close-modal
+          input.btn-exit(type='button' @click='hideOrderDetail()' value='Sair')
 
 append external_scripts
   script(src='/js/user/orderList.js')

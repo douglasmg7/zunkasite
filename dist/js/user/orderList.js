@@ -55,7 +55,53 @@ var app = new Vue({
     // Hide order detail modal.
     hideOrderDetail(){
       this.showModal = false;
-    }
+    },
+    // Get status order.
+    status(order){
+      switch(order.status) {
+        case 'canceled':
+          return 'Cancelado';
+        case 'delivered':
+          return 'Entregue';
+      }
+      if (order.payment.method === 'paypal' || order.payment.method === undefined) {
+        switch(order.status) {
+          case 'shipped':
+            return 'Enviado';
+          case 'paid':
+            return 'Processando';
+          case 'placed':
+            return '';
+          default:
+            return '';
+        }
+      } 
+      // Money, only by motoboy.
+      else if(order.payment.method === 'money'){
+        switch(order.status) {
+          case 'shipped':
+            return 'A caminho';
+          case 'paid':
+            return 'Pago';
+          case 'placed':
+            return 'Processando';
+          default:
+            return '';
+        }
+      } 
+      else if(order.payment.method === 'transfer'){
+        switch(order.status) {
+          case 'shipped':
+            return 'Enviado';
+          case 'paid':
+            return 'Processando';
+          case 'placed':
+            return 'Aguardando pagamento';
+          default:
+            return '';
+        }
+      }
+    },   
   },
   filters: {
     // Format number to money format.
