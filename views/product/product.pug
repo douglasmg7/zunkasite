@@ -22,8 +22,9 @@ block content
       //- Detail.
       ul.product-detail(v-if='productDetail.length > 0')
         li(v-for='detail in productDetail') {{detail}}
-      input.btn-primary(type='button' @click='addToCart' value='Adicionar ao carrinho')
-      .estimate-ship
+      h1(v-if='product.storeProductQtd < 1').no-stock Produto fora de estoque
+      input.btn-primary(v-if='product.storeProductQtd > 0' type='button' @click='addToCart' value='Adicionar ao carrinho')
+      .estimate-ship(v-if='product.storeProductQtd > 0')
         p Estimar frete e prazo (Entre com o CEP)
         .join-buttons
           input(type='text' id='cep' size='7' v-model='cepDestiny')
