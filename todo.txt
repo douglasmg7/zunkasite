@@ -1,43 +1,23 @@
 Feito
-  Informações em duas colunas na página de resumo.
-  Opção de pagar em dinheiro, apenas quando forma de envio for por motoboy.
-  Opção de pagar por transferência.
-  Informações sobre a transferência na página de confirmação do pedido apenas quando o pagamento for por transferência.
-  E-mail com informações de transferência, apnas quando o pagamento for por transferência.
-  Pagina admin pedidos tem mais uma coluna ação.
-  Página user pedidos tem mais uma coluna status.
-  Página user pedidos com formato igual a admin pedidos.
-  Página de produto com formato padrão dos botões.
-
-
-http://localhost:3080/checkout/order-confirmation/5c509da8c978c73a72c25140
-http://localhost:3080/checkout/order-confirmation/5c50622bc978c73a72c243b0
+  Produtos fora de estoque estão sendo exibidos
+  Quando produto fora de estoque 
+    Não mostra botão de adicionar ao carrinho
+    Não mostra calcular frete
+    Mostra mensagem produto fora de etoque
+  Backup do banco de dados
+  Criação de snapshot no servidor
 
 force user entry with cpf
-
-update node to version 10
-
-backup running system.
 
 detalhes técnicos -> especificação técnica
 
 image zoom
 
-incluir produtos com zero estoque, ativos e comercializar para venda, informar produto indisponível.
-
 test quilljs.com
-
-backup db system timer.
 
 cart and orders not breaking on mobile.
 
 Create a timer to backup (mongo and redis).
-
-set password to redis.
-
-put pm2 to start on boot.
-
-block 3080 port
 
 nginx alert on starting service
 2018/08/27 10:53:29 [warn] 19827#19827: could not build optimal types_hash, you should increase either types_hash_max_siz>
