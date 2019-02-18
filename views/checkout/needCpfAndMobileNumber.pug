@@ -1,0 +1,27 @@
+extends ../layout/layout_vue
+
+block title
+  title Zunka - Inclusão de CPF e celular
+
+block css
+  link(rel="stylesheet" href="/css/checkout/needCpfAndMobileNumber.css" charset="utf-8")
+
+block content 
+  .panel
+    h2 Favor informas os dados
+    //- Warn message.
+    p.warn-message(v-show='this.warnMessage !== ""') {{ warnMessage }}  
+    label(for='cpf') CPF
+    input(type='text' name='cpf' id='cpf' v-model='cpf')
+    label(for='mobileNumber') Número de Celular
+    input(type='text' name='mobileNumber' id='mobileNumber' v-model='mobileNumber' placeholder='(99) 9 9999-9999')
+    input.btn-primary(type='button' value='Salvar' @click='save()') 
+
+append internal_scripts
+  script.
+    let cpf = !{JSON.stringify(cpf)};
+    let mobileNumber = !{JSON.stringify(mobileNumber)};
+    let orderId = !{JSON.stringify(orderId)};
+
+append external_scripts
+  script(src='/js/checkout/needCpfAndMobileNumber.js')  

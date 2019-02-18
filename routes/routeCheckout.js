@@ -301,6 +301,18 @@ router.get('/payment/:order_id', (req, res, next)=>{
     if (err) { return next(err); }
     if (!order) {
       return next(new Error('No order to continue with payment.')); }
+    // Must have cpf and mobile number.
+    if (!order.cpf || !order.mobileNumber ) {
+      res.render('checkout/needCpfAndMobileNumber', 
+        { 
+          cpf: req.user.cpf,
+          mobileNumber: req.user.mobileNumber, 
+          orderId: req.params.order_id,
+          nav: {
+          },
+        }
+      ); 
+    }
     else {
       res.render('checkout/payment', 
         { 
@@ -312,6 +324,78 @@ router.get('/payment/:order_id', (req, res, next)=>{
       ); 
     }
   });  
+});
+
+// Need cpf and mobile number.
+router.post('/needCpfAndMobileNumber', checkPermission, (req, res, next)=>{
+  // Validation.
+  // Only digits.
+  let mobileNumberTemp = req.body.mobileNumber.match(/\d+/g);
+  if (mobileNumberTemp != null) {
+    req.body.mobileNumber = mobileNumberTemp.join('');
+  } 
+  log.debug(`mobileNumber before sanitize: ${req.body.mobileNumber}`);
+  req.sanitize("cpf").trim();
+  req.checkBody('mobileNumber', 'Campo NÚMERO DE CELULAR ínválido.').isLength({ min: 10});
+  req.checkBody('mobileNumber', 'Campo NÚMERO DE CELULAR inválido.').isLength({ max: 12});
+  req.checkBody('cpf', 'Campo CPF deve ser preenchido.').notEmpty();
+  req.checkBody('cpf', 'CPF inválido.').isCpf();
+  req.getValidationResult().then(function(result) {
+    // Send validations errors to client.
+    if (!result.isEmpty()) {
+      let messages = [];
+      messages.push(result.array()[0].msg);
+      log.debug('some error');
+      return res.json({ success: false, message: messages[0]});
+    } 
+    // Save cpf.
+    else {
+      log.debug('Ok');
+      // Format CPF.
+      // Get only the digits.
+      let cpf = req.body.cpf.match(/\d+/g).join('');
+      // Array [3][3][3][2].
+      cpf = cpf.match(/\d{2}\d?/g); 
+      // Format to 000.000.000-00.
+      cpf = `${cpf[0]}.${cpf[1]}.${cpf[2]}-${cpf[3]}`
+      // Format mobile number.
+      // Get only the digits.
+      let mobileNumber = req.body.mobileNumber.match(/\d+/g).join('');
+      // Array [2][1][1+][4].
+      mobileNumber = mobileNumber.match(/(^\d{2})(\d)(\d+)(\d{4})$/)
+      // Format to 000.000.000-00.
+      mobileNumber = `(${mobileNumber[1]}) ${mobileNumber[2]} ${mobileNumber[3]}-${mobileNumber[4]}`
+      log.debug(`mobileNumber: ${mobileNumber}`);
+      // Save user data.
+      User.findById(req.user._id, (err, user)=>{
+        if (err) { return next(err) };
+        if (!user) { return next(new Error('Not found user to save.')); }
+        user.cpf = cpf;
+        user.mobileNumber = mobileNumber;
+        user.save(function(err) {
+          if (err) { return next(err); } 
+          // Save order data.
+          Order.findById(req.body.orderId, (err, order)=>{
+            if (err) { return next(err) };
+            if (!order) { return next(new Error('Not found order to save cpf and mobile number.')); }
+            order.cpf = cpf;
+            order.mobileNumber = mobileNumber;
+            order.save(function(err) {
+              if (err) { return next(err); } 
+              res.render(`checkout/payment/${req.body.orderId}`, 
+                { 
+                  order: req.body.orderId, 
+                  nav: {
+                  },
+                  env: (process.env.NODE_ENV === 'production' ? 'production': 'sandbox')
+                }
+              )
+            });  
+          });
+        });  
+      });
+    }
+  });
 });
 
 // // Payed by paypal.
