@@ -383,6 +383,14 @@ router.get('/access/edit-mobile-number', checkPermission,(req, res, next)=>{
 router.post('/access/edit-mobile-number', checkPermission, (req, res, next)=>{
   // Validation.
   // req.checkBody('mobileNumber', 'Campo NÚMERO DE CELULAR deve ser preenchido.').notEmpty();
+  let mobileNumberTemp = req.body.mobileNumber.match(/\d+/g);
+  if (mobileNumberTemp != null) {
+    req.body.mobileNumber = mobileNumberTemp.join('');
+  } 
+  if (req.body.mobileNumber != "") {
+    req.checkBody('mobileNumber', 'Campo NÚMERO DE CELULAR ínválido.').isLength({ min: 10});
+    req.checkBody('mobileNumber', 'Campo NÚMERO DE CELULAR inválido.').isLength({ max: 11});
+  }
   req.getValidationResult().then(function(result) {
     // Send validations errors to client.
     if (!result.isEmpty()) {
@@ -392,10 +400,18 @@ router.post('/access/edit-mobile-number', checkPermission, (req, res, next)=>{
     } 
     // Save address.
     else {
+      if (req.body.mobileNumber != "") {
+        // Array [2][1][1+][4].
+        mobileNumberTemp = req.body.mobileNumber.match(/(^\d{2})(\d)(\d+)(\d{4})$/);
+        // Format to 000.000.000-00.
+        mobileNumberTemp = `(${mobileNumberTemp[1]}) ${mobileNumberTemp[2]} ${mobileNumberTemp[3]}-${mobileNumberTemp[4]}`;
+      } else{
+        mobileNumberTemp = "";
+      }
       User.findById(req.user._id, (err, user)=>{
         if (err) { return next(err) };
         if (!user) { return next(new Error('Not found user to save.')); }
-        user.mobileNumber = req.body.mobileNumber;
+        user.mobileNumber = mobileNumberTemp;
         user.save(function(err) {
           if (err) { return next(err); } 
           return res.json({ success: true });

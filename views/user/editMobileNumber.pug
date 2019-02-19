@@ -12,7 +12,7 @@ block content
     //- Warn message.
     p.warn-message(v-show='this.warnMessage !== ""') {{ warnMessage }}   
     label(for='mobileNumber') Novo Número de Celular
-    input(type='text' name='mobileNumber' id='mobileNumber' v-model='mobileNumber')
+    input(type='text' name='mobileNumber' id='mobileNumber' v-model='mobileNumber' placeholder='(99) 9 9999-9999')
     input.btn-primary(type='button' value='Salvar Alterações' @click='save()') 
 
 append internal_scripts

@@ -200,7 +200,9 @@ router.get('/shipping-method/:order_id', (req, res, next)=>{
         // Box shipping dimensions.
         order.shipping.box = shippingBox;
       }
+      log.debug('Wating correios ws...');
       estimateCorreiosShipping(shippingBox, (err, result)=>{
+        log.debug('Receive correios ws answer.');
         // No Correio info.
         if (err) {
           order.shipping.correioResult = {};
@@ -334,10 +336,9 @@ router.post('/needCpfAndMobileNumber', checkPermission, (req, res, next)=>{
   if (mobileNumberTemp != null) {
     req.body.mobileNumber = mobileNumberTemp.join('');
   } 
-  log.debug(`mobileNumber before sanitize: ${req.body.mobileNumber}`);
   req.sanitize("cpf").trim();
   req.checkBody('mobileNumber', 'Campo NÚMERO DE CELULAR ínválido.').isLength({ min: 10});
-  req.checkBody('mobileNumber', 'Campo NÚMERO DE CELULAR inválido.').isLength({ max: 12});
+  req.checkBody('mobileNumber', 'Campo NÚMERO DE CELULAR inválido.').isLength({ max: 11});
   req.checkBody('cpf', 'Campo CPF deve ser preenchido.').notEmpty();
   req.checkBody('cpf', 'CPF inválido.').isCpf();
   req.getValidationResult().then(function(result) {
@@ -345,12 +346,10 @@ router.post('/needCpfAndMobileNumber', checkPermission, (req, res, next)=>{
     if (!result.isEmpty()) {
       let messages = [];
       messages.push(result.array()[0].msg);
-      log.debug('some error');
       return res.json({ success: false, message: messages[0]});
     } 
     // Save cpf.
     else {
-      log.debug('Ok');
       // Format CPF.
       // Get only the digits.
       let cpf = req.body.cpf.match(/\d+/g).join('');
@@ -362,10 +361,9 @@ router.post('/needCpfAndMobileNumber', checkPermission, (req, res, next)=>{
       // Get only the digits.
       let mobileNumber = req.body.mobileNumber.match(/\d+/g).join('');
       // Array [2][1][1+][4].
-      mobileNumber = mobileNumber.match(/(^\d{2})(\d)(\d+)(\d{4})$/)
+      mobileNumber = mobileNumber.match(/(^\d{2})(\d)(\d+)(\d{4})$/);
       // Format to 000.000.000-00.
-      mobileNumber = `(${mobileNumber[1]}) ${mobileNumber[2]} ${mobileNumber[3]}-${mobileNumber[4]}`
-      log.debug(`mobileNumber: ${mobileNumber}`);
+      mobileNumber = `(${mobileNumber[1]}) ${mobileNumber[2]} ${mobileNumber[3]}-${mobileNumber[4]}`;
       // Save user data.
       User.findById(req.user._id, (err, user)=>{
         if (err) { return next(err) };
@@ -382,14 +380,7 @@ router.post('/needCpfAndMobileNumber', checkPermission, (req, res, next)=>{
             order.mobileNumber = mobileNumber;
             order.save(function(err) {
               if (err) { return next(err); } 
-              res.render(`checkout/payment/${req.body.orderId}`, 
-                { 
-                  order: req.body.orderId, 
-                  nav: {
-                  },
-                  env: (process.env.NODE_ENV === 'production' ? 'production': 'sandbox')
-                }
-              )
+              return res.json({ success: true});
             });  
           });
         });  

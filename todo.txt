@@ -1,11 +1,11 @@
 Feito
-  Produtos fora de estoque estão sendo exibidos
-  Quando produto fora de estoque 
-    Não mostra botão de adicionar ao carrinho
-    Não mostra calcular frete
-    Mostra mensagem produto fora de etoque
-  Backup do banco de dados
-  Criação de snapshot no servidor
+  Usuário é forçado a entrar com cpf e celular após seleção do modo de envio (apenas se ainda não tem as informações cadastradas)
+  Celular tem que ter entre 10 a 11 digitos incluindo ddd.
+  Edição de celular (Sua conta/Autenticação/Número de telefone celular) segue o mesmo padrão, mas permite que o número de celular seja removido.
+
+Coloca entre o campo pesquisar e o Admin um drop box com as categorias
+
+timeout for correio response
 
 force user entry with cpf
 
