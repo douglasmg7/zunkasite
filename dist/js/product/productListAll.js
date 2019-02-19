@@ -29,7 +29,7 @@ var app = new Vue({
     // Text for search products.
     search: search,
     // Sort.
-    sort: 'alfa',
+    sort: 'stock',
     // Cart.
     cart: cart,
     // Categories.

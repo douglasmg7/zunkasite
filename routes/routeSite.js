@@ -93,8 +93,11 @@ router.get('/api/products', function (req, res) {
     search.storeProductCategory = {$in: req.query.categoriesFilter};
   }
   // Sort.
-  let sort = {storeProductTitle: 1};
+  let sort = {storeProductQtd: -1, storeProductQtdSold: -1};
   switch(req.query.sort) {
+    case 'alpha':
+      sort = {storeProductTitle: 1};
+      break
     case 'best-selling':
       sort = {storeProductQtdSold: -1};
       break;

@@ -5,6 +5,9 @@ Feito
 
 Coloca entre o campo pesquisar e o Admin um drop box com as categorias
 
+Não permitir cancelar ordem depois de entregue.
+Não mostrar ação quando não houver opção.
+
 timeout for correio response
 
 force user entry with cpf
