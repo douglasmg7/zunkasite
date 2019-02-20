@@ -3,6 +3,11 @@ Feito
   Celular tem que ter entre 10 a 11 digitos incluindo ddd.
   Edição de celular (Sua conta/Autenticação/Número de telefone celular) segue o mesmo padrão, mas permite que o número de celular seja removido.
 
+Change Autenticação to Meus dados.
+
+Search if can make google show what we want on a search.
+https://www.google.com/search?client=ubuntu&channel=fs&q=zunka&ie=utf-8&oe=utf-8
+
 Coloca entre o campo pesquisar e o Admin um drop box com as categorias
 
 Não permitir cancelar ordem depois de entregue.
