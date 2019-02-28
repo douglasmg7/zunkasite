@@ -1,27 +1,26 @@
 Feito
-  Usuário é forçado a entrar com cpf e celular após seleção do modo de envio (apenas se ainda não tem as informações cadastradas)
-  Celular tem que ter entre 10 a 11 digitos incluindo ddd.
-  Edição de celular (Sua conta/Autenticação/Número de telefone celular) segue o mesmo padrão, mas permite que o número de celular seja removido.
-
-Change Autenticação to Meus dados.
-
-Search if can make google show what we want on a search.
-https://www.google.com/search?client=ubuntu&channel=fs&q=zunka&ie=utf-8&oe=utf-8
-
-Coloca entre o campo pesquisar e o Admin um drop box com as categorias
+  Alteração da opção de menu "Autenticação" para "Meus dados"
+  Criação do menu "Categorias" na barra de navegação.
+  Inclusão meta description
+  Nginx reload, para atualizar a chave de certificado para https
 
 Não permitir cancelar ordem depois de entregue.
 Não mostrar ação quando não houver opção.
 
-timeout for correio response
+pm2 start on startup system
 
-force user entry with cpf
+timeout for correio response
 
 detalhes técnicos -> especificação técnica
 
 image zoom
 
+banner is over menu on mobile
+
 test quilljs.com
+
+Verify if certbot.service is running.
+When certbot renew nginx must reload to.
 
 cart and orders not breaking on mobile.
 

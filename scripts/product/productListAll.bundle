@@ -30,7 +30,7 @@ var app = new Vue({
     // Categories.
     categories: [],
     // Filter categories.
-    categoriesFilter: []
+    categoriesFilter: categoriesFilter || [],
   },
   created() {
     // On reload page use the query string for search, not the input search.

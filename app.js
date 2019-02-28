@@ -165,7 +165,15 @@ app.use((req, res, next)=>{
   res.locals.csrfToken = req.csrfToken();
   res.locals.user = req.user ? req.user : { name: undefined, group: undefined };
   res.locals.path = req.path;
-  next();
+  redis.get('categoriesInUse', (err, categories)=>{
+    // Internal error.
+    if (err) { 
+      log.error(err.stack);
+      return res.render('/error', { message: 'Não foi possível encontrar as categorias.', error: err });
+    } 
+    res.locals.categories = JSON.parse(categories) || []
+    next();
+  });  
 });
 
 // Validation.

@@ -48,6 +48,17 @@ router.get('/all', function(req, res, next) {
     nav: {
     },
     search: req.query.search ? req.query.search : '',
+    categoriesFilter: [],
+  });   
+});
+
+// Get all products page by categorie.
+router.get('/all/:categoriesFilter', function(req, res, next) {
+  res.render('product/productListAll', {
+    nav: {
+    },
+    search: req.query.search ? req.query.search : '',
+    categoriesFilter: [req.params.categoriesFilter],
   });   
 });
 

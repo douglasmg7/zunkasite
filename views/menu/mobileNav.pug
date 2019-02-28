@@ -15,6 +15,9 @@
     input(onclick='searchMobile()')
 #sidenav
   a.closebtn(href="javascript:void(0)" onclick="closeNav()") &times;
+    a.root Categorias
+    each categorie in categories
+      a(href=`/all/${categorie}`)= categorie
   if user.name && user.group.includes('admin')
     a.root Admin
     a(href='/admin/orders') Pedidos
@@ -28,7 +31,7 @@
   if user.name
     a(href='/user/orders') Pedidos
     a(href='/user/address') Endereços
-    a(href='/user/access') Autenticação
+    a(href='/user/access') Meus dados
     a(href='/user/signout') Não é #{user.name}? Sair
 script.
   function searchMobile(event){

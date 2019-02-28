@@ -12,8 +12,15 @@
   //- div.t
   #menu
     ul
+      li
+        .title
+          | Categorias
+          svg.icon.menu: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
+        ul
+          each categorie in categories
+            li(onclick=`window.location="/all/${categorie}"`)= categorie
       if user.name && user.group.includes('admin')
-        li.niv1.admin
+        li
           .title
             | Admin
             svg.icon.menu: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
@@ -23,7 +30,7 @@
             li(onclick='window.location="/admin/product/new"') Criar produto   
             li(onclick='window.location="/admin/banner"') Banners   
             li(onclick='window.location="/admin/motoboy-delivery"') Motoboy
-      li.niv1.account
+      li
         .title
           | Sua conta
           svg.icon.menu: use(xlink:href='/icon/sprite.svg#baseline-expand_more_#ccc-24px')
@@ -33,7 +40,7 @@
           if user.name
             li(onclick='window.location="/user/orders"') Pedidos
             li(onclick='window.location="/user/address"') Endereços
-            li(onclick='window.location="/user/access"') Autenticação
+            li(onclick='window.location="/user/access"') Meus dados
             li(onclick='window.location="/user/signout"') Não é #{user.name}? Sair
   .search
     input(id='search' onkeyup='searchDesktop(event)' placeholder='O que você procura?')
