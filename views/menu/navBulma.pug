@@ -1,0 +1,82 @@
+nav.navbar.is-info(role="navigation" aria-label="main navigation")
+  .navbar-brand
+    a.navbar-item(href="/")
+      img(src='/logo.png')
+    a.navbar-burger.burger(role="button" aria-label="menu" aria-expanded="false" data-target="navbarMain")
+      span(aria-hidden="true")
+      span(aria-hidden="true")
+      span(aria-hidden="true")
+  .navbar-menu#navbarMain
+    //- .navbar-start
+    .navbar-end
+      //- Search
+      .navbar-item
+        .field.has-addons
+          .control
+            input.input(id='search' onkeyup='searchDesktop(event)' placeholder='O que você procura?')
+          .control
+            button.button(onclick='searchDesktop()')
+              span.icon
+                i.fas.fa-search
+              //- span Pesquisar
+      //- Admin
+      if user.name && user.group.includes('admin')
+        .navbar-item.has-dropdown.is-hoverable
+          a.navbar-link Admin
+          .navbar-dropdown
+            a.navbar-item(href="/admin/orders") Pedidos
+            a.navbar-item(href="/admin") Produtos
+            a.navbar-item(href="/admin/product/new") Criar produto 
+            a.navbar-item(href="/admin/banner") Banners
+            a.navbar-item(href="/admin/motoboy-delivery") Motoboy
+      //- Categories
+      .navbar-item.has-dropdown.is-hoverable
+        a.navbar-link Categorias
+        .navbar-dropdown
+          each categorie in categories
+            a.navbar-item(href=`/all/${categorie}`)= categorie
+      //- Sua conta.
+      .navbar-item.has-dropdown.is-hoverable
+        a.navbar-link Sua conta
+        .navbar-dropdown
+          if !user.name
+            a.navbar-item(href="/user/signin") Entrar
+          if user.name
+            a.navbar-item(href="/user/orders") Pedidos
+            a.navbar-item(href="/user/address") Endereços
+            a.navbar-item(href="/user/access") Meus dados
+            a.navbar-item(href="/user/signout") Não é #{user.name}? Sair
+      a.navbar-item(href="/cart") Carrinho (#{cart.totalQtd})
+      //- a.navbar-item(href="/cart") 
+      //-   span.icon.is-medium
+      //-     i.fas.fa-lg.fa-shopping-cart
+      //-   span (#{cart.totalQtd})
+      //- a.navbar-item(href="/cart") 
+      //-   span.icon.is-medium
+      //-     i.fas.fa-lg.fa-shopping-cart
+      //-       //- span(style="font-size:11px; margin-left:10px; margin-top:-19px; display:block; color: black;") #{cart.totalQtd}
+script.
+  document.addEventListener('DOMContentLoaded', () => {
+    // Get all "navbar-burger" elements
+    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+    // Check if there are any navbar burgers
+    if ($navbarBurgers.length > 0) {
+      // Add a click event on each of them
+      $navbarBurgers.forEach( el => {
+        el.addEventListener('click', () => {
+          // Get the target from the "data-target" attribute
+          const target = el.dataset.target;
+          const $target = document.getElementById(target);
+          // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+          el.classList.toggle('is-active');
+          $target.classList.toggle('is-active');
+        });
+      });
+    }
+  });
+  function searchDesktop(event){
+    if (!event || event.key === 'Enter') {
+      // Must be implemented on parent module.
+      _search(document.querySelectorAll('#search')[0].value);
+    }
+  }

@@ -16,6 +16,24 @@ function formatMoney(val){
 }
 
 // Get products page by class (news, more selled...).
+router.get('/bulma', function(req, res, next) {
+  redis.get('banners', (err, banners)=>{
+    // Internal error.
+    if (err) { 
+      log.error(err.stack);
+      return res.render('/error', { message: 'Não foi possível encontrar os banners.', error: err });
+    } 
+    // Render page.  
+    return res.render('product/productListBulma', {
+      nav: {
+      },
+      search: req.query.search ? req.query.search : '',
+      banners: JSON.parse(banners) || [],
+    }); 
+  }); 
+});
+
+// Get products page by class (news, more selled...).
 router.get('/', function(req, res, next) {
   redis.get('banners', (err, banners)=>{
     // Internal error.
