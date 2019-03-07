@@ -31,25 +31,27 @@ block content
     .buttons
       button(onclick='window.location="/cart"') Carrinho
       button(onclick='window.location="/checkout/shipping-address"') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
-  //- New products
+  //- New products.
   section.section
     .container
       h3.subtitle.is-3 Novidades na loja
-      .box(v-for='product in newProducts')
-        a(:href='"/product/" + product._id')
-          img(:src='srcImg0200(product)', v-if='product.images[0]')
-          //- img(:src='`/img/${product._id}/${product.images[0]}`', v-if='product.images[0]')
-          h4.title {{ product.storeProductTitle }}
-          h3.price
-            sup R$
-            | {{ product.storeProductPrice | currency | currencyInt }}
-            sup {{ product.storeProductPrice | currency | currencyCents }} 
-  //- Best selling products
+      .tile.is-ancestor
+        .tile(v-for='product in newProducts')
+          .card
+            .card-image
+              figure.image
+                a(:href='"/product/" + product._id')
+                  img(:src='srcImg0200(product)', v-if='product.images[0]' alt='Imagem não disponível')
+            .card-content
+              .content.is-medium
+                p.has-text-link {{ product.storeProductTitle }}
+                p.has-text-grey-dark R$ {{ product.storeProductPrice | currency}}
+  //- Best selling products.
   section.section
     .container
       h3.subtitle.is-3 Produtos mais vendidos
-      .products
-        .product(v-for='product in bestSellingProducts')
+      .tile.is-ancestor
+        .tile.box(v-for='product in bestSellingProducts')
           a(:href='"/product/" + product._id')
             img(:src='srcImg0200(product)', v-if='product.images[0]')
             //- img(:src='`/img/${product._id}/${product.images[0]}`', v-if='product.images[0]')
