@@ -1,4 +1,4 @@
-nav.navbar.is-black(role="navigation" aria-label="main navigation")
+nav.navbar.is-dark(role="navigation" aria-label="main navigation")
   .navbar-brand
     a.navbar-item(href="/")
       img(src='/logo.png')
@@ -22,29 +22,32 @@ nav.navbar.is-black(role="navigation" aria-label="main navigation")
       //- Admin
       if user.name && user.group.includes('admin')
         .navbar-item.has-dropdown.is-hoverable
-          a.navbar-link Admin
-          .navbar-dropdown
+          a.navbar-link.is-arrowless Admin
+          .navbar-dropdown.is-boxed
             a.navbar-item(href="/admin/orders") Pedidos
+            hr.navbar-divider
             a.navbar-item(href="/admin") Produtos
             a.navbar-item(href="/admin/product/new") Criar produto 
+            hr.navbar-divider
             a.navbar-item(href="/admin/banner") Banners
             a.navbar-item(href="/admin/motoboy-delivery") Motoboy
       //- Categories
       .navbar-item.has-dropdown.is-hoverable
-        a.navbar-link Categorias
-        .navbar-dropdown
+        a.navbar-link.is-arrowless Categorias
+        .navbar-dropdown.is-boxed
           each categorie in categories
             a.navbar-item(href=`/all/${categorie}`)= categorie
       //- Sua conta.
       .navbar-item.has-dropdown.is-hoverable
-        a.navbar-link Sua conta
-        .navbar-dropdown
+        a.navbar-link.is-arrowless Sua conta
+        .navbar-dropdown.is-boxed
           if !user.name
             a.navbar-item(href="/user/signin") Entrar
           if user.name
             a.navbar-item(href="/user/orders") Pedidos
             a.navbar-item(href="/user/address") Endereços
             a.navbar-item(href="/user/access") Meus dados
+            hr.navbar-divider
             a.navbar-item(href="/user/signout") Não é #{user.name}? Sair
       a.navbar-item(href="/cart") Carrinho (#{cart.totalQtd})
       //- a.navbar-item(href="/cart") 

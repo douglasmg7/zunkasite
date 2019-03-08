@@ -1,4 +1,4 @@
-extends ../layout/layout_vue_bulma
+extends ../layout/layout_vue_b
 
 block title
   title Zunka - Produtos
@@ -9,6 +9,11 @@ block css
   link(rel="stylesheet" href="/fontawesome/css/all.min.css" charset="utf-8")
   link(rel="stylesheet" href="/css/product/bannerMenu.css" charset="utf-8")
 
+block append internal_style
+  style.
+    ._card {
+      height: 800px;
+    }
 block content
   section
     //- .container.is-widescreen
@@ -21,16 +26,34 @@ block content
           .dots
             .dot(v-for="(banner, index) in banners", :index='index' @click='selectBanner(index)', :class='[index == visibleBanner ? "selected" : ""]')
           .arrow.right(@click='changeBanner(1)') &#10095;
-  .cart(v-if='this.productAddedToCart._id')
-    .item
-      img(:src='"/img/" + this.productAddedToCart._id + "/" + this.productAddedToCart.images[0]')
-      span Adicionado ao carrinho
-    .sub-total
-      span Subtotal ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}}) :
-      span {{ cart.totalPrice | currency }}
-    .buttons
-      button(onclick='window.location="/cart"') Carrinho
-      button(onclick='window.location="/checkout/shipping-address"') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
+  section.section(v-if='this.productAddedToCart._id')
+    .container
+      .notification
+        .level
+          .level-item
+            figure.image.is-128x128(style="padding:10px; background-color: white;")
+              img(:src='"/img/" + this.productAddedToCart._id + "/" + this.productAddedToCart.images[0]')
+          .level-item  
+            .level-item
+              span Adicionado ao carrinho
+            .level-item
+              span Subtotal ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}}) :
+              span {{ cart.totalPrice | currency }}
+          .level-item
+            .level-item
+              a.button.is-success(href="/cart") Carrinho
+            .level-item
+              a.button.is-success(href="/checkout/shipping-address") Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
+  //- .cart(v-if='this.productAddedToCart._id')
+  //-   .item
+  //-     img(:src='"/img/" + this.productAddedToCart._id + "/" + this.productAddedToCart.images[0]')
+  //-     span Adicionado ao carrinho
+  //-   .sub-total
+  //-     span Subtotal ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}}) :
+  //-     span {{ cart.totalPrice | currency }}
+  //-   .buttons
+  //-     button(onclick='window.location="/cart"') Carrinho
+  //-     button(onclick='window.location="/checkout/shipping-address"') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
   //- New products.
   section.section
     .container
@@ -38,13 +61,13 @@ block content
       .row.columns
         .column(v-for='product in newProducts')
           a(:href='"/product/" + product._id')
-            .card(style="height:400px;")
+            .card
               .card-image
                 figure.image(style="padding:1em;")
                     img(:src='srcImg0200(product)', v-if='product.images[0]' alt="Imagem não disponível")
               .card-content
                 .content.is-medium
-                  p.has-text-link {{ product.storeProductTitle }}
+                  p.has-text-green-zunka {{ product.storeProductTitle }}
                   p.has-text-grey-dark R$ {{ product.storeProductPrice | currency}}        
   //- Best selling products.
   section.section
@@ -53,18 +76,21 @@ block content
       .row.columns
         .column(v-for='product in bestSellingProducts')
           a(:href='"/product/" + product._id')
-            .card(style="height:400px;")
+            .card
               .card-image
                 figure.image(style="padding:1em;")
                   img(:src='srcImg0200(product)', v-if='product.images[0]' alt="Imagem não disponível")
               .card-content
                 .content.is.medium
-                  p.has-text-link {{ product.storeProductTitle }}
+                  p.has-text-green-zunka {{ product.storeProductTitle }}
                   p.has-text-grey-dark  R$ {{ product.storeProductPrice | currency}} 
   //- All products.
+  //- section.section
+  //-   .container
+  //-     h3.subtitle.is-3: a(href='/all') Todos os produtos >
   section.section
     .container
-      h3.subtitle.is-3: a(href='/all') Todos os produtos >
+      a.button.is-success.is-medium.is-fullwidth(href='/all') Ver todos os produtos
 append internal_scripts
   script.
     let cart = !{JSON.stringify(cart)};

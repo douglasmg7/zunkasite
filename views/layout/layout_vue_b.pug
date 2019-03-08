@@ -6,14 +6,22 @@ html(lang="en")
     meta(name="description" content="Loja especializada na venda de laptop")
     block title
     block css
+  block internal_style
+    style.
+      .has-text-green-zunka {
+        color: #070;
+      }
+      .has-background-green-zunka {
+        background-color: #070;
+      }
   body
-    //- include ../menu/contact.pug
-    include ../menu/navBulma.pug
+    include ../menu/contact_b.pug
+    include ../menu/topNavBar.pug
     //- include ../menu/mobileNav.pug 
     main#app(v-cloak)
       block content
     block footer
-      //- include ../menu/footer
+      include ../menu/footer_b
 
   block internal_scripts
     script.
