@@ -1,8 +1,8 @@
 @import '../menu/reset_menu_footer'
 // @import '../menu/pagination'
 #app
-  max-width max_width
-  margin 0 auto
+  // max-width max_width
+  // margin 0 auto
   margin-bottom 1em
   overflow-x hidden
   > .cart
@@ -42,7 +42,8 @@
       button:nth-child(1)
         margin-right 1em
   > .banners
-    height 300px
+    display flex
+    // height 300px
     margin 0 auto
     margin-bottom 2em
     margin-right 5px
@@ -53,6 +54,7 @@
     border-radius 0 0 4px 4px
     img
       display block
+      width 100%
     .banner-menu
       position absolute
       width 100%
@@ -117,7 +119,8 @@
         > a
           text-decoration none
           > img
-            max-width 100%
+            // max-width 100%
+            width 100%
           > .title
             font-size 1em
             color c_green

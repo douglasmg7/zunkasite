@@ -15,6 +15,7 @@ block append internal_style
       height: 800px;
     }
 block content
+  //- Banners.
   section
     //- .container.is-widescreen
     .container.is-fullhd
@@ -26,33 +27,23 @@ block content
           .dots
             .dot(v-for="(banner, index) in banners", :index='index' @click='selectBanner(index)', :class='[index == visibleBanner ? "selected" : ""]')
           .arrow.right(@click='changeBanner(1)') &#10095;
+  //- Cart.
   section.section(v-if='this.productAddedToCart._id')
     .container
       .level.box
-        .level-left
-          .level-item
-            figure.image.is-128x128(style="padding:10px; background-color: white;")
-              img(:src='"/img/" + this.productAddedToCart._id + "/" + this.productAddedToCart.images[0]')
-          .level-item
-            span.is-size-5.has-text-green-zunka(style="padding-left: 1em; padding-right: 1em;") Adicionado ao carrinho
-          .level-item
-            span.is-size-5 Subtotal ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}}) :&nbsp&nbsp
-            span.is-size-5.has-text-green-zunka.has-text-weight-bold R${{ cart.totalPrice | currency }}
-        .level-right
-          .level-item
-            a.button.is-success(href="/cart") Carrinho
-          .level-item
-            a.button.is-success(href="/checkout/shipping-address") Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
-  //- .cart(v-if='this.productAddedToCart._id')
-  //-   .item
-  //-     img(:src='"/img/" + this.productAddedToCart._id + "/" + this.productAddedToCart.images[0]')
-  //-     span Adicionado ao carrinho
-  //-   .sub-total
-  //-     span Subtotal ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}}) :
-  //-     span {{ cart.totalPrice | currency }}
-  //-   .buttons
-  //-     button(onclick='window.location="/cart"') Carrinho
-  //-     button(onclick='window.location="/checkout/shipping-address"') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
+        .level-item
+          //- figure.image.is-128x128(style="display: inline-block; padding:10px; background-color: white;")
+          figure.image.is-96x96
+            img(:src='"/img/" + this.productAddedToCart._id + "/" + this.productAddedToCart.images[0]')
+        .level-item
+          span.is-size-5.has-text-green-zunka Adicionado ao carrinho
+        //- .level-item
+          span.is-size-5(style="white-space-: nowrap;") Subtotal&nbsp({{ cart.totalQtd }}&nbsp{{cart.totalQtd > 1 ? "itens" : "item"}})&nbsp:&nbsp
+          span.is-size-5.has-text-green-zunka.has-text-weight-bold R${{ cart.totalPrice | currency }}&nbsp&nbsp
+        .level-item
+          a.button.is-success(href="/cart") Carrinho
+        .level-item
+          a.button.is-success(style="margin-left: 1em;" href="/checkout/shipping-address") Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
   //- New products.
   section.section
     .container

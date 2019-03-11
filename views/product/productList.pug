@@ -7,6 +7,14 @@ block css
   link(rel="stylesheet" href="/css/product/productList.css" charset="utf-8")
 
 block content
+  .banners
+    a(v-for="(banner, index) in banners", :index='index' v-show='index == visibleBanner', :href="banner.link || false")
+      img.banner(:src="'/banner/' + banner.fileName")
+    .banner-menu
+      .arrow.left(@click='changeBanner(-1)') &#10094;
+      .dots
+        .dot(v-for="(banner, index) in banners", :index='index' @click='selectBanner(index)', :class='[index == visibleBanner ? "selected" : ""]')
+      .arrow.right(@click='changeBanner(1)') &#10095;
   .cart(v-if='this.productAddedToCart._id')
     .item
       img(:src='"/img/" + this.productAddedToCart._id + "/" + this.productAddedToCart.images[0]')
@@ -17,14 +25,6 @@ block content
     .buttons
       button(onclick='window.location="/cart"') Carrinho
       button(onclick='window.location="/checkout/shipping-address"') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
-  .banners
-    a(v-for="(banner, index) in banners", :index='index' v-show='index == visibleBanner', :href="banner.link || false")
-      img.banner(:src="'/banner/' + banner.fileName")
-    .banner-menu
-      .arrow.left(@click='changeBanner(-1)') &#10094;
-      .dots
-        .dot(v-for="(banner, index) in banners", :index='index' @click='selectBanner(index)', :class='[index == visibleBanner ? "selected" : ""]')
-      .arrow.right(@click='changeBanner(1)') &#10095;
   .new-products
     h3.title Novidades na loja
     .products
