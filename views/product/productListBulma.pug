@@ -14,6 +14,9 @@ block append internal_style
     ._card {
       height: 800px;
     }
+    figure.image {
+      padding: 1em;
+    }
 block content
   //- Banners.
   section
@@ -53,7 +56,7 @@ block content
           a(:href='"/product/" + product._id')
             .card
               .card-image
-                figure.image(style="padding:1em;")
+                figure.image
                     img(:src='srcImg0200(product)', v-if='product.images[0]' alt="Imagem não disponível")
               .card-content
                 .content.is-medium
@@ -68,16 +71,13 @@ block content
           a(:href='"/product/" + product._id')
             .card
               .card-image
-                figure.image(style="padding:1em;")
+                figure.image
                   img(:src='srcImg0200(product)', v-if='product.images[0]' alt="Imagem não disponível")
               .card-content
-                .content.is.medium
+                .content.is-medium
                   p.has-text-green-zunka {{ product.storeProductTitle }}
                   p.has-text-grey-dark  R$ {{ product.storeProductPrice | currency}} 
-  //- All products.
-  //- section.section
-  //-   .container
-  //-     h3.subtitle.is-3: a(href='/all') Todos os produtos >
+  //- See all products.
   section.section
     .container
       a.button.is-success.is-medium.is-fullwidth(href='/all') Ver todos os produtos
