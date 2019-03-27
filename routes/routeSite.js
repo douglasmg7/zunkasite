@@ -16,6 +16,24 @@ function formatMoney(val){
 }
 
 // Get products page by class (news, more selled...).
+router.get('/normalize', function(req, res, next) {
+  redis.get('banners', (err, banners)=>{
+    // Internal error.
+    if (err) { 
+      log.error(err.stack);
+      return res.render('/error', { message: 'Não foi possível encontrar os banners.', error: err });
+    } 
+    // Render page.  
+    return res.render('product/productListNormalize', {
+      nav: {
+      },
+      search: req.query.search ? req.query.search : '',
+      banners: JSON.parse(banners) || [],
+    }); 
+  }); 
+});
+
+// Get products page by class (news, more selled...).
 router.get('/bulma', function(req, res, next) {
   redis.get('banners', (err, banners)=>{
     // Internal error.
@@ -183,7 +201,7 @@ router.get('/api/new-products', function (req, res) {
   // const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
   const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
   // Find products.
-  let productPromise = Product.find(search).sort({'createdAt': -1}).limit(5).exec();
+  let productPromise = Product.find(search).sort({'createdAt': -1}).limit(6).exec();
   Promise.all([productPromise])
   .then(([products])=>{    
     res.json({products});
@@ -200,7 +218,7 @@ router.get('/api/best-selling-products', function (req, res) {
   // const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductQtdSold': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
   // Find products.
   // let productPromise = Product.find(search).sort({'createdAt': -1}).limit(4).exec();
-  let productPromise = Product.find(search).sort({'storeProductQtdSold': -1, 'storeProductQtd': 1}).limit(5).exec();
+  let productPromise = Product.find(search).sort({'storeProductQtdSold': -1, 'storeProductQtd': 1}).limit(6).exec();
   Promise.all([productPromise])
   .then(([products])=>{    
     res.json({products});

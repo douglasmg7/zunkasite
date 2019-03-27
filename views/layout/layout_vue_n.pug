@@ -1,0 +1,35 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    meta(name="description" content="Loja especializada na venda de laptop")
+    block title
+    block css
+  block internal_style
+    style.
+      .has-text-green-zunka {
+        color: #070;
+      }
+      .has-background-green-zunka {
+        background-color: #070;
+      }
+  body
+    #header
+      include ../menu/header_n.pug
+    #menu
+      include ../menu/menu_n.pug
+    main#app(v-cloak)
+      block content
+    block footer
+      include ../menu/footer_n
+
+  block internal_scripts
+    script.
+      // Make available for vue.
+      let csrfToken = !{JSON.stringify(csrfToken)};
+
+  block external_scripts
+    script(src='/js/product/layout.js')
+    include ../components/axios.js.pug
+    include ../components/vue.js.pug

@@ -1,0 +1,30 @@
+//- Categories
+.sub-menu
+    a.item.toggle-items(href="#") Categorias
+    .items
+        a.item.back(href="#") Menu>
+        each categorie in categories
+            a.item(href=`/all/${categorie}`)= categorie
+//- Admin.
+if user.name && user.group.includes('admin')
+    .sub-menu
+        a.item.toggle-items(href="#") Admin
+        .items
+            a.item.back(href="#") Menu>
+            a.item(href="/admin/orders") Pedidos
+            a.item(href="/admin") Produtos
+            a.item(href="/admin/product/new") Criar produto
+            a.item(href="/admin/banner") Banners
+            a.item(href="/admin/motoboy-delivery") Motoboy
+//- Account.
+.sub-menu
+    a.item.toggle-items(href="#") Sua conta
+    .items
+        a.item.back(href="#") Menu>
+        if !user.name
+            a.item(href="/user/signin") Entrar
+        if user.name
+            a.item(href="user/orders") Pedidos
+            a.item(href="/user/address") Endereços
+            a.item(href="/user/access") Meus dados
+            a.item(href="/user/signout") Não é #{user.name}? Sair            
