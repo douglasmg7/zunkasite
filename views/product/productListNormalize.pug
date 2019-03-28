@@ -4,14 +4,13 @@ block title
   title Zunka - Produtos
 
 block css
-  link(rel="stylesheet" href="/css/product/productListNormalize.css" charset="utf-8")
   link(rel="stylesheet" href="/css/normalize.css" charset="utf-8")
-  //- link(rel="stylesheet" href="/css/milligram.min.css" charset="utf-8")
   link(rel="stylesheet" href="/css/skeleton.css" charset="utf-8")
+  //- link(rel="stylesheet" href="/css/milligram.css" charset="utf-8")
+  link(rel="stylesheet" href="/css/product/productListNormalize.css" charset="utf-8")
   link(rel="stylesheet" href="/fontawesome/css/all.min.css" charset="utf-8")
-  //- link(rel="stylesheet" href="/css/product/bannerMenu.css" charset="utf-8")
 
-//- block append internal_style
+block append internal_style
 
 block content
     //- New products.
@@ -20,16 +19,16 @@ block content
         .products
             a.product.shadow(v-for='product in newProducts', :href='"/product/" + product._id')
                 img(:src='srcImg0200(product)', v-if='product.images[0]' alt="Imagem não disponível")
-                p.has-text-green-zunka {{ product.storeProductTitle }}
-                p.has-text-grey-dark R$ {{ product.storeProductPrice | currency}}        
+                p {{ product.storeProductTitle }}
+                p R$ {{ product.storeProductPrice | currency}}        
     //- Best selling products.
     section
         h5.section-title Produtos mais vendidos
         .products
             a.product.shadow(v-for='product in bestSellingProducts', :href='"/product/" + product._id')
                 img(:src='srcImg0200(product)', v-if='product.images[0]' alt="Imagem não disponível")
-                p.has-text-green-zunka {{ product.storeProductTitle }}
-                p.has-text-grey-dark  R$ {{ product.storeProductPrice | currency}} 
+                p {{ product.storeProductTitle }}
+                p  R$ {{ product.storeProductPrice | currency}} 
     //- See all products.
     section
         a.button(href='/all') Ver todos os produtos
