@@ -145,15 +145,12 @@ body {
 
 // Menu.
 #menu {
-    text-align: center;
-    background-color: #363636;
+    background-color: var(--black-8);
 }
 #menu a {
-    margin: 1rem;
     color: #dbdbdb;
     font-size: 1.4em;
     cursor: pointer;
-    /*display: block;*/
 }
 
 // Main.
@@ -321,26 +318,37 @@ a.button:hover {
     #main {
         margin-top: 2em;
     }
+
+    // Menu.
     #menu {
-        /*margin-top: 1.2em;*/
-        text-align: center;
+        // display: flex;
+        // justify-content: flex-end;
+        padding-right: 1em;
+        text-align: right;
+        // background-color: var(--black-7);
+    }
+    /* Sub-menu. */
+    #menu .sub-menu {
+        margin: 0 0 0 3em;
+        display: inline-block;
+    }
+    #menu .toggle-items {
+        display: inline-block;
+        margin-bottom: .3em;
+        padding-left: .5em;
     }
     #menu .sub-menu .items,
     #menu .sub-menu .items .item.back {
         display: none;
     }
-    /* Sub-menu. */
-    #menu .sub-menu {
-        display: inline-block;
-    }
     /* Sub-menus items. */
     #menu .items {
         position: absolute;
-        top: 3.3em;
-        padding-top: .6em;
-        padding-bottom: .4em;
+        top: 5.9em;
+        padding-left: 1em;
+        padding-right: 1em;
         /*width: calc(var(--menu-width) * 1px);*/
-        background-color: #fff;
+        background-color: var(--black-8);
         font-size: .9em;
         text-align: left;
         box-shadow: 4px 6px 22px -8px rgba(0,0,0,0.81);
@@ -350,8 +358,8 @@ a.button:hover {
         display: block;
     }
     #menu .sub-menu .items .item {
-        padding-top: .5em;
-        padding-bottom: .5em;
+        // padding-top: .5em;
+        // padding-bottom: .5em;
         display: block;
     }
 }
