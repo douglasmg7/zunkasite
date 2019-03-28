@@ -19,54 +19,54 @@ function formatMoney(val){
 router.get('/normalize', function(req, res, next) {
   redis.get('banners', (err, banners)=>{
     // Internal error.
-    if (err) { 
+    if (err) {
       log.error(err.stack);
       return res.render('/error', { message: 'Não foi possível encontrar os banners.', error: err });
-    } 
-    // Render page.  
+    }
+    // Render page.
     return res.render('product/productListNormalize', {
       nav: {
       },
       search: req.query.search ? req.query.search : '',
       banners: JSON.parse(banners) || [],
-    }); 
-  }); 
+    });
+  });
 });
 
 // Get products page by class (news, more selled...).
 router.get('/bulma', function(req, res, next) {
   redis.get('banners', (err, banners)=>{
     // Internal error.
-    if (err) { 
+    if (err) {
       log.error(err.stack);
       return res.render('/error', { message: 'Não foi possível encontrar os banners.', error: err });
-    } 
-    // Render page.  
+    }
+    // Render page.
     return res.render('product/productListBulma', {
       nav: {
       },
       search: req.query.search ? req.query.search : '',
       banners: JSON.parse(banners) || [],
-    }); 
-  }); 
+    });
+  });
 });
 
 // Get products page by class (news, more selled...).
 router.get('/', function(req, res, next) {
   redis.get('banners', (err, banners)=>{
     // Internal error.
-    if (err) { 
+    if (err) {
       log.error(err.stack);
       return res.render('/error', { message: 'Não foi possível encontrar os banners.', error: err });
-    } 
-    // Render page.  
+    }
+    // Render page.
     return res.render('product/productList', {
       nav: {
       },
       search: req.query.search ? req.query.search : '',
       banners: JSON.parse(banners) || [],
-    }); 
-  }); 
+    });
+  });
 });
 
 // Get products page.
@@ -75,7 +75,7 @@ router.get('/search', function(req, res, next) {
     nav: {
     },
     search: req.query.search ? req.query.search : '',
-  });   
+  });
 });
 
 // Get all products page.
@@ -85,7 +85,7 @@ router.get('/all', function(req, res, next) {
     },
     search: req.query.search ? req.query.search : '',
     categoriesFilter: [],
-  });   
+  });
 });
 
 // Get all products page by categorie.
@@ -95,7 +95,7 @@ router.get('/all/:categoriesFilter', function(req, res, next) {
     },
     search: req.query.search ? req.query.search : '',
     categoriesFilter: [req.params.categoriesFilter],
-  });   
+  });
 });
 
 // Get product page.
@@ -111,11 +111,11 @@ router.get('/product/:_id', function(req, res, next) {
       });
     } else {
       log.info(`product ${req.params._id} not found`);
-      res.status(404).send('Produto não encontrado.');      
+      res.status(404).send('Produto não encontrado.');
     }
   }).catch(err=>{
     return next(err);
-  });  
+  });
 });
 
 // Get products.
@@ -132,7 +132,7 @@ router.get('/api/products', function (req, res) {
   }
   // const search = req.query.search
   //   ? {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}, 'storeProductTitle': {$regex: req.query.search, $options: 'i'}}
-  //   : {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};    
+  //   : {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
   // log.debug(JSON.stringify(req.query.categoriesFilter));
   // Categories search.
   if (req.query.categoriesFilter && req.query.categoriesFilter.length) {
@@ -161,16 +161,16 @@ router.get('/api/products', function (req, res) {
   // Product count.
   let productCountPromise = Product.count(search).exec();
   Promise.all([productPromise, productCountPromise])
-  .then(([products, count])=>{    
+  .then(([products, count])=>{
     redis.get('categoriesInUse', (err, categories)=>{
       // Internal error.
-      if (err) { 
+      if (err) {
         log.error(err.stack);
         return res.render('/error', { message: 'Não foi possível encontrar as categorias.', error: err });
-      } 
-      // Render page.  
+      }
+      // Render page.
       res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE), categories: JSON.parse(categories) || []});
-    });  
+    });
   }).catch(err=>{
     return next(err);
   });
@@ -182,13 +182,13 @@ router.get('/api/products', function (req, res) {
 //   const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
 //   const search = req.query.search
 //     ? {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}, 'storeProductTitle': {$regex: req.query.search, $options: 'i'}}
-//     : {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};    
+//     : {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
 //   // Find products.
 //   let productPromise = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
 //   // Product count.
 //   let productCountPromise = Product.count(search).exec();
 //   Promise.all([productPromise, productCountPromise])
-//   .then(([products, count])=>{    
+//   .then(([products, count])=>{
 //     res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)});
 //   }).catch(err=>{
 //     return next(err);
@@ -201,9 +201,9 @@ router.get('/api/new-products', function (req, res) {
   // const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
   const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
   // Find products.
-  let productPromise = Product.find(search).sort({'createdAt': -1}).limit(6).exec();
+  let productPromise = Product.find(search).sort({'createdAt': -1}).limit(5).exec();
   Promise.all([productPromise])
-  .then(([products])=>{    
+  .then(([products])=>{
     res.json({products});
   }).catch(err=>{
     return next(err);
@@ -218,9 +218,9 @@ router.get('/api/best-selling-products', function (req, res) {
   // const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductQtdSold': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
   // Find products.
   // let productPromise = Product.find(search).sort({'createdAt': -1}).limit(4).exec();
-  let productPromise = Product.find(search).sort({'storeProductQtdSold': -1, 'storeProductQtd': 1}).limit(6).exec();
+  let productPromise = Product.find(search).sort({'storeProductQtdSold': -1, 'storeProductQtd': 1}).limit(5).exec();
   Promise.all([productPromise])
-  .then(([products])=>{    
+  .then(([products])=>{
     res.json({products});
   }).catch(err=>{
     return next(err);
@@ -235,11 +235,11 @@ router.get('/api/product/:_id', function(req, res, next) {
       res.json({product});
     } else {
       log.info(`product ${req.params._id} not found`);
-      res.status(404).send('Produto não encontrado.');      
+      res.status(404).send('Produto não encontrado.');
     }
   }).catch(err=>{
     return next(err);
-  });  
+  });
 });
 
 // Cart page.
@@ -254,7 +254,7 @@ router.get('/cart', (req, res, next)=>{
       nav: {},
       user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined },
       cart: req.cart,
-      formatMoney: formatMoney  
+      formatMoney: formatMoney
     });
   });
 })
@@ -267,17 +267,17 @@ router.put('/cart/add/:_id', (req, res, next)=>{
     if (product._id) {
       req.cart.addProduct(product, ()=>{
         // console.log('user cart', JSON.stringify(user.cart));
-        res.json({success: true});  
+        res.json({success: true});
       });
     // Not exist the product.
     } else {
       log.error(new Error(`product ${req.params._id} not found to add to cart.`).stack);
-      res.status(404).send('Produto não encontrado na base de dados.');  
+      res.status(404).send('Produto não encontrado na base de dados.');
     }
   }).catch(err=>{
     log.error(err.stack);
     res.status(404).send('Produto não encontrado na base de dados.');
-  });  
+  });
 })
 
 // Change product quantity from cart.
