@@ -17,13 +17,14 @@
     --menu-width: 200;
 }
 html {
-    position: relative;
-    overflow-x: hidden;
+    // Use for right menu.
+    // position: relative;
+    // overflow-x: hidden;
 }
 body {
-    position: relative;
-    overflow-x: hidden;
-    background-color: red;
+    // Use for right menu.
+    // position: relative;
+    // overflow-x: hidden;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -31,11 +32,16 @@ body {
     font-family: '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'sans-serif';
     background-color: var(--white-light);
 }
+#container-menu {
+    position: relative;
+    z-index: 1002
+
+}
 #c-test {
     z-index: 1002
-    height: 30px;
-    // position: relative;
-    overflow-x: hidden;
+    // height: 30px;
+    position: relative;
+    // overflow-x: hidden;
 }
 #test {
     z-index: 1003;
@@ -45,55 +51,64 @@ body {
     position: absolute;
     background-color: orange;
     top 0;
-    right: -50px;
-    // margin-right: -10px;
-    // margin-left: -10px;
+    left: 0px;
 }
 // Header bar.
 #header {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    height: 2.8em;
+    // height: 2.8em;
     padding-left: .5em;
     background-color: var(--black-darker);
 }
-// Search.
-#header .search {
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  height: 70%;
-  padding-left: .5em;
-  padding-right: .5em;
-  margin: 0 1em 0 .5em;
-  border-radius: 4px;
-  background-color: var(--white-lighter);
-}
-#header .search input {
-  flex-grow: 1;
-  margin: 0;
-  box-sizing: border-box;
-  border: none;
-  padding-left: .5em;
-  height: 100%;
-}
-#header .search i {
-  cursor: pointer;
-}
-
 // Brand name.
 #header .brand {
   // margin-left: 1em;
   height: 70%;
   padding: 0 .5em;
-  flex-shrink: 0;
 }
 #header .brand img {
-  height: 100%;
+  height: 2em;
   width: auto;
 }
-
+// Search.
+#header .search {
+  flex-grow: 1;
+  flex-shrink: 1;
+  display: flex;
+  align-items: center;
+  // height: 70%;
+  height: 2em;
+  padding-left: .5em;
+  padding-right: .5em;
+  margin: .5em 1em .5em .5em;
+  border-radius: 4px;
+  background-color: var(--white-lighter);
+}
+#header .search input {
+  flex-grow: 1;
+  flex-shrink: 1;
+  // flex-basis: 30px;
+  margin: 0;
+  box-sizing: border-box;
+  border: none;
+  padding-left: .5em;
+  height: 100%;
+  width: 10em;
+}
+#header .search input:focus {
+    outline: none;
+}
+#header .search i {
+  cursor: pointer;
+}
+// Space.
+#header .space {
+    display: none;
+    flex-grow: 1
+}
 // Cart.
 #header a.cart {
   flex-shrink: 0;
@@ -118,8 +133,10 @@ body {
 #header .burger {
     cursor: pointer;
     display: inline-block;
-    height: 100%;
+    height: 2.5em;
+    // height: 100%;
     box-sizing: border-box;
+    // background-color: lightblue;
 }
 #header .burger:hover {
     opacity: .7;
@@ -133,7 +150,7 @@ body {
     // display: block;
     // top: 40%;
     left: 10%;
-    margin-top: 2px;
+    // margin-top: 2px;
 }
 #header .burger-inner, .burger-inner::before, .burger-inner::after {
     width: 28px;
@@ -169,7 +186,8 @@ body {
 
 // Menu.
 #menu {
-    overflow-x: hidden;
+    // Use for right menu.
+    // overflow-x: hidden;
     display: block;
     background-color: var(--black-darker);
 }
@@ -249,10 +267,33 @@ a.button:hover {
     background-color: var(--green-light);
 }
 /* Mobile */
-@media (min-width: 400px) {
+@media (min-width: 100px) and (max-width: 549px) {
     .products {
         grid-template-columns: 1fr;
     }
+    #header .brand {
+        order: 1;
+    }
+    #header .search {
+        order: 5;
+    }
+    #header .space {
+        order: 2;
+        display: flex;
+    }
+    #header .cart {
+        order: 3;
+    }
+    #header .burger {
+        order: 4;
+    }
+    #header .search {
+        flex-basis: 500px;
+    }
+    #header .search {
+        margin-top: .2em;
+    }
+
 }
 
 /* Tablet */
@@ -287,24 +328,25 @@ a.button:hover {
      #menu, .items {
         transition: all .2s ease-out;
     }
-
     /* Menu. */
     #menu {
         position: absolute;
-        height: 100%;
+        // height: 100%;
+        height: 1200px;
         width: calc(var(--menu-width) * 1px);
-        right: calc(var(--menu-width) * -1px);
+        left: calc(var(--menu-width) * -1px);
         // right: 0;
-        top: 2.5em;
+        // top: 2.5em;
         text-align: left;
         padding-top: .5em;
         overflow-x: hidden;
     }
     #menu .sub-menu {
-        overflow-x: hidden;
+        // Use for right menu.
+        // overflow-x: hidden;
     }
     #menu.active {
-        right: 0;
+        left: 0;
     }
 
     /* Menu item. */
@@ -323,10 +365,10 @@ a.button:hover {
         z-index: 1010;
         background-color: var(--black-darker);
         width: calc(var(--menu-width) * 1px);
-        right: calc(var(--menu-width) * -1px);
+        left: calc(var(--menu-width) * -1px);
     }
     #menu .items.active {
-        right: 0;
+        left: 0;
     }
     /* Sub-menu back menu. */
     #menu .sub-menu .items a.item.back {
@@ -374,7 +416,7 @@ a.button:hover {
     /* Sub-menus. */
     #menu .items {
         position: absolute;
-        top: 5.5em;
+        // top: 5.5em;
         margin-left: -2em;
         width: 12em;
         padding: .5em 1em;

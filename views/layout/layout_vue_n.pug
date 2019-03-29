@@ -13,10 +13,11 @@ html(lang="en")
   body
     #header
       include ../menu/header_n.pug
-    #menu
-      include ../menu/menu_n.pug
+    #container-menu
+        #menu
+          include ../menu/menu_n.pug
     //- #c-test
-    //- #test
+        #test
     main#app(v-cloak)
       block content
     block footer
