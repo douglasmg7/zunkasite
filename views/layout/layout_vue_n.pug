@@ -9,11 +9,14 @@ html(lang="en")
     block css
   block internal_style
 
+  //- body(style="overflow: hidden; position: fixed;")
   body
     #header
       include ../menu/header_n.pug
-    //- #menu
+    #menu
       include ../menu/menu_n.pug
+    //- #c-test
+    //- #test
     main#app(v-cloak)
       block content
     block footer

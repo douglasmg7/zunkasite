@@ -16,7 +16,13 @@
     /* Menu */
     --menu-width: 200;
 }
+html {
+    position: relative;
+    overflow-x: hidden;
+}
 body {
+    position: relative;
+    overflow-x: hidden;
     background-color: red;
     min-height: 100vh;
     display: flex;
@@ -24,9 +30,25 @@ body {
     justify-content: space-between;
     font-family: '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'sans-serif';
     background-color: var(--white-light);
-    // overflow-x: hidden;
 }
-
+#c-test {
+    z-index: 1002
+    height: 30px;
+    // position: relative;
+    overflow-x: hidden;
+}
+#test {
+    z-index: 1003;
+    width: 100px;
+    height: 100px;
+    display: block;
+    position: absolute;
+    background-color: orange;
+    top 0;
+    right: -50px;
+    // margin-right: -10px;
+    // margin-left: -10px;
+}
 // Header bar.
 #header {
     display: flex;
@@ -147,7 +169,8 @@ body {
 
 // Menu.
 #menu {
-    // overflow-x: hidden;
+    overflow-x: hidden;
+    display: block;
     background-color: var(--black-darker);
 }
 #menu a {
@@ -275,7 +298,10 @@ a.button:hover {
         top: 2.5em;
         text-align: left;
         padding-top: .5em;
-
+        overflow-x: hidden;
+    }
+    #menu .sub-menu {
+        overflow-x: hidden;
     }
     #menu.active {
         right: 0;
@@ -319,9 +345,6 @@ a.button:hover {
 @media (min-width: 48em) {
     #header .burger {
         display: none;
-    }
-    #main {
-        margin-top: 2em;
     }
 
     // Menu.
@@ -384,5 +407,8 @@ a.button:hover {
         // padding-top: .5em;
         // padding-bottom: .5em;
         display: block;
+    }
+    #main {
+        margin-top: 2em;
     }
 }
