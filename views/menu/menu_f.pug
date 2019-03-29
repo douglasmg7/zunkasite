@@ -1,0 +1,43 @@
+//- Categories
+.sub-menu
+    a.item.toggle-items(href="#") 
+        | Categorias&nbsp
+        i.fas.fa-xs.fa-chevron-up.fa-rotate-90
+    .items
+        a.item.back(href="#")
+            i.fas.fa-xs.fa-chevron-up.fa-rotate-270
+            | &nbspMenu
+            //- i.fas.fa-search.fa-lg i.fa.fa-chevron-up  Menu
+        each categorie in categories
+            a.item(href=`/all/${categorie}`)= categorie
+//- Admin.
+if user.name && user.group.includes('admin')
+    .sub-menu
+        a.item.toggle-items(href="#")
+            | Admin&nbsp
+            i.fas.fa-xs.fa-chevron-up.fa-rotate-90
+        .items
+            a.item.back(href="#")
+                i.fas.fa-xs.fa-chevron-up.fa-rotate-270
+                | &nbspMenu
+            a.item(href="/admin/orders") Pedidos
+            a.item(href="/admin") Produtos
+            a.item(href="/admin/product/new") Criar produto
+            a.item(href="/admin/banner") Banners
+            a.item(href="/admin/motoboy-delivery") Motoboy
+//- Account.
+.sub-menu
+    a.item.toggle-items(href="#")
+        | Sua conta&nbsp
+        i.fas.fa-xs.fa-chevron-up.fa-rotate-90
+    .items
+        a.item.back(href="#")
+            i.fas.fa-xs.fa-chevron-up.fa-rotate-270
+            | &nbspMenu
+        if !user.name
+            a.item(href="/user/signin") Entrar
+        if user.name
+            a.item(href="user/orders") Pedidos
+            a.item(href="/user/address") Endereços
+            a.item(href="/user/access") Meus dados
+            a.item(href="/user/signout") Não é <span style="font-weight: bold;">#{user.name}</span>? Sair            

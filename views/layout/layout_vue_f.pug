@@ -1,0 +1,33 @@
+doctype html
+//- html(lang="en" style="overflow: hidden; box-sizing: border-box")
+html(lang="en")
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    meta(name="description" content="Loja especializada na venda de laptop")
+    block title
+    block css
+  block internal_style
+
+  body
+    #header
+      include ../menu/header_f.pug
+    #container-menu
+        #menu
+          include ../menu/menu_f.pug
+    //- #c-test
+        #test
+    main#app(v-cloak)
+      block content
+    block footer
+      include ../menu/footer_f
+
+  block internal_scripts
+    script.
+      // Make available for vue.
+      let csrfToken = !{JSON.stringify(csrfToken)};
+
+  block external_scripts
+    script(src='/js/product/layout.js')
+    include ../components/axios.js.pug
+    include ../components/vue.js.pug
