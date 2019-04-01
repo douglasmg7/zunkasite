@@ -23,6 +23,18 @@ block content
             .dots
                 .dot(v-for="(banner, index) in banners", :index='index' @click='selectBanner(index)', :class='[index == visibleBanner ? "selected" : ""]')
             .arrow.right(@click='changeBanner(1)') &#10095;
+    section.cart(v-if='this.productAddedToCart._id')
+        h4.section-title Adicionado ao carrinho
+        .cart-container.shadow
+            a.item(:href='"/product/" + this.productAddedToCart._id')
+                img(:src='"/img/" + this.productAddedToCart._id + "/" + this.productAddedToCart.images[0]')
+                //- span Adicionado ao carrinho
+            .sub-total
+                span Subtotal ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}}) :
+                span {{ cart.totalPrice | currency }}
+            .buttons
+                a.button(href="/cart") Carrinho
+                a.button(href="/checkout/shipping-address") Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
     //- New products.
     section
         h4.section-title Novidades na loja
