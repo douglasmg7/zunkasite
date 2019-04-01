@@ -324,17 +324,14 @@ a.button:hover {
 
 /* Screen under 48em. */
 @media (max-width: 48em) {
-    /* Animation. */
-     #menu, .items {
-        transition: all .2s ease-out;
-    }
     /* Menu. */
     #menu {
         position: absolute;
         // height: 100%;
         height: 1200px;
-        width: calc(var(--menu-width) * 1px);
-        left: calc(var(--menu-width) * -1px);
+        // width: calc(var(--menu-width) * 1px);
+        width: 0;
+        left: 0;
         // right: 0;
         // top: 2.5em;
         text-align: left;
@@ -347,6 +344,7 @@ a.button:hover {
     }
     #menu.active {
         left: 0;
+        width: 100%;
     }
 
     /* Menu item. */

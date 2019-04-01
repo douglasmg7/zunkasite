@@ -1,11 +1,7 @@
-Feito
-  Alteração da opção de menu "Autenticação" para "Meus dados"
-  Criação do menu "Categorias" na barra de navegação.
-  Inclusão meta description
-  Nginx reload, para atualizar a chave de certificado para https
-
 Não permitir cancelar ordem depois de entregue.
 Não mostrar ação quando não houver opção.
+
+Opção de entrar com preço final do produto e o sistema calcular a porcentagem do lucro.
 
 pm2 start on startup system
 

@@ -7,12 +7,22 @@ block css
   link(rel="stylesheet" href="/css/normalize.css" charset="utf-8")
   link(rel="stylesheet" href="/css/skeleton.css" charset="utf-8")
   //- link(rel="stylesheet" href="/css/milligram.css" charset="utf-8")
-  link(rel="stylesheet" href="/css/product/productListNormalize.css" charset="utf-8")
+  link(rel="stylesheet" href="/css/layout.css" charset="utf-8")
+  link(rel="stylesheet" href="/css/product/productList_n.css" charset="utf-8")
   link(rel="stylesheet" href="/fontawesome/css/all.min.css" charset="utf-8")
 
 block append internal_style
 
 block content
+    //- Banners.
+    section.full.banners
+        a(v-for="(banner, index) in banners", :index='index' v-show='index == visibleBanner', :href="banner.link || false")
+            img.banner(:src="'/banner/' + banner.fileName")
+        .banner-menu
+            .arrow.left(@click='changeBanner(-1)') &#10094;
+            .dots
+                .dot(v-for="(banner, index) in banners", :index='index' @click='selectBanner(index)', :class='[index == visibleBanner ? "selected" : ""]')
+            .arrow.right(@click='changeBanner(1)') &#10095;
     //- New products.
     section
         h4.section-title Novidades na loja

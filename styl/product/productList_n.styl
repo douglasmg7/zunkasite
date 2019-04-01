@@ -1,0 +1,120 @@
+//  Buttons.
+a.button, a.button:hover {
+    width: 100%;
+    color: var(--white-lighter);
+    background-color: var(--green-lighter);
+    border-color: transparent;
+}
+a.button:hover {
+    background-color: var(--green-light);
+}
+// Products.
+.products {
+    display: grid;
+}
+.product {
+    margin: .7rem;
+    padding: .7rem;
+    background-color: var(--white-lighter);
+}
+.product p {
+    margin-bottom: .2em;
+}
+// Banners.
+.banners {
+    display: flex;
+    // height 300px
+    margin: 0 auto;
+    margin-bottom: 2em;
+    margin-right: 5px;
+    position: relative;
+    overflow: hidden;
+    z-index: 100;
+    box-shadow: 3px 3px 3px 0 rgba(0,0,0,.3);
+}
+.banners img {
+    display: block;
+    width: 100%;
+}
+.banners .banner-menu{
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    box-sizing: border-box;
+    padding: 1em;
+    color: #fff;
+}
+.banners .banner-menu .arrow,
+.banners .banner-menu .dots {
+    width: 33.33%;
+    float: left;
+}
+.banners .banner-menu .arrow {
+    font-size: 1.5em;
+}
+.banners .banner-menu .arrow:hover {
+    color: #999;
+    cursor: pointer;
+}
+.banners .banner-menu .arrow.right{
+    text-align: right;
+}
+.banners .banner-menu .dots {
+    position: relative;
+    top: .7em;
+    display: inline-block;
+    text-align: center;
+}
+.banners .banner-menu .dots .dot {
+    display: inline-block;
+    margin: 0 1em;
+    height: 12px;
+    width: 12px;
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 50%;
+    border: solid #fff 1px;
+}
+.banners .banner-menu .dots .dot:hover {
+    background-color: #fff;
+    cursor: pointer;
+}
+.banners .banner-menu .dots .dot.selected {
+    background-color: #fff;
+}
+/* Mobile. */
+@media (min-width: 0px) {
+    .products {
+        grid-template-columns: 1fr;
+    }
+    .banners {
+        display: none;
+    }
+}
+/* Tablet. */
+@media (min-width: 500px) {
+    .products {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+/* Small laptop. */
+@media (min-width: 800px){
+    .products {
+        grid-template-columns: 1fr 1fr 1fr ;
+    }
+    .banners {
+        display: flex;
+    }
+}
+/* Laptop. */
+@media (min-width: 1000px) {
+    .products {
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    }
+}
+/* Over max width. */
+@media (min-width: 1212px) {
+    .banners {
+        border-radius: 0 0 4px 4px;
+    }
+}

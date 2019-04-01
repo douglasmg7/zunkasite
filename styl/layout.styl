@@ -35,7 +35,6 @@ body {
 #container-menu {
     position: relative;
     z-index: 1002
-
 }
 #c-test {
     z-index: 1002
@@ -128,7 +127,6 @@ body {
   color: var(--green);
   margin-right: .5em;
 }
-
 // Burger.
 #header .burger {
     cursor: pointer;
@@ -183,7 +181,6 @@ body {
     bottom: 0;
     transform: rotate(-90deg);
 }
-
 // Menu.
 #menu {
     // Use for right menu.
@@ -196,15 +193,13 @@ body {
     font-size: 1.2em;
     cursor: pointer;
 }
-
 // Main.
 main {
     max-width: 1200px;
     flex-grow: 1;
     margin: 0 auto;
-    padding: 0 1em;
+    // padding: 0 1em;
 }
-
 // Footer.
 footer {
     padding: 1em;
@@ -224,22 +219,15 @@ footer a:hover {
 }
 section {
     margin: 2em auto;
+    padding: 0 1em;
+}
+section.full {
+    margin 0;
+    padding: 0;
 }
 .shadow {
     box-shadow: 3px 3px 3px 0 rgba(0,0,0,0.1);
     border-radius: 4px;
-}
-.products {
-    display: grid;
-    //- grid-template-columns: [first] 1fr 1fr 1fr 1fr;
-}
-.product {
-    margin: .7rem;
-    padding: .7rem;
-    background-color: var(--white-lighter);
-}
-.product p {
-    margin-bottom: .2em;
 }
 .section-title {
     margin: 0 0 0 1.4rem;
@@ -248,7 +236,6 @@ section {
     letter-spacing: 0;
     color: var(--gray);
 }
-
 img {
     height: auto;
     width: 100%;
@@ -257,20 +244,8 @@ img {
 a {
     text-decoration: none;
 }
-a.button, a.button:hover {
-    width: 100%;
-    color: var(--white-lighter);
-    background-color: var(--green-lighter);
-    border-color: transparent;
-}
-a.button:hover {
-    background-color: var(--green-light);
-}
 /* Mobile */
-@media (min-width: 100px) and (max-width: 549px) {
-    .products {
-        grid-template-columns: 1fr;
-    }
+@media (min-width: 0px) and (max-width: 449px) {
     #header .brand {
         order: 1;
     }
@@ -293,45 +268,29 @@ a.button:hover {
     #header .search {
         margin-top: .2em;
     }
-
+    footer a { display: block; }
 }
-
 /* Tablet */
-@media (min-width: 550px) {
-    .products {
-        grid-template-columns: 1fr 1fr;
-    }
-}
+@media (min-width: 500px){ }
 /* Small laptop */
-@media (min-width: 750px) {
-    .products {
-        grid-template-columns: 1fr 1fr 1fr ;
-    }
-    footer a {
-        display: block;
-    }
+@media (min-width: 800px){
+    footer a { display: inline-block; }
 }
 /* Laptop */
-@media (min-width: 1000px) {
-    .products {
-        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-    }
-    footer a {
-        display: inline-block;
-    }
-}
-
-
+@media (min-width: 1000px) { }
 /* Screen under 48em. */
 @media (max-width: 48em) {
+    /* Animation. */
+     #menu, .items {
+        transition: all .2s ease-out;
+    }
     /* Menu. */
     #menu {
         position: absolute;
         // height: 100%;
         height: 1200px;
-        // width: calc(var(--menu-width) * 1px);
-        width: 0;
-        left: 0;
+        width: calc(var(--menu-width) * 1px);
+        left: calc(var(--menu-width) * -1px);
         // right: 0;
         // top: 2.5em;
         text-align: left;
@@ -344,7 +303,6 @@ a.button:hover {
     }
     #menu.active {
         left: 0;
-        width: 100%;
     }
 
     /* Menu item. */
