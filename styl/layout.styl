@@ -14,7 +14,7 @@
     --green-darker: #030;
     --gray: #666;
     /* Menu */
-    --menu-width: 200;
+    --menu-width: 400;
 }
 html {
     // Use for right menu.
@@ -58,14 +58,11 @@ body {
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    // height: 2.8em;
-    padding-left: .5em;
     background-color: var(--black-darker);
+    min-width: 250px;
 }
 // Brand name.
 #header .brand {
-  // margin-left: 1em;
-  height: 70%;
   padding: 0 .5em;
 }
 #header .brand img {
@@ -77,12 +74,12 @@ body {
   flex-grow: 1;
   flex-shrink: 1;
   display: flex;
+  justify-content: flex-end;
   align-items: center;
-  // height: 70%;
   height: 2em;
   padding-left: .5em;
   padding-right: .5em;
-  margin: .5em 1em .5em .5em;
+  margin: 0em 1em 0em .5em;
   border-radius: 4px;
   background-color: var(--white-lighter);
 }
@@ -245,12 +242,16 @@ a {
     text-decoration: none;
 }
 /* Mobile */
-@media (min-width: 0px) and (max-width: 449px) {
+@media (min-width: 0px) {
+    #header {
+        padding-bottom: .7em;
+    }
     #header .brand {
         order: 1;
     }
     #header .search {
         order: 5;
+        flex-basis: 500px;
     }
     #header .space {
         order: 2;
@@ -262,16 +263,35 @@ a {
     #header .burger {
         order: 4;
     }
-    #header .search {
-        flex-basis: 500px;
-    }
-    #header .search {
-        margin-top: .2em;
-    }
     footer a { display: block; }
 }
 /* Tablet */
-@media (min-width: 500px){ }
+@media (min-width: 600px){
+    #header {
+        min-height: 2em;
+        padding: .3em .5em;
+    }
+    #header .brand {
+        order: 1;
+    }
+    #header .search {
+        order: 2;
+        flex-basis: 200px;
+    }
+    #header .space {
+        order: 3;
+        display: none;
+    }
+    #header .cart {
+        order: 4;
+    }
+    #header .burger {
+        order: 5;
+    }
+    // #header .search {
+    //     margin-top: .2em;
+    // }
+}
 /* Small laptop */
 @media (min-width: 800px){
     footer a { display: inline-block; }
@@ -279,7 +299,7 @@ a {
 /* Laptop */
 @media (min-width: 1000px) { }
 /* Screen under 48em. */
-@media (max-width: 48em) {
+@media (max-width: 800px) {
     /* Animation. */
      #menu, .items {
         transition: all .2s ease-out;
@@ -308,7 +328,8 @@ a {
     /* Menu item. */
     #menu .item {
         display: block;
-        padding: .4em .5em .4em 1.4em;
+        // padding: .4em .5em .4em 1.4em;
+        padding: 1.5em .5em 1.5em 4em;
     }
     #menu .item:hover {
         opacity: .7;
@@ -340,11 +361,10 @@ a {
 }
 
 /*  Screen above 48em. */
-@media (min-width: 48em) {
+@media (min-width: 800px) {
     #header .burger {
         display: none;
     }
-
     // Menu.
     #menu {
         padding-right: 5em;
