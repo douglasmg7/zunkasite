@@ -185,6 +185,10 @@ body {
     display: block;
     background-color: var(--black-darker);
 }
+/* Sub-menu items. */
+#menu .items {
+    z-index: 1010;
+}
 #menu a {
     color: var(--white);
     font-size: 1.2em;
@@ -339,7 +343,6 @@ a {
         position: absolute;
         top: 0;
         height: 100%;
-        z-index: 1010;
         background-color: var(--black-darker);
         width: calc(var(--menu-width) * 1px);
         left: calc(var(--menu-width) * -1px);
