@@ -7,9 +7,12 @@ html(lang="en")
     meta(name="description" content="Loja especializada na venda de laptop")
     block title
     block css
+        link(rel="stylesheet" href="/css/normalize.css" charset="utf-8")
+        link(rel="stylesheet" href="/css/skeleton.css" charset="utf-8")
+        link(rel="stylesheet" href="/css/layout.css" charset="utf-8")
+        link(rel="stylesheet" href="/fontawesome/css/all.min.css" charset="utf-8")
   block internal_style
-
-  //- body(style="overflow: hidden; position: fixed;")
+      
   body
     #header
       include ../menu/header_n.pug

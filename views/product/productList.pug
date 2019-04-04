@@ -1,73 +1,64 @@
-extends ../layout/layout_vue
+extends ../layout/layout_vue_n
 
 block title
   title Zunka - Produtos
 
-block css
+block append css
   link(rel="stylesheet" href="/css/product/productList.css" charset="utf-8")
+      
+block append internal_style
 
 block content
-  .banners
-    a(v-for="(banner, index) in banners", :index='index' v-show='index == visibleBanner', :href="banner.link || false")
-      img.banner(:src="'/banner/' + banner.fileName")
-    .banner-menu
-      .arrow.left(@click='changeBanner(-1)') &#10094;
-      .dots
-        .dot(v-for="(banner, index) in banners", :index='index' @click='selectBanner(index)', :class='[index == visibleBanner ? "selected" : ""]')
-      .arrow.right(@click='changeBanner(1)') &#10095;
-  .cart(v-if='this.productAddedToCart._id')
-    .item
-      img(:src='"/img/" + this.productAddedToCart._id + "/" + this.productAddedToCart.images[0]')
-      span Adicionado ao carrinho
-    .sub-total
-      span Subtotal ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}}) :
-      span {{ cart.totalPrice | currency }}
-    .buttons
-      button(onclick='window.location="/cart"') Carrinho
-      button(onclick='window.location="/checkout/shipping-address"') Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
-  .new-products
-    h3.title Novidades na loja
-    .products
-      .product(v-for='product in newProducts')
-        a(:href='"/product/" + product._id')
-          img(:src='srcImg0200(product)', v-if='product.images[0]')
-          //- img(:src='`/img/${product._id}/${product.images[0]}`', v-if='product.images[0]')
-          h4.title {{ product.storeProductTitle }}
-          h3.price
-            sup R$
-            | {{ product.storeProductPrice | currency | currencyInt }}
-            sup {{ product.storeProductPrice | currency | currencyCents }} 
-  .best-selling-products
-    h3.title Produtos mais vendidos
-    .products
-      .product(v-for='product in bestSellingProducts')
-        a(:href='"/product/" + product._id')
-          img(:src='srcImg0200(product)', v-if='product.images[0]')
-          //- img(:src='`/img/${product._id}/${product.images[0]}`', v-if='product.images[0]')
-          h4.title {{ product.storeProductTitle }}
-          h3.price
-            sup R$
-            | {{ product.storeProductPrice | currency | currencyInt }}
-            sup {{ product.storeProductPrice | currency | currencyCents }} 
-  .all-products
-    h3.title: a(href='/all') Todos os produtos >
-    //- .products
-    //-   .product(v-for='product in products')
-    //-     a(:href='"/product/" + product._id')
-    //-       img(:src='`/img/${product._id}/${product.images[0]}`', v-if='product.images[0]')
-    //-       h4.title {{ product.storeProductTitle }}
-    //-       h3.price
-    //-         sup R$
-    //-         | {{ product.storeProductPrice | currency | currencyInt }}
-    //-         sup {{ product.storeProductPrice | currency | currencyCents }} 
-  //- .pagination
-  //-   a(v-for='p in pageCount', @click='getProducts(p)', :page='page==p', :p='p', :active='page==p') {{p}}
+    //- Banners.
+    section.full.banners
+        a(v-for="(banner, index) in banners", :index='index' v-show='index == visibleBanner', :href="banner.link || false")
+            img.banner(:src="'/banner/' + banner.fileName")
+        .banner-menu
+            .arrow.left(@click='changeBanner(-1)') &#10094;
+            .dots
+                .dot(v-for="(banner, index) in banners", :index='index' @click='selectBanner(index)', :class='[index == visibleBanner ? "selected" : ""]')
+            .arrow.right(@click='changeBanner(1)') &#10095;
+    section.cart(v-if='this.productAddedToCart._id')
+        h4.section-title Adicionado ao carrinho
+        .cart-container.shadow
+            a.item(:href='"/product/" + this.productAddedToCart._id')
+                img(:src='"/img/" + this.productAddedToCart._id + "/" + this.productAddedToCart.images[0]')
+                //- span Adicionado ao carrinho
+            .sub-total
+                span Subtotal ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}}) :
+                span {{ cart.totalPrice | currency }}
+            .buttons
+                a.button(href="/cart") Carrinho
+                a.button(href="/checkout/shipping-address") Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
+    //- New products.
+    section
+        h4.section-title Novidades na loja
+        .products
+            a.product.shadow(v-for='product in newProducts', :href='"/product/" + product._id')
+                img(:src='srcImg0200(product)', v-if='product.images[0]' alt="Imagem não disponível")
+                p.product-title {{ product.storeProductTitle }}
+                //- p.product-price R$ {{ product.storeProductPrice | currency}}        
+                p.product-price
+                    sup R$
+                    | {{ product.storeProductPrice | currency | currencyInt }}
+                    sup {{ product.storeProductPrice | currency | currencyCents }}   
+    //- Best selling products.
+    section
+        h5.section-title Produtos mais vendidos
+        .products
+            a.product.shadow(v-for='product in bestSellingProducts', :href='"/product/" + product._id')
+                img(:src='srcImg0200(product)', v-if='product.images[0]' alt="Imagem não disponível")
+                p.product-title {{ product.storeProductTitle }}
+                p.product-price  R$ {{ product.storeProductPrice | currency}} 
+    //- See all products.
+    section
+        a.button(href='/all') Ver todos os produtos
 
 append internal_scripts
-  script.
-    let cart = !{JSON.stringify(cart)};
-    let search = !{JSON.stringify(search)};
-    let banners = !{JSON.stringify(banners)};
+    script.
+        let cart = !{JSON.stringify(cart)};
+        let search = !{JSON.stringify(search)};
+        let banners = !{JSON.stringify(banners)};
 
 append external_scripts
-  script(src='/js/product/productList.js?0001')
+    script(src='/js/product/productList.js?0001')
