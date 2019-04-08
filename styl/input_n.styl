@@ -33,13 +33,16 @@ input[type='checkbox'] {
 c_btn_primary = #080
 c_btn_primary_hover = darken(c_btn_primary, 20%)
 input[type='submit'].btn-primary,
-input[type='button'].btn-primary {
+input[type='button'].btn-primary,
+a.btn-primary {
     color: var(--white-lighter);
     background-color: c_btn_primary;
     border-color: darken(c_btn_primary, 10%);
 }
 input[type='submit'].btn-primary:hover,
-input[type='button'].btn-primary:hover {
+input[type='button'].btn-primary:hover,
+a.btn-primary:hover {
+    color: var(--white-lighter);
     background-color: c_btn_primary_hover;
     border-color: darken(c_btn_primary_hover, 10%);
 }
