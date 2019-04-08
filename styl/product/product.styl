@@ -32,6 +32,9 @@ section {
     padding: 0 1em;
     max-width: 1000px;
 }
+input[type="button"] {
+    width: unset;
+}
 .layout {
     background-color: var(--white-lighter);
     padding: 1em;
@@ -60,6 +63,7 @@ section {
 .product-image img {
     max-height: 400px;
     max-width: 400px;
+    margin 0 auto;
 }
 // Summary.
 .product-summary {
@@ -68,13 +72,24 @@ section {
 }
 .product-summary .title {
     color: var(--green);
+    margin-bottom: .3em;
     // font-weight: 500;
 }
 .product-summary .price {
-    margin-top: .5em;
-    font-size: 1.5em;
+    font-size: 1.8em;
+    color: var(--black-darker);
+    // font-weight: 500;
+    opacity: .7;
 }
-.product-sumarry .detail {
+.product-summary .price sup{
+    font-size: 0.7em;
+    top: -0.24em;
+    padding-right: 0.3em;
+    padding-left: 0.2em;
+}
+.product-summary > input[type="button"] {
+    // display: block;
+    // margin: 0 auto;
 }
 // Description.
 .product-description .title,
@@ -92,30 +107,33 @@ section {
 .out-of-stock {
     color: red;
     font-weight: 400;
+    max-width: 50%;
 }
 .join-buttons {
     display: flex;
-    align-items: center;
+    // justify-content: center;
 }
 .join-buttons  input {
     border: 1px solid lightgray;
-    margin-bottom: .5em;
+    // margin-bottom: .5em;
 }
 .join-buttons input[type='text'] {
-    flex-basis: 14em;
+    flex-shrink: 1;
+    flex-grow: 1;
+    width: 7em;
+    max-width: 11em;
     border-right: 0;
     border-radius: 4px 0 0 4px;
     padding-left: 1em;
     padding-right: 1em;
 }
 .join-buttons input[type='button'] {
-    flex-basis: 8em;
-    height: 2.06em;
-    // max-width 8em
+    flex-shrink: 1;
     border-radius: 0 4px 4px 0;
 }
 .estimate-ship {
-    margin-top: 2em;
+    margin-top: 1em;
+    // text-align: center;
 }
 .estimate-ship > p {
     margin: 0 0 .2em 0;
@@ -137,18 +155,11 @@ section {
     color: red;
 }
 @media (min-width: 0px) {
-
-}
-@media (min-width: 500px) {
-
-}
-@media (min-width: 600px) {
-
-}
-@media (min-width: 800px){
-
-}
-@media (min-width: 1000px){
+    .layout {
+        grid-template-columns: 80px auto;
+        grid-template-rows: auto;
+        grid-template-areas: "tub img" "sum sum" "des des" "tec tec" "add add";
+    }
     .product-thumbnail {
         grid-area: tub;
     }
@@ -168,6 +179,17 @@ section {
         grid-area: add;
     }
 }
-@media (min-width: 1212px) {
+@media (min-width: 500px) {
 
 }
+@media (min-width: 600px) {
+
+}
+@media (min-width: 800px){
+    .layout {
+        grid-template-columns: 80px auto auto;
+        grid-template-areas: "tub img sum" "des des des" "tec tec tec" "add add add";
+    }
+}
+@media (min-width: 1000px) {}
+@media (min-width: 1212px) {}

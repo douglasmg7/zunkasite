@@ -52,7 +52,7 @@ var app = new Vue({
         console.error(err);
         this.loadingEstimateShipment = false;
         this.showEstimatedShipment = false;
-      }); 
+      });
     },
     // Add product to cart.
     addToCart(){
@@ -70,20 +70,20 @@ var app = new Vue({
       })
       .catch(err => {
         console.error(err);
-      }); 
+      });
     },
     // Get image source 300 pixels.
     srcImg0300(product, index){
       let regExpResult = product.images[index].match(/\.[0-9a-z]+$/i);
       // console.debug(fileName);
       return '/img/' + product._id + '/' + product.images[index].slice(0, regExpResult.index) + '_0300px' + regExpResult[0]
-    },    
+    },
     // Get image source 80 pixels.
     srcImg0080(product, index){
       let regExpResult = product.images[index].match(/\.[0-9a-z]+$/i);
       // console.debug(fileName);
       return '/img/' + product._id + '/' + product.images[index].slice(0, regExpResult.index) + '_0080px' + regExpResult[0]
-    }    
+    }
   },
   computed:{
     // Each line of product detail become one array item.
@@ -124,10 +124,16 @@ var app = new Vue({
       });
       return infoAdd;
     }
-  },    
-  filters: { 
+  },
+  filters: {
     currency(val){
       return val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
+    currencyInt(val){
+      return val.split(',')[0];
+    },
+    currencyCents(val){
+      return val.split(',')[1];
     }
-  },
+  }
 });
