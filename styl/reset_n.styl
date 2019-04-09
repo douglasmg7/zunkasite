@@ -92,160 +92,144 @@ a:hover {
     border-radius: 4px;
 }
 // Input.
+.button,
+button,
 input,
 textarea {
     font-size: 1em;
     box-sizing: border-box;
-    // width: 100%;
     height: 2em;
     border: 1px solid var(--black);
     padding-left: .5em;
     padding-right: .5em;
     border-radius: 4px;
 }
-input:not([readonly]):focus,
-textarea:not([readonly]):focus {
-    border: 1px solid rgba(81, 203, 238, 1);
-}
-input:[readonly],
-textarea:[readonly] {
-    background-color: lightgray;
-}
 textarea {
     height: 10em;
-}
-input[type='submit'],
-input[type='button'] {
-    cursor: pointer;
 }
 input[type='checkbox'] {
     width: 1em;
     height: 1em;
     margin: 0 .4em 0 0;
 }
-// Primary.
-input[type='submit'].btn-primary,
-input[type='button'].btn-primary,
-a.btn-primary {
-    color: var(--white-lighter);
-    background-color: #008800;
-    border-color: #007a00;
-}
-input[type='submit'].btn-primary:hover,
-input[type='button'].btn-primary:hover,
-a.btn-primary:hover {
-    color: var(--white-lighter);
-    background-color:  #006d00;
-    border-color: #006200;;
-}
-// Secondary.
-input[type='submit'].btn-secondary,
-input[type='button'].btn-secondary {
-    color: var(--white-lighter);
-    background-color: #00c000;
-    border-color: #00ad00;
-}
-input[type='submit'].btn-secondary:hover,
-input[type='button'].btn-secondary:hover {
-    background-color: #009a00;
-    border-color: #008b00;
-}
-// Success.
-input[type='submit'].btn-success,
-input[type='button'].btn-success {
-    color: var(--white-lighter);
-    background-color: #218838;
-    border-color: #1e7a32;
-}
-input[type='submit'].btn-success:hover,
-input[type='button'].btn-success:hover {
-    background-color: #1a6d2d;
-    border-color: #176229;
-}
-// Danger.
-input[type='submit'].btn-danger,
-input[type='button'].btn-danger {
-    color: var(--white-lighter);
-    background-color: #c82333;
-    border-color #b4202e;
-}
-input[type='submit'].btn-danger:hover,
-input[type='button'].btn-danger:hover {
-    background-color: #a01c29;
-    border-color: #901925;
-}
-// Warn.
-input[type='submit'].btn-warn,
-input[type='button'].btn-warn {
-    color: var(--white-lighter);
-    background-color: #e0a800;
-    border-color: #ca9700;
-}
-input[type='submit'].btn-warn:hover,
-input[type='button'].btn-warn:hover {
-    background-color: #b38600;
-    border-color: #a17900;
-}
-// Info.
-input[type='submit'].btn-info,
-input[type='button'].btn-info {
-    color: var(--white-lighter);
-    background-color: #138496;
-    border-color: #117787;
-}
-input[type='submit'].btn-info:hover,
-input[type='button'].btn-info:hover {
-    background-color: #0f6a78;
-    border-color: #0e5f6c;
-}
-// Exit.
-input[type='submit'].btn-exit,
-input[type='button'].btn-exit {
-    color: var(--white-lighter);
-    background-color: #138496;
-    border-color: #117787;
-}
-input[type='submit'].btn-exit:hover,
-input[type='button'].btn-exit:hover {
-    background-color: #0f6a78;
-    border-color: #0e5f6c;
+a.button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .button,
 button,
-input[type='button'],
-input[type='reset'],
-input[type='submit'] {
+input[type='submit'],
+input[type='button'] {
   cursor: pointer;
   display: inline-block;
-  font-weight: 400;
-  font-size: 1em;
   line-height: 1em;
   /* letter-spacing: .05em; */
   text-align: center;
   text-decoration: none;
   white-space: nowrap;
 }
+.button:[readonly],
+button:[readonly],
+input:[readonly],
+textarea:[readonly] {
+    background-color: lightgray;
+}
 .button[disabled],
 button[disabled],
 input[type='button'][disabled],
-input[type='reset'][disabled],
 input[type='submit'][disabled] {
-  cursor: default;
-  opacity: .5;
+    cursor: default;
+    opacity: .5;
 }
-.button[disabled]:focus, .button[disabled]:hover,
+.button[disabled]:focus,
+.button[disabled]:hover,
 button[disabled]:focus,
 button[disabled]:hover,
 input[type='button'][disabled]:focus,
 input[type='button'][disabled]:hover,
-input[type='reset'][disabled]:focus,
-input[type='reset'][disabled]:hover,
 input[type='submit'][disabled]:focus,
 input[type='submit'][disabled]:hover {
-  background-color: #9b4dca;
-  border-color: #9b4dca;
+    background-color: #9b4dca;
+    border-color: #9b4dca;
 }
-
+// Primary.
+.btn-primary {
+    color: var(--white-lighter);
+    background-color: #008800;
+    border-color: #007a00;
+}
+.btn-primary:hover {
+    color: var(--white-lighter);
+    background-color:  #006d00;
+    border-color: #006200;;
+}
+// Secondary.
+.btn-secondary {
+    color: var(--white-lighter);
+    background-color: #00c000;
+    border-color: #00ad00;
+}
+.btn-secondary:hover {
+    color: var(--white-lighter);
+    background-color: #009a00;
+    border-color: #008b00;
+}
+// Success.
+.btn-success {
+    color: var(--white-lighter);
+    background-color: #218838;
+    border-color: #1e7a32;
+}
+.btn-success:hover {
+    color: var(--white-lighter);
+    background-color: #1a6d2d;
+    border-color: #176229;
+}
+// Danger.
+.btn-danger {
+    color: var(--white-lighter);
+    background-color: #c82333;
+    border-color #b4202e;
+}
+.btn-danger:hover {
+    color: var(--white-lighter);
+    background-color: #a01c29;
+    border-color: #901925;
+}
+// Warn.
+.btn-warn {
+    color: var(--white-lighter);
+    background-color: #e0a800;
+    border-color: #ca9700;
+}
+.btn-warn:hover {
+    color: var(--white-lighter);
+    background-color: #b38600;
+    border-color: #a17900;
+}
+// Info.
+.btn-info {
+    color: var(--white-lighter);
+    background-color: #138496;
+    border-color: #117787;
+}
+.btn-info:hover {
+    color: var(--white-lighter);
+    background-color: #0f6a78;
+    border-color: #0e5f6c;
+}
+// Exit.
+.btn-exit {
+    color: var(--white-lighter);
+    background-color: #138496;
+    border-color: #117787;
+}
+.btn-exit:hover {
+    color: var(--white-lighter);
+    background-color: #0f6a78;
+    border-color: #0e5f6c;
+}
 input[type='email'],
 input[type='number'],
 input[type='password'],
@@ -255,12 +239,10 @@ input[type='text'],
 input[type='url'],
 textarea,
 select {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-  background-color: transparent;
-  border: 1px solid #d1d1d1;
-  width: 100%;
+    appearance: none;
+    background-color: transparent;
+    border: 1px solid #d1d1d1;
+    width: 100%;
 }
 input[type='email']:focus,
 input[type='number']:focus,
@@ -271,8 +253,8 @@ input[type='text']:focus,
 input[type='url']:focus,
 textarea:focus,
 select:focus {
-  border-color: #9b4dca;
-  outline: 0;
+    border-color: #9b4dca;
+    outline: 0;
 }
 // Table.
 th,
@@ -290,23 +272,6 @@ td:last-child {
 button,
 .button {
   margin-bottom: 1em;
-}
-input,
-textarea,
-select,
-fieldset {
-  // margin-bottom: 1em;
-}
-pre,
-blockquote,
-dl,
-figure,
-table,
-p,
-ul,
-ol,
-form {
-  // margin-bottom: 2.5em;
 }
 .warn-message {
     color: var(--red);
