@@ -1,8 +1,31 @@
-@import '../menu/reset_menu_footer'
-@import '../input'
-@import '../message'
-btn-primary()
-btn-secondary()
-message()
-.panel
-  max-width max_width_auth
+input {
+    width: 100%;
+}
+section {
+    background-color: var(--white-lighter);
+    max-width: var(--width-small);
+    min-width: 14em;
+    padding 1em;
+    margin 2em 1em;
+}
+.title {
+    margin-top: 0;
+}
+input.signin {
+    margin-top: 1.5em;
+}
+input[type="submit"] {
+    margin-bottom: 0;
+}
+.signup {
+     width:100%;
+     text-align:center;
+     border-bottom: 1px solid #ccc;
+     line-height: 0.1em;
+     margin: 2em 0 1.5em 0;
+}
+.signup span {
+    color: var(--black);
+    background:#fff;
+    padding:0 .2em;
+}

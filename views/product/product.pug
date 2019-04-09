@@ -14,7 +14,7 @@ block content
             .product-image
                 img(:src='srcImg0300(product, selectedThumbnail)' v-if='product.images.length > 0')
             .product-summary
-                h4.title {{product.storeProductTitle}}
+                h1.title {{product.storeProductTitle}}
                 h2.price(v-if='accountingParse(this.product.storeProductPrice, ",") > 0')
                     sup R$
                     | {{ product.storeProductPrice | currency | currencyInt }}
@@ -22,8 +22,8 @@ block content
                     //- | R$ {{ product.storeProductPrice | currency}}
                 ul.detail(v-if='productDetail.length > 0')
                     li(v-for='detail in productDetail') {{detail}}
-                h5(v-if='product.storeProductQtd < 1').out-of-stock Produto fora de estoque
-                input.btn-primary(v-if='product.storeProductQtd > 0' type='button' @click='addToCart' value='Adicionar ao carrinho')
+                h2(v-if='product.storeProductQtd < 1').out-of-stock Produto fora de estoque
+                input.add-to-cart.btn-primary(v-if='product.storeProductQtd > 0' type='button' @click='addToCart' value='Adicionar ao carrinho')
                 .estimate-ship(v-if='product.storeProductQtd > 0')
                     p Estimar frete e prazo (Entre com o CEP)
                         .join-buttons
@@ -43,19 +43,19 @@ block content
                                 td {{deliveryPrice}}
                                 td {{deliveryTime}}
             .product-description(v-if='product.storeProductDescription.trim() !== ""')
-                h4.title Descrição do produto
+                h1.title Descrição do produto
                 p(v-for='prodDescItem in productDescription') 
                     | {{ prodDescItem }}
                     br
             .product-technical(v-if='productInformationTechnical.length > 0')
-                h4.title Detalhe técnico
+                h1.title Detalhe técnico
                 div(v-for='infoTech in productInformationTechnical')
-                    h5.sub-title {{infoTech[0]}}
+                    h2.sub-title {{infoTech[0]}}
                     p {{infoTech[1]}}
             .product-additional(v-if='productInformationAdditional.length > 0')
-                h4.title Informações adicionais
+                h1.title Informações adicionais
                 div(v-for='infoAdd in productInformationAdditional')
-                    h5.sub-title {{infoAdd[0]}}
+                    h2.sub-title {{infoAdd[0]}}
                     p {{infoAdd[1]}}
 
 append internal_scripts

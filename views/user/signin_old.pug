@@ -1,26 +1,26 @@
-extends ../layout/layout_vue_n
+extends ../layout/layout_vue
 
 block title
   title Zunka - Autenticação
 
-block append css
+block css
   link(rel="stylesheet" href="/css/user/signin.css" charset="utf-8")
 
 block content 
-  section.shadow
-    h2.title Identificação
+  .panel
+    h2.title Identificação              
     p.success-message(v-show='this.successMessage !== ""') {{successMessage}}
-    p.warn-message(v-show='this.warnMessage !== ""') {{warnMessage}}
     label(for='email') E-mail
     input(type='text' id='email' v-model='email')
     label(for='password') Senha
     input(type='password' id='password' v-model='password')
-    input.signin.btn-primary(type='submit' value='Entrar' @click='signin()')
-    a.forgotten-password(href='/user/forgottenPassword') Esqueceu a senha?
-    //- label Não tem cadastro?
-    h4.signup 
-        span Não tem cadastro?
-    input.btn-secondary(type='submit' value='Criar cadastro' @click='signup()')
+    label 
+      a.find-password(href='/user/forgottenPassword') Esqueceu a senha?
+    input.btn-primary(type='submit' value='Entrar' @click='signin()')
+    p.warn-message(v-show='this.warnMessage !== ""') {{warnMessage}}
+    hr
+    label Não tem cadastro?
+    input.btn-secondary(type='submit' value='Cadastrar' @click='signup()')
 
 append internal_scripts
   script.
