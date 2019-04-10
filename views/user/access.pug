@@ -1,42 +1,37 @@
-extends ../layout/layout_vue
+extends ../layout/layout_vue_n
 
 block title
   title Zunka - Dados de acesso
 
-block css
+block append css
     link(rel="stylesheet" href="/css/user/access.css" charset="utf-8")
 
 block content 
-  .panel
+  section.shadow
+    h2.title Dados da conta
     //- Name
-    p.title Nome completo
+    h3.sub-title Nome completo
     p {{ user.name }}
     a(href='access/edit-name') Editar
-    hr
     //- E-mail.
-    p.title E-mail
+    h3.sub-title E-mail
     p {{ user.email }} 
     a(href='access/edit-email') Editar
-    hr
     //- Cell phone.
-    p.title Número de telefone celular
+    h3.sub-title Número de telefone celular
     p {{ user.mobileNumber ? user.mobileNumber : '********' }}
     a(href='access/edit-mobile-number') Editar
-    hr
     //- Password.
-    p.title Senha
+    h3.sub-title Senha
     p ********
     a(href='access/edit-password') Editar
-    hr
     //- CPF.
-    p.title CPF
+    h3.sub-title CPF
     p {{ user.cpf ? user.cpf : '********' }}
     a(href='access/edit-cpf') Editar
-    hr
     //- Remove account.
-    p.title Apagar conta
+    h3.sub-title Apagar conta
     a(href='access/delete-account') Apagar
-    //- hr
     input.btn-primary(type='submit' @click='exit()' value='Sair')  
 
 append internal_scripts
