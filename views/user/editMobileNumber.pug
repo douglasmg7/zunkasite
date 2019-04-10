@@ -1,14 +1,14 @@
-extends ../layout/layout_vue
+extends ../layout/layout_vue_n
 
 block title
   title Zunka - Alteração do número do celular
 
-block css
+block append css
   link(rel="stylesheet" href="/css/user/editMobileNumber.css" charset="utf-8")
 
 block content 
-  .panel
-    h2.text-left Alteração do número de celular 
+  section.shadow
+    h2.title Alteração do número de celular 
     //- Warn message.
     p.warn-message(v-show='this.warnMessage !== ""') {{ warnMessage }}   
     label(for='mobileNumber') Novo Número de Celular

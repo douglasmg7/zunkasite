@@ -1,14 +1,14 @@
-extends ../layout/layout_vue
+extends ../layout/layout_vue_n
 
 block title
   title Zunka - Alteração de CPF
 
-block css
+block append css
   link(rel="stylesheet" href="/css/user/editCpf.css" charset="utf-8")
 
 block content 
-  .panel
-    h2 Altere Seu CPF
+  section.shadow
+    h2.title Altere Seu CPF
     //- Warn message.
     p.warn-message(v-show='this.warnMessage !== ""') {{ warnMessage }}  
     label(for='cpf') CPF

@@ -1,16 +1,15 @@
-extends ../layout/layout_vue
+extends ../layout/layout_vue_n
 
 block title
-  title Zunka - Conta removida
+    title Zunka - Conta removida
 
-block css
-  link(rel="stylesheet" href="/css/user/accountDeleted.css" charset="utf-8")
+block append css
+    link(rel="stylesheet" href="/css/user/accountDeleted.css" charset="utf-8")
 
 block content 
-  .account-deleted
-    h1 Pronto! 
-    h1 Sua conta já foi removida.
+    section.shadow
+        h2.msg Pronto! 
+        h2.msg Sua conta já foi removida.
 
-block internal_scripts
-
-block external_scripts
+append external_scripts
+  script(src='/js/user/accountDeleted.js')   

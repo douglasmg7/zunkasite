@@ -1,20 +1,20 @@
-extends ../layout/layout_vue
+extends ../layout/layout_vue_n
 
 block title
   title Zunka - Apagar conta
 
-block css
+block append css
   link(rel="stylesheet" href="/css/user/deleteAccount.css" charset="utf-8")
 
 block content 
-  .panel
-    h2 Apagar Conta
+  section.shadow
+    h2.title Apagar Conta
+    p.warn-message(v-show='this.warnMessage !== ""') {{warnMessage}}
     label(for='email') E-mail
     input(type='text' id='email' v-model='email')
     label(for='password') Senha
     input(type='password' id='password' v-model='password')        
     input.btn-primary(type='button' value='Apagar Conta' @click='deleteAccount()')
-    p.warn-message(v-show='this.warnMessage !== ""') {{warnMessage}}
 
 append internal_scripts
   script.
