@@ -1,20 +1,19 @@
-extends ../layout/layout_vue
+extends ../layout/layout_vue_n
 
 block title
   title Zunka - Endereços
 
-block css
+block append css
   link(rel="stylesheet" href="/css/user/address.css" charset="utf-8")
 
 block content
-  .panel
-    h2 Seus endereços
+  section.shadow
+    h2.title Seus endereços
     .addresses
       //- Addresses list.
       .address-panel(v-for='address in addresses' data-address-id='address._id')
         .address-header(v-if='address.default')
           h3 Padrão
-          hr
         .address-body      
           h4 {{address.name}}                                                                                                
           p {{address.phone}}                                                                                                

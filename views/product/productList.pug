@@ -28,8 +28,8 @@ block content
                 span Subtotal ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}}) :
                 span {{ cart.totalPrice | currency }}
             .buttons
-                a.button(href="/cart") Carrinho
-                a.button(href="/checkout/shipping-address") Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
+                a.button.btn-primary(href="/cart") Carrinho
+                a.button.btn-primary(href="/checkout/shipping-address") Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
     //- New products.
     section
         h4.section-title Novidades na loja

@@ -1,42 +1,56 @@
-@import '../menu/reset_menu_footer'
-@import '../input'
-@import '../message'
-btn-primary()
-.panel
-  p
+section {
+    background-color: var(--white-lighter);
+    max-width: var(--width-small);
+    min-width: 14em;
+    padding 1em;
+    margin 2em 1em;
+}
+.title {
+    margin-top: 0;
+}
+section p {
     color c_gray
     margin 0
     line-height 1.7
-  > .addresses
+}
+.addresses {
     flex 1 1 auto
     display flex
     flex-flow column wrap
     justify-content space-between
-    > .address-panel
-      display flex
-      flex-flow column nowrap
-      border 1px solid bgc_ineer_panel
-      border-radius 4px
-      min-height 300px
-      min-width 450px
-      margin-bottom 1em
-      > .address-header
-        background-color bgc_body
-        h3
-          margin .5em 0
-          padding-left .8em
-        hr
-          margin 0
-      > .address-body, 
-      > .address-footer
-        padding .8em
-      > .address-body 
-        h4
-          margin-bottom .5em
-        :first-child
-          font-weight bold
-          margin-top 0
-      > .address-footer
-        color green
-        a:hover
-          cursor pointer
+}
+.address-panel {
+    display: flex;
+    flex-flow: column nowrap;
+    border: 1px solid var(--white);
+    border-radius: 4px;
+    min-height: 300px;
+    // min-width: 450px;
+    margin-top: 1em;
+}
+.address-header {
+    background-color: var(--white-light);
+}
+.address-header h3 {
+    margin: .2em 0;
+    padding-left: .8em;
+}
+.address-header hr {
+    margin: 0;
+}
+.address-body,
+.address-footer {
+    padding: .8em;
+}
+.address-body h4 {
+    margin-bottom: .5em;
+    margin-top: 0;
+    font-weight: 500;
+}
+.address-footer,
+.address-footer a {
+    color: var(--green);
+}
+.address-footer a {
+    cursor: pointer;
+}

@@ -1,15 +1,15 @@
-extends ../layout/layout_vue
+extends ../layout/layout_vue_n
 
 block title
   title Zunka - Cadastro de endereço
 
-block css
+block append css
   link(rel="stylesheet" href="/css/user/editAddress.css" charset="utf-8")
 
 block content 
-  .panel
+  section.shadow
     //- title.
-    h2 Adicione Seu Endereço
+    h2.title {{ isNewAddress ? "Adicione seu endereço": "Altere seu endereço" }}
     //- Warn message.
     p.warn-message {{ warnMessage }}    
     //- Name.
@@ -42,7 +42,7 @@ block content
     //- Phone.
     label(for='phone') Telefone
     input(type='text' id='phone' v-model='address.phone')                                                                                        
-    input.btn-primary(type='button', :value='isNewAddress ? "Criar novo Endereço": "Salvar"' @click='saveAddress()')
+    input.btn-primary(type='button', :value='isNewAddress ? "Criar novo endereço": "Salvar"' @click='saveAddress()')
 
 append internal_scripts
   script.

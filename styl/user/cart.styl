@@ -1,108 +1,109 @@
-@import '../menu/reset_menu_footer'
-@import '../input'
-@import '../message'
-btn-primary()
-message()
-.panel
-  max-width 1000px
-  input:last-of-type
-    margin-top 2em 
-  > .cart
-    display flex
-    flex-flow column wrap
-    justify-content space-between
-    border-radius 4px  
-    table
-      margin-top 1em
-      border-spacing 0
-      thead
-        td
-          padding .5em
-      tbody
-        td
-          border-top 1px solid #ddd
-          padding .5em
-    img.product
-      max-width 100px
-      height auto
-    .subtotal
-      margin-top 1em
-      span
-        color green
-        font-weight bold
-      p
-        margin-top 1em
-      input
-        display inline-block
-        width auto
-        margin-left 1em
-    a.product-title
-      color #337ab7
-      display block
-      text-decoration none
-    p.remove-product
-      color #337ab7
-      margin-top .5em
-      font-size .9em
-      cursor pointer
-    p.product-price,
-    a.product-title
-      font-size 1.2em
-      padding-top .6em
-    p.product-price
-      color green
-    a.checkout
-      margin-left 2em
-  h5.info
-    margin-bottom 0
-    font-weight 400
-  > .modal
-    position fixed /* Stay in place */
-    z-index 1 /* Sit on top */
-    left 0
-    top 0
-    width 100% /* Full width */
-    height 100% /* Full height */
-    overflow auto /* Enable scroll if needed */
-    background-color rgb(0,0,0) /* Fallback color */
-    background-color rgba(0,0,0,0.4) /* Black w/ opacity */ 
-    display flex
-    flex-flow column nowrap
-    align-items center
-    > .modal-content
-      background-color #fefefe
-      margin 10% auto
-      padding 1em
-      border-radius 4px
-      display flex
-      flex-flow column nowrap
-      align-items flex-start
-      // max-width 600px
-      p
-        margin 0
-      h3
-        margin-top 1em
-        margin-bottom 0
-        // font-weight bold
-      table
-        margin-top .5em
-        border-spacing 0
-        thead
-          td
-            padding .5em
-        tbody
-          td
-            // border-top 1px solid #ddd
-            border-bottom 1px solid #ddd
-            padding .5em
-      img.product
-        max-width 100px
-        height auto
-      .title
-        font-weight bold
-      .price
-        color green
-        font-weight bold
-      .qtd
-        color green
-        font-weight bold
+section {
+    background-color: var(--white-lighter);
+    // max-width: var(--width-small);
+    // min-width: 14em;
+    padding 1em;
+    margin 2em 1em;
+}
+.title {
+    margin-top: 0;
+    margin-bottom: 1em;
+}
+main .cart {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: space-between;
+}
+.product {
+    display: flex;
+    padding: 1em 0;
+    border-bottom: 1px solid var(--white);
+}
+.product:last-of-type {
+    // border: none;
+    border: none;
+}
+.product img {
+    padding: 0 1em 1em .5em;
+    width: 100px;
+    height: auto;
+}
+.product-info {
+    padding-left: 1em;
+}
+.product-title {
+    font-size: 1.2em;
+    color: var(--blue-light);
+    display: block;
+    text-decoration: none;
+}
+.product-quantity {
+    width: 3em;
+    margin-top: .3em;
+}
+.product-quantity a {
+    cursor: pointer;
+    font-size: .9em;
+}
+.product-price {
+    font-size: 1.2em;
+    color: var(--green);
+    white-space: nowrap;
+    margin: 0 1em 0 0;
+}
+main .cart .subtotal span {
+    font-weight: 500;
+}
+main .cart .subtotal span:last-of-type {
+    white-space: nowrap;
+    color: var(--green);
+}
+main .cart .subtotal input {
+    width: 100%;
+}
+main .cart .info {
+    margin-bottom: 0;
+    font-weight: 400;
+}
+main .cart .info :last-of-type {
+    margin-top: 0;
+}
+.modal {
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    padding: 1em;
+    box-sizing: border-box;
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 1em;
+    border-radius: 4px;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: flex-start;
+}
+.modal-content p {
+    margin: 0;
+}
+.modal-content h3 {
+    margin-top: 1em;
+    margin-bottom: 0;
+}
+.modal-content img.product {
+    max-width: 100px;
+    height: auto;
+}
+.modal-content .title {
+    color: var(--blue-light);
+}

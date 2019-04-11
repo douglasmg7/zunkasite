@@ -1,18 +1,23 @@
-@import '../menu/reset_menu_footer'
-@import '../input'
-@import '../message'
-btn-primary()
-message()
-.panel
-  width width_address_page
-  input:last-of-type
-    margin-top 2em 
-  a
-    display block
-    margin-top .2em
-  p.loading-cep
-    color c_success
-    margin-bottom 0
-  p.cep-not-found
-    color c_warn
-    margin-bottom 0
+section {
+    background-color: var(--white-lighter);
+    max-width: var(--width-small);
+    min-width: 14em;
+    padding 1em;
+    margin 2em 1em;
+}
+.title {
+    margin-top: 0;
+}
+section a {
+    display: block;
+}
+p.loading-cep, p.cep-not-found {
+    margin-bottom: 0;
+    margin-top: 0;
+}
+p.cep-not-found {
+    color: var(--red);
+}
+p.loading-cep {
+    color: var(--green);
+}
