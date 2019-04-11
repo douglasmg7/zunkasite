@@ -27,16 +27,16 @@ section p {
     min-height: 300px;
     // min-width: 450px;
     margin-top: 1em;
+    background-color: var(--white-light);
 }
 .address-header {
     background-color: var(--white-light);
+    border-bottom: 1px solid var(--black-lighter);
+    color: var(--green);
 }
 .address-header h3 {
-    margin: .2em 0;
+    margin: .1em 0;
     padding-left: .8em;
-}
-.address-header hr {
-    margin: 0;
 }
 .address-body,
 .address-footer {
@@ -53,4 +53,7 @@ section p {
 }
 .address-footer a {
     cursor: pointer;
+}
+.address-footer span {
+    white-space: nowrap;
 }
