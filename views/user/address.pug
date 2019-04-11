@@ -12,7 +12,7 @@ block content
     .addresses
       //- Addresses list.
       .address-panel(v-for='address in addresses' data-address-id='address._id')
-        .address-header(v-if='address.default')
+        //- .address-header(v-if='address.default')
           h3 Padrão
         .address-body      
           h4 {{address.name}}                                                                                                
@@ -29,8 +29,8 @@ block content
             a.edit-address(@click='editAddress(address._id)') Editar
             strong &nbsp | &nbsp
             a.remove-address(@click='removeAddress(address._id)') Apagar
-            strong &nbsp | &nbsp
-            a.set-default-address(@click='setDefaultAddress(address._id)') Marcar como padrão
+            //- strong &nbsp | &nbsp
+            //- a.set-default-address(@click='setDefaultAddress(address._id)') Marcar como padrão
       input.btn-primary(type='button' @click='addAddress()' value='Adicionar novo endereço')
 
 append internal_scripts
