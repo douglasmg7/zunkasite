@@ -11,18 +11,20 @@ block content
     section
         .layout
             .filter
-                h5.title(v-show='search && products.length') Sua pesquisa por "{{search}}"
-                h5.title(v-show='search && !products.length') Nenhum resultado encontrado para "{{search}}"
+                .search-info(v-show='search')
+                    h3.m-0(v-show='search && products.length') Pesquisa
+                    h3(v-show='search && !products.length') Nenhum resultado para
+                    p "{{search}}"
                 //- h5.title(v-show='!search') Todos os produtos
                 div(v-show='products.length')
-                    h5.sub-title Ordenar produtos
+                    h3.m-0 Ordenar produtos
                     select(id='prduct-order' v-model='sort')
                         option(value='stock') 
                         option(value='alpha') Ordem alfabética
                         option(value='best-selling') Mais vendidos
                         option(value='price-low') Menor preço   
                         option(value='price-high') Maior preço 
-                    h5.sub-title Filtrar por categoria
+                    h3 Filtrar por categoria
                     .checkbox(v-for='category in categories')
                         //- input(type='checkbox', :id='category' v-model:checked='categories.category')
                         input(type='checkbox', :id='category', :value='category' v-model='categoriesFilter')
