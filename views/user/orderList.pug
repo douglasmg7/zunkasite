@@ -68,7 +68,7 @@ block content
             .item
                 h3.sub-title Status
                 p {{status(orderSelec)}}
-            input.btn-exit(type='button' @click='hideOrderDetail()' value='Sair')
+            input.btn-exit(type='button' @click='hideOrderDetail' value='Sair')
 
 append external_scripts
   script(src='/js/user/orderList.js')

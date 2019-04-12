@@ -54,8 +54,8 @@ var app = new Vue({
     },
     // Hide order detail modal.
     hideOrderDetail(event){
-      console.log(event.target);
-      if (event.target == "div.modal") {
+      let classes = event.target.className;
+      if (classes.indexOf("modal") > -1 || classes.indexOf("btn-exit") > -1) {
           this.showModal = false;
       }
     },
