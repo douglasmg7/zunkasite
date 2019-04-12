@@ -1,28 +1,21 @@
-@import '../menu/reset_menu_footer'
-#app
-  display flex
-  flex-flow column nowrap
-  justify-content center
-  margin 2em auto
-  width 95%
-  max-width 480px
-  > .message-link
-    display flex
-    flex-flow column nowrap
-    margin 1em 0
-    > h3
-      color #937848
-      background-color lightyellow
-      border 1px solid #FCF8E3
-      border-radius 4px  
-      padding 1em
-      text-align center
-    > a
-      margin-top 1em
-      text-decoration none
-      color green
-      text-align center
-      &:hover
-        text-decoration underline
-    
-    
+section {
+    background-color: var(--white-lighter);
+    max-width: var(--width-small);
+    min-width: 14em;
+    padding: 1em;
+    margin: 2em 1em;
+}
+section h3 {
+    color: #937848;
+    background-color: lightyellow;
+    border: 1px solid #FCF8E3;
+    border-radius: 4px  ;
+    padding: 1em;
+    text-align: center;
+}
+section a {
+    margin-top: 1em;
+    text-decoration: none;
+    color: green;
+    text-align: center;
+}

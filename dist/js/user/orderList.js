@@ -53,8 +53,11 @@ var app = new Vue({
       this.showModal = true;
     },
     // Hide order detail modal.
-    hideOrderDetail(){
-      this.showModal = false;
+    hideOrderDetail(event){
+      console.log(event.target);
+      if (event.target == "div.modal") {
+          this.showModal = false;
+      }
     },
     // Get status order.
     status(order){
@@ -75,7 +78,7 @@ var app = new Vue({
           default:
             return '';
         }
-      } 
+      }
       // Money, only by motoboy.
       else if(order.payment.method === 'money'){
         switch(order.status) {
@@ -88,7 +91,7 @@ var app = new Vue({
           default:
             return '';
         }
-      } 
+      }
       else if(order.payment.method === 'transfer'){
         switch(order.status) {
           case 'shipped':
@@ -101,7 +104,7 @@ var app = new Vue({
             return '';
         }
       }
-    },   
+    },
   },
   filters: {
     // Format number to money format.

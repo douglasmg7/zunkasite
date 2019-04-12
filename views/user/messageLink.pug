@@ -1,16 +1,17 @@
-extends ../layout/layout_vue
+extends ../layout/layout_vue_n
 
 block title
-  title Zunka - Mensagem
+    title Zunka - Mensagem
 
-block css
-  link(rel="stylesheet" href="/css/user/messageLink.css" charset="utf-8")
+block append css
+    link(rel="stylesheet" href="/css/user/messageLink.css" charset="utf-8")
 
 block content 
-  .message-link
-    h3 #{message} 
-    a(href=linkUrl) #{linkMessage}
+    section.shadow
+        h3 #{message} 
+        a(href=linkUrl) #{linkMessage}
 
 append internal_scripts
 
 append external_scripts
+    script(src='/js/user/messageLink.js')  

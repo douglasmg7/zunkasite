@@ -1,86 +1,74 @@
-extends ../layout/layout_vue
+extends ../layout/layout_vue_n
 
 block title
-  title Zunka - Pedidos
+    title Zunka - Pedidos
 
-block css
-  link(rel="stylesheet" href="/css/user/orderList.css" charset="utf-8")
+block append css
+    link(rel="stylesheet" href="/css/user/orderList.css" charset="utf-8")
+    link(rel="stylesheet" href="/css/menu/pagination.css" charset="utf-8")
 
 block content 
-  .panel
-    header
-      h2 Pedidos
-      .search-order
-        input(type='text' v-model='searchOrder' @keyup.enter='getOrders()' placeholder='Pesquise em todas as ordens')
-        input.btn-primary(type='button' @click='getOrders()' value='Pesquisar') 
-    table
-      thead
-        tr
-          th Data do pedido
-          th Total
-          th Enviado para
-          th Número
-          th Status
-      tbody
-        tr(v-for='order, index in orders' @click='showOrderDetail(index)')
-          td {{order.timestamps.shippingAddressSelectedAt | formatDate}}
-          td {{order.totalPrice | formatMoney}}
-          td {{order.shipping.address.name}}
-          td {{order._id}}
-          td {{status(order)}}
-    nav.pagination
-      a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
-    .modal(v-if='showModal')
-      .panel
-        .item
-          h2 Número do pedido
-          P {{orderSelec._id}}
-        .item
-          h2 Cliente
-          p Nome: {{orderSelec.name}}
-          p Email: {{orderSelec.email}}
-          p CPF: {{orderSelec.cpf}}
-          p Celular: {{orderSelec.mobileNumber}}
-        .item
-          h2 Endereço de entrega
-          p Nome: {{orderSelec.shipping.address.name}}
-          p Telefone: {{orderSelec.shipping.address.phone}}
-          p {{orderSelec.shipping.address.address}},  {{orderSelec.shipping.address.addressNumber}} {{orderSelec.shipping.address.addressComplement}}
-          p {{orderSelec.shipping.address.district}}
-          p {{orderSelec.shipping.address.city}} - {{orderSelec.shipping.address.state}} - Brasil
-          p {{orderSelec.shipping.address.cep}} 
-        .item
-          h2 Pagamento
-          p(v-if='orderSelec.payment.method === "paypal" || orderSelec.payment.method === undefined') Paypal
-          p(v-if='orderSelec.payment.method === "money"') Pagamento em dinheiro no memento da entrega
-          p(v-if='orderSelec.payment.method === "transfer"') Transferência bancária
-        .item
-          h2 Envio
-          //- p {{ orderSelec.shipping.method }}
-          p(v-if='orderSelec.shipping.method === "correios" || orderSelec.shipping.method === "standard"') Correios
-          p(v-if='orderSelec.shipping.method === "motoboy"') Motoboy
-          p
-            span Prazo: 
-            span {{orderSelec.shipping.deadline}} dia(s)
-          p
-            span Valor: 
-            span.price R${{orderSelec.shipping.price}}
-        .item(v-if='orderSelec.items.length > 0')
-          h2 Itens
-          ul
-            li(v-for='item in orderSelec.items')
-              p {{item.name}}
-              p 
-                span.price {{item.price | formatMoney}} 
-                span.quantity - Quantidade: {{item.quantity}}
-        .item
-          h2 Valor total com frete
-          p.price {{ orderSelec.totalPrice | formatMoney }}
-        .item
-          h2 Status
-          p {{status(orderSelec)}}
-        .close-modal
-          input.btn-exit(type='button' @click='hideOrderDetail()' value='Sair')
+    section.shadow
+        h2.title Pedidos
+        .search-order
+            input(type='text' v-model='searchOrder' @keyup.enter='getOrders()' placeholder='Pesquise por ordens')
+            i.fas.fa-search.fa-lg(@click='getOrders()')
+            //- input.btn-primary(type='button' @click='getOrders()' value='Pesquisar') 
+        .orders
+            .order(v-for='order, index in orders')
+                a(@click='showOrderDetail(index)')
+                    p {{order.timestamps.placedAt | formatDate}} &nbsp&nbsp&nbsp
+                    p {{order.shipping.address.name}} &nbsp&nbsp&nbsp
+                    p {{order.totalPrice | formatMoney}} &nbsp&nbsp&nbsp
+                p {{order._id}}
+                p {{status(order)}}
+        .pagination
+            a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
+    .modal(v-if='showModal' @click='hideOrderDetail')
+        .panel
+            .item
+                h3.sub-title Número do pedido
+                P {{orderSelec._id}}
+            .item
+                h3.sub-title Data do pedido
+                P {{orderSelec.timestamps.shippingAddressSelectedAt  | formatDate}}
+            .item
+                h3.sub-title Cliente
+                p Nome: {{orderSelec.name}}
+                p Email: {{orderSelec.email}}
+                p CPF: {{orderSelec.cpf}}
+                p Celular: {{orderSelec.mobileNumber}}
+            .item
+                h3.sub-title Endereço de entrega
+                p Nome: {{orderSelec.shipping.address.name}}
+                p Telefone: {{orderSelec.shipping.address.phone}}
+                p {{orderSelec.shipping.address.address}},  {{orderSelec.shipping.address.addressNumber}} {{orderSelec.shipping.address.addressComplement}}
+                p {{orderSelec.shipping.address.district}}
+                p {{orderSelec.shipping.address.city}} - {{orderSelec.shipping.address.state}} - Brasil
+                p {{orderSelec.shipping.address.cep}} 
+            .item
+                h3.sub-title Pagamento
+                p(v-if='orderSelec.payment.method === "paypal" || orderSelec.payment.method === undefined') Paypal
+                p(v-if='orderSelec.payment.method === "money"') Pagamento em dinheiro no memento da entrega
+                p(v-if='orderSelec.payment.method === "transfer"') Transferência bancária
+            .item
+                h3.sub-title Envio
+                //- p {{ orderSelec.shipping.method }}
+                p(v-if='orderSelec.shipping.method === "correios" || orderSelec.shipping.method === "standard"') Correios
+                p(v-if='orderSelec.shipping.method === "motoboy"') Motoboy
+                p Prazo: {{orderSelec.shipping.deadline}} dia(s)
+                p Valor: {{orderSelec.shipping.price | formatMoney}}
+            .item(v-if='orderSelec.items.length > 0')
+                h3.sub-title Itens
+                ul
+                    li(v-for='item in orderSelec.items') {{item.name}} &nbsp&nbsp {{item.price | formatMoney}} &nbsp&nbsp {{item.quantity}} unidade(s)
+            .item
+                h3.sub-title Valor total com frete
+                p.price {{ orderSelec.totalPrice | formatMoney }}
+            .item
+                h3.sub-title Status
+                p {{status(orderSelec)}}
+            input.btn-exit(type='button' @click='hideOrderDetail()' value='Sair')
 
 append external_scripts
   script(src='/js/user/orderList.js')
