@@ -1,15 +1,14 @@
-extends ../layout/layout_vue
+extends ../layout/layout_vue_n
 
 block title
   title Zunka - Inclusão de CPF e celular
 
-block css
+block append css
   link(rel="stylesheet" href="/css/checkout/needCpfAndMobileNumber.css" charset="utf-8")
 
 block content 
-  .panel
-    h2 Favor informas os dados
-    //- Warn message.
+  section.shadow
+    h2.title Favor informas os dados
     p.warn-message(v-show='this.warnMessage !== ""') {{ warnMessage }}  
     label(for='cpf') CPF
     input(type='text' name='cpf' id='cpf' v-model='cpf')

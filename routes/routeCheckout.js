@@ -72,7 +72,7 @@ router.post('/shipping-address', (req, res, next)=>{
   // Existing address selected.
   if (req.body.address_id) {
     // Create order.
-    createOrder(req.body.address_id); 
+    createOrder(req.body.address_id);
   }
   // New address selected.
   else {
@@ -98,7 +98,7 @@ router.post('/shipping-address', (req, res, next)=>{
       if (!result.isEmpty()) {
         res.json({validation: result.array()});
         return;
-      } 
+      }
       // Save address.
       else {
         let address = new Address(req.body.newAddress);
@@ -106,14 +106,14 @@ router.post('/shipping-address', (req, res, next)=>{
         address.save((err, newAddress) => {
           if (err) {
             res.json({err});
-            return next(err); 
+            return next(err);
           } else {
             log.info(`Address ${newAddress._id} saved.`);
             // Create order.
             createOrder(address._id);
           }
         });
-      }    
+      }
     });
   }
   // Create order.
@@ -166,7 +166,7 @@ router.post('/shipping-address', (req, res, next)=>{
           } else {
             res.json({ order_id: order._id });
           }
-        });        
+        });
       });
     })
   };
@@ -209,7 +209,7 @@ router.get('/shipping-method/:order_id', (req, res, next)=>{
           order.shipping.price = STANDARD_DELIVERY_PRICE;
           order.shipping.deadline = STANDARD_DELIVERY_DEADLINE;
         }
-        // Got correio info. 
+        // Got correio info.
         else {
           order.shipping.correioResult = result;
         }
@@ -217,10 +217,10 @@ router.get('/shipping-method/:order_id', (req, res, next)=>{
         // log.debug(JSON.stringify(order.address));
         redis.get('motoboy-delivery', (err, motoboyDeliveries)=>{
           // Internal error.
-          if (err) { 
+          if (err) {
             log.error(err.stack);
             return res.render('/error', { message: 'Can not find motoboy delivery data.', error: err });
-          } 
+          }
           motoboyDeliveries = JSON.parse(motoboyDeliveries) || [];
           // Find city.
           order.shipping.motoboyResult = {
@@ -244,16 +244,16 @@ router.get('/shipping-method/:order_id', (req, res, next)=>{
           order.save((err, newAddress) => {
             if (err) {
               res.json({err});
-              return next(err); 
+              return next(err);
             } else {
-              res.render('checkout/shippingMethod', { 
+              res.render('checkout/shippingMethod', {
                 nav: {
                 },
                 order
-              });  
+              });
             }
           });
-        }); 
+        });
       })
     }
   });
@@ -264,9 +264,9 @@ router.post('/shipping-method/:order_id', (req, res, next)=>{
   // Set shipment method to default.
   Order.findById(req.params.order_id, (err, order)=>{
     // console.log(`req.body: ${JSON.stringify(req.body)}`);
-    if (req.body.shippingMethod == 'correios') { 
+    if (req.body.shippingMethod == 'correios') {
       order.shipping.method = 'correios';
-      order.shipping.carrier = 'correios'; 
+      order.shipping.carrier = 'correios';
       // Shipping price.
       if (order.shipping.correioResult.Valor) {
         // Correio using ',' as decimal point.
@@ -282,10 +282,10 @@ router.post('/shipping-method/:order_id', (req, res, next)=>{
       }
     } else if (req.body.shippingMethod == 'motoboy'){
       order.shipping.method = 'motoboy';
-      order.shipping.carrier = 'sergio_delivery'; 
+      order.shipping.carrier = 'sergio_delivery';
       // Motoboy result using ',' as decimal point.
-      order.shipping.price = order.shipping.motoboyResult.price.replace('.', '').replace(',', '.'); 
-      order.shipping.deadline = order.shipping.motoboyResult.deadline; 
+      order.shipping.price = order.shipping.motoboyResult.price.replace('.', '').replace(',', '.');
+      order.shipping.deadline = order.shipping.motoboyResult.deadline;
     }
     order.totalPrice = (parseFloat(order.subtotalPrice) + parseFloat(order.shipping.price)).toFixed(2);
     order.timestamps.shippingMethodSelectedAt = new Date();
@@ -294,7 +294,7 @@ router.post('/shipping-method/:order_id', (req, res, next)=>{
       if (err) { return next(err) };
       res.json({});
     });
-  });  
+  });
 });
 
 // Payment - page.
@@ -305,27 +305,27 @@ router.get('/payment/:order_id', (req, res, next)=>{
       return next(new Error('No order to continue with payment.')); }
     // Must have cpf and mobile number.
     if (!order.cpf || !order.mobileNumber ) {
-      res.render('checkout/needCpfAndMobileNumber', 
-        { 
+      res.render('checkout/needCpfAndMobileNumber',
+        {
           cpf: req.user.cpf,
-          mobileNumber: req.user.mobileNumber, 
+          mobileNumber: req.user.mobileNumber,
           orderId: req.params.order_id,
           nav: {
           },
         }
-      ); 
+      );
     }
     else {
-      res.render('checkout/payment', 
-        { 
-          order: order, 
+      res.render('checkout/payment',
+        {
+          order: order,
           nav: {
           },
           env: (process.env.NODE_ENV === 'production' ? 'production': 'sandbox')
         }
-      ); 
+      );
     }
-  });  
+  });
 });
 
 // Need cpf and mobile number.
@@ -335,7 +335,7 @@ router.post('/needCpfAndMobileNumber', checkPermission, (req, res, next)=>{
   let mobileNumberTemp = req.body.mobileNumber.match(/\d+/g);
   if (mobileNumberTemp != null) {
     req.body.mobileNumber = mobileNumberTemp.join('');
-  } 
+  }
   req.sanitize("cpf").trim();
   req.checkBody('mobileNumber', 'Campo NÚMERO DE CELULAR ínválido.').isLength({ min: 10});
   req.checkBody('mobileNumber', 'Campo NÚMERO DE CELULAR inválido.').isLength({ max: 11});
@@ -347,14 +347,14 @@ router.post('/needCpfAndMobileNumber', checkPermission, (req, res, next)=>{
       let messages = [];
       messages.push(result.array()[0].msg);
       return res.json({ success: false, message: messages[0]});
-    } 
+    }
     // Save cpf.
     else {
       // Format CPF.
       // Get only the digits.
       let cpf = req.body.cpf.match(/\d+/g).join('');
       // Array [3][3][3][2].
-      cpf = cpf.match(/\d{2}\d?/g); 
+      cpf = cpf.match(/\d{2}\d?/g);
       // Format to 000.000.000-00.
       cpf = `${cpf[0]}.${cpf[1]}.${cpf[2]}-${cpf[3]}`
       // Format mobile number.
@@ -371,7 +371,7 @@ router.post('/needCpfAndMobileNumber', checkPermission, (req, res, next)=>{
         user.cpf = cpf;
         user.mobileNumber = mobileNumber;
         user.save(function(err) {
-          if (err) { return next(err); } 
+          if (err) { return next(err); }
           // Save order data.
           Order.findById(req.body.orderId, (err, order)=>{
             if (err) { return next(err) };
@@ -379,11 +379,11 @@ router.post('/needCpfAndMobileNumber', checkPermission, (req, res, next)=>{
             order.cpf = cpf;
             order.mobileNumber = mobileNumber;
             order.save(function(err) {
-              if (err) { return next(err); } 
+              if (err) { return next(err); }
               return res.json({ success: true});
-            });  
+            });
           });
-        });  
+        });
       });
     }
   });
@@ -406,16 +406,16 @@ router.post('/needCpfAndMobileNumber', checkPermission, (req, res, next)=>{
 //       order.save(err=>{
 //         if (err) {
 //           res.json({err});
-//           return next(err); 
-//         } 
+//           return next(err);
+//         }
 //         else {
 //           // Update stock.
 //           for (var i = 0; i < req.cart.products.length; i++) {
 //             // Product.update({ _id: req.cart.products[i]._id }, { $inc: { storeProductQtd: -1 * req.cart.products[i].qtd } }, err=>{
 //             Product.update(
-//               { _id: req.cart.products[i]._id }, 
-//               { $inc: { 
-//                 storeProductQtd: -1 * req.cart.products[i].qtd, 
+//               { _id: req.cart.products[i]._id },
+//               { $inc: {
+//                 storeProductQtd: -1 * req.cart.products[i].qtd,
 //                 storeProductQtdSold: 1 * req.cart.products[i].qtd
 //               } }, err=>{
 //               if (err) {
@@ -430,12 +430,12 @@ router.post('/needCpfAndMobileNumber', checkPermission, (req, res, next)=>{
 //               from: '',
 //               to: req.user.email,
 //               subject: 'Confirmação de pedido.',
-//               text: 'Parabéns! Sua compra já foi concluída, agora é só aguardar o envio do produto.\n\n' + 
-//                     'Número de pedido: ' + order._id + '\n\n' + 
-//                     'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' + 
+//               text: 'Parabéns! Sua compra já foi concluída, agora é só aguardar o envio do produto.\n\n' +
+//                     'Número de pedido: ' + order._id + '\n\n' +
+//                     'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' +
 //                     'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
 //                     'Muito obrigado por comprar na ZUNKA.'
-//           }; 
+//           };
 //           emailSender.sendMail(mailOptions, err=>{
 //             if (err) {
 //               log.error(err.stack);
@@ -447,7 +447,7 @@ router.post('/needCpfAndMobileNumber', checkPermission, (req, res, next)=>{
 //         }
 //       })
 //     }
-//   });  
+//   });
 // });
 
 
@@ -467,7 +467,7 @@ router.post('/payment/:order_id', (req, res, next)=>{
           paypal: req.body.payment,
           method: 'paypal'
         };
-      } 
+      }
       else if (req.query.method === 'money'){
         order.payment = {
           method: 'money'
@@ -477,23 +477,23 @@ router.post('/payment/:order_id', (req, res, next)=>{
         order.payment = {
           method: 'transfer'
         };
-      } 
+      }
       else {
         return next(new Error('No payment method selected.'));
       }
       order.save(err=>{
         if (err) {
           res.json({err});
-          return next(err); 
-        } 
+          return next(err);
+        }
         else {
           // Update stock.
           for (var i = 0; i < req.cart.products.length; i++) {
             // Product.update({ _id: req.cart.products[i]._id }, { $inc: { storeProductQtd: -1 * req.cart.products[i].qtd } }, err=>{
             Product.update(
-              { _id: req.cart.products[i]._id }, 
-              { $inc: { 
-                storeProductQtd: -1 * req.cart.products[i].qtd, 
+              { _id: req.cart.products[i]._id },
+              { $inc: {
+                storeProductQtd: -1 * req.cart.products[i].qtd,
                 storeProductQtdSold: 1 * req.cart.products[i].qtd
               } }, err=>{
               if (err) {
@@ -508,36 +508,36 @@ router.post('/payment/:order_id', (req, res, next)=>{
               from: '',
               to: req.user.email,
               subject: 'Confirmação de pedido.'
-          }; 
+          };
           if (req.query.method === 'paypal'){
-            mailOptions.text = 'Parabéns! Sua compra já foi concluída, agora é só aguardar o envio do produto.\n\n' + 
-             'Número de pedido: ' + order._id + '\n\n' + 
-             'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' + 
+            mailOptions.text = 'Parabéns! Sua compra já foi concluída, agora é só aguardar o envio do produto.\n\n' +
+             'Número de pedido: ' + order._id + '\n\n' +
+             'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' +
              'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
              'Muito obrigado por comprar na ZUNKA.'
           }
           if (req.query.method === 'money'){
-            mailOptions.text = 'Parabéns! Seu pedido foi realizado, agora é só aguardar o envio do produto.\n\n' + 
-             'O pagamento será realizado no momento do recebimento do produto.\n\n' + 
-             'Número de pedido: ' + order._id + '\n\n' + 
-             'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' + 
+            mailOptions.text = 'Parabéns! Seu pedido foi realizado, agora é só aguardar o envio do produto.\n\n' +
+             'O pagamento será realizado no momento do recebimento do produto.\n\n' +
+             'Número de pedido: ' + order._id + '\n\n' +
+             'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' +
              'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
              'Muito obrigado por comprar na ZUNKA.'
           }
           else if (req.query.method === 'transfer'){
-            mailOptions.text = 'Parabéns! Seu pedido foi realizado, agora é só efetuar a transferência.\n\n' + 
-              'Dados bancários\n' + 
+            mailOptions.text = 'Parabéns! Seu pedido foi realizado, agora é só efetuar a transferência.\n\n' +
+              'Dados bancários\n' +
               '   Titular: ZUNKA COM E SERV EM INF EIRELI\n' +
               '   CNPJ: 15.178.404/0001-47\n' +
               '   Banco: Santander (033)\n' +
               '   Agencia: 0944\n' +
               '   Conta: 13001412-1\n' +
               '   Valor a ser depositado: R$ ' + order.totalPrice.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '\n\n' +
-              'Número de pedido: ' + order._id + '\n\n' + 
-              'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' + 
+              'Número de pedido: ' + order._id + '\n\n' +
+              'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' +
               'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
               'Muito obrigado por seu pedido.'
-          } 
+          }
           emailSender.sendMail(mailOptions, err=>{
             if (err) {
               log.error(err.stack);
@@ -549,7 +549,7 @@ router.post('/payment/:order_id', (req, res, next)=>{
         }
       })
     }
-  });  
+  });
 });
 
 // Order confirmation - page.
@@ -559,15 +559,15 @@ router.get('/order-confirmation/:order_id', (req, res, next)=>{
     if (!order) {
       return next(new Error('No order to confirm.')); }
     else {
-      res.render('checkout/orderConfirmation', 
-        { 
-          order: order, 
+      res.render('checkout/orderConfirmation',
+        {
+          order: order,
           nav: {
           }
         }
-      ); 
+      );
     }
-  });  
+  });
 });
 
 // Estimate shipment.
@@ -576,13 +576,13 @@ router.get('/ship-estimate', (req, res, next)=>{
   Product.findById(req.query.productId, (err, product)=>{
     if (err) { return next(err); }
     if (!product) {  return next(new Error('Product not found.')); }
-    let box = { 
-      cepOrigin: CEP_ORIGIN, 
+    let box = {
+      cepOrigin: CEP_ORIGIN,
       cepDestiny: req.query.cepDestiny.replace(/\D/g, ''),
       length: product.storeProductLength,
       height: product.storeProductHeight,
       width: product.storeProductWidth,
-      weight: product.storeProductWeight 
+      weight: product.storeProductWeight
     }
     console.log(`box: ${JSON.stringify(box)}`);
     estimateCorreiosShipping(box, (err, result)=>{
@@ -615,9 +615,9 @@ function estimateCorreiosShipping(box, cb) {
     // Argments.
     let args = {
       nCdEmpresa: '',  // Código administrativo junto à ECT (para clientes com contrato) .
-      sDsSenha: '',  
+      sDsSenha: '',
       nCdServico: '04510',  // Para clientes sem contrato (04510 - PAC à vista).
-      sCepOrigem: box.cepOrigin.replace(/\D/g, ''),   
+      sCepOrigem: box.cepOrigin.replace(/\D/g, ''),
       sCepDestino: box.cepDestiny.replace(/\D/g, ''),
       nVlPeso: (box.weight / 1000).toString(),    // Weight in Kg.
       nCdFormato: 1,    // 1 - caixa/pacote, 2 - rolo/prisma, 3 - Envelope.
@@ -630,6 +630,8 @@ function estimateCorreiosShipping(box, cb) {
       sCdAvisoRecebimento: 'N'
     };
     // console.log('args', args);
+    // Uncomment for fast debud, to not use Correios webservice.
+    // return cb('Serviço indisponível');
     // Call webservice.
     client.CalcPrecoPrazo(args, (err, result)=>{
       if (err) {
@@ -647,7 +649,7 @@ function estimateCorreiosShipping(box, cb) {
 };
 
 
-/****************************************************************************** 
+/******************************************************************************
 / TEST
 ******************************************************************************/
 
@@ -662,7 +664,7 @@ router.post('/update-stock', (req, res, next)=>{
     Product.update({ _id: req.cart.products[i]._id }, { $inc: { storeProductQtd: -1 * req.cart.products[i].qtd } }, err=>{
       log.error(`err: ${err}`);
     });
-  };  
+  };
   // Clean cart.
   req.cart.clean();
   res.json({ success: true , cart: req.cart });

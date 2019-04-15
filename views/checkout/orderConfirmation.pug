@@ -1,84 +1,79 @@
-extends ../layout/layout_vue
+extends ../layout/layout_vue_n
 
 block title
-  title Zunka - Confirmação do pedido
+    title Zunka - Confirmação do pedido
 
-block css
-  link(rel="stylesheet" href="/css/checkout/orderConfirmation.css" charset="utf-8")
+block append css
+      link(rel="stylesheet" href="/css/checkout/orderConfirmation.css" charset="utf-8")
 
 block content 
-  .panel
-    .acknowledgment
-      h2 Obrigado pelo seu Pedido
-      p Seu pedido foi recebido e já será processado. As informações do seu pedido são exibidos a baixo para sua referência.
-      p Um e-mail com as informações do seu pedido será enviado para <span>{{order.email}}</span>.
-      hr
-    .important-info(v-if='order.payment.method === "transfer"')
-      h2 Informações importantes
-      p As vantagens de realizar o pagamento por transferência bancária são os valores dos produtos com descontos e o envio mais rápido caso a modalidade da transferência seja TED ou transferência entre contas do banco Santander, caso opte pela modalidade DOC, o envio do produto só ocorrerá no próximo dia útil em função da compensação bancária.
-      p Após a realização da transferência bancária, recomenda-se que o cliente envie o comprovante para o e-mail <span>zunka@outlook.com.br</span> ou pelo Whatsapp <span>(31) 99841-8491</span> para que o equipamento seja reservado caso este seja a última unidade em estoque.
-      hr
-    .bank-info(v-if='order.payment.method === "transfer"')
-      h2 Dados bancários
-      h3
-        span.title Titular: 
-        span.info ZUNKA COM E SERV EM INF EIRELI
-      h3
-        span.title CNPJ: 
-        span.info 15.178.404/0001-47
-      h3 
-        span.title Banco: 
-        span.info Santander (033)
-      h3 
-        span.title Agencia: 
-        span.info 0944
-      h3 
-        span.title Conta:  
-        span.info 13001412-1
-      h3 
-        span.title Valor a ser depositado:  
-        span.info {{ order.totalPrice | formatMoney }}
-      hr
-    .order
-      h2 Informações do pedido
-      h3 Número do pedido
-      P {{order._id}}
-    .client
-      h3 Cliente
-      p Nome: {{order.name}}
-      p Email: {{order.email}}
-    .address
-      h3 Endereço de entrega
-      p Nome: {{order.shipping.address.name}}
-      p Telefone: {{order.shipping.address.phone}}
-      p {{order.shipping.address.address}},  {{order.shipping.address.addressNumber}} {{order.shipping.address.addressComplement}}
-      p {{order.shipping.address.district}}
-      p {{order.shipping.address.city}} - {{order.shipping.address.state}} - Brasil
-      p {{order.shipping.address.cep}} 
-    .payment
-      h3 Forma de pagamento
-      p(v-if='order.payment.method === "paypal"') Paypal
-      p(v-if='order.payment.method === "money"') Pagamento em dinheiro no memento da entrega
-      p(v-if='order.payment.method === "transfer"') Transferência bancária
-    .shipment
-      h3 Frete
-      p {{order.shipping.method}}
-      p
-        span Prazo: 
-        span.deadline {{order.shipping.deadline}} dia(s)
-      span Valor do frete: 
-      span.price {{order.shipping.price | formatMoney}}
-    .items(v-if='order.items.length > 0')
-      h3 Itens
-      ul
-        li(v-for='item in order.items')
-          p {{item.name}}
-          p 
-            span.price {{item.price | formatMoney}} 
-            span.quantity - Quantidade: {{item.quantity}}
-    .total
-      h3 Valor total com frete
-      p.price {{ order.totalPrice | formatMoney }}
+    section.shadow
+        .acknowledgment
+            h2.title Obrigado pelo seu Pedido
+            p Seu pedido foi recebido e já será processado. As informações do seu pedido são exibidos a baixo para sua referência.
+            p Um e-mail com as informações do seu pedido será enviado para <span>{{order.email}}</span>.
+            hr
+        .important-info(v-if='order.payment.method === "transfer"')
+            h2.sub-title Informações importantes
+            p As vantagens de realizar o pagamento por transferência bancária são os valores dos produtos com descontos e o envio mais rápido caso a modalidade da transferência seja TED ou transferência entre contas do banco Santander, caso opte pela modalidade DOC, o envio do produto só ocorrerá no próximo dia útil em função da compensação bancária.
+            p Após a realização da transferência bancária, recomenda-se que o cliente envie o comprovante para o e-mail <span>zunka@outlook.com.br</span> ou pelo Whatsapp <span>(31) 99841-8491</span> para que o equipamento seja reservado caso este seja a última unidade em estoque.
+            hr
+        .bank-info(v-if='order.payment.method === "transfer"')
+            h2.sub-title Dados bancários
+            h3 Titular
+            p ZUNKA COM E SERV EM INF EIRELI
+            h3 CNPJ
+            p 15.178.404/0001-47
+            h3 Banco
+            p SANTANDER (033)
+            h3 Agencia
+            p 0944
+            h3 Conta
+            p 13001412-1
+            h3 Valor a ser depositado
+            p {{ order.totalPrice | formatMoney }}
+            hr
+        .order
+            h2.sub-title Informações do pedido
+            h3 Número do pedido
+            P {{order._id}}
+        .client
+            h2 Cliente
+            h3 Nome
+            p {{order.name}}
+            h3 Email
+            p {{order.email}}
+        .address
+            h2 Endereço de entrega
+            h3 Nome
+            p {{order.shipping.address.name}}
+            h3 Telefone 
+            p {{order.shipping.address.phone}}
+            h3 Endereço
+            p {{order.shipping.address.address}},  {{order.shipping.address.addressNumber}} {{order.shipping.address.addressComplement}}
+            p {{order.shipping.address.district}}
+            p {{order.shipping.address.city}} - {{order.shipping.address.state}} - Brasil
+            p {{order.shipping.address.cep}} 
+        .payment
+            h2 Forma de pagamento
+            p(v-if='order.payment.method === "paypal"') Paypal
+            p(v-if='order.payment.method === "money"') Pagamento em dinheiro no memento da entrega
+            p(v-if='order.payment.method === "transfer"') Transferência bancária
+        .shipment
+            h2 Frete
+            p {{order.shipping.method}}
+            p Prazo: {{order.shipping.deadline}} dia(s)
+            p Valor do frete {{order.shipping.price | formatMoney}}
+        .items(v-if='order.items.length > 0')
+            h2 Itens
+            ul
+                li(v-for='item in order.items')
+                    p {{item.name}}
+                    p Quantidade: {{item.quantity}}
+                    p {{item.price | formatMoney}} 
+        .total
+            h2 Valor total com frete
+            p.price {{ order.totalPrice | formatMoney }}
 
 append internal_scripts
   script.

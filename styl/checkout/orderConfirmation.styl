@@ -1,58 +1,23 @@
-@import '../menu/reset_menu_footer'
-.panel
-  max-width max_width_address
-  p
-  span
-    color c_gray
-    margin-bottom .5em
-  hr
-    margin-top 2em
-    margin-bottom 2em
-  // .acknowledgment
-  //   :first-child
-  //     margin-top 0
-  .price
-    color c_price
-  .quantity
-    color $c_quantity
-  .deadline
-    color c_black
-    font-weight bold
-  .acknowledgment
-  .important-info
-    span
-      font-weight 600
-      // font-style: italic
-      color c_black
-      white-space: nowrap
-  .bank-info
-    span.title
-      color c_black
-      font-weight 600
-  .order
-  .client
-  .address
-  .payment
-  .shipment
-  .items
-  .total
-    margin-top 2em
-    p
-    ul
-      margin .4em 0 .4em 0
-  .shipment
-    p
-      text-transform capitalize
-  .items
-    margin-bottom: 2em
-    ul
-      margin-left 2em
-      li
-        color $c_quantity
-      margin-top .5em
-      p
-        margin-top .2em
-        color black
-  .total
-    margin-top .5em
-    margin-bottom 1em
+section {
+	background-color: var(--white-lighter);
+	padding: 1em;
+	margin: 2em 1em;
+    max-width: var(--width-large);
+}
+section p {
+    margin-top: 0;
+    opacity: .7;
+}
+section h3 {
+    opacity: 1;
+    margin-top: .5em;
+}
+section hr {
+    margin-top: 1em;
+}
+.title {
+    margin-top: 0;
+}
+section ul li {
+    margin-left: 1em;
+}

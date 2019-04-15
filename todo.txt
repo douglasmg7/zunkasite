@@ -1,18 +1,3 @@
-Alterações
-A seguintes páginas foram alteradas para o novo formato e já estão rodando.
-- Minha conta.
-- Remoção de conta.
-- Conta removida.
-- Alteração de CPF.
-- Alteração de email.
-- Alteração de número de celular.
-- Alteração de nome.
-- Alteração de senha.
-- Senha esquecida.
-- Senha reset.
-- Signin.
-- Signout.
-
 Não permitir cancelar ordem depois de entregue.
 Não mostrar ação quando não houver opção.
 
