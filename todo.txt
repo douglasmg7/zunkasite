@@ -1,22 +1,23 @@
+Motoboy delivery
+    Buttom border "Adicionar nova cidade".
+
+Banners
+    Buttom border "Novo banner".
+    Create button for move and delete banners, to work on mobile.
+
+Image zoom on product page.
+
 Não permitir cancelar ordem depois de entregue.
 Não mostrar ação quando não houver opção.
 
 Opção de entrar com preço final do produto e o sistema calcular a porcentagem do lucro.
 
-pm2 start on startup system
-
 timeout for correio response
-
-detalhes técnicos -> especificação técnica
-
-image zoom
 
 test quilljs.com
 
 Verify if certbot.service is running.
 When certbot renew nginx must reload to.
-
-cart and orders not breaking on mobile.
 
 Create a timer to backup (mongo and redis).
 
