@@ -1,37 +1,33 @@
-extends ../layout/layout_vue
+extends ../layout/layout_vue_n
 
 block title
-  title Zunka - Banners
+    title Zunka - Banners
 
-block css
-  link(rel="stylesheet" href="/css/admin/banner.css" charset="utf-8")
+block append css
+    link(rel="stylesheet" href="/css/admin/banner.css" charset="utf-8")
 
 block content 
-  .panel
-    h2 Banners
-    .wrapper-image(v-for='banner, index in banners')
-      h4.sub-title Link
-      input(type='text' id='link' v-model='banner.link')
-      h4.sub-title Imagem
-      img.image.product-image(:src='`/banner/${banner.fileName}`')
-      .right-arrow(@click='moveImage(index, "r")')
-      .left-arrow(@click='moveImage(index, "l")')
-      p.delete-image(@click=`deleteImage(index)`) x          
-    .upload-image
-      label(for='uploadImage') 
-        svg.icon: use(xlink:href='/icon/sprite.svg#ic_file_upload_black_24px')
-        | Carregar imagem(s)
-      input(type='file' id='uploadImage' accept='image/*' multiple v-on:change=`uploadImage()`)
-    .buttons
-      input.btn-primary(type='button' v-on:click='saveBanners()' value='Salvar')
-      input.btn-secondary(type='button' onclick='window.location.href="/admin"' value='Sair')
+    section.shadow
+        h2.title Banners
+        .wrapper-image(v-for='banner, index in banners')
+            h4.sub-title Link
+            input(type='text' id='link' v-model='banner.link')
+            img(:src='`/banner/${banner.fileName}`')
+            .right-arrow(@click='moveImage(index, "r")')
+            .left-arrow(@click='moveImage(index, "l")')
+            p.delete-image(@click=`deleteImage(index)`) x          
+        .buttons
+            label.upload-image(for='uploadImage') Novo banner
+            input(type='file' id='uploadImage' accept='image/*' multiple v-on:change=`uploadImage()`)
+            input.btn-primary(type='button' v-on:click='saveBanners()' value='Salvar')
+            input.btn-exit(type='button' onclick='window.location.href="/admin"' value='Sair')
 
 block footer
   
 append internal_scripts
-  script.
-    let banners = !{JSON.stringify(banners)};
-    let user = !{JSON.stringify(user)};
+    script.
+        let banners = !{JSON.stringify(banners)};
+        let user = !{JSON.stringify(user)};
 
 append external_scripts
-  script(src='/js/admin/banner.js')
+    script(src='/js/admin/banner.js')
