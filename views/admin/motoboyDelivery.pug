@@ -1,38 +1,37 @@
-extends ../layout/layout_vue
+extends ../layout/layout_vue_n
 
 block title
-  title Zunka - Banners
+    title Zunka - Banners
 
-block css
-  link(rel="stylesheet" href="/css/admin/motoboyDelivery.css" charset="utf-8")
+block append css
+    link(rel="stylesheet" href="/css/admin/motoboyDelivery.css" charset="utf-8")
 
 block content 
-  .panel
-    h2 Motoboy delivery
-    .motoboy-delivery(v-for='motoboyDeliveriy, index in motoboyDeliveries')
-      label(for='city') Cidade
-      input(type='input' id='city' v-model='motoboyDeliveriy.city')
-      //- Deadline.
-      label(for='deadline') Prazo de entrega
-      input(type='input' id='deadline' v-model='motoboyDeliveriy.deadline' @input='validateDeadline(index)')
-      p.validation(v-if='!motoboyDeliveriy.deadlineValid') Valor inválido
-      //- price.
-      label(for='price') Valor
-      input(type='input' id='price' v-model='motoboyDeliveriy.price' @input='validatePrice(index)')
-      p.validation(v-if='!motoboyDeliveriy.priceValid') Valor inválido
-      input.btn-danger(type='button' @click='deleteMotoboyDelivery(index)' value='Apagar')
-    .add-motoboy-delivery(@click='addMotoboyDelivery()')
-      h3 Adicionar nova cidade
-    .buttons
-      input.btn-success(type='button' @click='saveMotoboyDelivery()' value='Salvar')
-      input.btn-exit(type='button' onclick='window.location.href="/admin"' value='Sair')
+    section.shadow
+        h2.title Entrega por motoboy
+        .motoboy-delivery(v-for='motoboyDeliveriy, index in motoboyDeliveries')
+            label(for='city') Cidade
+            input(type='text' id='city' v-model='motoboyDeliveriy.city')
+            //- Deadline.
+            label(for='deadline') Prazo de entrega
+            input(type='text' id='deadline' v-model='motoboyDeliveriy.deadline' @input='validateDeadline(index)')
+            p.validation(v-if='!motoboyDeliveriy.deadlineValid') Valor inválido
+            //- price.
+            label(for='price') Valor
+            input(type='text' id='price' v-model='motoboyDeliveriy.price' @input='validatePrice(index)')
+            p.validation(v-if='!motoboyDeliveriy.priceValid') Valor inválido
+            input.btn-danger(type='button' @click='deleteMotoboyDelivery(index)' value='Apagar')
+        .buttons
+            input.btn-secondary(type='button' @click='addMotoboyDelivery()' value='Adicionar nova cidade')
+            input.btn-success(type='button' @click='saveMotoboyDelivery()' value='Salvar')
+            input.btn-exit(type='button' onclick='window.location.href="/admin"' value='Sair')
 
 block footer
   
 append internal_scripts
-  script.
-    let motoboyDeliveries = !{JSON.stringify(motoboyDeliveries)};
-    let user = !{JSON.stringify(user)};
+    script.
+        let motoboyDeliveries = !{JSON.stringify(motoboyDeliveries)};
+        let user = !{JSON.stringify(user)};
 
 append external_scripts
-  script(src='/js/admin/motoboyDelivery.js')
+    script(src='/js/admin/motoboyDelivery.js')
