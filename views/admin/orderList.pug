@@ -1,150 +1,138 @@
-extends ../layout/layout_vue
+extends ../layout/layout_vue_n
 
 block title
-  title Admin - Pedidos
+    title Admin - Pedidos
 
-block css
-  link(rel="stylesheet" href="/css/admin/orderList.css" charset="utf-8")
+block append css
+    link(rel="stylesheet" href="/css/admin/orderList.css" charset="utf-8")
+    link(rel="stylesheet" href="/css/menu/pagination.css" charset="utf-8")
 
 block content
-  .panel
-    header
-      h2 Pedidos
-      .search-order
-        input(type='text' v-model='searchOrder' @keyup.enter='getOrders()' placeholder='Pesquise em todas as ordens')
-        input.btn-primary(type='button' @click='getOrders()' value='Pesquisar')
-    .filter
-      //- Show placed.
-      input(type='checkbox' id='showPlaced' v-model:checked='filter.placed')
-      label(for='showPlaced') Aberto
-      //- Show paid.
-      input(type='checkbox' id='showPaid' v-model:checked='filter.paid')
-      label(for='showPaid') Pagos
-      //- Show shipped.
-      input(type='checkbox' id='showShipped' v-model:checked='filter.shipped')
-      label(for='showShipped') Enviados
-      //- Show delivered.
-      input(type='checkbox' id='showDelivered' v-model:checked='filter.delivered')
-      label(for='showDelivered') Entregues
-      //- Show canceled.
-      input(type='checkbox' id='showCanceled' v-model:checked='filter.canceled')
-      label(for='showCanceled') Cancelados
-    table
-      thead
-        tr
-          th Data do pedido
-          th Cliente
-          th Total
-          th Número
-          th Status
-          th Ação
-      tbody
-        tr(v-for='order, index in orders' @click='showOrderDetail(index)')
-          td {{order.timestamps.shippingAddressSelectedAt | formatDate}}
-          td {{order.name}}
-          td {{order.totalPrice | formatMoney}}
-          td {{order._id}}
-          td {{status(order)}}
-          td {{action(order)}}
-    nav.pagination
-      a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
-    .modal(v-if='showModal')
-      .panel
-        .item
-          h2 Número do pedido
-          P {{orderSelec._id}}
-        .item
-          h2 Cliente
-          p Nome: {{orderSelec.name}}
-          p Email: {{orderSelec.email}}
-          p CPF: {{orderSelec.cpf}}
-          p Celular: {{orderSelec.mobileNumber}}
-        .item
-          h2 Endereço de entrega
-          p Nome: {{orderSelec.shipping.address.name}}
-          p Telefone: {{orderSelec.shipping.address.phone}}
-          p {{orderSelec.shipping.address.address}},  {{orderSelec.shipping.address.addressNumber}} {{orderSelec.shipping.address.addressComplement}}
-          p {{orderSelec.shipping.address.district}}
-          p {{orderSelec.shipping.address.city}} - {{orderSelec.shipping.address.state}} - Brasil
-          p {{orderSelec.shipping.address.cep}} 
-        .item
-          h2 Pagamento
-          p(v-if='orderSelec.payment.method === "paypal" || orderSelec.payment.method === undefined') Paypal
-          p(v-if='orderSelec.payment.method === "money"') Pagamento em dinheiro no memento da entrega
-          p(v-if='orderSelec.payment.method === "transfer"') Transferência bancária
-        .item
-          h2 Envio
-          //- p {{ orderSelec.shipping.method }}
-          p(v-if='orderSelec.shipping.method === "correios" || orderSelec.shipping.method === "standard"') Correios
-          p(v-if='orderSelec.shipping.method === "motoboy"') Motoboy
-          p
-            span Prazo: 
-            span {{orderSelec.shipping.deadline}} dia(s)
-          p
-            span Valor: 
-            span.price R${{orderSelec.shipping.price}}
-        .item(v-if='orderSelec.items.length > 0')
-          h2 Itens
-          ul
-            li(v-for='item in orderSelec.items')
-              p {{item.name}}
-              p 
-                span.price {{item.price | formatMoney}} 
-                span.quantity - Quantidade: {{item.quantity}}
-        .item
-          h2 Valor total com frete
-          p.price {{ orderSelec.totalPrice | formatMoney }}
-        .item
-          h2 Status
-          p {{status(orderSelec)}}
-        .item
-          h2 Ação
-          p {{action(orderSelec)}}
-        //- .change-status(v-if='status(orderSelec) !== "Cancelado"')
-        .item(v-if='status(orderSelec) !== "Cancelado"')
-          h2 Alterar status
-          //- No type (older orders).
-          .buttons(v-if='orderSelec.payment.method === undefined || orderSelec.payment.method === "paypal" || orderSelec.payment.method === "transfer"')
-            input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("paid")' value='Pago')
-            input.btn-primary(type='button' v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("shipped")' value='Enviado')
-            input.btn-primary(type='button' v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("delivered")' value='Entregue')
-            input.btn-danger(type='button' v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')            
-          //- //- Paypal.
-          //- .buttons(v-if='orderSelec.payment.method === "paypal"')
-          //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("paid")' value='Pago')
-          //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("shipped")' value='Enviado')
-          //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("delivered")' value='Entregue')
-          //-   input.btn-danger(type='button' v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')
-          //- Money.   
-          .buttons(v-if='orderSelec.payment.method === "money"')
-            input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("shipped")' value='Enviado')
-            input.btn-primary(type='button' v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("paid")' value='Pago')
-            input.btn-primary(type='button' v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("delivered")' value='Entregue')
-            input.btn-danger(type='button' v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')
-          //- //- transfer.   
-          //- .buttons(v-if='orderSelec.payment.method === "transfer"')
-          //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("paid")' value='Pago')
-          //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("shipped")' value='Enviado')
-          //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("delivered")' value='Entregue')
-          //-   input.btn-danger(type='button' v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')              
-        .close-modal
-          input.btn-exit(type='button' @click='hideOrderDetail()' value='Sair')
+    section.shadow
+        h2.title Pedidos
+        .search-order
+            input(type='text' v-model='searchOrder' @keyup.enter='getOrders()' placeholder='Pesquise por ordens')
+            i.fas.fa-search.fa-lg(@click='getOrders()')
+        .filters
+            //- Show placed.
+            .filter
+                input(type='checkbox' id='showPlaced' v-model:checked='filter.placed')
+                label(for='showPlaced') Aberto
+            //- Show paid.
+            .filter
+                input(type='checkbox' id='showPaid' v-model:checked='filter.paid')
+                label(for='showPaid') Pagos
+            //- Show shipped.
+            .filter
+                input(type='checkbox' id='showShipped' v-model:checked='filter.shipped')
+                label(for='showShipped') Enviados
+            //- Show delivered.
+            .filter
+                input(type='checkbox' id='showDelivered' v-model:checked='filter.delivered')
+                label(for='showDelivered') Entregues
+            //- Show canceled.
+            .filter
+                input(type='checkbox' id='showCanceled' v-model:checked='filter.canceled')
+                label(for='showCanceled') Cancelados
+        .orders
+            .order(v-for='order, index in orders')
+                a(@click='showOrderDetail(index)')
+                    p {{order.timestamps.shippingAddressSelectedAt | formatDate}} &nbsp&nbsp&nbsp
+                    p {{order.name}} &nbsp&nbsp&nbsp
+                    p {{order.totalPrice | formatMoney}} &nbsp&nbsp&nbsp
+                p {{order._id}}
+                p {{status(order)}} &nbsp -> &nbsp {{action(order)}}
+        nav.pagination
+            a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
+    .modal(v-if='showModal' @click='hideOrderDetail')
+        .panel
+            .item
+                h3.sub-title Número do pedido
+                P {{orderSelec._id}}
+            .item
+                h3.sub-title Cliente
+                    p Nome: {{orderSelec.name}}
+                    p Email: {{orderSelec.email}}
+                    p CPF: {{orderSelec.cpf}}
+                    p Celular: {{orderSelec.mobileNumber}}
+            .item
+                h3.sub-title Endereço de entrega
+                    p Nome: {{orderSelec.shipping.address.name}}
+                    p Telefone: {{orderSelec.shipping.address.phone}}
+                    p {{orderSelec.shipping.address.address}},  {{orderSelec.shipping.address.addressNumber}} {{orderSelec.shipping.address.addressComplement}}
+                    p {{orderSelec.shipping.address.district}}
+                    p {{orderSelec.shipping.address.city}} - {{orderSelec.shipping.address.state}} - Brasil
+                    p {{orderSelec.shipping.address.cep}} 
+            .item
+                h3.sub-title Pagamento
+                p(v-if='orderSelec.payment.method === "paypal" || orderSelec.payment.method === undefined') Paypal
+                p(v-if='orderSelec.payment.method === "money"') Pagamento em dinheiro no memento da entrega
+                p(v-if='orderSelec.payment.method === "transfer"') Transferência bancária
+            .item
+                h3.sub-title Envio
+                //- p {{ orderSelec.shipping.method }}
+                p(v-if='orderSelec.shipping.method === "correios" || orderSelec.shipping.method === "standard"') Correios
+                p(v-if='orderSelec.shipping.method === "motoboy"') Motoboy
+                p Prazo: {{orderSelec.shipping.deadline}} dia(s)
+                p Valor: {{orderSelec.shipping.price | formatMoney}}          
+            .item(v-if='orderSelec.items.length > 0')
+                h3.sub-title Itens
+                ul
+                    li(v-for='item in orderSelec.items') {{item.name}} &nbsp&nbsp {{item.price | formatMoney}} &nbsp&nbsp {{item.quantity}} unidade(s)
+            .item
+                h3.sub-title Valor total com frete
+                p.price {{ orderSelec.totalPrice | formatMoney }}                        
+            .item
+                h3.sub-title Status
+                p {{status(orderSelec)}}
+            .item
+                h3.sub-title Ação
+                p {{action(orderSelec)}}
+            //- .change-status(v-if='status(orderSelec) !== "Cancelado"')
+            .item.change-status(v-if='status(orderSelec) !== "Cancelado"')
+                h3.sub-title Alterar status
+                //- No type (older orders).
+                .buttons(v-if='orderSelec.payment.method === undefined || orderSelec.payment.method === "paypal" || orderSelec.payment.method === "transfer"')
+                    input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("paid")' value='Pago')
+                    input.btn-primary(type='button' v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("shipped")' value='Enviado')
+                    input.btn-primary(type='button' v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("delivered")' value='Entregue')
+                    input.btn-danger(type='button' v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')            
+                //- //- Paypal.
+                //- .buttons(v-if='orderSelec.payment.method === "paypal"')
+                //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("paid")' value='Pago')
+                //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("shipped")' value='Enviado')
+                //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("delivered")' value='Entregue')
+                //-   input.btn-danger(type='button' v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')
+                //- Money.   
+                .buttons(v-if='orderSelec.payment.method === "money"')
+                    input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("shipped")' value='Enviado')
+                    input.btn-primary(type='button' v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("paid")' value='Pago')
+                    input.btn-primary(type='button' v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("delivered")' value='Entregue')
+                    input.btn-danger(type='button' v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')
+                //- //- transfer.   
+                //- .buttons(v-if='orderSelec.payment.method === "transfer"')
+                //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("paid")' value='Pago')
+                //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("shipped")' value='Enviado')
+                //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("delivered")' value='Entregue')
+                //-   input.btn-danger(type='button' v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')              
+            .close-modal
+                input.btn-exit(type='button' @click='hideOrderDetail()' value='Sair')
     .set-status(v-if='setStatusWindow.show')
-      .panel
-        .item
-          h3 {{ setStatusWindow.message }}
-          .options(v-if='setStatusWindow.showCheckboxUpdateStock')
-            input(type='checkbox' id='updateStock' v-model:checked='setStatusWindow.updateStock')
-            label(for='updateStock') Voltar com o produto para o estoque
-        .buttons
-          input.btn-primary(type='button' @click='setStatus()' value='Sim')
-          input.btn-exit(type='button' @click='setStatusWindow.show=false' value='Não')
+        .panel
+            .item
+                h3.title {{ setStatusWindow.message }}
+                .options(v-if='setStatusWindow.showCheckboxUpdateStock')
+                    input(type='checkbox' id='updateStock' v-model:checked='setStatusWindow.updateStock')
+                    label(for='updateStock') Voltar com o produto para o estoque
+            .buttons
+                input.btn-primary(type='button' @click='setStatus()' value='Sim')
+                input.btn-exit(type='button' @click='setStatusWindow.show=false' value='Não')
 
 block footer
 
 append internal_scripts
-  script.
-    let cart = !{JSON.stringify(cart)};
+    script.
+        let cart = !{JSON.stringify(cart)};
 
 append external_scripts
-  script(src='/js/admin/orderList.js')
+    script(src='/js/admin/orderList.js')

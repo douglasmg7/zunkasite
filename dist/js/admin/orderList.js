@@ -79,7 +79,7 @@ var app = new Vue({
       .catch((err)=>{
         console.log(`Error - getOrders(), err: ${err}`);
       });
-    },    
+    },
     // Show order detail on modal window.
     showOrderDetail(index){
       this.orderSelecIndex = index;
@@ -87,8 +87,11 @@ var app = new Vue({
       this.showModal = true;
     },
     // Hide order detail modal.
-    hideOrderDetail(){
-      this.showModal = false;
+    hideOrderDetail(event){
+      let classes = event.target.className;
+      if (classes.indexOf("modal") > -1 || classes.indexOf("btn-exit") > -1) {
+          this.showModal = false;
+      }
     },
     // Get status order.
     status(order){
@@ -126,7 +129,7 @@ var app = new Vue({
           default:
             return '';
         }
-      } 
+      }
       // Money, only by motoboy.
       else if(order.payment.method === 'money'){
         switch(order.status) {
@@ -139,7 +142,7 @@ var app = new Vue({
           default:
             return '';
         }
-      } 
+      }
       else if(order.payment.method === 'transfer'){
         switch(order.status) {
           case 'shipped':
@@ -152,7 +155,7 @@ var app = new Vue({
             return '';
         }
       }
-    },    
+    },
     // Set order status from selected order.
     showSetStatusWindow(status){
       // Status to change.

@@ -1,11 +1,6 @@
-Motoboy delivery
-    Buttom border "Adicionar nova cidade".
-
-Banners
-    Buttom border "Novo banner".
-    Create button for move and delete banners, to work on mobile.
-
 Image zoom on product page.
+
+Enviar e-mail quando cliente fazer uma compra.
 
 Não permitir cancelar ordem depois de entregue.
 Não mostrar ação quando não houver opção.
