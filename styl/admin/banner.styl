@@ -20,43 +20,20 @@ section {
     border-radius: 4px;
 }
 .wrapper-image input {
-    margin-bottom: .5em;
+	margin-bottom: 1em;
 }
-.wrapper-image:hover .left-arrow,
-.wrapper-image:hover .right-arrow,
-.wrapper-image:hover p.delete-image {
-    display: block;
+.wrapper-image .move {
+	display: flex;
+	justify-content: space-between;
 }
-.wrapper-image .left-arrow,
-.wrapper-image .right-arrow,
-.wrapper-image .delete-image {
-    opacity: .8;
-    cursor: pointer;
-    display: none;
+.wrapper-image .move a:nth-child(2) {
+	margin-left: .5em;
+	margin-right: .5em;
 }
-.wrapper-image .left-arrow,
-.wrapper-image .right-arrow {
-    position: absolute;
-    top: 50%;
-    width: 0;
-    height: 0;
-    border-top: 30px solid transparent;
-    border-bottom: 30px solid transparent;
-}
-.wrapper-image .left-arrow {
-    left: 3%;
-    border-right: 30px solid orange;
-}
-.wrapper-image .right-arrow {
-    right: 3%;
-    border-left: 30px solid orange;
-}
-.wrapper-image p.delete-image {
-    position: absolute;
-    top: 8%;
-    right: 50%;
-    color: orange;
-    font-size: 5em;
+.wrapper-image .move a {
+	width: 4em;
+	margin-bottom: 0;
+	margin-top: 1em;
 }
 .upload-image {
     box-sizing: border-box;

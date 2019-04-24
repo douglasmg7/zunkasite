@@ -12,10 +12,15 @@ block content
         .wrapper-image(v-for='banner, index in banners')
             h4.sub-title Link
             input(type='text' id='link' v-model='banner.link')
-            img(:src='`/banner/${banner.fileName}`')
-            .right-arrow(@click='moveImage(index, "r")')
-            .left-arrow(@click='moveImage(index, "l")')
-            p.delete-image(@click=`deleteImage(index)`) x          
+            img(:src='`/banner/${banner.fileName}`')   
+            .move  
+                a.button.btn-info(href="#" v-on:click='moveImage(index, "l")')
+                    i.fas.fa-arrow-left.fa-lg
+                a.button.btn-danger(href="#" v-on:click='deleteImage(index)')
+                    i.fas.fa-trash
+                a.button.btn-info(href="#" v-on:click='moveImage(index, "r")')
+                    i.fas.fa-arrow-right.fa-lg
+               
         .buttons
             label.upload-image(for='uploadImage') Novo banner
             input(type='file' id='uploadImage' accept='image/*' multiple v-on:change=`uploadImage()`)
