@@ -1,104 +1,165 @@
-@import '../menu/reset_menu'
-@import '../input'
-@import '../message'
-btn-success()
-btn-danger()
-btn-exit()
-.panel
-  p
-    color c_gray
-  h2
-    margin-top: 1.5em
-    margin-bottom: 0
-  input[type='checkbox']
-    width auto
-    height auto
-  .buttons
-    display flex
-    justify-content space-between
-    input[type='button']
-      margin-top: 1em
-      flex 0 1 32%
-  .upload-image
-    margin-top .3em
-    label
-      background-color: bgc_ineer_panel
-      padding .5em
-      border-radius 4px
-      cursor pointer   
-      svg
-        vertical-align text-bottom
-    input
-      display none  
-    .icon
-      width 1.5em
-      height 1.5em
-  .maker
-  .category
-    select
-      display: block
-  .discount
-    flex 1 1 auto
-    display flex
-    align-items flex-end
-    input
-      flex 5 10 auto
-      border-radius .2em 0 0 .2em
-    select
-      flex 1 1 auto
-      height 2em
-      border 1px solid #aaaaaa
-      border-radius 0 .2em .2em 0
-      border-left none
-      // appearance none
-      // -moz-appearance none
-      // -webkit-appearance none
-      text-align center
-  .validation
-    margin-top: 0
-    margin-bottom: 0
-    color red
-  .images
-    border 1px solid c_very_light_gray
-    border-radius .2em
-    padding .4em
-    display flex
-    flex-wrap wrap
-    min-height 4em
-  .wrapper-image
-    position relative
-    display inline-block
-    margin .4em
-    border .5em solid transparent
-    > img
-      max-width 180px
-    &:hover 
-      .left-arrow{display: block}
-      .right-arrow{display: block}
-      p.delete-image{display: block}
-  .left-arrow
-  .right-arrow
-  .delete-image
-    position absolute
-    display none
-    opacity 1
-    cursor pointer
-  .left-arrow
-  .right-arrow
-    top 40%
-    width 0
-    height 0
-    border-top 15px solid transparent
-    border-bottom 15px solid transparent
-  .left-arrow
-    left 0
-    border-right 15px solid orange
-  .right-arrow
+section {
+	background-color: var(--white-lighter);
+	padding: 1em;
+	margin: 2em 1em;
+}
+.mt0 {
+    margin-top: 0;
+}
+label {
+    font-weight: 500;
+}
+hr {
+    margin-top: 0;
+    margin-bottom: 1em;
+    border-top: 2px solid var(--black);
+}
+h2 {
+    font-weight: 500;
+}
+section input[type='checkbox'] {
+    width: auto;
+    height: auto;
+    display: inline;
+}
+section input[type='checkbox'] + label {
+    display: inline;
+}
+.buttons {
+    display: flex;
+    justify-content: space-between;
+}
+.buttons input[type='button'] {
+    margin-top: 1em;
+    flex: 0 1 32%;
+}
+.upload-image {
+    margin-top: .3em;
+}
+.upload-image label {
+    background-color: var(--white-lighter);
+    padding: .5em;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.upload-image label svg {
+    vertical-align: text-bottom;
+}
+.upload-image input {
+    display: none;
+}
+.upload-image .icon {
+    width: 1.5em;
+    height: 1.5em;
+}
+.maker select,
+.category select {
+    display: block;
+}
+.discount {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: flex-end;
+}
+.discount input {
+    flex-shrink: 2;
+    min-width: 2em;
+    border-radius: .2em 0 0 .2em;
+}
+.discount select {
+    flex: 0 0 4em;
+    height: 2em;
+    border: 1px solid #aaaaaa;
+    border-radius: 0 .2em .2em 0;
+    border-left: none;
+    // appearance none
+    // -moz-appearance none
+    // -webkit-appearance none
+    text-align: center;
+}
+.validation {
+    margin-top: 0;
+    margin-bottom: 0;
+    color: var(--red);
+}
+.images {
+    border: 1px solid var(--black-lighter);
+    border-radius: .2em;
+    padding: .4em;
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 4em;
+}
+.upload-image {
+    box-sizing: border-box;
+    font-size: 1em;
+    cursor: pointer;
+    display: block;
+    border: 1px solid var(--black-lighter);
+    border-radius: 4px;
+    padding-top: .4em;
+    // padding: 1em;
+    margin-top: 2em;
+    height: 2em;
+    line-height: 1em;
+    text-align: center;
+    vertical-align: bottom;
+    white-space: nowrap
+    color: var(--white-lighter);
+    background-color: #00c000;
+    border-color: #00ad00;
+}
+.upload-image:hover {
+    border-radius: 4px;
+    color: var(--white-lighter);
+    background-color: #009a00;
+    border-color: #008b00;
+}
+input[type="file"] {
+    display: none;
+}
+.wrapper-image {
+    position: relative;
+    display: inline-block;
+    margin: .4em;
+    border: .5em solid transparent;
+}
+.wrapper-image img {
+    max-width: 180px;
+}
+.wrapper-image:hover .left-arrow,
+.wrapper-image:hover .right-arrow,
+.wrapper-image:hover p.delete-image {
+     display: block;
+}
+.left-arrow,
+.right-arrow,
+.delete-image {
+    position: absolute;
+    display: none;
+    opacity: 1;
+    cursor: pointer;
+}
+.left-arrow,
+.right-arrow {
+    top 40%;
+    width: 0;
+    height: 0;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+}
+.left-arrow {
+    left: 0
+    border-right: 15px solid orange;
+}
+.right-arrow {
     right 0
-    border-left 15px solid orange
-  .delete-image
-    top 28%
-    left 50%
-    color orange
-    font-size 1.5em
-    font-weight bold
+    border-left: 15px solid orange;
+}
+.delete-image {
+    top: 28%;
+    left: 50%;
+    color: orange;
+    font-size: 1.5em;
+    font-weight: bold;
+}

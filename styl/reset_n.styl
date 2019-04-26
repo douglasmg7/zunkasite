@@ -113,6 +113,9 @@ textarea {
 }
 textarea {
     height: 10em;
+    // padding-top: .5em;
+    line-height: 1.5em;
+
 }
 input[type='checkbox'] {
     width: 1em;
@@ -137,12 +140,6 @@ input[type='button'] {
   white-space: nowrap;
   margin-top: 1.5em;
   width: 100%;
-}
-.button:[readonly],
-button:[readonly],
-input:[readonly],
-textarea:[readonly] {
-    background-color: lightgray;
 }
 .button[disabled],
 button[disabled],
@@ -253,6 +250,22 @@ select {
     border: 1px solid #d1d1d1;
     width: 100%;
 }
+.button[readonly],
+button[readonly],
+input[readonly],
+textarea[readonly] {
+    background-color: var(--black-lighter);
+}
+select {
+    color: var(--black-dark);
+    height: 1.8em;
+    border-radius: 4px;
+    padding-left: .3em;
+}
+select option {
+    color: var(--black-dark);
+    background-color: transparent;
+}
 input[type='email']:focus,
 input[type='number']:focus,
 input[type='password']:focus,
@@ -277,11 +290,11 @@ tr:first-child td {
 }
 th:first-child,
 td:first-child {
-    // padding-left: .5em;
+    padding-left: 12px;
 }
 th:last-child,
 td:last-child {
-    // padding-right: .5em;
+    padding-right: 12px;
 }
 td:first-child {
     // border-left: 1px solid var(--black-light);
