@@ -10,27 +10,27 @@ block append css
 block content
     section.shadow
         h2.title Produtos
-            table
-                thead
-                    tr
-                        th Código
-                        th Título
-                        th.dealer Fornecedor
-                        th.location Local
-                        th Estoque
-                        th Preço
-                tbody
-                    tr(
-                    v-for='product in products', 
-                    @click='goToProductPage(product._id)',
-                    :class='{"product-commercialize": product.storeProductCommercialize, "product-active": product.storeProductActive && (product.storeProductQtd > 0) && (product.storeProductPrice > 0)}'
-                    )
-                        td {{product.storeProductId}}
-                        td {{product.storeProductTitle}}
-                        td.dealer {{product.dealerName}}
-                        td.location {{product.storeProductLocation}}
-                        td {{product.storeProductQtd}}
-                        td {{product.storeProductPrice | formatMoney}}    
+        table
+            //- thead
+                tr
+                    th Código
+                    th Título
+                    th.dealer Fornecedor
+                    th.location Local
+                    th Estoque
+                    th Preço
+            tbody
+                tr(
+                v-for='product in products', 
+                @click='goToProductPage(product._id)',
+                :class='{"product-commercialize": product.storeProductCommercialize, "product-active": product.storeProductActive && (product.storeProductQtd > 0) && (product.storeProductPrice > 0)}'
+                )
+                    td {{product.storeProductId}}
+                    td {{product.storeProductTitle}}
+                    //- td {{product.dealerName}}
+                    //- td {{product.storeProductLocation}}
+                    td.hide-on-mobile {{product.storeProductPrice | formatMoney}}    
+                    td {{product.storeProductQtd}}
         nav.pagination
             a(v-for='p in pageCount', @click='getProducts(p)', :page='page==p', :p='p', :active='page==p') {{p}}
 
