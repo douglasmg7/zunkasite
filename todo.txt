@@ -1,11 +1,14 @@
-Image zoom on product page.
+Admin/product
+    Center image on mobile.
+    Use buttons to move images.
+
+Opção de entrar com preço final do produto e o sistema calcular a porcentagem do lucro.
 
 Enviar e-mail quando cliente fazer uma compra.
 
 Não permitir cancelar ordem depois de entregue.
 Não mostrar ação quando não houver opção.
 
-Opção de entrar com preço final do produto e o sistema calcular a porcentagem do lucro.
 
 timeout for correio response
 

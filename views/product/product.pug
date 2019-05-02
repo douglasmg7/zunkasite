@@ -11,7 +11,7 @@ block content
         .layout.shadow
             .product-thumbnail
                 img(v-for='image, index in product.images', :src='srcImg0080(product, index)' @click='selectedThumbnail=index')
-            .product-image
+            .product-image(@click='showZoomImg')
                 img(:src='srcImg0300(product, selectedThumbnail)' v-if='product.images.length > 0')
             .product-summary
                 h1.title {{product.storeProductTitle}}
@@ -57,6 +57,11 @@ block content
                 div(v-for='infoAdd in productInformationAdditional')
                     h2.sub-title {{infoAdd[0]}}
                     p {{infoAdd[1]}}
+        .modal(v-if='showModal')
+            .panel
+                i.close.far.fa-window-close(@click='hideZoomImg')
+                .zoom-image
+                    img(:src='srcImgZoom(product, selectedThumbnail)' v-if='product.images.length > 0')
 
 append internal_scripts
     script.

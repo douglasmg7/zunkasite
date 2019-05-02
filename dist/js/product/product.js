@@ -19,6 +19,7 @@ var app = new Vue({
     deliveryMethod: '',
     deliveryPrice: 0,
     deliveryTime: 0,   // Delivery time in days.
+    showModal: false,
   },
   methods: {
     // Accaunting.
@@ -73,6 +74,12 @@ var app = new Vue({
       });
     },
     // Get image source 300 pixels.
+    srcImgZoom(product, index){
+      // let regExpResult = product.images[index].match(/\.[0-9a-z]+$/i);
+      // console.debug(fileName);
+      return '/img/' + product._id + '/' + product.images[index];
+    },
+    // Get image source 300 pixels.
     srcImg0300(product, index){
       let regExpResult = product.images[index].match(/\.[0-9a-z]+$/i);
       // console.debug(fileName);
@@ -83,7 +90,15 @@ var app = new Vue({
       let regExpResult = product.images[index].match(/\.[0-9a-z]+$/i);
       // console.debug(fileName);
       return '/img/' + product._id + '/' + product.images[index].slice(0, regExpResult.index) + '_0080px' + regExpResult[0]
-    }
+    },
+    // Show zoom image.
+    showZoomImg(){
+      this.showModal = true;
+    },
+    // Hide zoom image.
+    hideZoomImg(){
+      this.showModal = false;
+    },
   },
   computed:{
     // Each line of product detail become one array item.
@@ -128,12 +143,6 @@ var app = new Vue({
   filters: {
     currency(val){
       return val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    },
-    currencyInt(val){
-      return val.split(',')[0];
-    },
-    currencyCents(val){
-      return val.split(',')[1];
     }
-  }
+  },
 });
