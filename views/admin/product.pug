@@ -110,7 +110,8 @@ block content
             p.validation(v-if='validation.storeProductDiscountValue') {{validation.storeProductDiscountValue}}
             //- Final price.
             label(for='finalPrice') Valor final (R$)
-            input(type='text' id='finalPrice', :value='product.storeProductPrice', readonly)
+            //- input(type='text' id='finalPrice', v-model='product.storeProductPrice', v-on:input='calcMarkup')
+            input(type='text' id='finalPrice', v-model='storeProductPriceBr', v-on:input='calcMarkup')
         .status
             h2 Status
             hr

@@ -138,6 +138,12 @@ var app = new Vue({
   filters: {
     currency(val){
       return val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
+    currencyInt(val){
+      return val.split(',')[0];
+    },
+    currencyCents(val){
+      return val.split(',')[1];
     }
   },
 });

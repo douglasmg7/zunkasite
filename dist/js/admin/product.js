@@ -9,7 +9,7 @@ var app = new Vue({
     productCategories: productCategories,
     user: user,
     search: '',
-    validation: { 
+    validation: {
       dealerProductPrice: '',
       storeProductDiscountValue: '',
       storeProductMarkup: '',
@@ -19,10 +19,16 @@ var app = new Vue({
       storeProductLength: '',
       storeProductWeight: '',
       storeProductWidth: ''
-    }
+    },
+    // Only for from use.
+    storeProductPriceBr: '',
+    storeProductMarkupeBr: '',
+  },
+  created: function() {
+    this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice.toString());
   },
   methods: {
-    // // Calculate final price with discount.
+    // Calculate final price with discount.
     calcFinalPrice(){
       // Price with markup.
       let priceWithMarkup = product.dealerProductPrice * (product.storeProductMarkup / 100 + 1);
@@ -31,16 +37,30 @@ var app = new Vue({
         // Use percentage.
         if(product.storeProductDiscountType === '%'){
           product.storeProductPrice = (priceWithMarkup * (1 - (product.storeProductDiscountValue / 100))).toFixed(2);
+          this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice);
         }
         // Use monetary value.
         else {
           product.storeProductPrice = (priceWithMarkup - product.storeProductDiscountValue).toFixed(2);
+          this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice);
         }
       }
       // No discount.
       else {
         product.storeProductPrice = priceWithMarkup.toFixed(2);
+        this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice);
       }
+    },
+    // Calculate markup from price final.
+    calcMarkup(){
+      // Format to . as separeator.
+      product.storeProductPrice = this.toNumberFormatString(this.storeProductPriceBr);
+      // Diasable discount.
+      product.storeProductDiscountEnable = false;
+      console.log(`calcMarkup: ${product.storeProductPrice} - ${typeof product.storeProductPrice}`);
+      //  Markup.
+      product.storeProductMarkup = (((product.storeProductPrice / product.dealerProductPrice) - 1) * 100).toFixed(2);
+      this.storeProductMarkupeBr = this.toBRCurrencyString(product.storeProductMarkup);
     },
     // Save product.
     saveProduct(){
@@ -76,7 +96,7 @@ var app = new Vue({
       .catch(err => {
         alert('Não foi possível salvar.');
         console.error(err);
-      });       
+      });
     },
     // Delete product.
     deleteProduct(){
@@ -99,9 +119,9 @@ var app = new Vue({
         .catch(e => {
           alert('Não foi possível apagar o produto.');
           console.error(e);
-        });            
+        });
       }
-    },    
+    },
     moveImage(index, direction){
       // Position to move.
       let toIndex;
@@ -114,7 +134,7 @@ var app = new Vue({
         } else  {
           toIndex = index + 1;
         }
-      // To left. 
+      // To left.
       } else {
         // First element.
         if (index === 0) {
@@ -122,7 +142,7 @@ var app = new Vue({
         // Not the last element.
         } else  {
           toIndex = index - 1;
-        } 
+        }
       }
       // Change elements.
       let toIndexElement = this.product.images[toIndex];
@@ -166,8 +186,29 @@ var app = new Vue({
         .catch(e => {
           alert('Não foi possível salvar.');
           console.error(e);
-        }); 
+        });
       }
     },
-  }
+    toNumberFormatString(val) {
+        // To 1000.99 format.
+        return val.replace(/\./g, '').replace(',', '.');
+    },
+    toBRCurrencyString(val) {
+        // return this.product.storeProductPrice.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        console.log(`toBRCurrencyString - ${val} - ${typeof val}`);
+        return val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
+  },
+  filters: {
+    currency(val){
+      console.log(val.toFixed(2).replace('.', ','));
+      return val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
+    currencyInt(val){
+      return val.split(',')[0];
+    },
+    currencyCents(val){
+      return val.split(',')[1];
+    }
+  },
 });
