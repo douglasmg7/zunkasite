@@ -538,6 +538,7 @@ router.post('/payment/:order_id', (req, res, next)=>{
               'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
               'Muito obrigado por seu pedido.'
           }
+          // Email confirmation to client.
           emailSender.sendMail(mailOptions, err=>{
             if (err) {
               log.error(err.stack);
@@ -545,6 +546,21 @@ router.post('/payment/:order_id', (req, res, next)=>{
               log.info(`Email with order confirmation sent to ${req.user.email}`);
             }
             res.json({});
+            // Email to store admin.
+            let toAdminMailOptions = {
+                from: '',
+                to: emailSender.adminEmail,
+                subject: 'Novo pedido no site Zunka.com.br.',
+                text: 'Número de pedido: ' + order._id + '\n\n' +
+                 'https://' + req.app.get('hostname')+ '/admin/orders' + '\n\n'
+            };
+            emailSender.sendMail(toAdminMailOptions, err=>{
+                if (err) {
+                  log.error(err.stack);
+                } else {
+                  log.info(`Email with alert of new order sent to ${emailSender.adminEmail}`);
+                }
+            })
           })
         }
       })

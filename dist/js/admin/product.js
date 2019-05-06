@@ -23,37 +23,46 @@ var app = new Vue({
     // Only for from use.
     storeProductPriceBr: '',
     storeProductMarkupeBr: '',
+    storeProductDiscountValue: '',
+    dealerProductPrice: '',
   },
   created: function() {
-    this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice.toString());
+    this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice.toFixed(2));
+    this.storeProductMarkupeBr = this.toBRCurrencyString(product.storeProductMarkup.toFixed(2));
+    this.storeProductDiscountValue = this.toBRCurrencyString(product.storeProductDiscountValue.toFixed(2));
+    this.dealerProductPrice = this.toBRCurrencyString(product.dealerProductPrice.toFixed(2));
   },
   methods: {
-    // Calculate final price with discount.
-    calcFinalPrice(){
-      // Price with markup.
-      let priceWithMarkup = product.dealerProductPrice * (product.storeProductMarkup / 100 + 1);
-      // Use discount.
-      if(product.storeProductDiscountEnable){
-        // Use percentage.
-        if(product.storeProductDiscountType === '%'){
-          product.storeProductPrice = (priceWithMarkup * (1 - (product.storeProductDiscountValue / 100))).toFixed(2);
-          this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice);
-        }
-        // Use monetary value.
-        else {
-          product.storeProductPrice = (priceWithMarkup - product.storeProductDiscountValue).toFixed(2);
-          this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice);
-        }
-      }
-      // No discount.
-      else {
-        product.storeProductPrice = priceWithMarkup.toFixed(2);
-        this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice);
-      }
-    },
+        // Calculate final price with discount.
+        calcFinalPrice(){
+              // Get values from input.
+              product.storeProductMarkup = this.toNumberFormatString(this.storeProductMarkupeBr);
+              product.storeProductDiscountValue = this.toNumberFormatString(this.storeProductDiscountValue);
+              product.dealerProductPrice = this.toNumberFormatString(this.dealerProductPrice);
+              // Price with markup.
+              let priceWithMarkup = product.dealerProductPrice * (product.storeProductMarkup / 100 + 1);
+              // Use discount.
+              if(product.storeProductDiscountEnable){
+                    // Use percentage.
+                    if(product.storeProductDiscountType === '%'){
+                      product.storeProductPrice = (priceWithMarkup * (1 - (product.storeProductDiscountValue / 100))).toFixed(2);
+                      this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice);
+                    }
+                    // Use monetary value.
+                    else {
+                      product.storeProductPrice = (priceWithMarkup - product.storeProductDiscountValue).toFixed(2);
+                      this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice);
+                    }
+              }
+              // No discount.
+              else {
+                    product.storeProductPrice = priceWithMarkup.toFixed(2);
+                    this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice);
+              }
+        },
     // Calculate markup from price final.
     calcMarkup(){
-      // Format to . as separeator.
+      // Get values from input.
       product.storeProductPrice = this.toNumberFormatString(this.storeProductPriceBr);
       // Diasable discount.
       product.storeProductDiscountEnable = false;
@@ -198,17 +207,5 @@ var app = new Vue({
         console.log(`toBRCurrencyString - ${val} - ${typeof val}`);
         return val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
-  },
-  filters: {
-    currency(val){
-      console.log(val.toFixed(2).replace('.', ','));
-      return val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    },
-    currencyInt(val){
-      return val.split(',')[0];
-    },
-    currencyCents(val){
-      return val.split(',')[1];
-    }
   },
 });

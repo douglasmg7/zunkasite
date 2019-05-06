@@ -33,7 +33,7 @@ function checkPermission (req, res, next) {
 
 module.exports = router;
 
-/****************************************************************************** 
+/******************************************************************************
 /  PRODUCTS
 ******************************************************************************/
 
@@ -41,12 +41,12 @@ module.exports = router;
 router.get('/', checkPermission, function(req, res, next) {
   res.render('admin/productList', {
     page: req.query.page ? req.query.page : 1,
-    search: req.query.search ? req.query.search : '',  
+    search: req.query.search ? req.query.search : '',
     nav: {
       showAdminLinks: true,
       showNewProductButton: true
     }
-  });   
+  });
 });
 
 // Get products.
@@ -55,7 +55,7 @@ router.get('/products', checkPermission, function(req, res, next) {
   const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
   const search = req.query.search
     ? { $or: [
-        {'storeProductTitle': {$regex: req.query.search, $options: 'i'}}, 
+        {'storeProductTitle': {$regex: req.query.search, $options: 'i'}},
         {'storeProductId': {$regex: req.query.search, $options: 'i'}}
         ]}
     : {};
@@ -65,7 +65,7 @@ router.get('/products', checkPermission, function(req, res, next) {
   // Product count.
   let productCountPromise = Product.count(search).exec();
   Promise.all([productPromise, productCountPromise])
-  .then(([products, count])=>{    
+  .then(([products, count])=>{
     res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)});
   }).catch(err=>{
     return next(err);
@@ -102,16 +102,16 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
         removeUploadedImage: false,
       });
       resolve(product);
-    });      
+    });
   }
-  // Existing product. 
+  // Existing product.
   else{
     productPromise = Product.findById(req.params.product_id);
   }
   let productMakerPromise = ProductMaker.find().exec();
   let productCategoriePromise = ProductCategorie.find().exec();
   Promise.all([productPromise, productMakerPromise, productCategoriePromise])
-  .then(([product, productMakers, productCategories])=>{    
+  .then(([product, productMakers, productCategories])=>{
     res.render('admin/product', {
       nav: {
         showAdminLinks: true
@@ -119,10 +119,10 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
       product: product,
       productMakers: productMakers,
       productCategories: productCategories
-    });    
+    });
   }).catch(err=>{
     return next(err);
-  });  
+  });
 });
 
 // Save product.
@@ -134,19 +134,39 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
   // Price.
   validation.storeProductPrice = parseFloat(req.body.product.storeProductPrice) >= 0 ? undefined : 'Valor inválido';
   // Markup.
-  validation.storeProductMarkup = parseFloat(req.body.product.storeProductMarkup) >= 0 ? undefined : 'Valor inválido'; 
+  validation.storeProductMarkup = parseFloat(req.body.product.storeProductMarkup) >= 0 ? undefined : 'Valor inválido';
   // Discount.
   validation.storeProductDiscountValue = parseFloat(req.body.product.storeProductDiscountValue) >= 0 ? undefined: 'Valor inválido';
   // Quantity.
   validation.storeProductQtd = parseFloat(req.body.product.storeProductQtd) >= 0 ? undefined: 'Valor inválido';
   // Length.
-  validation.storeProductLength = req.body.product.storeProductLength > 0 ? undefined: 'Valor inválido';
+  if (req.body.product.storeProductLength.toString().includes(",") || req.body.product.storeProductLength.toString().includes(".")) {
+      validation.storeProductLength = 'Valor deve ser sem precisão decimal';
+  }
+  else {
+      validation.storeProductLength = req.body.product.storeProductLength > 0 ? undefined: 'Valor inválido';
+  }
   // Height.
-  validation.storeProductHeight = req.body.product.storeProductHeight > 0 ? undefined: 'Valor inválido';
+  if (req.body.product.storeProductHeight.toString().includes(",") || req.body.product.storeProductHeight.toString().includes(".")) {
+      validation.storeProductHeight = 'Valor deve ser sem precisão decimal';
+  }
+  else {
+      validation.storeProductHeight = req.body.product.storeProductHeight > 0 ? undefined: 'Valor inválido';
+  }
   // Width.
-  validation.storeProductWidth = req.body.product.storeProductWidth > 0 ? undefined: 'Valor inválido';
+  if (req.body.product.storeProductWidth.toString().includes(",") || req.body.product.storeProductWidth.toString().includes(".")) {
+      validation.storeProductWidth = 'Valor deve ser sem precisão decimal';
+  }
+  else {
+      validation.storeProductWidth = req.body.product.storeProductWidth > 0 ? undefined: 'Valor inválido';
+  }
   // Weight.
-  validation.storeProductWeight = req.body.product.storeProductWeight > 0 ? undefined: 'Valor inválido';
+  if (req.body.product.storeProductWeight.toString().includes(",") || req.body.product.storeProductWeight.toString().includes(".")) {
+      validation.storeProductWeight = 'Valor deve ser sem precisão decimal';
+  }
+  else {
+      validation.storeProductWeight = req.body.product.storeProductWeight > 0 ? undefined: 'Valor inválido';
+  }
   // Send validation erros if some.
   for (let key in validation){
     if (validation[key]) {
@@ -164,7 +184,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
     product.save((err, newProduct) => {
       if (err) {
         res.json({err});
-        return next(err); 
+        return next(err);
       } else {
         log.info(`Produto ${newProduct._id} saved.`);
         res.json({ isNew: true, product: newProduct });
@@ -176,9 +196,9 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
   else {
     // Save product.
     Product.findOneAndUpdate({_id: req.body.product._id}, req.body.product, function(err, product){
-      if (err) { 
+      if (err) {
         res.json({err});
-        return next(err); 
+        return next(err);
       } else {
         log.info(`Produto ${product._id} updated.`);
         res.json({});
@@ -188,7 +208,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
         fse.readdir(path.join(__dirname, '..', 'dist/img/', req.body.product._id), (err, files)=>{
           if (err) {
             log.error(err.stack);
-          } 
+          }
           else {
             // Remove uploaded images not in product images.
             let exist;
@@ -197,12 +217,12 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
               req.body.product.images.forEach(function(image) {
                 // Not remove resized images.
                 let pathObj = path.parse(image);
-                let img_0080 = pathObj.name + '_0080px' + pathObj.ext; 
-                let img_0200 = pathObj.name + '_0200px' + pathObj.ext; 
-                let img_0300 = pathObj.name + '_0300px' + pathObj.ext; 
+                let img_0080 = pathObj.name + '_0080px' + pathObj.ext;
+                let img_0200 = pathObj.name + '_0200px' + pathObj.ext;
+                let img_0300 = pathObj.name + '_0300px' + pathObj.ext;
                 if ((file === image) || (file === img_0080) || (file === img_0200) || (file === img_0300)) {
                   exist = true;
-                }  
+                }
               });
               // Uploaded image not in product images.
               if (!exist) {
@@ -214,9 +234,9 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
               }
             });
           }
-        }); 
+        });
       }
-    });    
+    });
   }
 });
 
@@ -285,16 +305,16 @@ router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
 
 
 
-/****************************************************************************** 
+/******************************************************************************
 /   ORDERS
 ******************************************************************************/
 
 // Get orders page.
 router.get('/orders', checkPermission, function(req, res, next) {
-  res.render('admin/orderList', { 
+  res.render('admin/orderList', {
     nav: {
     }
-  });   
+  });
 });
 
 // Get orders data.
@@ -307,20 +327,20 @@ router.get('/api/orders_old', checkPermission, function(req, res, next) {
   // No search request.
   if (req.query.search == '') {
     search = { 'timestamps.placedAt': { $exists: true } };
-  } 
+  }
   // Search by _id.
   else if (req.query.search.match(/^[a-f\d]{24}$/i)) {
     search = { 'timestamps.placedAt': {$exists: true}, _id: req.query.search };
   }
   // No search by _id.
   else {
-    search = { 
+    search = {
       'timestamps.placedAt': {$exists: true},
-      $or: [ 
+      $or: [
         {'name': {$regex: req.query.search, $options: 'i'}},
         {totalPrice: {$regex: req.query.search, $options: 'i'}},
         {'items.name': {$regex: req.query.search, $options: 'i'}},
-      ] 
+      ]
     }
   }
   // console.log(`search: ${JSON.stringify(search)}`);
@@ -329,7 +349,7 @@ router.get('/api/orders_old', checkPermission, function(req, res, next) {
   // Order count.
   let orderCountPromise = Order.find(search).count().exec();
   Promise.all([orderPromise, orderCountPromise])
-  .then(([orders, count])=>{    
+  .then(([orders, count])=>{
     res.json({orders, page, pageCount: Math.ceil(count / ORDER_QTD_BY_PAGE)});
   }).catch(err=>{
     return next(err);
@@ -345,26 +365,26 @@ router.get('/api/orders', checkPermission, function(req, res, next) {
   let search;
   // No search request.
   if (req.query.search == '') {
-    search = { 
+    search = {
       status: { $in: JSON.parse(req.query.filter) }
     };
-  } 
+  }
   // Search by _id.
   else if (req.query.search.match(/^[a-f\d]{24}$/i)) {
-    search = { 
+    search = {
       status: { $in: JSON.parse(req.query.filter) },
-      _id: req.query.search 
+      _id: req.query.search
     };
   }
   // No search by _id.
   else {
-    search = { 
+    search = {
       status: { $in: JSON.parse(req.query.filter) },
-      $or: [ 
+      $or: [
         {'name': {$regex: req.query.search, $options: 'i'}},
         {totalPrice: {$regex: req.query.search, $options: 'i'}},
         {'items.name': {$regex: req.query.search, $options: 'i'}},
-      ] 
+      ]
     }
   }
   // Find orders.
@@ -372,7 +392,7 @@ router.get('/api/orders', checkPermission, function(req, res, next) {
   // Order count.
   let orderCountPromise = Order.find(search).count().exec();
   Promise.all([orderPromise, orderCountPromise])
-  .then(([orders, count])=>{    
+  .then(([orders, count])=>{
     res.json({orders, page, pageCount: Math.ceil(count / ORDER_QTD_BY_PAGE)});
   }).catch(err=>{
     return next(err);
@@ -421,9 +441,9 @@ router.post('/api/order/status/:_id/:status', checkPermission, function(req, res
       }
       // Save order.
       order.save((err, newOrder)=>{
-        if (err) { 
+        if (err) {
           res.json({err: err});
-          return next(err); 
+          return next(err);
         } else {
           res.json({order: newOrder});
         }
@@ -433,7 +453,7 @@ router.post('/api/order/status/:_id/:status', checkPermission, function(req, res
 });
 
 
-/****************************************************************************** 
+/******************************************************************************
 /   BANNERS
 ******************************************************************************/
 
@@ -441,13 +461,13 @@ router.post('/api/order/status/:_id/:status', checkPermission, function(req, res
 router.get('/banner', (req, res, next)=>{
   redis.get('banners', (err, banners)=>{
     // Internal error.
-    if (err) { 
+    if (err) {
       log.error(err.stack);
       return res.render('/error', { message: 'Can not find banners data.', error: err });
-    } 
-    // Render page.  
+    }
+    // Render page.
     return res.render('admin/banner', {  banners: JSON.parse(banners) || [] });
-  });   
+  });
 });
 
 // Save banners.
@@ -457,7 +477,7 @@ router.post('/banner', checkPermission, (req, res, next)=>{
     banners = [];
   }
   redis.set('banners', banners, (err)=>{
-    if (err) { 
+    if (err) {
       log.error(new Error(err).stack);
       return;
     }
@@ -470,7 +490,7 @@ router.post('/banner', checkPermission, (req, res, next)=>{
         console.debug(JSON.stringify(files));
         if (err) {
           log.error(err.stack);
-        } 
+        }
         else {
           // Remove uploaded images not in product images.
           files.forEach(function(file) {
@@ -530,7 +550,7 @@ router.put('/upload-banner-images', checkPermission, (req, res)=>{
   });
 });
 
-/****************************************************************************** 
+/******************************************************************************
 /   MOTOBY DELIVERY
 ******************************************************************************/
 
@@ -538,13 +558,13 @@ router.put('/upload-banner-images', checkPermission, (req, res)=>{
 router.get('/motoboy-delivery', (req, res, next)=>{
   redis.get('motoboy-delivery', (err, motoboyDeliveries)=>{
     // Internal error.
-    if (err) { 
+    if (err) {
       log.error(err.stack);
       return res.render('/error', { message: 'Can not find motoboy delivery data.', error: err });
-    } 
-    // Render page.  
+    }
+    // Render page.
     return res.render('admin/motoboyDelivery', {  motoboyDeliveries: JSON.parse(motoboyDeliveries) || [] });
-  });   
+  });
 });
 
 // Save motoboy delivery.
@@ -566,7 +586,7 @@ router.post('/motoboy-delivery', checkPermission, (req, res, next)=>{
   }
   // Save.
   redis.set('motoboy-delivery', motoboyDeliveries, (err)=>{
-    if (err) { 
+    if (err) {
       log.error(new Error(err).stack);
       return;
     }
@@ -579,7 +599,7 @@ router.post('/motoboy-delivery', checkPermission, (req, res, next)=>{
 
 
 
-/****************************************************************************** 
+/******************************************************************************
 /   UTIL
 ******************************************************************************/
 
@@ -597,7 +617,7 @@ function updateCategoriesInUse(){
     }
     // log.debug(JSON.stringify(categories));
     redis.set('categoriesInUse', JSON.stringify(categories), (err)=>{
-      if (err) { 
+      if (err) {
         log.error(new Error(err).stack);
       }
     });
@@ -611,9 +631,9 @@ function createResizedImgs(images){
     let pathObj = path.parse(imgPath);
     // File output.
     let fileOut = {
-      _0080: path.format({dir: pathObj.dir, name: pathObj.name + '_0080px', ext: pathObj.ext }), 
-      _0200: path.format({dir: pathObj.dir, name: pathObj.name + '_0200px', ext: pathObj.ext }), 
-      _0300: path.format({dir: pathObj.dir, name: pathObj.name + '_0300px', ext: pathObj.ext }) 
+      _0080: path.format({dir: pathObj.dir, name: pathObj.name + '_0080px', ext: pathObj.ext }),
+      _0200: path.format({dir: pathObj.dir, name: pathObj.name + '_0200px', ext: pathObj.ext }),
+      _0300: path.format({dir: pathObj.dir, name: pathObj.name + '_0300px', ext: pathObj.ext })
     }
     // 0080 pixels.
     sharp(imgPath)
@@ -644,5 +664,3 @@ function createResizedImgs(images){
       });
   })
 }
-
-    

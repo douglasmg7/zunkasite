@@ -92,17 +92,20 @@ block content
             br
             //- Dealer price.
             label(for='dealerPrice') Fornecedor (R$)
-            input.input-money(type='text' id='dealerPrice' v-model='product.dealerProductPrice' v-on:input='calcFinalPrice()')
+            //- input.input-money(type='text' id='dealerPrice' v-model='product.dealerProductPrice' v-on:input='calcFinalPrice()')
+            input.input-money(type='text' id='dealerPrice' v-model='dealerProductPrice' v-on:input='calcFinalPrice()')
             p.validation(v-if='validation.dealerProductPrice') {{validation.dealerProductPrice}}
             //- Markup.
             label(for='markup') Lucro (%)
-            input.input-money(type='text' id='markup' v-model='product.storeProductMarkup', v-on:input='calcFinalPrice()')
+            //- input.input-money(type='text' id='markup' v-model='product.storeProductMarkup', v-on:input='calcFinalPrice()')
+            input.input-money(type='text' id='markup' v-model='storeProductMarkupeBr', v-on:input='calcFinalPrice()')
             p.validation(v-if='validation.storeProductMarkup') {{validation.storeProductMarkup}}
             //- Discount config.
             label(for='discount') Desconto
             .discount
                 //- Discount value.
-                input.input-money(type='text' id='discount' v-model='product.storeProductDiscountValue', v-on:input='calcFinalPrice()')
+                //- input.input-money(type='text' id='discount' v-model='product.storeProductDiscountValue', v-on:input='calcFinalPrice()')
+                input.input-money(type='text' id='discount' v-model='storeProductDiscountValue', v-on:input='calcFinalPrice()')
                 //- Discount mode.
                 select(v-model='product.storeProductDiscountType' v-on:change='calcFinalPrice()')
                     option(value='%') %
@@ -137,4 +140,4 @@ append internal_scripts
         let user = !{JSON.stringify(user)}; 
 
 append external_scripts
-    script(src='/js/admin/product.js')
+    script(src='/js/admin/product.js?0002')
