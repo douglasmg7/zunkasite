@@ -551,7 +551,7 @@ router.post('/payment/:order_id', (req, res, next)=>{
                 strItens + '\n' +
 
                 'Valor total com frete\n' + 
-                'R$ ' + converToBRCurrencyString(order.shipping.price) + '\n\n' +  
+                'R$ ' + converToBRCurrencyString(order.totalPrice) + '\n\n' +  
 
                 'https://' + req.app.get('hostname')+ '/admin/orders' + '\n\n'
             };
