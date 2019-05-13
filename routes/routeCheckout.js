@@ -389,68 +389,6 @@ router.post('/needCpfAndMobileNumber', checkPermission, (req, res, next)=>{
   });
 });
 
-// // Payed by paypal.
-// router.post('/payment/paypal/:order_id', (req, res, next)=>{
-//   Order.findById(req.params.order_id, (err, order)=>{
-//     if (err) { return next(err); }
-//     if (!order) {
-//       return next(new Error('No order to continue with payment.')); }
-//     else {
-//       order.timestamps.placedAt = new Date();
-//       order.timestamps.paidAt = new Date();
-//       order.status = 'paid';
-//       order.payment = {
-//         paypal: req.body.payment,
-//         method: 'paypal'
-//       };
-//       order.save(err=>{
-//         if (err) {
-//           res.json({err});
-//           return next(err);
-//         }
-//         else {
-//           // Update stock.
-//           for (var i = 0; i < req.cart.products.length; i++) {
-//             // Product.update({ _id: req.cart.products[i]._id }, { $inc: { storeProductQtd: -1 * req.cart.products[i].qtd } }, err=>{
-//             Product.update(
-//               { _id: req.cart.products[i]._id },
-//               { $inc: {
-//                 storeProductQtd: -1 * req.cart.products[i].qtd,
-//                 storeProductQtdSold: 1 * req.cart.products[i].qtd
-//               } }, err=>{
-//               if (err) {
-//                 log.error(err.stack);
-//               }
-//             });
-//           }
-//           // Clean cart.
-//           req.cart.clean();
-//           // Send email.
-//           let mailOptions = {
-//               from: '',
-//               to: req.user.email,
-//               subject: 'Confirmação de pedido.',
-//               text: 'Parabéns! Sua compra já foi concluída, agora é só aguardar o envio do produto.\n\n' +
-//                     'Número de pedido: ' + order._id + '\n\n' +
-//                     'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' +
-//                     'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
-//                     'Muito obrigado por comprar na ZUNKA.'
-//           };
-//           emailSender.sendMail(mailOptions, err=>{
-//             if (err) {
-//               log.error(err.stack);
-//             } else {
-//               log.info(`Email with order confirmation sent to ${req.user.email}`);
-//             }
-//             res.json({});
-//           })
-//         }
-//       })
-//     }
-//   });
-// });
-
-
 // Payment.
 router.post('/payment/:order_id', (req, res, next)=>{
   Order.findById(req.params.order_id, (err, order)=>{
@@ -546,13 +484,76 @@ router.post('/payment/:order_id', (req, res, next)=>{
               log.info(`Email with order confirmation sent to ${req.user.email}`);
             }
             res.json({});
+            // Listed itens string.
+            let strItens = "";
+            for (let index = 0; index < order.items.length; index++) {
+              strItens = strItens + order.items[index].name + '\t\tR$' + converToBRCurrencyString(order.items[index].price) + '\t\t' + order.items[index].quantity + ' unidade(s)\n';
+            }
+            // Tipo de pagamento.
+            let strPaymentMethod;
+            switch (order.payment.method) {
+              case "transfer":
+                strPaymentMethod = "Transferência bancária";
+                break;
+              case "money":
+                strPaymentMethod = "Dinheiro";
+                break;
+              case "paypal":
+                strPaymentMethod = "Paypal";
+                break;
+              default:
+                break;
+            }
+            let strShippingMethod;
+            switch (order.shipping.method) {
+              case "correios":
+                strShippingMethod = "Correios";
+                break;
+              case "motoboy":
+                strShippingMethod = "Motoboy";
+                break;
+              default:
+                break;
+            }
             // Email to store admin.
             let toAdminMailOptions = {
                 from: '',
                 to: emailSender.adminEmail,
                 subject: 'Novo pedido no site Zunka.com.br.',
                 text: 'Número de pedido: ' + order._id + '\n\n' +
-                 'https://' + req.app.get('hostname')+ '/admin/orders' + '\n\n'
+
+                'Cliente\n' +
+                'Nome: ' + order.name + '\n' +
+                'Email: ' + order.email + '\n' +
+                'CPF: ' + order.cpf + '\n' +
+                'Celular: ' + order.mobileNumber + '\n\n' +
+
+                'Endereço\n' +
+                'Nome: ' + order.shipping.address.name + '\n' +  
+                'Telefone: ' + order.shipping.address.phone + '\n' +  
+                'Endereço: ' + order.shipping.address.address + '\n' +  
+                'Número: ' + order.shipping.address.addressNumber + '\n' +  
+                'Complemento: ' + order.shipping.address.addressComplement + '\n' +  
+                'Bairro: ' + order.shipping.address.district + '\n' +  
+                'Cidade: ' + order.shipping.address.city + '\n' +  
+                'Estado: ' + order.shipping.address.state + '\n' +  
+                'CEP: ' + order.shipping.address.cep + '\n\n' +  
+
+                'Pagamento\n' + 
+                'Método: ' + strPaymentMethod + '\n\n' +  
+
+                'Envio\n' + 
+                'Método: ' + strShippingMethod + '\n' +  
+                'Prazo: ' + order.shipping.deadline + 'dia(s)\n' +  
+                'Valor: R$ ' + converToBRCurrencyString(order.shipping.price) + '\n\n' +  
+
+                'Ítens\n' +
+                strItens + '\n' +
+
+                'Valor total com frete\n' + 
+                'R$ ' + converToBRCurrencyString(order.shipping.price) + '\n\n' +  
+
+                'https://' + req.app.get('hostname')+ '/admin/orders' + '\n\n'
             };
             emailSender.sendMail(toAdminMailOptions, err=>{
                 if (err) {
@@ -685,3 +686,7 @@ router.post('/update-stock', (req, res, next)=>{
   req.cart.clean();
   res.json({ success: true , cart: req.cart });
 });
+
+function converToBRCurrencyString(val) {
+  return val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
