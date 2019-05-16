@@ -633,7 +633,9 @@ function estimateCorreiosShipping(box, cb) {
     let args = {
       nCdEmpresa: '',  // Código administrativo junto à ECT (para clientes com contrato) .
       sDsSenha: '',
-      nCdServico: '04510',  // Para clientes sem contrato (04510 - PAC à vista).
+      // nCdServico: '04510',  // Para clientes sem contrato (04510 - PAC à vista).
+      // nCdServico: '41106',  // PAC Varejo.
+      nCdServico: '40010',  // SEDEX Varejo.
       sCepOrigem: box.cepOrigin.replace(/\D/g, ''),
       sCepDestino: box.cepDestiny.replace(/\D/g, ''),
       nVlPeso: (box.weight / 1000).toString(),    // Weight in Kg.
@@ -646,7 +648,7 @@ function estimateCorreiosShipping(box, cb) {
       nVlValorDeclarado  : 0,
       sCdAvisoRecebimento: 'N'
     };
-    // console.log('args', args);
+    console.log('args', args);
     // Uncomment for fast debud, to not use Correios webservice.
     // return cb('Serviço indisponível');
     // Call webservice.

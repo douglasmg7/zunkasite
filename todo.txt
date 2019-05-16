@@ -1,6 +1,18 @@
+Conferir valor do correio.
+
+Descrição do produto
+    Criar subtitle igual ao detalhe técnico.
+
+Email change
+    Need confirm email, sending a e-mail.
+
+Product page
+    Change Detalhe técnico para Especificações técnicas
+
 Admin/product
     Center image on mobile.
     Use buttons to move images.
+    To small on desktop.
 
 Não permitir cancelar ordem depois de entregue.
 Não mostrar ação quando não houver opção.
