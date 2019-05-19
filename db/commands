@@ -1,0 +1,5 @@
+-- Product.
+db.products.find({createdAt: {$gte:  new ISODate("2018-09-11T15:21:59.312Z")}})
+
+-- Orders.
+db.orders.find({"timestamps.shippingAddressSelectedAt": {$gte: new ISODate("2019-05-18T20:15:31Z")}}).pretty();

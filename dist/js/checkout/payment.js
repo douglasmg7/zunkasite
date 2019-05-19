@@ -5,6 +5,13 @@ function _search(text){
   window.location.href = `/all?page=1&search=${text}`;
 }
 
+// Name used for each correio code.
+const CORREIOS_SERVICE_NAME = {
+    41106: "PAC",
+    40215: "Sedex 10",
+    40010: "Sedex"
+};
+
 // Vue.
 let app = new Vue({
   el: '#app',
@@ -57,6 +64,9 @@ let app = new Vue({
         console.error(err);
       }); 
     },
+    correioServiceName(code){
+      return CORREIOS_SERVICE_NAME[code];
+    }
   },
   filters: {
     formatMoney: function(val){

@@ -21,7 +21,7 @@ const redis = require('../db/redis');
 // CEP origin, Rua Bicas - 31030160.
 const CEP_ORIGIN = '31030160';
 const STANDARD_DELIVERY_DEADLINE = 10;
-const STANDARD_DELIVERY_PRICE = '30.00';
+const STANDARD_DELIVERY_PRICE = '60.00';
 
 module.exports = router;
 
@@ -201,17 +201,21 @@ router.get('/shipping-method/:order_id', (req, res, next)=>{
         order.shipping.box = shippingBox;
       }
       log.debug('Wating correios ws...');
-      estimateCorreiosShipping(shippingBox, (err, result)=>{
+      estimateAllCorreiosShipping(shippingBox, (err, result)=>{
         log.debug('Receive correios ws answer.');
         // No Correio info.
         if (err) {
+          log.debug(`Correios ws error, using default delivery price and deadline. Price: ${STANDARD_DELIVERY_PRICE}, Deadline: ${STANDARD_DELIVERY_DEADLINE}`)
           order.shipping.correioResult = {};
+          order.shipping.correioResults = [];
           order.shipping.price = STANDARD_DELIVERY_PRICE;
           order.shipping.deadline = STANDARD_DELIVERY_DEADLINE;
         }
         // Got correio info.
         else {
-          order.shipping.correioResult = result;
+          // log.debug(`Result: ${JSON.stringify(result)}`);
+          // order.shipping.correioResult = result[0]; // Deprected.
+          order.shipping.correioResults = result;
         }
         // Get motoboy shipping values.
         // log.debug(JSON.stringify(order.address));
@@ -264,29 +268,52 @@ router.post('/shipping-method/:order_id', (req, res, next)=>{
   // Set shipment method to default.
   Order.findById(req.params.order_id, (err, order)=>{
     // console.log(`req.body: ${JSON.stringify(req.body)}`);
-    if (req.body.shippingMethod == 'correios') {
-      order.shipping.method = 'correios';
-      order.shipping.carrier = 'correios';
-      // Shipping price.
-      if (order.shipping.correioResult.Valor) {
-        // Correio using ',' as decimal point.
-        order.shipping.price = order.shipping.correioResult.Valor.replace('.', '').replace(',', '.');
-      } else {
-        order.shipping.price = STANDARD_DELIVERY_PRICE;
-      }
-      // Shipping deadline.
-      if (order.shipping.correioResult.PrazoEntrega) {
-        order.shipping.deadline = parseInt(order.shipping.correioResult.PrazoEntrega);
-      } else {
-        order.shipping.deadline = STANDARD_DELIVERY_DEADLINE;
-      }
-    } else if (req.body.shippingMethod == 'motoboy'){
+    if (req.body.shippingMethod == 'motoboy'){
       order.shipping.method = 'motoboy';
       order.shipping.carrier = 'sergio_delivery';
       // Motoboy result using ',' as decimal point.
       order.shipping.price = order.shipping.motoboyResult.price.replace('.', '').replace(',', '.');
       order.shipping.deadline = order.shipping.motoboyResult.deadline;
+    } 
+    // Correios delivery type.
+    else {
+      for (let index = 0; index < order.shipping.correioResults.length; index++) {
+        if (order.shipping.correioResults[index].Codigo == req.body.shippingMethod) {
+          order.shipping.method = order.shipping.correioResults[index].Codigo;
+          order.shipping.carrier = 'Correios';
+          // Shipping price. Correio using ',' as decimal point.
+          order.shipping.price = order.shipping.correioResults[index].Valor.replace('.', '').replace(',', '.');
+          // Shipping deadline.
+          order.shipping.deadline = parseInt(order.shipping.correioResults[index].PrazoEntrega);
+        }
+      }
     }
+
+    // // console.log(`req.body: ${JSON.stringify(req.body)}`);
+    // if (req.body.shippingMethod == 'correios') {
+    //   order.shipping.method = 'correios';
+    //   order.shipping.carrier = 'correios';
+    //   // Shipping price.
+    //   if (order.shipping.correioResult.Valor) {
+    //     // Correio using ',' as decimal point.
+    //     order.shipping.price = order.shipping.correioResult.Valor.replace('.', '').replace(',', '.');
+    //   } else {
+    //     order.shipping.price = STANDARD_DELIVERY_PRICE;
+    //   }
+    //   // Shipping deadline.
+    //   if (order.shipping.correioResult.PrazoEntrega) {
+    //     order.shipping.deadline = parseInt(order.shipping.correioResult.PrazoEntrega);
+    //   } else {
+    //     order.shipping.deadline = STANDARD_DELIVERY_DEADLINE;
+    //   }
+    // } else if (req.body.shippingMethod == 'motoboy'){
+    //   order.shipping.method = 'motoboy';
+    //   order.shipping.carrier = 'sergio_delivery';
+    //   // Motoboy result using ',' as decimal point.
+    //   order.shipping.price = order.shipping.motoboyResult.price.replace('.', '').replace(',', '.');
+    //   order.shipping.deadline = order.shipping.motoboyResult.deadline;
+    // }
+
     order.totalPrice = (parseFloat(order.subtotalPrice) + parseFloat(order.shipping.price)).toFixed(2);
     order.timestamps.shippingMethodSelectedAt = new Date();
     order.status = 'shippingMethodSelected';
@@ -601,8 +628,8 @@ router.get('/ship-estimate', (req, res, next)=>{
       width: product.storeProductWidth,
       weight: product.storeProductWeight
     }
-    console.log(`box: ${JSON.stringify(box)}`);
-    estimateCorreiosShipping(box, (err, result)=>{
+    // console.log(`box: ${JSON.stringify(box)}`);
+    estimateAllCorreiosShipping(box, (err, result)=>{
       if (err) {
         res.json({ err: err });
         return;
@@ -667,6 +694,79 @@ function estimateCorreiosShipping(box, cb) {
   });
 };
 
+
+// Estimate shipment.
+// box = {lenght, height, wdith, weight}
+// length, height, width in cm.
+// weight in grams.
+function estimateAllCorreiosShipping(box, cb) {
+  // Length can not be less than 16cm (correio error);
+  if (box.length < 16) { box.length = 16 };
+  // Height can not be less than 2cm (correio error);
+  if (box.height < 2) { box.height = 2 };
+  // Width can not be less than 2cm (correio error);
+  if (box.width < 11) { box.width = 11 };
+  // Create soap.
+  soap.createClient('http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?wsdl', (err, client)=>{
+    if (err) {
+      log.error(err.stack);
+      return cb(err);
+    }
+    // Argments.
+    let args = {
+      nCdEmpresa: '',  // Código administrativo junto à ECT (para clientes com contrato) .
+      sDsSenha: '',
+      // 40045 - Error: WS Correios - Code: 40045, err: Código de serviço inválido/inativo.
+      // 40290 - Error: WS Correios - Code: 40290, err: Não foi encontrada precificação. MSG-015: Para o serviço: 40290 o preço nã$ se aplica para origem: 31030160 para o destino: 91710000(-1).
+      // nCdServico: "40010, 40045, 40215, 40290, 41106",
+      // 40010 - SEDEX Varejo
+      // 40045 - SEDEX a Cobrar Varejo
+      // 40215 - SEDEX 10 Varejo
+      // 40290 - SEDEX Hoje Varejo
+      // 41106 - PAC Varejo
+      nCdServico: "41106, 40010, 40215",
+      sCepOrigem: box.cepOrigin.replace(/\D/g, ''),
+      sCepDestino: box.cepDestiny.replace(/\D/g, ''),
+      nVlPeso: (box.weight / 1000).toString(),    // Weight in Kg.
+      nCdFormato: 1,    // 1 - caixa/pacote, 2 - rolo/prisma, 3 - Envelope.
+      nVlComprimento: box.length,  // Lenght in cm.
+      nVlAltura: box.height,  // Height in cm.
+      nVlLargura: box.width,   // Width in cm.
+      nVlDiametro: 0,   // Diâmetro em cm.
+      sCdMaoPropria      : 'N',   // Se a encomenda será entregue com o serviço adicional mão própria.
+      nVlValorDeclarado  : 0,
+      sCdAvisoRecebimento: 'N'
+    };
+    // log.debug('args: ' + JSON.stringify(args));
+    // Uncomment for fast debud, to not use Correios webservice.
+    // return cb('Serviço indisponível');
+    // Call webservice.
+    client.CalcPrecoPrazo(args, (err, result)=>{
+      // log.debug("Correio retuned");
+      if (err) {
+        log.error(err.stack);
+        return cb('Serviço indisponível');
+      }
+      // Log and remove CSerivco with erros.
+      for (let index = 0; index < result.CalcPrecoPrazoResult.Servicos.cServico.length; index++) {
+        if (result.CalcPrecoPrazoResult.Servicos.cServico[index].Erro !== '0') {
+          log.error(new Error('WS Correios - Code: ' + result.CalcPrecoPrazoResult.Servicos.cServico[index].Codigo + ", err: " + result.CalcPrecoPrazoResult.Servicos.cServico[index].MsgErro).stack);
+          result.CalcPrecoPrazoResult.Servicos.cServico.splice(index, 1);
+          index--;
+        }
+      }
+      // Error in all codes.
+      if (result.CalcPrecoPrazoResult.Servicos.cServico.length == 0) {
+        let errMsg = "Serviço indisponível."
+        log.error(new Error(errMsg).stack);
+        return cb(errMsg);
+      }
+      // Have at least one valid code.
+      // log.debug(JSON.stringify(result.CalcPrecoPrazoResult.Servicos.cServico, " "));
+      return cb(null, result.CalcPrecoPrazoResult.Servicos.cServico);
+    });
+  });
+};
 
 /******************************************************************************
 / TEST

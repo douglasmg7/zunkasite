@@ -5,6 +5,13 @@ function _search(text){
   window.location.href = `/all?page=1&search=${text}`;
 }
 
+// Name used for each correio code.
+const CORREIOS_SERVICE_NAME = {
+    41106: "PAC",
+    40215: "Sedex 10",
+    40010: "Sedex"
+};
+
 // Vue.
 var app = new Vue({
   el: '#app',
@@ -16,9 +23,8 @@ var app = new Vue({
     showEstimatedShipment: false,
     loadingEstimateShipment: false,
     cepErrMsg: '',
-    deliveryMethod: '',
-    deliveryPrice: 0,
-    deliveryTime: 0,   // Delivery time in days.
+    // Delivery time in days.
+    estimateShipmentData: [],
     showModal: false,
   },
   methods: {
@@ -41,9 +47,16 @@ var app = new Vue({
           this.cepErrMsg = response.data.err;
         } else {
           this.cepErrMsg = '';
-          this.deliveryMethod = 'Padrão';
-          this.deliveryPrice = response.data.correio.Valor;
-          this.deliveryTime =  `${response.data.correio.PrazoEntrega} dia(s)`;
+          // console.log(`response.data.correio: ${JSON.stringify(response.data.correio)}`);
+          this.estimateShipmentData = [];
+          for (let index = 0; index < response.data.correio.length; index++) {
+            let deliveryData = {
+              method: CORREIOS_SERVICE_NAME[response.data.correio[index].Codigo],
+              price: response.data.correio[index].Valor,
+              time:  `${response.data.correio[index].PrazoEntrega} dia(s)`
+            };
+            this.estimateShipmentData.push(deliveryData);
+          }
           this.showEstimatedShipment = true;
         }
         this.loadingEstimateShipment = false;

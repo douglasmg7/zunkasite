@@ -1,10 +1,16 @@
 import _search from '../lib/_search';
+import CORREIOS_SERVICE_NAME from '../lib/correiosServiceName';
 
 // Vue.
 var app = new Vue({
   el: '#app',
   data: {
     order: order
+  },
+  methods: {
+    correioServiceName(code){
+      return CORREIOS_SERVICE_NAME[code];
+    }
   },
   filters: {
     formatMoney: function(val){

@@ -148,15 +148,31 @@ input[type="button"] {
     font-weight: 500;
 }
 .estimate-ship  table {
+    border-collapse: collapse;
     margin-top: 1em;
-    border-radius: 4px;
+    // border-radius: 4px;
     background-color: #F3F3F3;
 }
-.estimate-ship table th {
-    padding: .5em 1em 0 1em;
+.estimate-ship thead tr {
+    border-top: 1px solid var(--black-lighter);
 }
-.estimate-ship table td {
-    padding: .5em 1em .5em 1em;
+.estimate-ship tr {
+    border-bottom: 1px solid var(--black-lighter);
+}
+.estimate-ship thead tr,
+.estimate-ship tbody tr:nth-child(even) {
+    // background-color var(--black-lighter);
+}
+.estimate-ship tr:first-child td {
+    border: 0
+}
+.estimate-ship th,
+.estimate-ship td {
+    border: 0;
+    padding: .1em 1em;
+}
+.estimate-ship th {
+    font-weight: 500;
 }
 .estimate-ship p.errMsg {
     margin-top: .5em;

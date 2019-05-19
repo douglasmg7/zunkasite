@@ -38,10 +38,10 @@ block content
                                 th Frete
                                 th Prazo
                         tbody
-                            tr
-                                td {{deliveryMethod}}
-                                td {{deliveryPrice}}
-                                td {{deliveryTime}}
+                            tr(v-for='estShip in estimateShipmentData')
+                                td {{estShip.method}}
+                                td R$ {{estShip.price}}
+                                td {{estShip.time}}
             .product-description(v-if='product.storeProductDescription.trim() !== ""')
                 h1.title Descrição do produto
                 p(v-for='prodDescItem in productDescription') 

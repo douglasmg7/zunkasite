@@ -5,12 +5,19 @@ function _search(text){
   window.location.href = `/all?page=1&search=${text}`;
 }
 
+// Name used for each correio code.
+const CORREIOS_SERVICE_NAME = {
+    41106: "PAC",
+    40215: "Sedex 10",
+    40010: "Sedex"
+};
+
 // Vue.
 var app = new Vue({
   el: '#app',
   data: {
     order: order,
-    shippingMethod: 'correios'
+    shippingMethod: '41106'
   },
   methods: { 
     shipmentSelected: function(){
@@ -32,24 +39,28 @@ var app = new Vue({
         alert('Não foi possível selecionar a forma de envio.');
         console.error(err);
       });  
-    }
-  },
-  computed: {
-    deliveryDeadline: function(){
-      if (order.shipping.correioResult.PrazoEntrega) {
-        return order.shipping.correioResult.PrazoEntrega;
+    },
+    deliveryDeadline: function(index){
+      if (order.shipping.correioResults.length) {
+        // console.log("Index: " + index);
+        // console.log("Quantity: " + order.shipping.correioResults.length);
+        // console.log("PrazoEntrega: " + order.shipping.correioResults[index].PrazoEntrega);
+        return order.shipping.correioResults[index].PrazoEntrega;
       } 
       else {
         return order.shipping.deadline;
       }
     },
-    deliveryPrice: function(){
-      if (order.shipping.correioResult.Valor) {
-        return order.shipping.correioResult.Valor;
+    deliveryPrice: function(index){
+      if (order.shipping.correioResults.length) {
+        return order.shipping.correioResults[index].Valor;
       } 
       else {
         return order.shipping.price;
       }
+    },
+    correioServiceName: function(index){
+      return CORREIOS_SERVICE_NAME[order.shipping.correioResults[index].Codigo];
     }
   },
   filters: {

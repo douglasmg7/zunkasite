@@ -66,7 +66,11 @@ let shipping = new mongoose.Schema({
   price: { type: String },  // Price for shipment.
   address: address,
   deadline: { type: Number },
-  correioResult: correioResult, // Result from correio search ws for shipment price and deadline.
+  // Deprected.
+  correioResult: correioResult, // Deprected - Result from correio search ws for shipment price and deadline.
+  correioResults: [correioResult], // Result from correio search ws for shipment price and deadline.
+  // All result from correio search ws for shipment price and deadline.
+  // The correioResult is deprected, use this instead.
   motoboyResult: motoboyResult, // Result from motoboy search for shipment price and deadline.
 });
 
