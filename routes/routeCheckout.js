@@ -6,6 +6,7 @@ const emailSender = require('../config/email');
 const soap = require('soap');
 // const https = require('https');
 // const request = require('request');
+const axios = require('axios');
 // var paypal = require('paypal-rest-sdk');
 
 // Personal modules.
@@ -592,7 +593,9 @@ router.get('/order-confirmation/:order_id', (req, res, next)=>{
 
 // Estimate shipment.
 router.get('/ship-estimate', (req, res, next)=>{
+  let deliveryData = [];
   // console.log('req.query', req.query);
+  // Get product information.
   Product.findById(req.query.productId, (err, product)=>{
     if (err) { return next(err); }
     if (!product) {  return next(new Error('Product not found.')); }
@@ -604,16 +607,119 @@ router.get('/ship-estimate', (req, res, next)=>{
       width: product.storeProductWidth,
       weight: product.storeProductWeight
     }
-    // console.log(`box: ${JSON.stringify(box)}`);
-    estimateAllCorreiosShipping(box, (err, result)=>{
-      if (err) {
-        res.json({ err: err });
-        return;
+
+    // Correio shipping estimate.
+    const promiseCorreiosShipping = new Promise((resolve, reject)=>{
+      // console.log(`box: ${JSON.stringify(box)}`);
+      estimateAllCorreiosShipping(box, (err, result)=>{
+        // if (err) { reject(err); }
+        var deliveryData = []
+        for (let index = 0; index < result.length; index++) {
+          deliveryData.push({
+            method: result[index].DescServico,
+            price: result[index].Valor,
+            deadline: result[index].PrazoEntrega
+          });
+        }
+        // log.debug(`promiseCorreiosShipping result: ${JSON.stringify(deliveryData)}`);
+        resolve(deliveryData);
+        // reject("asdf");
+      });
+    });
+    // Motoboy shipping estimate.
+    const promiseMotoboyShipping = new Promise((resolve, reject)=>{
+      getMotoboyDeliveryFromCEP(box.cepDestiny, (err, result)=>{
+        // if (err) { reject(err); }
+        if (err) { log.debug(err); }
+        // log.debug(`promiseMotoboyShipping result: ${JSON.stringify(result)}`);
+        resolve(result);
+        // reject("asdf");
+      });
+    });
+    // When receive all return.
+    Promise.all([promiseCorreiosShipping, promiseMotoboyShipping]).then(([deliveryCorreio, deliveryMotoboy])=>{
+      log.debug("Promisse.all");
+      // log.debug(`deliveryCorreio: ${JSON.stringify(deliveryCorreio)}`);
+      // log.debug(`deliveryMotoboy: ${JSON.stringify(deliveryMotoboy)}`);
+      if(deliveryMotoboy) {
+        // deliveryCorreio.push(deliveryMotoboy);
+        deliveryCorreio.unshift(deliveryMotoboy);
       }
-      res.json({correio: result});
+      log.debug(`delivery: ${JSON.stringify(deliveryCorreio)}`);
+      res.json({ delivery: deliveryCorreio });
+      // res.json({ err: "Promisse no err." });
+    }).catch(err=>{
+      log.error(err);
     });
   });
 });
+
+// Get motoboy delivery from CEP.
+function getMotoboyDeliveryFromCEP(cep, cb) {
+  getAddressFromCEP(cep, (err, addressResult)=> {
+    // If MG.
+    if(err) {
+      return cb("CPF inválido.", null);
+    }
+    if(addressResult.uf === "MG"){
+      // Get motoboy shipping values.
+      redis.get('motoboy-delivery', (err, motoboyDeliveries)=>{
+        // Internal error.
+        if (err) {
+          log.error(err.stack);
+          return res.render('/error', { message: 'Can not find motoboy delivery data.', error: err });
+        }
+        motoboyDeliveries = JSON.parse(motoboyDeliveries) || [];
+        let cityNormalized = addressResult.localidade.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '');
+        motoboyDeliveries.forEach(motoboyDelivery=>{
+          if (motoboyDelivery.city.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '') === cityNormalized) {
+            cb(null, {
+              method: "Motoboy",
+              price: motoboyDelivery.price,
+              deadline: motoboyDelivery.deadline
+            });
+            return;
+          }
+        });
+      });
+    } else {
+      // No motoboy delivery.
+      return cb("Região não atentida.", null);
+    }
+  });
+};
+
+// Get address from CEP.
+function getAddressFromCEP(val, cb) {
+  // Cep is valid if 00000-000 or 00000000.
+  if (val.match(/^\d{5}-?\d{3}$/)) {
+    val = val.replace("-", "");
+    axios({
+      method: 'get',
+      url: `https://viacep.com.br/ws/${val}/json/`,
+    })
+    .then((res)=>{
+      // console.log(`res: ${JSON.stringify(res)}`);
+      // log.debug(JSON.stringify(res.data));
+      // Some error, no more information from ws.
+      if (res.data.erro) {
+        cb("Cep inválido");
+      }
+      // Found CEP.
+      else {
+        // log.debug(JSON.stringify(res.data));
+        cb(null, res.data);
+      }
+    })
+    .catch((err)=>{
+      log.error(`getAddressFromCEP(), Err: ${err}`);
+    });        
+  } 
+  // Inválid cep format.
+  else {
+    cb('Cep inválido.');
+  }
+}
 
 // Estimate shipment.
 // box = {lenght, height, wdith, weight}
@@ -669,7 +775,7 @@ function estimateAllCorreiosShipping(box, cb) {
       // Log and remove CSerivco with erros.
       for (let index = 0; index < result.CalcPrecoPrazoResult.Servicos.cServico.length; index++) {
         if (result.CalcPrecoPrazoResult.Servicos.cServico[index].Erro !== '0') {
-          log.error(new Error('WS Correios - Code: ' + result.CalcPrecoPrazoResult.Servicos.cServico[index].Codigo + ", err: " + result.CalcPrecoPrazoResult.Servicos.cServico[index].MsgErro).stack);
+          // log.error(new Error('WS Correios - Code: ' + result.CalcPrecoPrazoResult.Servicos.cServico[index].Codigo + ", err: " + result.CalcPrecoPrazoResult.Servicos.cServico[index].MsgErro).stack);
           result.CalcPrecoPrazoResult.Servicos.cServico.splice(index, 1);
           index--;
         }

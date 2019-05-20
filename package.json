@@ -22,6 +22,7 @@
     "removeResizedImgs": "./bin/removeResizedImgs.js"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.19.0",
     "chai-http": "^4.3.0",

@@ -46,11 +46,11 @@ var app = new Vue({
           this.cepErrMsg = '';
           // console.log(`response.data.correio: ${JSON.stringify(response.data.correio)}`);
           this.estimateShipmentData = [];
-          for (let index = 0; index < response.data.correio.length; index++) {
+          for (let index = 0; index < response.data.delivery.length; index++) {
             let deliveryData = {
-              service: response.data.correio[index].DescServico,
-              price: response.data.correio[index].Valor,
-              time:  `${response.data.correio[index].PrazoEntrega} dia(s)`
+              service: response.data.delivery[index].method,
+              price: response.data.delivery[index].price,
+              time:  `${response.data.delivery[index].deadline} dia(s)`
             };
             this.estimateShipmentData.push(deliveryData);
           }
