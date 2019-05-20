@@ -5,13 +5,6 @@ function _search(text){
   window.location.href = `/all?page=1&search=${text}`;
 }
 
-// Name used for each correio code.
-const CORREIOS_SERVICE_NAME = {
-    41106: "PAC",
-    40215: "Sedex 10",
-    40010: "Sedex"
-};
-
 // Vue.
 var app = new Vue({
   el: '#app',
@@ -32,6 +25,10 @@ var app = new Vue({
     accountingParse: accounting.parse,
     // Get shimpment value from Correios.
     estimateShipment(){
+      if (this.cepDestiny.trim() === "") {
+        this.cepErrMsg = "Valor inválido.";
+        return;
+      }
       this.loadingEstimateShipment = true;
       axios({
         method: 'get',
@@ -51,7 +48,7 @@ var app = new Vue({
           this.estimateShipmentData = [];
           for (let index = 0; index < response.data.correio.length; index++) {
             let deliveryData = {
-              method: CORREIOS_SERVICE_NAME[response.data.correio[index].Codigo],
+              service: response.data.correio[index].DescServico,
               price: response.data.correio[index].Valor,
               time:  `${response.data.correio[index].PrazoEntrega} dia(s)`
             };
@@ -62,8 +59,7 @@ var app = new Vue({
         this.loadingEstimateShipment = false;
       })
       .catch(err => {
-        console.log('inside error.');
-        console.error(err);
+        // console.error(err);
         this.loadingEstimateShipment = false;
         this.showEstimatedShipment = false;
       });

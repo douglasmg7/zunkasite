@@ -1,5 +1,4 @@
 import _search from '../lib/_search';
-import CORREIOS_SERVICE_NAME from '../lib/correiosServiceName';
 
 // Vue.
 var app = new Vue({
@@ -21,6 +20,10 @@ var app = new Vue({
     accountingParse: accounting.parse,
     // Get shimpment value from Correios.
     estimateShipment(){
+      if (this.cepDestiny.trim() === "") {
+        this.cepErrMsg = "Valor inválido.";
+        return;
+      }
       this.loadingEstimateShipment = true;
       axios({
         method: 'get',
@@ -40,7 +43,7 @@ var app = new Vue({
           this.estimateShipmentData = [];
           for (let index = 0; index < response.data.correio.length; index++) {
             let deliveryData = {
-              method: CORREIOS_SERVICE_NAME[response.data.correio[index].Codigo],
+              service: response.data.correio[index].DescServico,
               price: response.data.correio[index].Valor,
               time:  `${response.data.correio[index].PrazoEntrega} dia(s)`
             }
@@ -51,8 +54,7 @@ var app = new Vue({
         this.loadingEstimateShipment = false;
       })
       .catch(err => {
-        console.log('inside error.');
-        console.error(err);
+        // console.error(err);
         this.loadingEstimateShipment = false;
         this.showEstimatedShipment = false;
       })

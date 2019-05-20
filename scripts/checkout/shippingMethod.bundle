@@ -48,8 +48,13 @@ var app = new Vue({
         return order.shipping.price;
       }
     },
-    correioServiceName: function(index){
-      return CORREIOS_SERVICE_NAME[order.shipping.correioResults[index].Codigo];
+    deliveryServiceDesc: function(index){
+      if (order.shipping.correioResults.length) {
+        return order.shipping.correioResults[index].DescServico;
+      } 
+      else {
+        return "Padrão (Correios)";
+      }
     }
   },
   filters: {

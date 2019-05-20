@@ -61,7 +61,7 @@ block content
             p(v-if='order.payment.method === "transfer"') Transferência bancária
         .shipment
             h2 Frete
-            p {{order.shipping.method}}
+            p {{order.shipping.methodDesc}}
             p Prazo: {{order.shipping.deadline}} dia(s)
             p Valor do frete {{order.shipping.price | formatMoney}}
         .items(v-if='order.items.length > 0')

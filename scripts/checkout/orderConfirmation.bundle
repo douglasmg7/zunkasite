@@ -1,5 +1,4 @@
 import _search from '../lib/_search';
-import CORREIOS_SERVICE_NAME from '../lib/correiosServiceName';
 
 // Vue.
 var app = new Vue({

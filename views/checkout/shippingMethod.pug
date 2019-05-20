@@ -13,7 +13,7 @@ block content
       .radio
         label(v-for="(item, index) in order.shipping.correioResults")
           input(type='radio' name='shipmentOption' id='correios', :value='item.Codigo'  v-model='shippingMethod')/ 
-          span {{correioServiceName(index)}} (Correios)
+          span {{deliveryServiceDesc(index)}}
           p Prazo de entrega: {{deliveryDeadline(index)}} dia(s) após a confirmação do pagamento
           p Valor: R${{deliveryPrice(index)}}
         label(v-if='order.shipping.motoboyResult.price')

@@ -1,5 +1,4 @@
 import _search from '../lib/_search';
-import CORREIOS_SERVICE_NAME from '../lib/correiosServiceName';
 
 // Vue.
 let app = new Vue({
@@ -53,9 +52,6 @@ let app = new Vue({
         console.error(err);
       }) 
     },
-    correioServiceName(code){
-      return CORREIOS_SERVICE_NAME[code];
-    }
   },
   filters: {
     formatMoney: function(val){

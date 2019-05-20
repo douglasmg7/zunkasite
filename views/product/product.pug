@@ -39,7 +39,7 @@ block content
                                 th Prazo
                         tbody
                             tr(v-for='estShip in estimateShipmentData')
-                                td {{estShip.method}}
+                                td {{estShip.service}}
                                 td R$ {{estShip.price}}
                                 td {{estShip.time}}
             .product-description(v-if='product.storeProductDescription.trim() !== ""')

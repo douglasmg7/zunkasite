@@ -31,7 +31,7 @@ block content
             p Brasil
         .shipment
             h3.sub-title Forma de envio
-            p {{correioServiceName(order.shipping.method)}} (Correios) 
+            p {{order.shipping.methodDesc}}
             p Entrega em {{order.shipping.deadline}} dia(s)
             P Valor do frete: {{order.shipping.price | formatMoney}}
         .items(v-if='order.items.length > 0')
