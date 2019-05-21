@@ -63,7 +63,7 @@ router.get('/products', checkPermission, function(req, res, next) {
   // Find products.
   let productPromise = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
   // Product count.
-  let productCountPromise = Product.count(search).exec();
+  let productCountPromise = Product.countDocuments(search).exec();
   Promise.all([productPromise, productCountPromise])
   .then(([products, count])=>{
     res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)});
@@ -317,44 +317,44 @@ router.get('/orders', checkPermission, function(req, res, next) {
   });
 });
 
-// Get orders data.
-router.get('/api/orders_old', checkPermission, function(req, res, next) {
-  const user_id = req.params.user_id;
-  const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
-  const skip = (page - 1) * ORDER_QTD_BY_PAGE;
-  // Db search.
-  let search;
-  // No search request.
-  if (req.query.search == '') {
-    search = { 'timestamps.placedAt': { $exists: true } };
-  }
-  // Search by _id.
-  else if (req.query.search.match(/^[a-f\d]{24}$/i)) {
-    search = { 'timestamps.placedAt': {$exists: true}, _id: req.query.search };
-  }
-  // No search by _id.
-  else {
-    search = {
-      'timestamps.placedAt': {$exists: true},
-      $or: [
-        {'name': {$regex: req.query.search, $options: 'i'}},
-        {totalPrice: {$regex: req.query.search, $options: 'i'}},
-        {'items.name': {$regex: req.query.search, $options: 'i'}},
-      ]
-    }
-  }
-  // console.log(`search: ${JSON.stringify(search)}`);
-  // Find orders.
-  let orderPromise = Order.find(search).sort({'timestamps.placedAt': -1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
-  // Order count.
-  let orderCountPromise = Order.find(search).count().exec();
-  Promise.all([orderPromise, orderCountPromise])
-  .then(([orders, count])=>{
-    res.json({orders, page, pageCount: Math.ceil(count / ORDER_QTD_BY_PAGE)});
-  }).catch(err=>{
-    return next(err);
-  });
-});
+// // Get orders data.
+// router.get('/api/orders_old', checkPermission, function(req, res, next) {
+//   const user_id = req.params.user_id;
+//   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
+//   const skip = (page - 1) * ORDER_QTD_BY_PAGE;
+//   // Db search.
+//   let search;
+//   // No search request.
+//   if (req.query.search == '') {
+//     search = { 'timestamps.placedAt': { $exists: true } };
+//   }
+//   // Search by _id.
+//   else if (req.query.search.match(/^[a-f\d]{24}$/i)) {
+//     search = { 'timestamps.placedAt': {$exists: true}, _id: req.query.search };
+//   }
+//   // No search by _id.
+//   else {
+//     search = {
+//       'timestamps.placedAt': {$exists: true},
+//       $or: [
+//         {'name': {$regex: req.query.search, $options: 'i'}},
+//         {totalPrice: {$regex: req.query.search, $options: 'i'}},
+//         {'items.name': {$regex: req.query.search, $options: 'i'}},
+//       ]
+//     }
+//   }
+//   // console.log(`search: ${JSON.stringify(search)}`);
+//   // Find orders.
+//   let orderPromise = Order.find(search).sort({'timestamps.placedAt': -1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
+//   // Order count.
+//   let orderCountPromise = Order.find(search).countDocuments().exec();
+//   Promise.all([orderPromise, orderCountPromise])
+//   .then(([orders, count])=>{
+//     res.json({orders, page, pageCount: Math.ceil(count / ORDER_QTD_BY_PAGE)});
+//   }).catch(err=>{
+//     return next(err);
+//   });
+// });
 
 // Get orders data.
 router.get('/api/orders', checkPermission, function(req, res, next) {
@@ -390,7 +390,7 @@ router.get('/api/orders', checkPermission, function(req, res, next) {
   // Find orders.
   let orderPromise = Order.find(search).sort({'timestamps.placedAt': -1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
   // Order count.
-  let orderCountPromise = Order.find(search).count().exec();
+  let orderCountPromise = Order.find(search).countDocuments().exec();
   Promise.all([orderPromise, orderCountPromise])
   .then(([orders, count])=>{
     res.json({orders, page, pageCount: Math.ceil(count / ORDER_QTD_BY_PAGE)});
@@ -427,7 +427,7 @@ router.post('/api/order/status/:_id/:status', checkPermission, function(req, res
           // Update stock.
           if (req.query.updateStock) {
             for (let i = 0; i < order.items.length; i++) {
-              Product.update({ _id: order.items[i]._id }, { $inc: { storeProductQtd: order.items[i].quantity }}, err=>{
+              Product.updateOne({ _id: order.items[i]._id }, { $inc: { storeProductQtd: order.items[i].quantity }}, err=>{
                 if (err) {
                   log.error(err.stack);
                 }

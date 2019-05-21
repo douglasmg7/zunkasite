@@ -141,7 +141,7 @@ router.get('/api/products', function (req, res) {
   let productPromise = Product.find(search).sort(sort).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
   // let productPromise = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
   // Product count.
-  let productCountPromise = Product.count(search).exec();
+  let productCountPromise = Product.countDocuments(search).exec();
   Promise.all([productPromise, productCountPromise])
   .then(([products, count])=>{
     redis.get('categoriesInUse', (err, categories)=>{
@@ -168,7 +168,7 @@ router.get('/api/products', function (req, res) {
 //   // Find products.
 //   let productPromise = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
 //   // Product count.
-//   let productCountPromise = Product.count(search).exec();
+//   let productCountPromise = Product.countDocuments(search).exec();
 //   Promise.all([productPromise, productCountPromise])
 //   .then(([products, count])=>{
 //     res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)});

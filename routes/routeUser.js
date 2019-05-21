@@ -667,7 +667,7 @@ router.put('/address/default/:addressId', checkPermission, (req, res, next)=>{
 
 // Remove user address.
 router.put('/address/remove/:addressId', checkPermission, (req, res, next)=>{
-  Address.remove({ _id: req.params.addressId}, (err)=>{
+  Address.deleteOne({ _id: req.params.addressId}, (err)=>{
     if (err) { next(err) };
     res.json({success: true, msg: 'Address removed.' });  
   });
@@ -713,7 +713,7 @@ router.get('/api/orders', checkPermission, function(req, res, next) {
   // Find orders.
   let orderPromise = Order.find(search).sort({'timestamps.placedAt': -1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
   // Order count.
-  let orderCountPromise = Order.find(search).count().exec();
+  let orderCountPromise = Order.find(search).countDocuments().exec();
   Promise.all([orderPromise, orderCountPromise])
   .then(([orders, count])=>{    
     res.json({orders, page, pageCount: Math.ceil(count / ORDER_QTD_BY_PAGE)});

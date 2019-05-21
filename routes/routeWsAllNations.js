@@ -20,7 +20,7 @@ router.get('/', function (req, res) {
   const cursor = mongo.db.collection(dbConfig.collAllNationProducts).find(search).sort({'desc': 1}).skip(skip).limit(PAGE_SIZE);
   Promise.all([
     cursor.toArray(),
-    cursor.count()
+    cursor.countDocuments()
   ]).then(([products, count])=>{
     res.json({products, page, pageCount: Math.ceil(count / PAGE_SIZE)});
   }).catch(err=>{

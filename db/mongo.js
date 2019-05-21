@@ -13,7 +13,8 @@ const state = {
 let url = null;
 process.env.NODE_ENV === 'unitTest' ? url = dbConfig.urlUnitTest : url = dbConfig.url;
 
-mongo.connect(url, (err, database)=>{
+// mongo.connect(url, (err, database)=>{
+mongo.connect(url, {useNewUrlParser: true}, (err, database)=>{
   if(err){
     log.error(err.stack);
     process.exit(1);

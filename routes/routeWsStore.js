@@ -29,7 +29,7 @@ router.get('/products-commercialize', function (req, res) {
   console.log(`search: ${JSON.stringify(search)}`);
   Promise.all([
     cursor.toArray(),
-    cursor.count()
+    cursor.countDocuments()
   ]).then(([products, count])=>{
     res.json({products, page, pageCount: Math.ceil(count / PAGE_SIZE_STORE)});
   }).catch(err=>{
@@ -48,9 +48,10 @@ router.get('/', function (req, res) {
     // : {'dealerProductCommercialize': {$exists: true, $eq: true}};
   // log.info('search: ' + JSON.stringify(search) + ', skip: ' + skip + ', PAGE_SIZE_ADMIN: ' + PAGE_SIZE_ADMIN);
   const cursor = mongo.db.collection(dbConfig.collStoreProducts).find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PAGE_SIZE_ADMIN);
+  log.debug("count4...");
   Promise.all([
     cursor.toArray(),
-    cursor.count()
+    cursor.countDocuments()
   ]).then(([products, count])=>{
     // log.warn('Products length: ' + products.length);
     res.json({products, page, pageCount: Math.ceil(count / PAGE_SIZE_ADMIN)});

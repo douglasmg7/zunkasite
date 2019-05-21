@@ -12,7 +12,9 @@ let options = {
   socketTimeoutMS: 0,
   keepAlive: true,
   reconnectTries: 30,
-  promiseLibrary: global.Promise  // Set promise for MongoDb Driver.
+  promiseLibrary: global.Promise,  // Set promise for MongoDb Driver.
+  useNewUrlParser: true,
+  useCreateIndex: true
 };
 mongoose.Promise = global.Promise;  // Set promise for mongoose uses.
 // Mongoose.
