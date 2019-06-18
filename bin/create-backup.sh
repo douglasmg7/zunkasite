@@ -9,8 +9,10 @@ tar cvzf ../dump/img-$(date +%Y-%h-%d).tar.gz ../dist/img/ ../dist/banner/
 
 # Mongo backup.
 # mongodump --db zunka -u admin --authenticationDatabase admin --gzip --archive=../dump/db-$(date +%Y-%h-%d@%T).gz    # Tar err if this name format.
+printf "\nMongo db admin password:\n"
 mongodump --db zunka -u admin --authenticationDatabase admin --gzip --archive=../dump/db-$(date +%Y-%h-%d).gz
 
 # Redis backup.
 redis-cli save
-sudo cp var/lib/redis/dump.rdb ../dump/dump-$(date +%Y-%h-%d).rdb
+printf "\root password:\n"
+sudo cp /var/lib/redis/dump.rdb ../dump/dump-$(date +%Y-%h-%d).rdb
