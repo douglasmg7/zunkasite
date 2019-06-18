@@ -14,5 +14,5 @@ mongodump --db zunka -u admin --authenticationDatabase admin --gzip --archive=..
 
 # Redis backup.
 redis-cli save
-printf "\root password:\n"
+printf "\nroot password:\n"
 sudo cp /var/lib/redis/dump.rdb ../dump/dump-$(date +%Y-%h-%d).rdb
