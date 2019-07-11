@@ -7,7 +7,7 @@ const soap = require('soap');
 // const https = require('https');
 // const request = require('request');
 const axios = require('axios');
-// var paypal = require('paypal-rest-sdk');
+var paypal = require('paypal-rest-sdk');
 
 // Personal modules.
 const log = require('../config/log');
@@ -25,6 +25,12 @@ const STANDARD_DELIVERY_DEADLINE = 10;
 const STANDARD_DELIVERY_PRICE = '60.00';
 
 module.exports = router;
+
+paypal.configure({
+	'mode': 'sandbox', //sandbox or live
+	'client_id': 'ASpmuFYrAVJcuEiBR5kP8lBdfEJqz4b8hsPQ0fKV7spzkiYFQc2BtA2q7M5vyXTPFuUELBiOpGmfhSZw',
+	'client_secret': 'EPDRmbUrj1SwC8XsLVV-Tw-9r0jg7GmBr3MFcNOd6xL3S-cXQ7VGbdJPmb4YBI_ZncIyKg82kKeAWJyT'
+});
 
 // Format number to money format.
 function formatMoney(val){
@@ -859,3 +865,54 @@ router.post('/update-stock', (req, res, next)=>{
 function converToBRCurrencyString(val) {
   return val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
+
+
+/******************************************************************************
+/ Paypal
+******************************************************************************/
+
+// Get access-token.
+function getAccessToken(cb){
+	redis.get('paypal-token-access', (err, tokenAccess)=>{
+		// Internal error.
+		if (err) {
+			return cb(err);
+		}
+		// tokenAccess = JSON.parse(tokenAccess) || [];
+		// tokenAccess = JSON.parse(tokenAccess);
+		if (tokenAccess) {
+			log.debug("token yes")
+			log.debug(`tokenAccess: ${tokenAccess}`)
+		}
+		else {
+			log.debug("token no")
+			log.debug(`tokenAccess: ${tokenAccess}`)
+		}
+	});
+}
+
+// Order confirmation - page.
+router.get('/paypal/init', (req, res, next)=>{
+	paypal.webProfile.list((err, webProfiles)=>{
+		if (err) {
+			return next(new Error('No order to confirm.'));
+		} else {
+			log.debug("List Web Profiles Response");
+			log.debug(JSON.stringify(webProfiles));
+		}
+	});
+	res.json({ success: true });
+});
+
+// Order confirmation - page.
+router.get('/paypal/web-profile', (req, res, next)=>{
+	paypal.webProfile.list((err, webProfiles)=>{
+		if (err) {
+			return next(new Error('No order to confirm.'));
+		} else {
+			log.debug("List Web Profiles Response");
+			log.debug(JSON.stringify(webProfiles));
+		}
+	});
+	res.json({ success: true });
+});
