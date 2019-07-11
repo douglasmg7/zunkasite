@@ -1,7 +1,6 @@
 *.swp
 *.log
-bin/*.watch
-bin/.last_req
+
 node_modules/
 bower_components/
 public/js/bundle*
@@ -24,3 +23,12 @@ config/email.js
 nginx/nginx.conf
 nginx/sites-enabled/zunka.conf
 .gitsecret/keys/random_seed
+
+# bin.
+bin/*.watch
+bin/.last_req
+
+# Sensitive paypal data.
+bin/paypal/*.json
+bin/paypal/secret
+bin/paypal/client_id
