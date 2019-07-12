@@ -871,38 +871,82 @@ function converToBRCurrencyString(val) {
 / Paypal
 ******************************************************************************/
 
+// Order confirmation - page.
+router.get('/paypal/init', (req, res, next)=>{
+	getAccessToken((err, paypalAccessToken)=>{
+		if (err) {
+			log.error("Error getting access token: " + err.stack);
+			res.json({ success: false });
+		} else {
+			res.json({ success: true , paypalAccessToken: paypalAccessToken});
+		}
+	});
+});
+
 // Get access-token.
 function getAccessToken(cb){
-	redis.get('paypal-token-access', (err, tokenAccess)=>{
-		// Internal error.
+	redis.get('paypalAccessToken', (err, paypalAccessToken)=>{
+		// Redis error.
 		if (err) {
+			log.debug("redis error");
 			return cb(err);
 		}
-		// tokenAccess = JSON.parse(tokenAccess) || [];
-		// tokenAccess = JSON.parse(tokenAccess);
-		if (tokenAccess) {
-			log.debug("token yes")
-			log.debug(`tokenAccess: ${tokenAccess}`)
+		// Already have access token on db.
+		if (paypalAccessToken) {
+			cb(null, JSON.parse(paypalAccessToken));
 		}
+		// Not have access token.
 		else {
-			log.debug("token no")
-			log.debug(`tokenAccess: ${tokenAccess}`)
+			// Get access token from paypal.
+			// todo - encrypt on db.
+			let clientId = "ASpmuFYrAVJcuEiBR5kP8lBdfEJqz4b8hsPQ0fKV7spzkiYFQc2BtA2q7M5vyXTPFuUELBiOpGmfhSZw";
+			let secret = "EPDRmbUrj1SwC8XsLVV-Tw-9r0jg7GmBr3MFcNOd6xL3S-cXQ7VGbdJPmb4YBI_ZncIyKg82kKeAWJyT";
+			axios({
+				method: 'post',
+				url: `https://api.sandbox.paypal.com/v1/oauth2/token`,
+				headers: {
+					"Accept": "application/json", 
+					"Accept-Language": "en_US",
+					"content-type": "application/x-www-form-urlencoded"
+				},
+				auth: { 
+					username: clientId, 
+					password: secret 
+				},
+				params: { grant_type: "client_credentials" }
+			})
+			.then(response => {
+				if (response.data.err) {
+					log.debug("axios error");
+					cb(response.data.err);
+				} else {
+					log.debug("axios ok");
+					log.debug(`papal res: ${JSON.stringify(response.data)}`);
+					paypalAccessToken = JSON.stringify(response.data);
+					redis.set("paypalAccessToken", paypalAccessToken, (err)=>{
+						if (err) {
+							log.debug("redis set error");
+							cb(err);
+						}
+						else {
+							log.debug("ok");
+							cb(null, response.data);
+						}
+					});
+				}
+			})
+			.catch(err => {
+				cb(err);
+			}); 
 		}
 	});
 }
 
-// Order confirmation - page.
-router.get('/paypal/init', (req, res, next)=>{
-	paypal.webProfile.list((err, webProfiles)=>{
-		if (err) {
-			return next(new Error('No order to confirm.'));
-		} else {
-			log.debug("List Web Profiles Response");
-			log.debug(JSON.stringify(webProfiles));
-		}
-	});
-	res.json({ success: true });
-});
+// Create access-token,
+function createAccessToken(cb){
+	// paypal.authorization()
+}
+
 
 // Order confirmation - page.
 router.get('/paypal/web-profile', (req, res, next)=>{
