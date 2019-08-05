@@ -4,8 +4,8 @@
 [[ $0 != -bash ]] && echo Must be executed in this way: . $BASH_SOURCE && exit 1
 
 # Must be defined.
-[[ -z $PP_TOKEN_TYPE ]] && echo PP_TOKEN_TYPE not defined && exit 1
-[[ -z $PP_ACCESS_TOKEN ]] && echo PP_ACCESS_TOKEN not defined && exit 1
+[[ -z $PP_TOKEN_TYPE ]] && echo PP_TOKEN_TYPE not defined && return 1
+[[ -z $PP_ACCESS_TOKEN ]] && echo PP_ACCESS_TOKEN not defined && return 1
 
 # Not remove new lines.
 IFS=
@@ -18,7 +18,7 @@ PP_WEB_EXP_PROFILE=$(curl -v -X \
   -H "Content-Type: application/json" \
   -H "Authorization: $PP_TOKEN_TYPE $PP_ACCESS_TOKEN" \
   -d '{
-  "name": "zunka_profile",
+  "name": "zunkaDefault",
   "presentation":
   {
 	"logo_image": "https://www.zunka.com.br/logo.png"

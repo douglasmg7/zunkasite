@@ -4,8 +4,8 @@
 [[ $0 != -bash ]] && echo Must be executed in this way: . $BASH_SOURCE && exit 1
 
 # Must be defined.
-[[ -z $PP_CLIENT_ID ]] && echo PP_CLIENT_ID not defined && exit 1
-[[ -z $PP_SECRET ]] && echo PP_SECRET not defined && exit 1
+[[ -z $PP_CLIENT_ID ]] && echo PP_CLIENT_ID not defined && return 1
+[[ -z $PP_SECRET ]] && echo PP_SECRET not defined && return 1
 
 # Not remove new lines.
 IFS=
