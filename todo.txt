@@ -2,6 +2,8 @@ Correct envio on email message.
 
 Conferir valor do correio.
 
+Redirect paypal client id development and production (payment.bundle linha 120) to s.js payment.bundle. 
+
 Descrição do produto
     Criar subtitle igual ao detalhe técnico.
 

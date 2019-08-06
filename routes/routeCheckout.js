@@ -7,7 +7,6 @@ const soap = require('soap');
 // const https = require('https');
 // const request = require('request');
 const axios = require('axios');
-var paypal = require('paypal-rest-sdk');
 
 // Personal modules.
 const log = require('../config/log');
@@ -15,6 +14,7 @@ const User = require('../model/user');
 const Address = require('../model/address');
 const Order = require('../model/order');
 const Product = require('../model/product');
+const ppConfig = require('../config/s').paypal;
 
 // Redis.
 const redis = require('../db/redis');
@@ -25,12 +25,6 @@ const STANDARD_DELIVERY_DEADLINE = 10;
 const STANDARD_DELIVERY_PRICE = '60.00';
 
 module.exports = router;
-
-paypal.configure({
-	'mode': 'sandbox', //sandbox or live
-	'client_id': 'ASpmuFYrAVJcuEiBR5kP8lBdfEJqz4b8hsPQ0fKV7spzkiYFQc2BtA2q7M5vyXTPFuUELBiOpGmfhSZw',
-	'client_secret': 'EPDRmbUrj1SwC8XsLVV-Tw-9r0jg7GmBr3MFcNOd6xL3S-cXQ7VGbdJPmb4YBI_ZncIyKg82kKeAWJyT'
-});
 
 // Format number to money format.
 function formatMoney(val){
@@ -870,17 +864,18 @@ function converToBRCurrencyString(val) {
 /******************************************************************************
 / Paypal
 ******************************************************************************/
-// todo - encrypt on db.
-const ppClientId = "ASpmuFYrAVJcuEiBR5kP8lBdfEJqz4b8hsPQ0fKV7spzkiYFQc2BtA2q7M5vyXTPFuUELBiOpGmfhSZw";
-const ppSecret = "EPDRmbUrj1SwC8XsLVV-Tw-9r0jg7GmBr3MFcNOd6xL3S-cXQ7VGbdJPmb4YBI_ZncIyKg82kKeAWJyT";
-// Paypal uri.
-let ppWebServerUri = "https://api.sandbox.paypal.com/v1/"
-// todo - uri production.
+// Sandbox configurations.
+let ppUrl = ppConfig.sandbox.ppUrl;
+let ppClientId = ppConfig.sandbox.ppClientId;
+let ppSecret = ppConfig.sandbox.ppSecret;
+// Production configurations.
 if (process.env.NODE_ENV == 'production') {
-	ppWebServerUri = "https://api.sandbox.paypal.com/v1/";
+	ppUrl = ppConfig.production.ppUrl;
+	ppClientId = ppConfig.production.ppClientId;
+	ppSecret = ppConfig.production.ppSecret;
 }
 // Web profile name.
-let ppWebProfileName = "zunkaProfile1";
+let ppWebProfileName = ppConfig.webProfileName;
 
 // Order confirmation - page.
 router.get('/paypal/init', (req, res, next)=>{
@@ -924,15 +919,15 @@ function getAccessToken(cb){
 		let reqTime = new Date();
 		axios({
 			method: 'post',
-			url: ppWebServerUri + "oauth2/token",
+			url: ppUrl + "oauth2/token",
 			headers: {
 				"Accept": "application/json", 
 				"Accept-Language": "en_US",
 				"content-type": "application/x-www-form-urlencoded"
 			},
 			auth: { 
-				username: ppClientId, 
-				password: ppSecret 
+				username: ppConfig.ppClientId, 
+				password: ppConfig.ppSecret 
 			},
 			params: { grant_type: "client_credentials" }
 		})
@@ -964,7 +959,7 @@ function getAccessToken(cb){
 function getWebProfile(ppAccessTokenData, cb){
 	axios({
 		method: 'get',
-		url: ppWebServerUri + "payment-experience/web-profiles/",
+		url: ppUrl + "payment-experience/web-profiles/",
 		headers: {
 			"Accept": "application/json", 
 			"Accept-Language": "en_US",
@@ -1008,7 +1003,7 @@ function createWebProfile(ppAccessTokenData, cb){
 	log.debug(`Creating web profile ${ppWebProfileName} on Paypal web server.`);
 	axios({
 		method: 'post',
-		url: ppWebServerUri + "payment-experience/web-profiles/",
+		url: ppUrl + "payment-experience/web-profiles/",
 		headers: {
 			"Accept": "application/json", 
 			"Accept-Language": "en_US",
