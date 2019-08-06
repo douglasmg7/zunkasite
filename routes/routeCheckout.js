@@ -876,23 +876,97 @@ if (process.env.NODE_ENV == 'production') {
 }
 // Web profile name.
 let ppWebProfileName = ppConfig.webProfileName;
+// Redis keys.
+let redisPaypalWebProfileKey = "paypalWebProfile"
+let redisPaypalAccessTokenKey = "paypalAccessToken"
 
-// Order confirmation - page.
-router.get('/paypal/init', (req, res, next)=>{
+// Get web profile.
+router.get('/paypal/web-profile', (req, res, next)=>{
 	getAccessToken((err, ppAccessTokenData)=>{
 		if (err) {
 			log.error(err.stack);
 			res.json({ success: false });
 		} else {
 			// res.json({ success: true , ppAccessTokenData: ppAccessTokenData});
-			getWebProfile(ppAccessTokenData, (err, ppWebProfileData) =>{
+			getWebProfile(ppAccessTokenData, (err, ppWebProfile) =>{
 				if (err) {
 					log.error(err.stack);
 					res.json({ success: false });
 					return;
 				}
-				res.json({ success: true, ppWebProfileData: ppWebProfileData });
+				res.json({ success: true, ppWebProfile: ppWebProfile });
 			});
+		}
+	});
+});
+
+// Create payment request.
+router.get('/paypal/create-paymant-request', (req, res, next)=>{
+	let payReqData = {};
+	// Redirect urls.
+	// payReqData.redirect_urls = {
+		// return_url: `${req.headers.host}/checkout/paypal/return`,
+		// cancel_url: `${req.headers.host}/checkout/paypal/cancel`
+	// };
+
+	// payReqData.redirect_urls = {
+		// "return_url": "https://example.com",
+		// "cancel_url": "https://example.com"
+	// };
+	payReqData.redirect_urls = {
+		"return_url": "https://www.zunka.com.br/checkout/paypal/return",
+		"cancel_url": "https://www.zunka.com.br/checkout/paypal/cancel"
+	};
+	// Transaction.
+	payReqData.transactions = [{
+		"amount": {
+			"currency": "DKK",
+			"total": "41.15",
+			"details": {
+			"shipping": "11",
+			"subtotal": "30",
+			"tax": "0.15"
+			}
+		},
+		"payee": {
+			"email": "merchant@example.com"
+		},
+		"description": "This is the payment transaction description.",
+		"item_list": {
+			"items": [
+				{
+					"name": "Basketball Team Jersey",
+					"quantity": "5",
+					"price": "3",
+					"sku": "1",
+					"currency": "DKK"
+				}, 
+				{
+					"name": "Sequined Shirt",
+					"quantity": "1",
+					"price": "15",
+					"sku": "product34",
+					"currency": "DKK"
+				}
+			],
+			"shipping_address": {
+				"recipient_name": "Betsy customer",
+				"line1": "111 First Street",
+				"city": "Saratoga",
+				"country_code": "US",
+				"postal_code": "95070",
+				"phone": "0116519999164",
+				"state": "CA"
+			}
+		}
+	}];
+	// Create payment request.
+	createPaymentRequest(payReqData, (err, result)=>{
+		if (err) {
+			log.error(err.stack);
+			res.json({ success: false });
+		} else {
+			res.json({ success: true, result: result });
 		}
 	});
 });
@@ -900,7 +974,7 @@ router.get('/paypal/init', (req, res, next)=>{
 // Get access-token.
 // If not in db or in db but expired, take from paypal server.
 function getAccessToken(cb){
-	redis.get('paypalAccessToken', (err, ppAccessTokenData)=>{
+	redis.get(redisPaypalAccessTokenKey, (err, ppAccessTokenData)=>{
 		// Redis error.
 		if (err) {
 			return cb(new error(`Retriving paypal access token from redis db. ${err.message}`));
@@ -915,6 +989,7 @@ function getAccessToken(cb){
 				return cb(null, ppAccessTokenData);
 			}
 		}
+		// Not access token on redis db or it expired.
 		// Get access token from paypal.
 		let reqTime = new Date();
 		axios({
@@ -926,8 +1001,8 @@ function getAccessToken(cb){
 				"content-type": "application/x-www-form-urlencoded"
 			},
 			auth: { 
-				username: ppConfig.ppClientId, 
-				password: ppConfig.ppSecret 
+				username: ppClientId, 
+				password: ppSecret 
 			},
 			params: { grant_type: "client_credentials" }
 		})
@@ -939,7 +1014,7 @@ function getAccessToken(cb){
 				response.data.get_date = reqTime;
 				response.data.expires_date = new Date(response.data.expires_in * 1000 + reqTime.getTime());
 				ppAccessTokenData = JSON.stringify(response.data);
-				redis.set("paypalAccessToken", ppAccessTokenData, (err)=>{
+				redis.set(redisPaypalAccessTokenKey, ppAccessTokenData, (err)=>{
 					if (err) {
 						return cb(new error(`Saving paypal access token o redis db, ${err.message}`));
 					}
@@ -950,13 +1025,71 @@ function getAccessToken(cb){
 			}
 		})
 		.catch(err => {
-			cb(new error(`Retriving paypal access token. ${err.message}`));
+			cb(new Error(`Retriving paypal access token. ${err.message}`));
 		}); 
 	});
 }
 
-// Get web profile id.
-function getWebProfile(ppAccessTokenData, cb){
+// Get web profile.
+function getWebProfile(ppAccessTokenData, cb) {
+	// Get web profile from db.
+	redis.get(redisPaypalWebProfileKey, (err, ppWebProfileRaw)=>{
+		if (err) {
+			return cb("Error, getting web profile on redis db: " + err.message);
+		}
+		else {
+			// Web profile cached on db.
+			if (ppWebProfileRaw) {
+				let ppWebProfile = JSON.parse(ppWebProfileRaw);
+				// log.debug(`ppWebProfile.name: ${ppWebProfile.name}`);
+				// log.debug(`ppWebProfile: ${ppWebProfileName}`);
+				// Web profile name found on db match.
+				if (ppWebProfile.name === ppWebProfileName) {
+					return cb(null, ppWebProfile);
+				}
+			}
+			// No web profile on db or not match web profile name.
+			// Get web profile from paypal web server.
+			getWebProfileFromPaypalWebServer(ppAccessTokenData, (err, ppWebProfile)=>{
+				if (err) {
+					return cb(err);
+				}
+				// Found web profile on paypal web server.
+				if (ppWebProfile) {
+					// Save web profile on db.
+					redis.set(redisPaypalWebProfileKey, JSON.stringify(ppWebProfile), (err)=>{
+						if (err) {
+							return cb("Error, saving web profile on redis db: " + err.message);
+						}
+						else {
+							return cb(null, ppWebProfile);
+						}
+					});
+					return;
+				}
+				// No web profile on paypal web server.
+				// Create it.
+				createWebProfile(ppAccessTokenData, (err, ppWebProfile)=>{
+					if (err) {
+						return cb(err);
+					}
+					// Save web profile on db.
+					redis.set(redisPaypalWebProfileKey, JSON.stringify(ppWebProfile), (err)=>{
+						if (err) {
+							return cb("Error, saving web profile on redis db: " + err.message);
+						}
+						else {
+							return cb(null, ppWebProfile);
+						}
+					});
+				});
+			});
+		}
+	});
+}
+
+// Get web profile from paypal web server.
+function getWebProfileFromPaypalWebServer(ppAccessTokenData, cb){
 	axios({
 		method: 'get',
 		url: ppUrl + "payment-experience/web-profiles/",
@@ -971,26 +1104,17 @@ function getWebProfile(ppAccessTokenData, cb){
 		if (response.data.err) {
 			return cb(new error(`Retriving web profile from paypal web server. ${response.data.err}`));
 		} else {
-			// log.debug(`paypal web profiles res: ${JSON.stringify(response.data)}`);
 			let webProfiles = response.data;
-			// log.debug(`web-profile: ${JSON.stringify(response.data, null, 2)}`); 
-			for (let i=0; i <= webProfiles.length; i++) {
-				// log.debug(JSON.stringify(webProfiles[i], null, 2));
+			for (let i=0; i < webProfiles.length; i++) {
 				if (webProfiles[i].name == ppWebProfileName) {
-					let ppWebProfileData = webProfiles[i];
-					// Nothing to do, webprofile alredy exist.
-					log.debug(`Web profile was retrived from paypal web server: ${JSON.stringify(ppWebProfileData)}`);
-					// log.debug(`Web profile was retrived from paypal web server.\n${JSON.stringify(ppWebProfileData, null, 2)}`);
-					return cb(null, ppWebProfileData); 
+					let ppWebProfile = webProfiles[i];
+					// Webprofile retrived from paypal web server.
+					log.debug(`Web profile was retrived from paypal web server: ${JSON.stringify(ppWebProfile)}`);
+					return cb(null, ppWebProfile); 
 				}
 			}
-			// Web profile not exist, must be created.
-			createWebProfile(ppAccessTokenData, (err, ppWebProfileData)=>{
-				if (err) {
-					return cb(err);
-				}
-				return cb(null, ppWebProfileData);
-			});
+			// Not exist web profile on paypal web server.
+			return cb(null, null);
 		}
 	})
 	.catch(err => {
@@ -1000,7 +1124,7 @@ function getWebProfile(ppAccessTokenData, cb){
 // Create web profile.
 function createWebProfile(ppAccessTokenData, cb){
 	// Get access token from paypal.
-	log.debug(`Creating web profile ${ppWebProfileName} on Paypal web server.`);
+	// log.debug(`Creating web profile ${ppWebProfileName} on Paypal web server.`);
 	axios({
 		method: 'post',
 		url: ppUrl + "payment-experience/web-profiles/",
@@ -1029,19 +1153,155 @@ function createWebProfile(ppAccessTokenData, cb){
 		if (response.data.err) {
 			return cb(new Error("Creating web profile on Paypal web service, " + response.data.err));
 		} else {
-			log.debug(`Paypal web profile created: ${JSON.stringify(response.data)}`);
-			let ppWebProfileData = JSON.stringify(response.data);
-			redis.set("paypalWebProfile", ppWebProfileData, (err)=>{
-				if (err) {
-					return cb("Error, saving web profile on redis db: " + err.message);
-				}
-				else {
-					return cb(null, ppWebProfileData);
-				}
-			});
+			log.debug(`Web profile created on payapl web service: ${JSON.stringify(response.data)}`);
+			return cb(null, response.data);
 		}
 	})
 	.catch(err => {
 		cb(new Error("Creating web profile on Paypal web server. " + err.message));
 	}); 
+}
+
+// Create payment request.
+function createPaymentRequest(payReqData, cb){
+	// Get access token.
+	getAccessToken((err, ppAccessTokenData)=>{
+		if (err) {
+			return cb (err);
+		} 	
+		getWebProfile(ppAccessTokenData, (err, webProfile)=>{
+			payReqData.intent = "authorize";
+			payReqData.experience_profile_id = webProfile.id;
+			payReqData.payer = { "payment_method": "paypal" };
+			log.debug(`redirect_urls: ${JSON.stringify(payReqData.redirect_urls, null, 2)}`);
+
+			// log.debug(`payReqData: ${JSON.stringify(payReqData, null, 2)}`);
+			// Create a payment request.
+			axios({
+				method: 'post',
+				url: `${ppUrl}payments/payment/`,
+				headers: {
+					"Accept": "application/json", 
+					"Accept-Language": "en_US",
+					"Content-Type": "application/json",
+					"Authorization": ppAccessTokenData.token_type + " " + ppAccessTokenData.access_token
+				},
+				data: payReqData
+			})
+			.then(response => {
+				if (response.data.err) {
+					return cb(new Error(`Creating payment request on paypal web service. ${response.data.err}`));
+				} else {
+					log.debug(`Created a payment request on payapl web service: ${JSON.stringify(response.data, null, 2)}`);
+					// Save payment request on db.
+					redis.set("paypalPaymentRequest", JSON.stringify(response.data), (err)=>{
+						if (err) {
+							return cb("Error, saving payment request on redis db: " + err.message);
+						}
+						else {
+							return cb(null, response.data);
+						}
+					});
+					return;
+				}
+			})
+			.catch(err => {
+				cb(new Error(`Creating payment request on paypal web server. ${err.message}`));
+			}); 
+
+		});
+	});
+}
+
+// Create a payment request.
+function createPaymentRequestWorking(payReqData, cb){
+	// Get access token.
+	getAccessToken((err, ppAccessTokenData)=>{
+		if (err) {
+			return cb (err);
+		} 	
+		// Create a payment request.
+		// log.debug(`Creating a paypal payment request`);
+		// log.debug(JSON.stringify(payReqData, null, 2));
+		axios({
+			method: 'post',
+			url: `${ppUrl}payments/payment/`,
+			headers: {
+				"Accept": "application/json", 
+				"Accept-Language": "en_US",
+				"Content-Type": "application/json",
+				"Authorization": ppAccessTokenData.token_type + " " + ppAccessTokenData.access_token
+			},
+			data: {
+			  "intent": "authorize",
+			  "experience_profile_id": "XP-JLSM-MULG-SE8C-2PLC",
+			  "payer": {
+				"payment_method": "paypal"
+			  },
+			  "transactions": [{
+				"amount": {
+				  "currency": "DKK",
+				  "total": "41.15",
+				  "details": {
+					"shipping": "11",
+					"subtotal": "30",
+					"tax": "0.15"
+				  }
+				},
+				"payee": {
+				  "email": "merchant@example.com"
+				},
+				"description": "This is the payment transaction description.",
+				"item_list": {
+				  "items": [{
+					"name": "Basketball Team Jersey",
+					"quantity": "5",
+					"price": "3",
+					"sku": "1",
+					"currency": "DKK"
+				  }, {
+					"name": "Sequined Shirt",
+					"quantity": "1",
+					"price": "15",
+					"sku": "product34",
+					"currency": "DKK"
+				  }],
+				  "shipping_address": {
+					"recipient_name": "Betsy customer",
+					"line1": "111 First Street",
+					"city": "Saratoga",
+					"country_code": "US",
+					"postal_code": "95070",
+					"phone": "0116519999164",
+					"state": "CA"
+				  }
+				}
+			  }],
+			  "redirect_urls": {
+				"return_url": "https://example.com",
+				"cancel_url": "https://example.com"
+			  }
+			}
+		})
+		.then(response => {
+			if (response.data.err) {
+				return cb(new Error(`Creating payment request on paypal web service. ${response.data.err}`));
+			} else {
+				log.debug(`Created a payment request on payapl web service: ${JSON.stringify(response.data, null, 2)}`);
+				// Save payment request on db.
+				redis.set("paypalPaymentRequest", JSON.stringify(response.data), (err)=>{
+					if (err) {
+						return cb("Error, saving payment request on redis db: " + err.message);
+					}
+					else {
+						return cb(null, response.data);
+					}
+				});
+				return;
+			}
+		})
+		.catch(err => {
+			cb(new Error(`Creating payment request on paypal web server. ${err.message}`));
+		}); 
+	});
 }

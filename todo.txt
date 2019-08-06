@@ -1,3 +1,5 @@
+Treat when zunka have web profile but payapl not.
+
 Correct envio on email message.
 
 Conferir valor do correio.

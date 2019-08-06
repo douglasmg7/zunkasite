@@ -8,5 +8,5 @@ do
 	-H "Content-Type: application/json" \
 	-H "Authorization: $TYPE $TOKEN")
 
-	echo $RES
+	# echo $RES
 done
