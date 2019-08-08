@@ -1,37 +1,36 @@
 doctype html
 //- html(lang="en" style="overflow: hidden; box-sizing: border-box")
 html(lang="en")
-  head
-    meta(charset='utf-8')
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-    meta(name="description" content="Loja especializada na venda de laptop")
-    block title
-    block css
-        link(rel="stylesheet" href="/css/normalize.css" charset="utf-8")
-        link(rel="stylesheet" href="/css/reset_n.css" charset="utf-8")
-        link(rel="stylesheet" href="/css/layout.css" charset="utf-8")
-        link(rel="stylesheet" href="/fontawesome/css/all.min.css" charset="utf-8")
-  block internal_style
-      
-  body
-    #header
-      include ../menu/header_n.pug
-    #menu-container
-        #menu
-          include ../menu/menu_n.pug
-    //- #c-test
-        #test
-    main#app(v-cloak)
-      block content
-    block footer
-      include ../menu/footer_n
+	head
+		meta(charset='utf-8')
+		meta(name="viewport" content="width=device-width, initial-scale=1")
+		meta(name="description" content="Loja especializada na venda de laptop")
+		block meta
+		block title
+		block css
+			link(rel="stylesheet" href="/css/normalize.css" charset="utf-8")
+			link(rel="stylesheet" href="/css/reset_n.css" charset="utf-8")
+			link(rel="stylesheet" href="/css/layout.css" charset="utf-8")
+			link(rel="stylesheet" href="/fontawesome/css/all.min.css" charset="utf-8")
+	block internal_style
 
-  block internal_scripts
-    script.
-      // Make available for vue.
-      let csrfToken = !{JSON.stringify(csrfToken)};
+	body
+		#header
+			include ../menu/header_n.pug
+		#menu-container
+			#menu
+				include ../menu/menu_n.pug
+		main#app(v-cloak)
+			block content
+		block footer
+			include ../menu/footer_n
 
-  block external_scripts
-    script(src='/js/product/layout.js')
-    include ../components/axios.js.pug
-    include ../components/vue.js.pug
+	block internal_scripts
+		script.
+			// Make available for vue.
+			let csrfToken = !{JSON.stringify(csrfToken)};
+
+	block external_scripts
+		script(src='/js/product/layout.js')
+		include ../components/axios.js.pug
+		include ../components/vue.js.pug

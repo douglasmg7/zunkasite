@@ -66,16 +66,16 @@ var app = new Vue({
       .then((res)=>{
         // Success.
         if (res.data.success) {
-          this.cart = res.data.cart;
+          this.cart = res.data.cart;      
           // Update nav-bar.
-          document.getElementById('cart-qtd').innerHTML = this.cart.totalQtd;
+          document.getElementById('cart-qtd').innerHTML = this.cart.totalQtd;    
         }
       })
       .catch((err)=>{
         alert('Erro interno, não foi possível atualizar o carrinho.');
         console.error(`Error - removeProduct(), err: ${err}`);
       });
-    },
+    },  
     selectAddress(){
       window.location.href = '/checkout/shipping-address';
     },
@@ -89,14 +89,14 @@ var app = new Vue({
       .then((res)=>{
         // Success.
         if (res.data.success) {
-          this.cart = res.data.cart;
+          this.cart = res.data.cart;          
         }
       })
       .catch((err)=>{
         alert('Erro interno, não foi possível atualizar o carrinho.');
         console.error(`Error - updateStock(), err: ${err}`);
       });
-    },
+    },  
     // user receive msg that cart was change.
     userReceiveMsgCartChanged(){
       axios({
@@ -108,20 +108,20 @@ var app = new Vue({
         // Success.
         if (res.data.success) {
           this.cart = res.data.cart;
-          this.showModal = false;
+          this.showModal = false;    
         }
       })
       .catch((err)=>{
         console.error(`Error - userReceiveMsgCartChanged(), err: ${err}`);
       });
-    },
+    },  
   },
   computed: {
     productsPriceChanged: function(){
       for (var i = 0; i < this.cart.products.length; i++) {
         if (this.cart.products[i].showMsgPriceChanged) {
           return true;
-        }
+        } 
       }
       return false;
     },
@@ -129,12 +129,12 @@ var app = new Vue({
       for (var i = 0; i < this.cart.products.length; i++) {
         if (this.cart.products[i].showMsgQtdChanged) {
           return true;
-        }
+        } 
       }
       return false;
     }
   },
-  filters: {
+  filters: { 
     currency(val){ return val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, "."); },
   },
 });

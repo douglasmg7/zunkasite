@@ -1,0 +1,40 @@
+extends ../layout/layout_vue_n
+
+block title
+	title Zunka - Forma de pagamento
+
+block meta
+	meta(http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.paypal.com https://*.paypal.com:* https://*.paypalobjects.com https://*.sandbox.paypal.com;")
+	meta(http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.paypal.com https://*.paypal.com:* https://*.paypalobjects.com https://*.sandbox.paypal.com;")
+	meta(http-equiv="Content-Security-Policy" content="connect-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.paypal.com https://*.paypal.com:* https://*.paypalobjects.com https://*.sandbox.paypal.com;")
+
+	//- meta(http-equiv="Content-Security-Policy" content="frame-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.paypalobjects.com https://www.sandbox.paypal.com;")
+	//- meta(http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.paypalobjects.com/webstatic/ppplusdcc/ppplusdcc.min.js;")
+	//- meta(http-equiv="Content-Security-Policy" content="base-uri	*;")
+	//- meta(http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' *;")
+	//- meta(http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.paypalobjects.com https://www.sandbox.paypal.com *;")
+
+block append css
+	link(rel="stylesheet" href="/css/checkout/paypalPayment.css" charset="utf-8")
+
+block content
+	section.shadow
+		h2.title Resumo
+		.total
+			h3.sub-title Valor total com frete
+			p {{ order.totalPrice | formatMoney }}
+		hr
+		.payment
+			h2 Selecione a forma de pagamento
+			div.separator
+			input#continueButton.btn-primary(type='submit' @click='ppp.doContinue(); return false;' value='Checkout')
+		#ppplus
+
+append internal_scripts
+	script.
+		let order = !{JSON.stringify(order)};
+		let env = !{JSON.stringify(env)};
+
+append external_scripts
+	script(src="https://www.paypalobjects.com/webstatic/ppplusdcc/ppplusdcc.min.js") 
+	script(src='/js/checkout/paypalPayment.js') 

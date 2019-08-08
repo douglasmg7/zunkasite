@@ -1,3 +1,17 @@
+
+Embed an iFrame
+
+paypalPayment.js:102 https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-3GT975898V946325A
+paypalPayment.js:116 End
+ppplusdcc.min.js:32 INTERNAL-LOG: validateConfigAndReportErrors: {"payerEmail":"douglasmg@gmail.com","payerFirstName":"Sérgio","payerLastName":"Miranda","payerTaxId":"","approvalUrl":"https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-3GT975898V946325A","placeholder":"ppplus","mode":"sandbox"}
+ppplusdcc.min.js:32 INTERNAL-LOG: validationResult: {"error":null,"value":{"placeholder":"ppplus","approvalUrl":"https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-3GT975898V946325A","mode":"sandbox","buttonLocation":"inside","preselection":"paypal","language":"en_US","country":"US","disallowRememberedCards":false,"rememberedCards":"","payerEmail":"douglasmg@gmail.com","payerPhone":"","payerFirstName":"Sérgio","payerLastName":"Miranda","payerTaxId":"","payerTaxIdType":"","iframeHeight":"","useraction":"continue","surcharging":false,"thirdPartyPaymentMethods":[],"hideAmount":false,"miniBrowser":false,"merchantInstallmentSelection":0,"hideMxDebitCards":false,"collectBillingAddress":false,"merchantInstallmentSelectionOptional":false,"css":{}},"warnings":null}
+ppplusdcc.min.js:32 INTERNAL-LOG: mode: sandbox
+ppplusdcc.min.js:32 Filtered Custom CSS string is: {}
+
+www.sandbox.paypal.com/inlinepaymentwall/payment-selection:1 Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+payment-selection:1 Refused to set the document's base URI to 'https://www.paypalobjects.com/web/res/a6c/8dca35340ac5b62987043bd9ef8f3' because it violates the following Content Security Policy directive: "base-uri 'self' https://*.paypal.com".
+
+
 Treat when zunka have web profile but payapl not.
 
 Correct envio on email message.

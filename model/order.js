@@ -80,6 +80,7 @@ let shipping = new mongoose.Schema({
 let payment = new mongoose.Schema({
   method: { type: String }, // Identify the payment method.
   paypal: { type: Object },
+  paypalPaymentRequestResult: { type: Object },
 });
 
 // Schema - timestamps.
