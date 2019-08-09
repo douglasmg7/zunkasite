@@ -11,6 +11,10 @@ ppplusdcc.min.js:32 Filtered Custom CSS string is: {}
 www.sandbox.paypal.com/inlinepaymentwall/payment-selection:1 Failed to load resource: the server responded with a status of 500 (Internal Server Error)
 payment-selection:1 Refused to set the document's base URI to 'https://www.paypalobjects.com/web/res/a6c/8dca35340ac5b62987043bd9ef8f3' because it violates the following Content Security Policy directive: "base-uri 'self' https://*.paypal.com".
 
+Please note: The life span is defaulted to 28800 in Sandbox. In the live environment the
+default is 900. Please make sure using the value „expires_in“ as returned in the API response.
+In addition a logic should be in place that can handle error response 401 unauthorized when
+a token is expired.
 
 Treat when zunka have web profile but payapl not.
 
