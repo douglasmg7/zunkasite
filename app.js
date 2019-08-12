@@ -64,7 +64,7 @@ const routeInfo = require('./routes/routeInfo');
 const routeCheckout = require('./routes/routeCheckout');
 // const routeWsAllNations = require('./routes/routeWsAllNations');
 // const routeWsStore = require('./routes/routeWsStore');
-const routeConfigProducts = require('./routes/routeConfigProducts');
+const routeProductConfig = require('./routes/routeProductConfig.js');
 const routeTest = require('./routes/routeTest');
 const routeAdmin = require('./routes/routeAdmin');
 
@@ -219,7 +219,7 @@ app.use(function(req, res, next) {
 // Routes.
 // Users.
 app.use('/user', routeUser);
-app.use('/configProducts', routeConfigProducts);
+app.use('/product-config', routeProductConfig);
 app.use('/test', routeTest);
 app.use('/', routeSite);
 app.use('/info', routeInfo);

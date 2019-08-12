@@ -110,7 +110,8 @@ let ppp = PAYPAL.apps.PPP({
 	payerTaxId: "",
 	approvalUrl: urlAproval,
 	placeholder: "ppplus",
-	mode: "sandbox"
+	mode: "sandbox",
+	country: "BR",
 });
 
 console.log("End");
