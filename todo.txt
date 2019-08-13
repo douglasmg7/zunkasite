@@ -1,4 +1,3 @@
-
 Embed an iFrame
 
 paypalPayment.js:102 https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-3GT975898V946325A

@@ -923,10 +923,14 @@ router.post('/paypal/create-payment/:order_id', (req, res, next)=>{
 							shipping: order.shipping.price,
 						}
 					},
-					payee: {
-						email: emailSender.adminEmail
-					},
+					// payee: {
+						// email: emailSender.adminEmail
+					// },
 					description: "Itens to carrinho.",
+					payment_options: {
+						allowed_payment_method: "IMMEDIATE_PAY"
+					},
+					// invoice_number: "942342",
 					item_list: {
 						items: items,
 						shipping_address: shippingAddress
@@ -1009,6 +1013,7 @@ function getAccessToken(cb){
 			url: ppUrl + "oauth2/token",
 			headers: {
 				"Accept": "application/json", 
+				// "PayPal-Partner-Attribution-Id: <Your-BN-Code>", 
 				"Accept-Language": "en_US",
 				"content-type": "application/x-www-form-urlencoded"
 			},
@@ -1185,10 +1190,15 @@ function createPayment(payReqData, cb){
 			if(err) {
 				return cb(err);
 			}
-			payReqData.intent = "authorize";
-			payReqData.experience_profile_id = webProfile.id;
+			payReqData.intent = "sale";
+			// payReqData.intent = "authorize";
+			// payReqData.experience_profile_id = webProfile.id;
 			payReqData.payer = { payment_method: "paypal" };
-			// log.debug(`payReqData: ${JSON.stringify(payReqData, null, 2)}`);
+			payReqData.application_context = {
+				brand_name: "Zunka",
+				shipping_preference: "SET_PROVIDED_ADDRESS"
+			}, 
+			log.debug(`payReqData: ${JSON.stringify(payReqData, null, 2)}`);
 			// Create a payment request.
 			axios({
 				method: 'post',

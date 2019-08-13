@@ -86,6 +86,112 @@ let app = new Vue({
 	}  
 });
 
+
+// Paste from doc example.
+if (window.addEventListener) {
+    window.addEventListener("message", receiveMessage, false);
+    console.log("addEventListener successful", "debug");
+} else if (window.attachEvent) {
+    window.attachEvent("onmessage", receiveMessage);
+    console.log("attachEvent successful", "debug");
+} else {
+    console.log("Could not attach message listener", "debug");
+    throw new Error("Can't attach message listener");
+}
+
+function receiveMessage(event) {
+    try {
+        var message = JSON.parse(event.data);
+        if (typeof message['cause'] !== 'undefined') { //iFrame error handling
+            ppplusError = message['cause'].replace (/['"]+/g,""); //log & attach this error into the order if possible
+			// <<Insert Code Here>>
+            switch (ppplusError)
+                {
+                    case "INTERNAL_SERVICE_ERROR": //javascript fallthrough
+                    case "SOCKET_HANG_UP": //javascript fallthrough
+                    case "socket hang up": //javascript fallthrough
+                    case "connect ECONNREFUSED": //javascript fallthrough
+                    case "connect ETIMEDOUT": //javascript fallthrough
+                    case "UNKNOWN_INTERNAL_ERROR": //javascript fallthrough
+                    case "fiWalletLifecycle_unknown_error": //javascript fallthrough
+                    case "Failed to decrypt term info": //javascript fallthrough
+                    case "RESOURCE_NOT_FOUND": //javascript fallthrough
+                    case "INTERNAL_SERVER_ERROR": 
+                    alert ("Ocorreu um erro inesperado, por favor tente novamente. (" + ppplusError + ")"); //pt_BR
+                    //Generic error, inform the customer to try again; generate a new approval_url and reload the iFrame.
+                    // <<Insert Code Here>>
+                    break;
+
+                    case "RISK_N_DECLINE": //javascript fallthrough
+                    case "NO_VALID_FUNDING_SOURCE_OR_RISK_REFUSED": //javascript fallthrough
+                    case "TRY_ANOTHER_CARD": //javascript fallthrough
+                    case "NO_VALID_FUNDING_INSTRUMENT":
+                    alert ("Seu pagamento não foi aprovado. Por favor utilize outro cartão, caso o problema persista entre em contato com o PayPal (0800-047-4482). (" + ppplusError + ")"); //pt_BR
+                    //Risk denial, inform the customer to try again; generate a new approval_url and reload the iFrame.
+                    // <<Insert Code Here>>
+                    break;
+
+                    case "CARD_ATTEMPT_INVALID":
+                    alert ("Ocorreu um erro inesperado, por favor tente novamente. (" + ppplusError + ")"); //pt_BR
+                    //03 maximum payment attempts with error, inform the customer to try again; generate a new approval_url and reload the iFrame.
+                    // <<Insert Code Here>>
+                    break;
+
+                    case "INVALID_OR_EXPIRED_TOKEN":
+                    alert ("A sua sessão expirou, por favor tente novamente. (" + ppplusError + ")"); //pt_BR
+                    //User session is expired, inform the customer to try again; generate a new approval_url and reload the iFrame.
+                    // <<Insert Code Here>>
+                    break;
+
+                    case "CHECK_ENTRY":  
+                    alert ("Por favor revise os dados de Cartão de Crédito inseridos. (" + ppplusError + ")"); //pt_BR
+                    //Missing or invalid credit card information, inform your customer to check the inputs.
+                    // <<Insert Code Here>>
+                    break;
+                    
+                    default:  //unknown error & reload payment flow
+                    alert ("Ocorreu um erro inesperado, por favor tente novamente. (" + ppplusError + ")"); //pt_BR
+                    //Generic error, inform the customer to try again; generate a new approval_url and reload the iFrame.
+                    // <<Insert Code Here>>
+                }
+        }
+        if (message['action'] == 'checkout') { //PPPlus session approved, do logic here
+        	var rememberedCard = null;
+            var payerID = null;
+            var installmentsValue= null;
+
+            rememberedCard = message['result']['rememberedCards']; //save on user BD record
+            payerID = message['result']['payer']['payer_info']['payer_id']; //use it on executePayment API
+            
+            if(message['result']['term']['term']){
+                installmentsValue = message['result']['term']['term']; //installments value
+            } else {
+                installmentsValue=1; //no installments
+            }
+            /* Next steps:
+            console.log (rememberedCard);
+            console.log (payerID);
+            console.log (installmentsValue);
+                1) Save the rememberedCard value on the user record on your Database.
+                2) Save the installmentsValue value into the order (Optional).
+                3) Call executePayment API using payerID value to capture the payment.
+            */
+            // <<Insert Code Here>>
+        }
+    } catch (e){ //treat exceptions here
+    	// <<Insert Code Here>>
+    }
+
+}
+
+function ec(){
+	console.log("enableContinue was called.");
+}
+
+function dc(){
+	console.log("disableContinue was called.");
+}
+
 // Url for paypal approval payment.
 let urlAproval;
 order.payment.paypalPaymentRequestResult.links.forEach(item=>{
@@ -94,19 +200,30 @@ order.payment.paypalPaymentRequestResult.links.forEach(item=>{
 		return;
 	}
 });
-console.log(urlAproval);
+// console.log(`approvalURL: ${urlAproval}`);
 
 // Paypal script.
 // todo - config to use mode production.
 let ppp = PAYPAL.apps.PPP({ 
-	payerEmail: "douglasmg@gmail.com",
-	payerFirstName: "Sérgio",	// This name must match the name on the credit card.
-	payerLastName: "Miranda",	// This name must match the name on the credit card.
-	payerTaxId: "",
 	approvalUrl: urlAproval,
 	placeholder: "ppplus",
 	mode: "sandbox",
+	payerFirstName: "Sérgio",
+	payerLastName: "Miranda",
+	payerEmail: "douglasmg@gmail.com",
+	payerPhone: "31998830334",
+	payerTaxId: "02806376670",
+	payerTaxIdType: "BR_CPF",	// BR_CNPJ
+	language: "pt_BR",
 	country: "BR",
-});
+	enableContinue: "continueButton",
+	disableContinue: "continueButton"
 
-console.log("End");
+	// enableContinue: ec,
+	// disableContinue: dc
+
+	// 4devs.com Gerar cpf.
+	// payerFirstName: "Sérgio",	// This name must match the name on the credit card.
+	// payerLastName: "Miranda",	// This name must match the name on the credit card.
+	// approvalUrl: urlAproval,
+});
