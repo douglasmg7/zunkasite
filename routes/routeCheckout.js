@@ -1045,140 +1045,6 @@ function getAccessToken(cb){
 	});
 }
 
-// Get web profile.
-function getWebProfile(ppAccessTokenData, cb) {
-	// Get web profile from db.
-	redis.get(redisPaypalWebProfileKey, (err, ppWebProfileRaw)=>{
-		if (err) {
-			return cb("Error, getting web profile on redis db: " + err.message);
-		}
-		else {
-			// Web profile cached on db.
-			if (ppWebProfileRaw) {
-				let ppWebProfile = JSON.parse(ppWebProfileRaw);
-				// log.debug(`ppWebProfile.name: ${ppWebProfile.name}`);
-				// log.debug(`ppWebProfile: ${ppWebProfileName}`);
-				// Web profile name found on db match.
-				if (ppWebProfile.name === ppWebProfileName) {
-					return cb(null, ppWebProfile);
-				}
-			}
-			// No web profile on db or not match web profile name.
-			// Get web profile from paypal web server.
-			getWebProfileFromPaypalWebServer(ppAccessTokenData, (err, ppWebProfile)=>{
-				if (err) {
-					return cb(err);
-				}
-				// Found web profile on paypal web server.
-				if (ppWebProfile) {
-					// Save web profile on db.
-					redis.set(redisPaypalWebProfileKey, JSON.stringify(ppWebProfile), (err)=>{
-						if (err) {
-							return cb("Error, saving web profile on redis db: " + err.message);
-						}
-						else {
-							return cb(null, ppWebProfile);
-						}
-					});
-					return;
-				}
-				// No web profile on paypal web server.
-				// Create it.
-				createWebProfile(ppAccessTokenData, (err, ppWebProfile)=>{
-					if (err) {
-						return cb(err);
-					}
-					// Save web profile on db.
-					redis.set(redisPaypalWebProfileKey, JSON.stringify(ppWebProfile), (err)=>{
-						if (err) {
-							return cb("Error, saving web profile on redis db: " + err.message);
-						}
-						else {
-							return cb(null, ppWebProfile);
-						}
-					});
-				});
-			});
-		}
-	});
-}
-
-// Get web profile from paypal web server.
-function getWebProfileFromPaypalWebServer(ppAccessTokenData, cb){
-	log.debug(`Retriving web profile from paypal web server.`);
-	// log.debug(`${JSON.stringify(ppAccessTokenData, null, 2)}`);
-	axios({
-		method: 'get',
-		url: ppUrl + "payment-experience/web-profiles/",
-		headers: {
-			"Accept": "application/json", 
-			"Accept-Language": "en_US",
-			"content-type": "application/x-www-form-urlencoded",
-			"Authorization": ppAccessTokenData.token_type + " " + ppAccessTokenData.access_token
-		},
-	}).then(response => {
-		if (response.data.err) {
-			return cb(new error(`Retriving web profile from paypal web server. ${response.data.err}`));
-		} else {
-			let webProfiles = response.data;
-			for (let i=0; i < webProfiles.length; i++) {
-				if (webProfiles[i].name == ppWebProfileName) {
-					let ppWebProfile = webProfiles[i];
-					// Webprofile retrived from paypal web server.
-					log.debug(`Web profile was retrived from paypal web server: ${JSON.stringify(ppWebProfile, null ,2)}`);
-					return cb(null, ppWebProfile); 
-				}
-			}
-			// Not exist web profile on paypal web server.
-			return cb(null, null);
-		}
-	})
-	.catch(err => {
-		cb(new Error(`Retriving  web profile from payapl web server, ${err.message}`)); 
-	}); 
-}
-
-// Create web profile.
-function createWebProfile(ppAccessTokenData, cb){
-	// Get access token from paypal.
-	log.debug(`Creating web profile ${ppWebProfileName} on Paypal web server.`);
-	axios({
-		method: 'post',
-		url: ppUrl + "payment-experience/web-profiles/",
-		headers: {
-			"Accept": "application/json", 
-			"Accept-Language": "en_US",
-			"Content-Type": "application/json",
-			"Authorization": ppAccessTokenData.token_type + " " + ppAccessTokenData.access_token
-		},
-		data: {
-			name: ppWebProfileName,
-			presentation: {
-				logo_image: "https://www.zunka.com.br/logo.png"
-			},
-			input_fields: {
-				no_shipping: 1,
-				address_override: 1
-			},
-			// flow_config: {
-				// landing_page_type: "billing",
-				// bank_txn_pending_url: "https://www.paypal.com"
-			// }
-		}
-	})
-		.then(response => {
-			if (response.data.err) {
-				return cb(new Error("Creating web profile on Paypal web service, " + response.data.err));
-			} else {
-				log.debug(`Web profile was created on payapl web service: ${JSON.stringify(response.data, null, 2)}`);
-				return cb(null, response.data);
-			}
-		})
-		.catch(err => {
-			cb(new Error("Creating web profile on Paypal web server. " + err.message));
-		}); 
-}
-
 // Create payment request.
 function createPayment(payReqData, cb){
 	// Get access token.
@@ -1186,40 +1052,33 @@ function createPayment(payReqData, cb){
 		if (err) {
 			return cb (err);
 		} 	
-		getWebProfile(ppAccessTokenData, (err, webProfile)=>{
-			if(err) {
-				return cb(err);
+		payReqData.intent = "sale";
+		payReqData.payer = { payment_method: "paypal" };
+		payReqData.application_context = {
+			brand_name: "Zunka",
+			shipping_preference: "SET_PROVIDED_ADDRESS"
+		}, 
+		log.debug(`payReqData: ${JSON.stringify(payReqData, null, 2)}`);
+		// Create a payment request.
+		axios({
+			method: 'post',
+			url: `${ppUrl}payments/payment/`,
+			headers: {
+				"Accept": "application/json", 
+				"Accept-Language": "en_US",
+				"Content-Type": "application/json",
+				"Authorization": ppAccessTokenData.token_type + " " + ppAccessTokenData.access_token
+			},
+			data: payReqData
+		}).then(response => {
+			if (response.data.err) {
+				return cb(new Error(`Creating payment request on paypal web service. ${response.data.err}`));
+			} else {
+				log.debug(`Created a payment request on payapl web service: ${JSON.stringify(response.data, null, 2)}`);
+				return cb(null, response.data);
 			}
-			payReqData.intent = "sale";
-			// payReqData.intent = "authorize";
-			// payReqData.experience_profile_id = webProfile.id;
-			payReqData.payer = { payment_method: "paypal" };
-			payReqData.application_context = {
-				brand_name: "Zunka",
-				shipping_preference: "SET_PROVIDED_ADDRESS"
-			}, 
-			log.debug(`payReqData: ${JSON.stringify(payReqData, null, 2)}`);
-			// Create a payment request.
-			axios({
-				method: 'post',
-				url: `${ppUrl}payments/payment/`,
-				headers: {
-					"Accept": "application/json", 
-					"Accept-Language": "en_US",
-					"Content-Type": "application/json",
-					"Authorization": ppAccessTokenData.token_type + " " + ppAccessTokenData.access_token
-				},
-				data: payReqData
-			}).then(response => {
-				if (response.data.err) {
-					return cb(new Error(`Creating payment request on paypal web service. ${response.data.err}`));
-				} else {
-					log.debug(`Created a payment request on payapl web service: ${JSON.stringify(response.data, null, 2)}`);
-					return cb(null, response.data);
-				}
-			}).catch(err => {
-				cb(new Error(`Creating payment request on paypal web server. ${err.message}`));
-			}); 
-		});
+		}).catch(err => {
+			cb(new Error(`Creating payment request on paypal web server. ${err.message}`));
+		}); 
 	});
 }
