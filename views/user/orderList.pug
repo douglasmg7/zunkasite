@@ -54,7 +54,7 @@ block content
             .item
                 h3.sub-title Envio
                 p {{ orderSelec.shipping.methodDesc }}
-                //- Deprected:begin.
+                //- Deprected:begin - still here, because old orders.
                 p(v-if='orderSelec.shipping.method === "correios" || orderSelec.shipping.method === "standard"') Correios
                 p(v-if='orderSelec.shipping.method === "motoboy"') Motoboy
                 //- Deprected:end.

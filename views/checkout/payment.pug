@@ -47,12 +47,11 @@ block content
         hr
         .payment
             h2 Selecione a forma de pagamento
-            input.btn-primary(type='button' @click='closeOrder("money")' v-if='order.shipping.method === "motoboy"' value='Dinheiro')
+            input.btn-primary(type='button' @click='closeOrder("money")' v-if='order.shipping.methodDesc === "Motoboy"' value='Dinheiro')
             input.btn-info(type='button' @click='closeOrder("transfer")' value='Transferência bancária')
-            div.separator
+            input.btn-primary(type='button' @click='PaymentByPaypalRestApi()' value='Cartão')
+            //- div.separator
             #paypal-button
-            div.separator
-            input.btn-primary(type='button' @click='PaymentByPaypalRestApi()' value='Paypal-test')
 
 append internal_scripts
     script.

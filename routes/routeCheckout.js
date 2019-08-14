@@ -508,17 +508,6 @@ router.post('/payment/:order_id', (req, res, next)=>{
 							default:
 								break;
 						}
-						let strShippingMethod;
-						switch (order.shipping.method) {
-							case "correios":
-								strShippingMethod = "Correios";
-								break;
-							case "motoboy":
-								strShippingMethod = "Motoboy";
-								break;
-							default:
-								break;
-						}
 						// Email to store admin.
 						let toAdminMailOptions = {
 							from: '',
@@ -547,7 +536,7 @@ router.post('/payment/:order_id', (req, res, next)=>{
 							'Método: ' + strPaymentMethod + '\n\n' +  
 
 							'Envio\n' + 
-							'Método: ' + strShippingMethod + '\n' +  
+							'Método: ' + order.shipping.methodDesc + '\n' +  
 							'Prazo: ' + order.shipping.deadline + 'dia(s)\n' +  
 							'Valor: R$ ' + converToBRCurrencyString(order.shipping.price) + '\n\n' +  
 
