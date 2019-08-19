@@ -11,89 +11,12 @@ let app = new Vue({
 	data: {
 		order: order
 	},
-	created() {
-		// console.log(`env: ${env}`);
-	},
-	methods: {
-		// Close de order.
-		confirmPayment(payment){
-			axios({
-				method: 'post',
-				// url: `/checkout/payment/paypal/${order._id}`,
-				url: window.location.href,
-				headers:{'csrf-token' : csrfToken},
-				data: { payment: payment },
-				params: { method: 'paypal'}
-			})
-				.then(response => {
-					// Correio answer.
-					if (response.data.err) {
-						console.log(response.data.err);
-					} else {
-						window.location.href = `/checkout/order-confirmation/${order._id}`;
-					}
-				})
-				.catch(err => {
-					console.error(err);
-				}); 
-		},
-		// Close de order.
-		closeOrder(method){
-			axios({
-				method: 'post',
-				url: window.location.href,
-				headers:{'csrf-token' : csrfToken},
-				params: { method: method}
-			})
-				.then(response => {
-					// Correio answer.
-					if (response.data.err) {
-						console.log(response.data.err);
-					} else {
-						window.location.href = `/checkout/order-confirmation/${order._id}`;
-					}
-				})
-				.catch(err => {
-					console.error(err);
-				}); 
-		},
-		// Process order by paypal rest api.
-		PaymentByPaypalRestApi(){
-			axios({
-				method: 'post',
-				url: `/checkout/paypal/create-payment/${order._id}`,
-				headers:{'csrf-token' : csrfToken},
-			})
-				.then(response => {
-					// Correio answer.
-					if (response.data.err) {
-						console.log(response.data.err);
-					} else {
-						console.log(JSON.stringify(response.data, null, 2));
-						if (response.data.success) {
-							console.log("Success.");
-						}
-						else {
-							window.location.href = `/error`;
-							// window.location.href = `/checkout/order-confirmation/${order._id}`
-						}
-					}
-				})
-				.catch(err => {
-					console.error(err);
-				}); 
-		},
-	},
-	filters: {
-		formatMoney: function(val){
-			return 'R$ ' + val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-		}
-	}  
 });
 
 
 // Paste from doc example.
 if (window.addEventListener) {
+    // window.addEventListener("*", receiveAll, false);
     window.addEventListener("message", receiveMessage, false);
     console.log("addEventListener successful", "debug");
 } else if (window.attachEvent) {
@@ -104,9 +27,15 @@ if (window.addEventListener) {
     throw new Error("Can't attach message listener");
 }
 
+function receiveAll(event) {
+	console.log("ReceiveAll", JSON.stringify(event, null, 2));
+}
+
 function receiveMessage(event) {
     try {
+		// console.log("event:", event);
         var message = JSON.parse(event.data);
+		console.log("message:", message);
         if (typeof message['cause'] !== 'undefined') { //iFrame error handling
             ppplusError = message['cause'].replace (/['"]+/g,""); //log & attach this error into the order if possible
 			// <<Insert Code Here>>
@@ -167,12 +96,17 @@ function receiveMessage(event) {
 
             rememberedCard = message['result']['rememberedCards']; //save on user BD record
             payerID = message['result']['payer']['payer_info']['payer_id']; //use it on executePayment API
+
+			// Debug.
+			if(message['result']['term']){
+				console.log(message['result']['term']);
+			}
             
-            if(message['result']['term']['term']){
-                installmentsValue = message['result']['term']['term']; //installments value
-            } else {
-                installmentsValue=1; //no installments
-            }
+			if(message['result']['term'] && message['result']['term']['term']){
+				installmentsValue = message['result']['term']['term']; //installments value
+			} else {
+				installmentsValue=1; //no installments
+			}
             /* Next steps:
             console.log (rememberedCard);
             console.log (payerID);
@@ -184,17 +118,9 @@ function receiveMessage(event) {
             // <<Insert Code Here>>
         }
     } catch (e){ //treat exceptions here
-    	// <<Insert Code Here>>
+		console.error("Catch:", e);
     }
 
-}
-
-function ec(){
-	console.log("enableContinue was called.");
-}
-
-function dc(){
-	console.log("disableContinue was called.");
 }
 
 // Url for paypal approval payment.
@@ -223,12 +149,4 @@ let ppp = PAYPAL.apps.PPP({
 	country: "BR",
 	enableContinue: "continueButton",
 	disableContinue: "continueButton"
-
-	// enableContinue: ec,
-	// disableContinue: dc
-
-	// 4devs.com Gerar cpf.
-	// payerFirstName: "Sérgio",	// This name must match the name on the credit card.
-	// payerLastName: "Miranda",	// This name must match the name on the credit card.
-	// approvalUrl: urlAproval,
 });
