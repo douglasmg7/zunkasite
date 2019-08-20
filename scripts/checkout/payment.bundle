@@ -10,27 +10,26 @@ let app = new Vue({
 		// console.log(`env: ${env}`);
 	},
 	methods: {
-		// Close de order.
+		// Confirm payment, called onAuthorize paypal button.
 		confirmPayment(payment){
 			axios({
 				method: 'post',
-				// url: `/checkout/payment/paypal/${order._id}`,
 				url: window.location.href,
 				headers:{'csrf-token' : csrfToken},
 				data: { payment: payment },
 				params: { method: 'paypal'}
 			})
-				.then(response => {
-					// Correio answer.
-					if (response.data.err) {
-						console.log(response.data.err);
-					} else {
-						window.location.href = `/checkout/order-confirmation/${order._id}`
-					}
-				})
-				.catch(err => {
-					console.error(err);
-				}) 
+			.then(response => {
+				// Correio answer.
+				if (response.data.err) {
+					console.log(response.data.err);
+				} else {
+					window.location.href = `/checkout/order-confirmation/${order._id}`
+				}
+			})
+			.catch(err => {
+				console.error(err);
+			}) 
 		},
 		// Close de order.
 		closeOrder(method){
@@ -40,23 +39,23 @@ let app = new Vue({
 				headers:{'csrf-token' : csrfToken},
 				params: { method: method}
 			})
-				.then(response => {
-					// Correio answer.
-					if (response.data.err) {
-						console.log(response.data.err);
-					} else {
-						window.location.href = `/checkout/order-confirmation/${order._id}`
-					}
-				})
-				.catch(err => {
-					console.error(err);
-				}) 
+			.then(response => {
+				// Correio answer.
+				if (response.data.err) {
+					console.log(response.data.err);
+				} else {
+					window.location.href = `/checkout/order-confirmation/${order._id}`
+				}
+			})
+			.catch(err => {
+				console.error(err);
+			}) 
 		},
-		// Process order by paypal rest api.
-		PaymentByPaypalRestApi(){
+		// Payment by credit card, using PayPal Plus (ppp).
+		payPalPlusPayment() {
 			axios({
 				method: 'post',
-				url: `/checkout/paypal/create-payment/${order._id}`,
+				url: `/checkout/ppp/create-payment/${order._id}`,
 				headers:{'csrf-token' : csrfToken},
 			}).then(response => {
 				// Correio answer.
@@ -65,8 +64,7 @@ let app = new Vue({
 				} else {
 					console.log(JSON.stringify(response.data, null, 2));
 					if (response.data.success) {
-						// console.log("Success.");
-						window.location.href = `/checkout/payment/paypal/${order._id}`
+						window.location.href = `/checkout/ppp/approval-payment/${order._id}`
 					}
 					else {
 						window.location.href = `/error`

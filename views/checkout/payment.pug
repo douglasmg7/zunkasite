@@ -1,63 +1,66 @@
 extends ../layout/layout_vue_n
 
 block title
-    title Zunka - Forma de pagamento
+	title Zunka - Forma de pagamento
 
 block append css
-    link(rel="stylesheet" href="/css/checkout/payment.css" charset="utf-8")
+	link(rel="stylesheet" href="/css/checkout/payment.css" charset="utf-8")
 
 block content
-    section.shadow
-        h2.title Resumo
-        .address(v-if='order.shipping.address.addressComplement')
-            h3.sub-title Enviar para
-            p {{order.shipping.address.name}}
-            p {{order.shipping.address.address}} {{order.shipping.address.addressNumber}}
-            p {{order.shipping.address.addressComplement}} 
-            p {{order.shipping.address.district}}
-            p {{order.shipping.address.city}}
-            p {{order.shipping.address.state}}
-            p {{order.shipping.address.cep}} 
-            p Brasil   
-        //- Addres complement not exist.
-        .address(v-if='!order.shipping.address.addressComplement')
-            h3.sub-title Enviar para
-            p {{order.shipping.address.name}}
-            p {{order.shipping.address.address}} {{order.shipping.address.addressNumber}}
-            p {{order.shipping.address.district}}
-            p {{order.shipping.address.city}}
-            p {{order.shipping.address.state}}
-            p {{order.shipping.address.cep}} 
-            p Brasil
-        .shipment
-            h3.sub-title Forma de envio
-            p {{order.shipping.methodDesc}}
-            p Entrega em {{order.shipping.deadline}} dia(s)
-            P Valor do frete: {{order.shipping.price | formatMoney}}
-        .items(v-if='order.items.length > 0')
-            h3.sub-title Ítens
-            ul
-                li(v-for='item in order.items')
-                    p {{item.name}}
-                    p {{item.quantity}} unidade(s)
-                    p {{item.price | formatMoney}} 
-        .total
-            h3.sub-title Valor total com frete
-            p {{ order.totalPrice | formatMoney }}
-        hr
-        .payment
-            h2 Selecione a forma de pagamento
-            input.btn-primary(type='button' @click='closeOrder("money")' v-if='order.shipping.methodDesc === "Motoboy"' value='Dinheiro')
-            input.btn-info(type='button' @click='closeOrder("transfer")' value='Transferência bancária')
-            input.btn-primary(type='button' @click='PaymentByPaypalRestApi()' value='Cartão')
-            //- div.separator
-            #paypal-button
+	section.shadow
+		h2.title Resumo
+		.address(v-if='order.shipping.address.addressComplement')
+			h3.sub-title Enviar para
+			p {{order.shipping.address.name}}
+			p {{order.shipping.address.address}} {{order.shipping.address.addressNumber}}
+			p {{order.shipping.address.addressComplement}} 
+			p {{order.shipping.address.district}}
+			p {{order.shipping.address.city}}
+			p {{order.shipping.address.state}}
+			p {{order.shipping.address.cep}} 
+			p Brasil   
+		//- Addres complement not exist.
+		.address(v-if='!order.shipping.address.addressComplement')
+			h3.sub-title Enviar para
+			p {{order.shipping.address.name}}
+			p {{order.shipping.address.address}} {{order.shipping.address.addressNumber}}
+			p {{order.shipping.address.district}}
+			p {{order.shipping.address.city}}
+			p {{order.shipping.address.state}}
+			p {{order.shipping.address.cep}} 
+			p Brasil
+		.shipment
+			h3.sub-title Forma de envio
+			p {{order.shipping.methodDesc}}
+			p Entrega em {{order.shipping.deadline}} dia(s)
+			P Valor do frete: {{order.shipping.price | formatMoney}}
+		.items(v-if='order.items.length > 0')
+			h3.sub-title Ítens
+			ul
+				li(v-for='item in order.items')
+					p {{item.name}}
+					p {{item.quantity}} unidade(s)
+					p {{item.price | formatMoney}} 
+		.total
+			h3.sub-title Valor total com frete
+			p {{ order.totalPrice | formatMoney }}
+		hr
+		.payment
+			h2 Selecione a forma de pagamento
+			//- Payment by money.
+			input.btn-primary(type='button' @click='closeOrder("money")' v-if='order.shipping.methodDesc === "Motoboy"' value='Dinheiro')
+			//- Payment by transfer.
+			input.btn-info(type='button' @click='closeOrder("transfer")' value='Transferência bancária')
+			//- Payment by credit card, using PayPal Plus.
+			input.btn-primary(type='button' @click='payPalPlusPayment()' value='Cartão')
+			//- Payment by PayPal.
+			#paypal-button
 
 append internal_scripts
-    script.
-        let order = !{JSON.stringify(order)};
-        let env = !{JSON.stringify(env)};
+	script.
+		let order = !{JSON.stringify(order)};
+		let env = !{JSON.stringify(env)};
 
 append external_scripts
-    include ../components/paypal.js.pug
-    script(src='/js/checkout/payment.js') 
+	include ../components/paypal.js.pug
+	script(src='/js/checkout/payment.js') 

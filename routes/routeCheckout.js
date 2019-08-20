@@ -869,8 +869,8 @@ let ppWebProfileName = ppConfig.webProfileName;
 let redisPaypalWebProfileKey = "paypalWebProfile"
 let redisPaypalAccessTokenKey = "paypalAccessToken"
 
-// Paypal create payment.
-router.post('/paypal/create-payment/:order_id', (req, res, next)=>{
+// PayPal Plus create payment.
+router.post('/ppp/create-payment/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
 		if (err) { return next(err); }
 		if (!order) {
@@ -939,7 +939,7 @@ router.post('/paypal/create-payment/:order_id', (req, res, next)=>{
 					// Save paypal payment request result.
 					order.payment = {};
 					order.payment.method = "paypalRestApi";
-					order.payment.paypalPaymentRequestResult = result;
+					order.payment.pppCreatePayment = result;
 					order.save((err)=>{
 						if (err) {
 							log.error(err.stack);
@@ -955,8 +955,8 @@ router.post('/paypal/create-payment/:order_id', (req, res, next)=>{
 	});
 });
 
-// Paypal payment page.
-router.get('/payment/paypal/:order_id', (req, res, next)=>{
+// PayPal Puls approval payment (payment using credit card) - page.
+router.get('/ppp/approval-payment/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
 		if (err) { return next(err); }
 		if (!order) {
@@ -964,7 +964,7 @@ router.get('/payment/paypal/:order_id', (req, res, next)=>{
 			return next(new Error('No order to continue with payment.')); }
 		else {
 			// todo - avoid process order again.
-			res.render('checkout/paypalPayment',
+			res.render('checkout/pppApproval',
 				{
 					order: order,
 					nav: {

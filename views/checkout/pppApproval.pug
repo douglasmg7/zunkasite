@@ -10,16 +10,13 @@ block meta
 	//- meta(http-equiv="Content-Security-Policy" content="connect-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.paypal.com https://*.paypal.com:* https://*.paypalobjects.com https://*.sandbox.paypal.com;")
 
 block append css
-	link(rel="stylesheet" href="/css/checkout/paypalPayment.css" charset="utf-8")
+	link(rel="stylesheet" href="/css/checkout/pppApproval.css" charset="utf-8")
 
 block content
 	section.shadow
 		h2.title Pagamento com cartão
 		#ppplus
 		input#continueButton.btn-primary(type='submit' onclick='ppp.doContinue(); return false;' value='Checkout')
-		//- input#btnEnableContinue.btn-primary(type='submit' @click='console.log("Enable continue");' value='Enable Cont')
-		//- input#btnDisableContinue.btn-primary(type='submit' @click='console.log("Disable continue");' value='Disable Cont')
-		//- input#continueButton.btn-primary(type='submit' @click='ppp.doContinue(); return false;' value='Checkout')
 
 append internal_scripts
 	script.
@@ -28,4 +25,4 @@ append internal_scripts
 
 append external_scripts
 	script(src="https://www.paypalobjects.com/webstatic/ppplusdcc/ppplusdcc.min.js" type="text/javascript") 
-	script(src='/js/checkout/paypalPayment.js') 
+	script(src='/js/checkout/pppApproval.js') 

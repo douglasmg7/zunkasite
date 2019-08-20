@@ -1,4 +1,9 @@
-import _search from '../lib/_search';
+'use strict';
+
+// Search for products.
+function _search(text){
+  window.location.href = `/all?page=1&search=${text}`;
+}
 
 // Vue.
 let app = new Vue({
@@ -120,7 +125,7 @@ function receiveMessage(event) {
 
 // Url for paypal approval payment.
 let urlAproval;
-order.payment.paypalPaymentRequestResult.links.forEach(item=>{
+order.payment.pppCreatePayment.links.forEach(item=>{
 	if (item.rel == "approval_url") {
 		urlAproval = item.href;
 		return;

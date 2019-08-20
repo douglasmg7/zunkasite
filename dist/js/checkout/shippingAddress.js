@@ -39,8 +39,6 @@ var app = new Vue({
   methods: {
     // Select an address.
     selectAddress(address_id){
-          console.log("axio");
-
       axios({
         method: 'post',
         url: window.location.pathname,
@@ -52,7 +50,6 @@ var app = new Vue({
         if (response.data.err) {
           alert('Não foi possível selecionar o endereço.');
         } else{
-          console.log("waiting new location");
           window.location.href=`/checkout/shipping-method/${response.data.order_id}`;
         }
       })
