@@ -863,10 +863,7 @@ if (process.env.NODE_ENV == 'production') {
 	ppClientId = ppConfig.production.ppClientId;
 	ppSecret = ppConfig.production.ppSecret;
 }
-// Web profile name.
-let ppWebProfileName = ppConfig.webProfileName;
 // Redis keys.
-let redisPaypalWebProfileKey = "paypalWebProfile"
 let redisPaypalAccessTokenKey = "paypalAccessToken"
 
 // PayPal Plus create payment.
@@ -955,13 +952,13 @@ router.post('/ppp/create-payment/:order_id', (req, res, next)=>{
 	});
 });
 
-// PayPal Puls approval payment (payment using credit card) - page.
+// PayPal Plus approval payment (payment using credit card) - page.
 router.get('/ppp/approval-payment/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
 		if (err) { return next(err); }
 		if (!order) {
 			// todo-test
-			return next(new Error('No order to continue with payment.')); }
+			return next(new Error('No order to continue with approval payment.')); }
 		else {
 			// todo - avoid process order again.
 			res.render('checkout/pppApproval',
@@ -972,6 +969,35 @@ router.get('/ppp/approval-payment/:order_id', (req, res, next)=>{
 					env: (process.env.NODE_ENV === 'production' ? 'production': 'sandbox')
 				}
 			);
+		}
+	});
+});
+
+// Paypal Plus execute payment (payment using credit card).
+router.post('/ppp/execute-payment/:order_id', (req, res, next)=>{
+	Order.findById(req.params.order_id, (err, order)=>{
+		if (err) { return next(err); }
+		if (!order) {
+			// todo-test
+			return next(new Error('No order to continue with execute payment.')); }
+		else {
+			console.log(JSON.stringify(req.body.pppApprovalPayment, null, 2));
+			order.payment.pppApprovalPayment = req.body.pppApprovalPayment;
+			order.save(err=>{
+				if (err) {
+					res.json({ success: false });
+					return next(err);
+				}
+				executePayment(order, (err, pppExecutePayment)=>{
+					order.pppExecutePayment = pppExecutePayment;
+					order.save(err=>{
+						res.json({ success: false });
+						return next(err);
+					});
+					return res.json({ success: true });
+					// todo - process order.
+				});
+			});
 		}
 	});
 });
@@ -1068,6 +1094,52 @@ function createPayment(payReqData, cb){
 			}
 		}).catch(err => {
 			cb(new Error(`Creating payment request on paypal web server. ${err.message}`));
+		}); 
+	});
+}
+
+// Execute payment.
+function executePayment(order, cb){
+	// Get access token.
+	getAccessToken((err, ppAccessTokenData)=>{
+		if (err) {
+			return cb (err);
+		} 	
+		// Url for execute payment.
+		let urlExecute = "";
+		order.payment.pppCreatePayment.links.forEach(item=>{
+			if (item.rel == "execute") {
+				urlExecute = item.href;
+				return;
+			}
+		});
+		log.debug(`urlExecute: ${urlExecute}`);
+		if (!urlExecute) {
+			return cb(new Error(`Executing payment, no url execute payment found.`));
+		}
+		// Payer id.
+		let payerId = order.payment.pppApprovalPayment.result.payer.payer_info.payer_id;
+		log.debug(`payerId: ${payerId}"`);
+		// Execute payment.
+		axios({
+			method: 'post',
+			url: urlExecute,
+			headers: {
+				"Accept": "application/json", 
+				"Accept-Language": "en_US",
+				"Content-Type": "application/json",
+				"Authorization": ppAccessTokenData.token_type + " " + ppAccessTokenData.access_token
+			},
+			data: { payer_id: payerId}
+		}).then(response => {
+			if (response.data.err) {
+				return cb(new Error(`Executing payment on paypal web service. ${response.data.err}`));
+			} else {
+				// log.debug(`Executing a payment on payapl web service: ${JSON.stringify(response.data, null, 2)}`);
+				return cb(null, response.data);
+			}
+		}).catch(err => {
+			cb(new Error(`Executing payment on paypal web server. ${err.message}`));
 		}); 
 	});
 }

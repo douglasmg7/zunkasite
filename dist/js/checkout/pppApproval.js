@@ -11,12 +11,35 @@ let app = new Vue({
 	data: {
 		order: order
 	},
+	methods: {
+		// Execute payment.
+		executePayment(pppApprovalPayment){
+			axios({
+				method: 'post',
+				// url: window.location.href,
+				url: `/checkout/ppp/execute-payment/${order._id}`,
+				headers:{'csrf-token' : csrfToken},
+				data: { pppApprovalPayment: pppApprovalPayment },
+				// params: { method: 'paypal'}
+			})
+			.then(response => {
+				// Correio answer.
+				if (response.data.err) {
+					console.log(response.data.err);
+				} else {
+					console.log(response.data);
+					// window.location.href = `/checkout/order-confirmation/${order._id}`
+				}
+			})
+			.catch(err => {
+				console.error(err);
+			}); 
+		},
+	}
 });
-
 
 // Paste from doc example.
 if (window.addEventListener) {
-    // window.addEventListener("*", receiveAll, false);
     window.addEventListener("message", receiveMessage, false);
     console.log("addEventListener successful", "debug");
 } else if (window.attachEvent) {
@@ -27,16 +50,17 @@ if (window.addEventListener) {
     throw new Error("Can't attach message listener");
 }
 
-function receiveAll(event) {
-	console.log("ReceiveAll", JSON.stringify(event, null, 2));
-}
-
 function receiveMessage(event) {
     try {
+		// Don't process vue messages.
+		if (event.data && event.data.devtoolsEnabled) {
+			return;
+		}
 		// console.log("event:", event);
         var message = JSON.parse(event.data);
 		console.log("message:", message);
-        if (typeof message['cause'] !== 'undefined') { //iFrame error handling
+		//	iFrame error.
+        if (typeof message['cause'] !== 'undefined') { 
             ppplusError = message['cause'].replace (/['"]+/g,""); //log & attach this error into the order if possible
 			// <<Insert Code Here>>
             switch (ppplusError)
@@ -89,7 +113,8 @@ function receiveMessage(event) {
                     // <<Insert Code Here>>
                 }
         }
-        if (message['action'] == 'checkout') { //PPPlus session approved, do logic here
+		//	PPPlus session approved, do logic here.
+        if (message['action'] == 'checkout') {
         	var rememberedCard = null;
             var payerID = null;
             var installmentsValue= null;
@@ -107,6 +132,9 @@ function receiveMessage(event) {
 			} else {
 				installmentsValue=1; //no installments
 			}
+			// Execute payment.
+			app.executePayment(message);
+
             /* Next steps:
             console.log (rememberedCard);
             console.log (payerID);
