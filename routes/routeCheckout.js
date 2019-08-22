@@ -402,6 +402,7 @@ router.post('/payment/:order_id', (req, res, next)=>{
 		else {
 			order.timestamps.placedAt = new Date();
 			order.status = 'placed';
+			// Paypal.
 			if (req.query.method === 'paypal') {
 				order.timestamps.paidAt = new Date();
 				order.status = 'paid';
@@ -410,14 +411,26 @@ router.post('/payment/:order_id', (req, res, next)=>{
 					method: 'paypal'
 				};
 			}
+			// Money.
 			else if (req.query.method === 'money'){
 				order.payment = {
 					method: 'money'
 				};
 			}
+			// Transfer.
 			else if (req.query.method === 'transfer'){
 				order.payment = {
 					method: 'transfer'
+				};
+			// PayPal Plus credit card.
+			} else if (req.query.method === 'ppp-credit') {
+				order.timestamps.paidAt = new Date();
+				// Credit card pyament completed. If not the PayPal Plus system is Reviewing credit card payment.
+				if (order.pppExecutePayment.transactions[0].related_resources[0].sale.state === "completed") {
+					order.status = 'paid';
+				} 
+				order.payment = {
+					method: 'ppp-credit'	
 				};
 			}
 			else {
@@ -451,13 +464,15 @@ router.post('/payment/:order_id', (req, res, next)=>{
 						to: req.user.email,
 						subject: 'Confirmação de pedido.'
 					};
-					if (req.query.method === 'paypal'){
+					// Paypal or PayPal Plus credit card.
+					if (req.query.method === 'paypal' || req.query.method === 'ppp-credit'){
 						mailOptions.text = 'Parabéns! Sua compra já foi concluída, agora é só aguardar o envio do produto.\n\n' +
 							'Número de pedido: ' + order._id + '\n\n' +
 							'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' +
 							'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
 							'Muito obrigado por comprar na ZUNKA.'
 					}
+					// Money.
 					if (req.query.method === 'money'){
 						mailOptions.text = 'Parabéns! Seu pedido foi realizado, agora é só aguardar o envio do produto.\n\n' +
 							'O pagamento será realizado no momento do recebimento do produto.\n\n' +
@@ -466,6 +481,7 @@ router.post('/payment/:order_id', (req, res, next)=>{
 							'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
 							'Muito obrigado por comprar na ZUNKA.'
 					}
+					// Transfer.
 					else if (req.query.method === 'transfer'){
 						mailOptions.text = 'Parabéns! Seu pedido foi realizado, agora é só efetuar a transferência.\n\n' +
 							'Dados bancários\n' +
@@ -504,6 +520,9 @@ router.post('/payment/:order_id', (req, res, next)=>{
 								break;
 							case "paypal":
 								strPaymentMethod = "Paypal";
+								break;
+							case "ppp-credit":
+								strPaymentMethod = "Cartão de crédito";
 								break;
 							default:
 								break;
@@ -866,6 +885,23 @@ if (process.env.NODE_ENV == 'production') {
 // Redis keys.
 let redisPaypalAccessTokenKey = "paypalAccessToken"
 
+// PayPal Plus on approval payment call it on continue.
+router.get('/ppp/return/null', (req, res, next)=>{
+	// res.json({ msg: "ppp return" });
+	// res.status(400).send("Bad request.");
+	res.status(400).json({
+		"name":"TRANSACTION_REFUSED",
+		"message":"The request was refused",
+		"information_link":"https://developer.paypal.com/webapps/developer/docs/api/#TRANSA CTION_REFUSED",
+		"debug_id":"5c3b33b7d52d6"
+	});
+});
+
+// PayPal Plus on approval payment call it on cancel.
+router.get('/ppp/cancel/null', (req, res, next)=>{
+	res.json({ msg: "ppp cancel" });
+});
+
 // PayPal Plus create payment.
 router.post('/ppp/create-payment/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
@@ -923,8 +959,9 @@ router.post('/ppp/create-payment/:order_id', (req, res, next)=>{
 					}
 				}],
 				redirect_urls: {
-					return_url: "https://www.zunka.com.br/checkout/paypal/return",
-					cancel_url: "https://www.zunka.com.br/checkout/paypal/cancel"
+					// todo - create this points.
+					return_url: "https://www.zunka.com.br/checkout/ppp/return/null",
+					cancel_url: "https://www.zunka.com.br/checkout/ppp/cancel/null"
 				}
 			};
 			// Create payment request.
@@ -981,7 +1018,7 @@ router.post('/ppp/execute-payment/:order_id', (req, res, next)=>{
 			// todo-test
 			return next(new Error('No order to continue with execute payment.')); }
 		else {
-			console.log(JSON.stringify(req.body.pppApprovalPayment, null, 2));
+			log.debug(`Paypal approval return: ${JSON.stringify(req.body.pppApprovalPayment, null, 2)}`);
 			order.payment.pppApprovalPayment = req.body.pppApprovalPayment;
 			order.save(err=>{
 				if (err) {
@@ -989,13 +1026,31 @@ router.post('/ppp/execute-payment/:order_id', (req, res, next)=>{
 					return next(err);
 				}
 				executePayment(order, (err, pppExecutePayment)=>{
+					if (err) {
+						// Execute payment error.
+						if (err.response && err.response.status == 400) {
+							log.debug(`Execute payment error 400: ${JSON.stringify(err, null, 2)}`);
+							if (err.response.data.name == "") {
+								return res.json({ success: false, msg: "" });
+							}
+						} 
+						return res.json({ success: false, msg: "" });
+						console.error(err);
+					}
+
 					order.pppExecutePayment = pppExecutePayment;
 					order.save(err=>{
-						res.json({ success: false });
-						return next(err);
+						// todo - test if error return next log on file correctly.
+						if (err) {
+							res.json({ success: false });
+							return next(err);
+						}
+						return res.json({ 
+							success: true,
+							saleId: order.pppExecutePayment.transactions[0].related_resources[0].sale.id,
+							state: order.pppExecutePayment.transactions[0].related_resources[0].sale.state 
+						});
 					});
-					return res.json({ success: true });
-					// todo - process order.
 				});
 			});
 		}
@@ -1113,13 +1168,13 @@ function executePayment(order, cb){
 				return;
 			}
 		});
-		log.debug(`urlExecute: ${urlExecute}`);
+		// log.debug(`urlExecute: ${urlExecute}`);
 		if (!urlExecute) {
 			return cb(new Error(`Executing payment, no url execute payment found.`));
 		}
 		// Payer id.
 		let payerId = order.payment.pppApprovalPayment.result.payer.payer_info.payer_id;
-		log.debug(`payerId: ${payerId}"`);
+		// log.debug(`payerId: ${payerId}"`);
 		// Execute payment.
 		axios({
 			method: 'post',
@@ -1135,11 +1190,11 @@ function executePayment(order, cb){
 			if (response.data.err) {
 				return cb(new Error(`Executing payment on paypal web service. ${response.data.err}`));
 			} else {
-				// log.debug(`Executing a payment on payapl web service: ${JSON.stringify(response.data, null, 2)}`);
+				log.debug(`Pyapal execute payment: ${JSON.stringify(response.data, null, 2)}`);
 				return cb(null, response.data);
 			}
 		}).catch(err => {
-			cb(new Error(`Executing payment on paypal web server. ${err.message}`));
+			return cb(err);
 		}); 
 	});
 }

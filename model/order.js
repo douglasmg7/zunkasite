@@ -79,7 +79,7 @@ let shipping = new mongoose.Schema({
 // Schema - Payment.
 let payment = new mongoose.Schema({
 	method: { type: String }, // Identify the payment method.
-	// PayPal payment.
+	// PayPal payment not PayPal Plus (ppp).
 	paypal: { type: Object },
 	// Credit card payment using PayPal Plus(ppp).
 	pppCreatePayment: { type: Object },

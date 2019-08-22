@@ -23,7 +23,6 @@ let app = new Vue({
 				// params: { method: 'paypal'}
 			})
 			.then(response => {
-				// Correio answer.
 				if (response.data.err) {
 					console.log(response.data.err);
 				} else {
@@ -33,6 +32,32 @@ let app = new Vue({
 			})
 			.catch(err => {
 				console.error(err);
+			}); 
+		},
+		// Execute payment.
+		test400(){
+			axios({
+				method: 'get',
+				url: `/checkout/ppp/return/null`,
+				headers:{'csrf-token' : csrfToken},
+			})
+			.then(response => {
+				console.log("inside response");
+				// Correio answer.
+				if (response.data.err) {
+					console.log(response.data.err);
+					console.log(response.data);
+				} else {
+					console.log(response.data);
+				}
+			})
+			.catch(err => {
+				if (err.response.status == 400) {
+					console.log(err.response);
+					console.log(JSON.stringify(err, null, 2));
+				} else {
+					console.error(err);
+				}
 			}); 
 		},
 	}
@@ -61,7 +86,7 @@ function receiveMessage(event) {
 		console.log("message:", message);
 		//	iFrame error.
         if (typeof message['cause'] !== 'undefined') { 
-            ppplusError = message['cause'].replace (/['"]+/g,""); //log & attach this error into the order if possible
+            let ppplusError = message['cause'].replace (/['"]+/g,""); //log & attach this error into the order if possible
 			// <<Insert Code Here>>
             switch (ppplusError)
                 {
@@ -126,7 +151,7 @@ function receiveMessage(event) {
 			if(message['result']['term']){
 				console.log(message['result']['term']);
 			}
-            
+			// todo - test.            
 			if(message['result']['term'] && message['result']['term']['term']){
 				installmentsValue = message['result']['term']['term']; //installments value
 			} else {
@@ -148,7 +173,6 @@ function receiveMessage(event) {
     } catch (e){ //treat exceptions here
 		console.error("Catch:", e);
     }
-
 }
 
 // Url for paypal approval payment.
