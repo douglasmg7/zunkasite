@@ -36,20 +36,20 @@ let app = new Vue({
 				console.error(err);
 			}); 
 		},
-		// Close de order.
-		closeOrder(method){
+		// Payment by money or transfer.
+		directPayment(method){
 			axios({
 				method: 'post',
-				url: window.location.href,
+				url: `/checkout/payment/${order._id}`,
 				headers:{'csrf-token' : csrfToken},
 				params: { method: method}
 			})
 			.then(response => {
-				// Correio answer.
-				if (response.data.err) {
-					console.log(response.data.err);
-				} else {
-					window.location.href = `/checkout/order-confirmation/${order._id}`;
+				if (response.data.success) {
+					window.location.href = `/checkout/summary/${order._id}`;
+				}
+				else {
+					window.location.href = `/error`;
 				}
 			})
 			.catch(err => {
