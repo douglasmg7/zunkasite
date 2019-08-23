@@ -1,3 +1,5 @@
+include option to cnpj
+
 Redirect paypal client id development and production (payment.bundle linha 120) to s.js payment.bundle. 
 
 Descrição do produto

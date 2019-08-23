@@ -24,7 +24,7 @@ var app = new Vue({
       .then((res)=>{
         // Successful change the name.
         if (res.data.success) {
-          window.location.href = `/checkout/payment/${orderId}`;
+          window.location.href = `/checkout/payment/order/${orderId}`;
         }
         // Something wrong.
         else

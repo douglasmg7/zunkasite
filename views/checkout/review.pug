@@ -1,10 +1,10 @@
 extends ../layout/layout_vue_n
 
 block title
-	title Zunka - Resumo da ordem.
+	title Zunka - Revisão do pedido
 
 block append css
-	link(rel="stylesheet" href="/css/checkout/summary.css" charset="utf-8")
+	link(rel="stylesheet" href="/css/checkout/review.css" charset="utf-8")
 
 block content
 	section.shadow
@@ -46,9 +46,12 @@ block content
 			p {{ order.totalPrice | formatMoney }}
 		.payment
 			h3.sub-title Forma de pagamento
-			p(v-if='order.payment.method === "transfer"') Transferência bancária
 			p(v-if='order.payment.method === "money"') Pagamento em dinheiro no momento da entrega
-		form(action=`/checkout/close-order/${order._id}`, method='post')
+			p(v-if='order.payment.method === "transfer"') Transferência bancária
+			p(v-if='order.payment.method === "paypal"') Paypal
+			p(v-if='order.payment.method === "ppp-credit"') Cartão de crédito
+		form(action=`/checkout/close/order/${order._id}`, method='post')
+			input(type='hidden' name='_csrf' value=csrfToken)
 			input.btn-primary(type='submit' value='Fechar pedido')
 
 append internal_scripts
@@ -56,4 +59,4 @@ append internal_scripts
 		let order = !{JSON.stringify(order)};
 
 append external_scripts
-	script(src='/js/checkout/summary.js') 
+	script(src='/js/checkout/review.js') 

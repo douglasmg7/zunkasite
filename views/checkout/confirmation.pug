@@ -4,7 +4,7 @@ block title
     title Zunka - Confirmação do pedido
 
 block append css
-      link(rel="stylesheet" href="/css/checkout/orderConfirmation.css" charset="utf-8")
+      link(rel="stylesheet" href="/css/checkout/confirmation.css" charset="utf-8")
 
 block content 
     section.shadow
@@ -59,6 +59,7 @@ block content
             p(v-if='order.payment.method === "paypal"') Paypal
             p(v-if='order.payment.method === "money"') Pagamento em dinheiro no memento da entrega
             p(v-if='order.payment.method === "transfer"') Transferência bancária
+            p(v-if='order.payment.method === "ppp-credit"') Cartão de crédito
         .shipment
             h2 Frete
             p {{order.shipping.methodDesc}}
@@ -81,4 +82,4 @@ append internal_scripts
 
 append external_scripts
   include ../components/accounting.js.pug
-  script(src='/js/checkout/orderConfirmation.js') 
+  script(src='/js/checkout/confirmation.js') 

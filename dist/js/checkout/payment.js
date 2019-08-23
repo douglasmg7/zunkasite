@@ -40,13 +40,13 @@ let app = new Vue({
 		directPayment(method){
 			axios({
 				method: 'post',
-				url: `/checkout/payment/${order._id}`,
+				url: `/checkout/payment/order/${order._id}`,
 				headers:{'csrf-token' : csrfToken},
 				params: { method: method}
 			})
 			.then(response => {
 				if (response.data.success) {
-					window.location.href = `/checkout/summary/${order._id}`;
+					window.location.href = `/checkout/review/order/${order._id}`;
 				}
 				else {
 					window.location.href = `/error`;

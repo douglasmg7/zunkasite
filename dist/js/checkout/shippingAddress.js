@@ -50,7 +50,7 @@ var app = new Vue({
         if (response.data.err) {
           alert('Não foi possível selecionar o endereço.');
         } else{
-          window.location.href=`/checkout/shipping-method/${response.data.order_id}`;
+          window.location.href=`/checkout/shipping-method/order/${response.data.order_id}`;
         }
       })
       .catch(err => {
@@ -88,7 +88,7 @@ var app = new Vue({
         }
         // Address selected with success.
         else {
-          window.location.href=`/checkout/shipping-method/${response.data.order_id}`;
+          window.location.href=`/checkout/shipping-method/order/${response.data.order_id}`;
         }
       })
       .catch(err => {

@@ -174,7 +174,7 @@ router.post('/shipping-address', (req, res, next)=>{
 });
 
 // Select shipment - page.
-router.get('/shipping-method/:order_id', (req, res, next)=>{
+router.get('/shipping-method/order/:order_id', (req, res, next)=>{
 	// Find order not placed yet.
 	Order.findById(req.params.order_id, (err, order)=>{
 		if (err) { return next(err); }
@@ -265,7 +265,7 @@ router.get('/shipping-method/:order_id', (req, res, next)=>{
 });
 
 // Select shipment.
-router.post('/shipping-method/:order_id', (req, res, next)=>{
+router.post('/shipping-method/order/:order_id', (req, res, next)=>{
 	// Set shipment method to default.
 	Order.findById(req.params.order_id, (err, order)=>{
 		// console.log(`req.body: ${JSON.stringify(req.body)}`);
@@ -302,7 +302,7 @@ router.post('/shipping-method/:order_id', (req, res, next)=>{
 });
 
 // Payment - page.
-router.get('/payment/:order_id', (req, res, next)=>{
+router.get('/payment/order/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
 		if (err) { return next(err); }
 		if (!order) {
@@ -582,7 +582,7 @@ router.post('/payment-old/:order_id', (req, res, next)=>{
 });
 
 // Payment.
-router.post('/payment/:order_id', (req, res, next)=>{
+router.post('/payment/order/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
 		if (err) { return next(err); }
 		if (!order) {
@@ -638,7 +638,7 @@ router.post('/payment/:order_id', (req, res, next)=>{
 });
 
 // Order summary. 
-router.get('/summary/:order_id', (req, res, next)=>{
+router.get('/review/order/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
 		// Mongo error.
 		if (err) { return next(err); }
@@ -648,7 +648,7 @@ router.get('/summary/:order_id', (req, res, next)=>{
 		}
 		// Payment process completed.
 		if (order.payment.method == 'money' || order.payment.method == 'transfer') {
-			return res.render('checkout/summary',
+			return res.render('checkout/review',
 				{
 					order: order,
 					nav: {
@@ -661,7 +661,7 @@ router.get('/summary/:order_id', (req, res, next)=>{
 });
 
 // Close order.
-router.post('/close-order/:order_id', (req, res, next)=>{
+router.post('/close/order/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
 		if (err) { return next(err); }
 		if (!order) {
@@ -764,7 +764,13 @@ router.post('/close-order/:order_id', (req, res, next)=>{
 					} else {
 						log.info(`Email with order confirmation sent to ${req.user.email}`);
 					}
-					res.json({});
+					res.render('checkout/confirmation',
+						{
+							order: order,
+							nav: {
+							}
+						}
+					);
 					// Listed itens string.
 					let strItens = "";
 					for (let index = 0; index < order.items.length; index++) {

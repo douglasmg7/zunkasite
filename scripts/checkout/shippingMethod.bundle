@@ -21,7 +21,7 @@ var app = new Vue({
         if (response.data.err) {
           alert('Não foi possível selecionar a forma de envio.');
         } else{
-          window.location.href=`/checkout/payment/${this.order._id}`;
+          window.location.href=`/checkout/payment/order/${this.order._id}`;
         }
       })
       .catch(err => {
