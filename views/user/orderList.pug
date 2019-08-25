@@ -48,9 +48,10 @@ block content
                 p {{orderSelec.shipping.address.cep}} 
             .item
                 h3.sub-title Pagamento
-                p(v-if='orderSelec.payment.method === "paypal" || orderSelec.payment.method === undefined') Paypal
                 p(v-if='orderSelec.payment.method === "money"') Pagamento em dinheiro no memento da entrega
                 p(v-if='orderSelec.payment.method === "transfer"') Transferência bancária
+                p(v-if='orderSelec.payment.method === "paypal" || orderSelec.payment.method === undefined') Paypal
+                p(v-if='orderSelec.payment.method === "ppp-credit"') Cartão de crédito
             .item
                 h3.sub-title Envio
                 p {{ orderSelec.shipping.methodDesc }}

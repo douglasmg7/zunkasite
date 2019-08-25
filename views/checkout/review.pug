@@ -50,9 +50,9 @@ block content
 			p(v-if='order.payment.method === "transfer"') Transferência bancária
 			p(v-if='order.payment.method === "paypal"') Paypal
 			p(v-if='order.payment.method === "ppp-credit"') Cartão de crédito
-		form(action=`/checkout/close/order/${order._id}`, method='post')
-			input(type='hidden' name='_csrf' value=csrfToken)
-			input.btn-primary(type='submit' value='Fechar pedido')
+			//- form(action=`/checkout/close/order/${order._id}`, method='post')
+				//- input(type='hidden' name='_csrf' value=csrfToken)
+			input.btn-primary(type='submit' @click='closeOrder()' value='Fechar pedido')
 
 append internal_scripts
 	script.

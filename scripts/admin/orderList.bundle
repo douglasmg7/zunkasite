@@ -108,20 +108,8 @@ var app = new Vue({
         case 'delivered':
           return '';
       }
-      if (order.payment.method === 'paypal' || order.payment.method === undefined) {
-        switch(order.status) {
-          case 'shipped':
-            return '';
-          case 'paid':
-            return 'Enviar';
-          case 'placed':
-            return 'Erro';
-          default:
-            return '';
-        }
-      } 
       // Money, only by motoboy.
-      else if(order.payment.method === 'money'){
+      if(order.payment.method === 'money'){
         switch(order.status) {
           case 'shipped':
             return '';
@@ -145,6 +133,30 @@ var app = new Vue({
             return '';
         }
       }
+      else if (order.payment.method === 'paypal' || order.payment.method === undefined) {
+        switch(order.status) {
+          case 'shipped':
+            return '';
+          case 'paid':
+            return 'Enviar';
+          case 'placed':
+            return 'Erro';
+          default:
+            return '';
+        }
+      } 
+      else if (order.payment.method === 'ppp-credit') {
+        switch(order.status) {
+          case 'shipped':
+            return '';
+          case 'paid':
+            return 'Enviar';
+          case 'placed':
+            return 'Verificar pagamento';
+          default:
+            return '';
+        }
+      } 
     },    
     // Set order status from selected order.
     showSetStatusWindow(status){

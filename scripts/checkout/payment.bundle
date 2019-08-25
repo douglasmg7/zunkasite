@@ -10,6 +10,7 @@ let app = new Vue({
 		// console.log(`env: ${env}`);
 	},
 	methods: {
+		// todo - delete.
 		// Confirm payment, called onAuthorize paypal button.
 		confirmPayment(payment){
 			axios({
@@ -53,25 +54,25 @@ let app = new Vue({
 		},
 		// Payment by credit card, using PayPal Plus (ppp).
 		payPalPlusPayment() {
+			// Create a paypal payment and redirect to approval payment page.
 			axios({
 				method: 'post',
-				url: `/checkout/ppp/create-payment/${order._id}`,
+				url: `/checkout/payment/order/${order._id}`,
+				// url: `/checkout/ppp/payment/create/${order._id}`,
 				headers:{'csrf-token' : csrfToken},
+				params: { method: 'ppp-credit'}
 			}).then(response => {
-				// Correio answer.
+				console.log(response.data);
 				if (response.data.err) {
-					console.log(response.data.err);
+					window.location.href = `/error`
+					// console.log(response.data.err);
 				} else {
-					console.log(JSON.stringify(response.data, null, 2));
-					if (response.data.success) {
-						window.location.href = `/checkout/ppp/approval-payment/${order._id}`
-					}
-					else {
-						window.location.href = `/error`
-					}
+					// console.log(JSON.stringify(response.data, null, 2));
+					window.location.href = `/checkout/ppp/payment/approval/${order._id}`
 				}
 			}).catch(err => {
-				console.error(err);
+				// console.error(err);
+				window.location.href = `/error`
 			}) 
 		},
 	},

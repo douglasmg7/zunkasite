@@ -8,11 +8,10 @@ let app = new Vue({
 	},
 	methods: {
 		// Execute payment.
-		executePayment(pppApprovalPayment){
+		savePPPApprovalPayment(pppApprovalPayment){
 			axios({
 				method: 'post',
-				// url: window.location.href,
-				url: `/checkout/ppp/execute-payment/${order._id}`,
+				url: `/checkout/ppp/payment/approval/${order._id}`,
 				headers:{'csrf-token' : csrfToken},
 				data: { pppApprovalPayment: pppApprovalPayment },
 				// params: { method: 'paypal'}
@@ -20,39 +19,15 @@ let app = new Vue({
 			.then(response => {
 				if (response.data.err) {
 					console.log(response.data.err);
+					window.location.href = `/error`
 				} else {
-					console.log(response.data);
-					// window.location.href = `/checkout/order-confirmation/${order._id}`
+					// console.log(response.data);
+					window.location.href = `/checkout/review/order/${order._id}`
 				}
 			})
 			.catch(err => {
 				console.error(err);
-			}) 
-		},
-		// Execute payment.
-		test400(){
-			axios({
-				method: 'get',
-				url: `/checkout/ppp/return/null`,
-				headers:{'csrf-token' : csrfToken},
-			})
-			.then(response => {
-				console.log("inside response");
-				// Correio answer.
-				if (response.data.err) {
-					console.log(response.data.err);
-					console.log(response.data);
-				} else {
-					console.log(response.data);
-				}
-			})
-			.catch(err => {
-				if (err.response.status == 400) {
-					console.log(err.response);
-					console.log(JSON.stringify(err, null, 2));
-				} else {
-					console.error(err);
-				}
+				window.location.href = `/error`
 			}) 
 		},
 	}
@@ -70,6 +45,7 @@ if (window.addEventListener) {
     throw new Error("Can't attach message listener");
 }
 
+// Treat ppp approval message.
 function receiveMessage(event) {
     try {
 		// Don't process vue messages.
@@ -153,7 +129,7 @@ function receiveMessage(event) {
 				installmentsValue=1; //no installments
 			}
 			// Execute payment.
-			app.executePayment(message);
+			app.savePPPApprovalPayment(message);
 
             /* Next steps:
             console.log (rememberedCard);

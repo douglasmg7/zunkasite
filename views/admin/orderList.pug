@@ -65,9 +65,11 @@ block content
                     p {{orderSelec.shipping.address.cep}} 
             .item
                 h3.sub-title Pagamento
-                p(v-if='orderSelec.payment.method === "paypal" || orderSelec.payment.method === undefined') Paypal
                 p(v-if='orderSelec.payment.method === "money"') Pagamento em dinheiro no memento da entrega
                 p(v-if='orderSelec.payment.method === "transfer"') Transferência bancária
+                p(v-if='orderSelec.payment.method === "paypal" || orderSelec.payment.method === undefined') Paypal
+                p(v-if='orderSelec.payment.method === "ppp-credit"') Cartão de crédito
+                p(v-if='orderSelec.payment.method === "ppp-credit"') Sale id: {{orderSelec.payment.pppExecutePayment.transactions[0].related_resources[0].sale.id}}
             .item
                 h3.sub-title Envio
                 p {{ orderSelec.shipping.methodDesc }}
@@ -94,7 +96,7 @@ block content
             .item.change-status(v-if='status(orderSelec) !== "Cancelado"')
                 h3.sub-title Alterar status
                 //- No type (older orders).
-                .buttons(v-if='orderSelec.payment.method === undefined || orderSelec.payment.method === "paypal" || orderSelec.payment.method === "transfer"')
+                .buttons(v-if='orderSelec.payment.method === undefined || orderSelec.payment.method === "paypal" || orderSelec.payment.method === "transfer" || orderSelec.payment.method === "ppp-credit"')
                     input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("paid")' value='Pago')
                     input.btn-primary(type='button' v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("shipped")' value='Enviado')
                     input.btn-primary(type='button' v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("delivered")' value='Entregue')

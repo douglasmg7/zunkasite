@@ -57,20 +57,8 @@ var app = new Vue({
         case 'delivered':
           return 'Entregue';
       }
-      if (order.payment.method === 'paypal' || order.payment.method === undefined) {
-        switch(order.status) {
-          case 'shipped':
-            return 'Enviado';
-          case 'paid':
-            return 'Processando';
-          case 'placed':
-            return '';
-          default:
-            return '';
-        }
-      } 
       // Money, only by motoboy.
-      else if(order.payment.method === 'money'){
+      if(order.payment.method === 'money'){
         switch(order.status) {
           case 'shipped':
             return 'A caminho';
@@ -83,6 +71,30 @@ var app = new Vue({
         }
       } 
       else if(order.payment.method === 'transfer'){
+        switch(order.status) {
+          case 'shipped':
+            return 'Enviado';
+          case 'paid':
+            return 'Processando';
+          case 'placed':
+            return 'Aguardando pagamento';
+          default:
+            return '';
+        }
+      }
+      else if (order.payment.method === 'paypal' || order.payment.method === undefined) {
+        switch(order.status) {
+          case 'shipped':
+            return 'Enviado';
+          case 'paid':
+            return 'Processando';
+          case 'placed':
+            return '';
+          default:
+            return '';
+        }
+      } 
+      else if(order.payment.method === 'ppp-credit'){
         switch(order.status) {
           case 'shipped':
             return 'Enviado';
