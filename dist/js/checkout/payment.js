@@ -20,21 +20,23 @@ let app = new Vue({
 		confirmPayment(payment){
 			axios({
 				method: 'post',
-				url: window.location.href,
+				url: `/checkout/payment/order/${order._id}`,
 				headers:{'csrf-token' : csrfToken},
 				data: { payment: payment },
 				params: { method: 'paypal'}
 			})
 			.then(response => {
 				// Correio answer.
-				if (response.data.err) {
-					console.log(response.data.err);
+				if (response.data.success) {
+					window.location.href = `/checkout/confirmation/order/${order._id}`;
 				} else {
-					window.location.href = `/checkout/order-confirmation/${order._id}`;
+					window.location.href = `/error`;
+					// console.log(response.data.err);
 				}
 			})
 			.catch(err => {
-				console.error(err);
+				// console.error(err);
+				window.location.href = `/error`;
 			}); 
 		},
 		// Payment by money or transfer.
@@ -54,32 +56,34 @@ let app = new Vue({
 				}
 			})
 			.catch(err => {
-				console.error(err);
-			}); 
-		},
-		// Payment by credit card, using PayPal Plus (ppp).
-		payPalPlusPayment() {
-			// Create a paypal payment and redirect to approval payment page.
-			axios({
-				method: 'post',
-				url: `/checkout/payment/order/${order._id}`,
-				// url: `/checkout/ppp/payment/create/${order._id}`,
-				headers:{'csrf-token' : csrfToken},
-				params: { method: 'ppp-credit'}
-			}).then(response => {
-				console.log(response.data);
-				if (response.data.err) {
-					window.location.href = `/error`;
-					// console.log(response.data.err);
-				} else {
-					// console.log(JSON.stringify(response.data, null, 2));
-					window.location.href = `/checkout/ppp/payment/approval/${order._id}`;
-				}
-			}).catch(err => {
 				// console.error(err);
 				window.location.href = `/error`;
 			}); 
 		},
+		// todo - delete.
+		// Payment by credit card, using PayPal Plus (ppp).
+		// payPalPlusPayment() {
+			// // Create a paypal payment and redirect to approval payment page.
+			// axios({
+				// method: 'post',
+				// url: `/checkout/payment/order/${order._id}`,
+				// // url: `/checkout/ppp/payment/create/${order._id}`,
+				// headers:{'csrf-token' : csrfToken},
+				// params: { method: 'ppp-credit'}
+			// }).then(response => {
+				// console.log(response.data);
+				// if (response.data.err) {
+					// window.location.href = `/error`
+					// // console.log(response.data.err);
+				// } else {
+					// // console.log(JSON.stringify(response.data, null, 2));
+					// window.location.href = `/checkout/ppp/payment/approval/${order._id}`
+				// }
+			// }).catch(err => {
+				// // console.error(err);
+				// window.location.href = `/error`
+			// }) 
+		// },
 	},
 	filters: {
 		formatMoney: function(val){
@@ -144,6 +148,7 @@ paypal.Button.render({
 		// allowed: [ paypal.FUNDING.CREDIT, paypal.FUNDING.CARD ],
 		disallowed: [ paypal.FUNDING.CREDIT ]
 	},
+	// todo - move do config.
 	client: {
 		sandbox:    'ASpmuFYrAVJcuEiBR5kP8lBdfEJqz4b8hsPQ0fKV7spzkiYFQc2BtA2q7M5vyXTPFuUELBiOpGmfhSZw',
 		production: 'AS_j3TPURVruBoT5aGQlyiSmvUH5s-q7y998n139LNrroOchlIGxK9BCWM0AcMxP2O9w_q-cZT00qDgi'

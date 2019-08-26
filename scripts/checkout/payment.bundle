@@ -15,21 +15,23 @@ let app = new Vue({
 		confirmPayment(payment){
 			axios({
 				method: 'post',
-				url: window.location.href,
+				url: `/checkout/payment/order/${order._id}`,
 				headers:{'csrf-token' : csrfToken},
 				data: { payment: payment },
 				params: { method: 'paypal'}
 			})
 			.then(response => {
 				// Correio answer.
-				if (response.data.err) {
-					console.log(response.data.err);
+				if (response.data.success) {
+					window.location.href = `/checkout/confirmation/order/${order._id}`
 				} else {
-					window.location.href = `/checkout/order-confirmation/${order._id}`
+					window.location.href = `/error`
+					// console.log(response.data.err);
 				}
 			})
 			.catch(err => {
-				console.error(err);
+				// console.error(err);
+				window.location.href = `/error`
 			}) 
 		},
 		// Payment by money or transfer.
@@ -49,7 +51,8 @@ let app = new Vue({
 				}
 			})
 			.catch(err => {
-				console.error(err);
+				// console.error(err);
+				window.location.href = `/error`
 			}) 
 		},
 		// todo - delete.
@@ -141,10 +144,11 @@ paypal.Button.render({
 		disallowed: [ paypal.FUNDING.CREDIT ]
 	},
 	// todo - move do config.
-	client: {
-		sandbox:    'ASpmuFYrAVJcuEiBR5kP8lBdfEJqz4b8hsPQ0fKV7spzkiYFQc2BtA2q7M5vyXTPFuUELBiOpGmfhSZw',
-		production: 'AS_j3TPURVruBoT5aGQlyiSmvUH5s-q7y998n139LNrroOchlIGxK9BCWM0AcMxP2O9w_q-cZT00qDgi'
-	},
+	client: client,
+	// client: {
+		// sandbox:    'ASpmuFYrAVJcuEiBR5kP8lBdfEJqz4b8hsPQ0fKV7spzkiYFQc2BtA2q7M5vyXTPFuUELBiOpGmfhSZw',
+		// production: 'AS_j3TPURVruBoT5aGQlyiSmvUH5s-q7y998n139LNrroOchlIGxK9BCWM0AcMxP2O9w_q-cZT00qDgi'
+	// },
 	// Set up the payment.
 	payment: function(data, actions) {
 		return actions.payment.create({

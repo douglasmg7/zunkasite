@@ -326,6 +326,10 @@ router.get('/payment/order/:order_id', (req, res, next)=>{
 					order: order,
 					nav: {
 					},
+					client: {
+						sandbox: ppConfig.sandbox.ppClientId,
+						production: ppConfig.production.ppClientId
+					},
 					env: (process.env.NODE_ENV === 'production' ? 'production': 'sandbox')
 				}
 			);
@@ -394,194 +398,6 @@ router.post('/needCpfAndMobileNumber', checkPermission, (req, res, next)=>{
 	});
 });
 
-// Payment old.
-router.post('/payment-old/:order_id', (req, res, next)=>{
-	Order.findById(req.params.order_id, (err, order)=>{
-		if (err) { return next(err); }
-		if (!order) {
-			return next(new Error('No order to continue with payment.')); }
-		else {
-			order.timestamps.placedAt = new Date();
-			order.status = 'placed';
-			// Paypal.
-			if (req.query.method === 'paypal') {
-				order.timestamps.paidAt = new Date();
-				order.status = 'paid';
-				order.payment = {
-					paypal: req.body.payment,
-					method: 'paypal'
-				};
-			}
-			// Money.
-			else if (req.query.method === 'money'){
-				order.payment = {
-					method: 'money'
-				};
-			}
-			// Transfer.
-			else if (req.query.method === 'transfer'){
-				order.payment = {
-					method: 'transfer'
-				};
-			// PayPal Plus credit card.
-			} else if (req.query.method === 'ppp-credit') {
-				order.timestamps.paidAt = new Date();
-				// Credit card pyament completed. If not the PayPal Plus system is Reviewing credit card payment.
-				if (order.pppExecutePayment.transactions[0].related_resources[0].sale.state === "completed") {
-					order.status = 'paid';
-				} 
-				order.payment = {
-					method: 'ppp-credit'	
-				};
-			}
-			else {
-				return next(new Error('No payment method selected.'));
-			}
-			order.save(err=>{
-				if (err) {
-					res.json({err});
-					return next(err);
-				}
-				else {
-					// Update stock.
-					for (var i = 0; i < req.cart.products.length; i++) {
-						// Product.updateOne({ _id: req.cart.products[i]._id }, { $inc: { storeProductQtd: -1 * req.cart.products[i].qtd } }, err=>{
-						Product.updateOne(
-							{ _id: req.cart.products[i]._id },
-							{ $inc: {
-								storeProductQtd: -1 * req.cart.products[i].qtd,
-								storeProductQtdSold: 1 * req.cart.products[i].qtd
-							} }, err=>{
-								if (err) {
-									log.error(err.stack);
-								}
-							});
-					}
-					// Clean cart.
-					req.cart.clean();
-					// Send email.
-					let mailOptions = {
-						from: '',
-						to: req.user.email,
-						subject: 'Confirmação de pedido.'
-					};
-					// Paypal or PayPal Plus credit card.
-					if (req.query.method === 'paypal' || req.query.method === 'ppp-credit'){
-						mailOptions.text = 'Parabéns! Sua compra já foi concluída, agora é só aguardar o envio do produto.\n\n' +
-							'Número de pedido: ' + order._id + '\n\n' +
-							'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' +
-							'https://' + req.app.get('hostname')+ '/checkout/confirmation/order/' + order._id + '\n\n' +
-							'Muito obrigado por comprar na ZUNKA.'
-					}
-					// Money.
-					if (req.query.method === 'money'){
-						mailOptions.text = 'Parabéns! Seu pedido foi realizado, agora é só aguardar o envio do produto.\n\n' +
-							'O pagamento será realizado no momento do recebimento do produto.\n\n' +
-							'Número de pedido: ' + order._id + '\n\n' +
-							'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' +
-							'https://' + req.app.get('hostname')+ '/checkout/confirmation/order/' + order._id + '\n\n' +
-							'Muito obrigado por comprar na ZUNKA.'
-					}
-					// Transfer.
-					else if (req.query.method === 'transfer'){
-						mailOptions.text = 'Parabéns! Seu pedido foi realizado, agora é só efetuar a transferência.\n\n' +
-							'Dados bancários\n' +
-							'   Titular: ZUNKA COM E SERV EM INF EIRELI\n' +
-							'   CNPJ: 15.178.404/0001-47\n' +
-							'   Banco: Santander (033)\n' +
-							'   Agencia: 0944\n' +
-							'   Conta: 13001412-1\n' +
-							'   Valor a ser depositado: R$ ' + order.totalPrice.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '\n\n' +
-							'Número de pedido: ' + order._id + '\n\n' +
-							'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' +
-							'https://' + req.app.get('hostname')+ '/checkout/confirmation/order/' + order._id + '\n\n' +
-							'Muito obrigado por seu pedido.'
-					}
-					// Email confirmation to client.
-					emailSender.sendMail(mailOptions, err=>{
-						if (err) {
-							log.error(err.stack);
-						} else {
-							log.info(`Email with order confirmation sent to ${req.user.email}`);
-						}
-						res.json({});
-						// Listed itens string.
-						let strItens = "";
-						for (let index = 0; index < order.items.length; index++) {
-							strItens = strItens + order.items[index].name + '\t\tR$' + converToBRCurrencyString(order.items[index].price) + '\t\t' + order.items[index].quantity + ' unidade(s)\n';
-						}
-						// Tipo de pagamento.
-						let strPaymentMethod;
-						switch (order.payment.method) {
-							case "transfer":
-								strPaymentMethod = "Transferência bancária";
-								break;
-							case "money":
-								strPaymentMethod = "Dinheiro";
-								break;
-							case "paypal":
-								strPaymentMethod = "Paypal";
-								break;
-							case "ppp-credit":
-								strPaymentMethod = "Cartão de crédito";
-								break;
-							default:
-								break;
-						}
-						// Email to store admin.
-						let toAdminMailOptions = {
-							from: '',
-							to: emailSender.adminEmail,
-							subject: 'Novo pedido no site Zunka.com.br.',
-							text: 'Número de pedido: ' + order._id + '\n\n' +
-
-							'Cliente\n' +
-							'Nome: ' + order.name + '\n' +
-							'Email: ' + order.email + '\n' +
-							'CPF: ' + order.cpf + '\n' +
-							'Celular: ' + order.mobileNumber + '\n\n' +
-
-							'Endereço\n' +
-							'Nome: ' + order.shipping.address.name + '\n' +  
-							'Telefone: ' + order.shipping.address.phone + '\n' +  
-							'Endereço: ' + order.shipping.address.address + '\n' +  
-							'Número: ' + order.shipping.address.addressNumber + '\n' +  
-							'Complemento: ' + order.shipping.address.addressComplement + '\n' +  
-							'Bairro: ' + order.shipping.address.district + '\n' +  
-							'Cidade: ' + order.shipping.address.city + '\n' +  
-							'Estado: ' + order.shipping.address.state + '\n' +  
-							'CEP: ' + order.shipping.address.cep + '\n\n' +  
-
-							'Pagamento\n' + 
-							'Método: ' + strPaymentMethod + '\n\n' +  
-
-							'Envio\n' + 
-							'Método: ' + order.shipping.methodDesc + '\n' +  
-							'Prazo: ' + order.shipping.deadline + 'dia(s)\n' +  
-							'Valor: R$ ' + converToBRCurrencyString(order.shipping.price) + '\n\n' +  
-
-							'Ítens\n' +
-							strItens + '\n' +
-
-							'Valor total com frete\n' + 
-							'R$ ' + converToBRCurrencyString(order.totalPrice) + '\n\n' +  
-
-							'https://' + req.app.get('hostname')+ '/admin/orders' + '\n\n'
-						};
-						emailSender.sendMail(toAdminMailOptions, err=>{
-							if (err) {
-								log.error(err.stack);
-							} else {
-								log.info(`Email with alert of new order sent to ${emailSender.adminEmail}`);
-							}
-						})
-					})
-				}
-			})
-		}
-	});
-});
-
 // Payment.
 router.post('/payment/order/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
@@ -589,14 +405,14 @@ router.post('/payment/order/:order_id', (req, res, next)=>{
 		if (!order) { return next(new Error('No order to continue with payment.')); }
 		switch(req.query.method) {
 			case 'paypal':
-				// order.status = 'placed';
-				order.timestamps.placedAt = new Date();
-				order.timestamps.paidAt = new Date();
 				order.status = 'paid';
+				order.timestamps.placedAt = new Date();
+				order.timestamps.paidAt = order.timestamps.placedAt;
 				order.payment = {
 					paypal: req.body.payment,
 					method: 'paypal'
 				};
+				closeOrder(order, req, res);
 				break;
 			case 'money':
 				order.payment = {
@@ -625,18 +441,13 @@ router.post('/payment/order/:order_id', (req, res, next)=>{
 						}
 					})
 				});
-				// todo - put this code on review.
-				// order.timestamps.paidAt = new Date();
-				// // Credit card pyament completed. If not the PayPal Plus system is Reviewing credit card payment.
-				// if (order.pppExecutePayment.transactions[0].related_resources[0].sale.state === "completed") {
-					// order.status = 'paid';
-				// } 
 				break;
 			default:
 				return next(new Error('No payment method selected.'));
 		}
 		// Not need save for ppp-credit, createPayment alredy do that. 
-		if (order.payment.method != 'ppp-credit') {
+		// Not need save for paypal, closeOrder alredy do that. 
+		if (order.payment.method == 'transfer' || order.payment.method == 'money') {
 			order.save(err=>{
 				if (err) {
 					res.json({err});
@@ -691,14 +502,7 @@ router.post('/close/order/:order_id', (req, res, next)=>{
 				closeOrder(order, req, res);
 				break;
 			case 'paypal':
-				order.timestamps.placedAt = new Date();
-				order.timestamps.paidAt = order.timestamps.placedAt; 
-				order.status = 'paid';
-				order.payment = {
-					// paypal: req.body.payment,
-					// method: 'paypal'
-				};
-				closeOrder(order, req, res);
+				// Norhting to do, alredy did at /payment/order/:order post.
 				break;
 			case 'ppp-credit':
 				if (!order.payment.pppApprovalPayment) {
@@ -739,7 +543,7 @@ router.post('/close/order/:order_id', (req, res, next)=>{
 
 // Close order and render confirmation.
 function closeOrder(order, req, res) {
-	log.debug(`Test pppExecutePayment: ${JSON.stringify(order.payment.pppExecutePayment, null, 2)}`);
+	// log.debug(`Test pppExecutePayment: ${JSON.stringify(order.payment.pppExecutePayment, null, 2)}`);
 	order.save(err=>{
 		if (err) {
 			log.error("Closing order. Error saving order on db.");
@@ -1175,11 +979,13 @@ function converToBRCurrencyString(val) {
  ******************************************************************************/
 // Sandbox configurations.
 let ppUrl = ppConfig.sandbox.ppUrl;
+let ppIpnUrl = ppConfig.sandbox.ppIpnUrl;
 let ppClientId = ppConfig.sandbox.ppClientId;
 let ppSecret = ppConfig.sandbox.ppSecret;
 // Production configurations.
 if (process.env.NODE_ENV == 'production') {
 	ppUrl = ppConfig.production.ppUrl;
+	ppIpnUrl = ppConfig.production.ppIpnUrl;
 	ppClientId = ppConfig.production.ppClientId;
 	ppSecret = ppConfig.production.ppSecret;
 }
@@ -1201,6 +1007,36 @@ router.get('/ppp/return/null', (req, res, next)=>{
 // PayPal Plus on approval payment call it on cancel.
 router.get('/ppp/cancel/null', (req, res, next)=>{
 	res.json({ msg: "ppp cancel" });
+});
+
+// PayPal Plus IPN listener.
+router.get('/ppp/ipn', (req, res, next)=>{
+	log.debug(`ppp ipn message: ${JSON.stringify(req.body, null, 2)}`);
+	// return 200.
+	res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.header("Pragma", "no-cache");
+    res.header("Expires", 0);
+	res.send();
+	// res.status(200).json({});
+	axios({
+		method: 'post',
+		url: `${ppIpnUrl}`,
+		headers: {
+			"Accept": "application/json", 
+			"Accept-Language": "en_US",
+			"Content-Type": "application/json",
+			// "Authorization": ppAccessTokenData.token_type + " " + ppAccessTokenData.access_token
+		},
+		data: req.body
+	}).then(response => {
+		if (response.data.err) {
+			log.debug(new Error(`Sending POST to Paypal IPN. ${JSON.stringify(response.data.err, null, 3)}`));
+		} else {
+			log.debug(`Response to POST to Paypal IPN. ${JSON.stringify(response.data, null, 3)}`);
+		}
+	}).catch(err => {
+		return log.debug(new Error(`Sending POST to Paypal IPN. ${JSON.stringify(err.response, null, 3)}`));
+	}); 
 });
 
 // PayPal Plus create payment.
@@ -1255,7 +1091,6 @@ function createPayment(order, cb){
 			}
 		}],
 		redirect_urls: {
-			// todo - create this points.
 			return_url: "https://www.zunka.com.br/checkout/ppp/return/null",
 			cancel_url: "https://www.zunka.com.br/checkout/ppp/cancel/null"
 		}
@@ -1297,120 +1132,14 @@ function createPayment(order, cb){
 			cb(new Error(`Creating payment request on paypal web server. ${err.message}`));
 		}); 
 	});
-
-	// Create payment request.
-	// pppCreatePayment(payReqData, (err, result)=>{
-		// if (err) {
-			// log.error(err.stack);
-			// res.json({ success: false });
-		// } else {
-			// // Save paypal payment request result.
-			// order.payment.pppCreatePayment = result;
-			// order.save((err)=>{
-				// if (err) {
-					// log.error(err.stack);
-					// res.json({ success: false });
-				// }
-				// else {
-					// res.json({ success: true });
-				// }
-			// });
-		// }
-	// });
 };
-
-// todo - delete.
-// PayPal Plus create payment.
-// router.post('/ppp/payment/create-old/:order_id', (req, res, next)=>{
-	// Order.findById(req.params.order_id, (err, order)=>{
-		// if (err) { return next(err); }
-		// if (!order) {
-			// return next(new Error('No order to continue with payment.')); }
-		// else {
-			// // Items.
-			// let items = [];
-			// for (var i = 0; i < order.items.length; i++) {
-				// let item = {
-					// name: order.items[i].name,
-					// // item.description: '',
-					// quantity: order.items[i].quantity,
-					// price: order.items[i].price,
-					// //- tax: "0.01",
-					// sku: order.items[i]._id,
-					// currency: "BRL"
-				// };
-				// items.push(item);
-			// }
-			// // Shipping address.
-			// let shippingAddress = {
-				// recipient_name: order.shipping.address.name,
-				// line1: `${order.shipping.address.address}, ${order.shipping.address.addressNumber} - ${order.shipping.address.district}`,
-				// line2: order.shipping.address.complement,
-				// city: order.shipping.address.city,
-				// country_code: 'BR',
-				// postal_code: order.shipping.address.cep,
-				// phone: order.shipping.address.phone,
-				// state: order.shipping.address.state
-			// };
-
-			// let payReqData = {
-				// transactions: [{
-					// amount: {
-						// currency: "BRL",
-						// total: order.totalPrice,
-						// details: {
-							// subtotal: order.subtotalPrice,
-							// shipping: order.shipping.price,
-						// }
-					// },
-					// // payee: {
-						// // email: emailSender.adminEmail
-					// // },
-					// description: "Itens to carrinho.",
-					// payment_options: {
-						// allowed_payment_method: "IMMEDIATE_PAY"
-					// },
-					// // invoice_number: "942342",
-					// item_list: {
-						// items: items,
-						// shipping_address: shippingAddress
-					// }
-				// }],
-				// redirect_urls: {
-					// // todo - create this points.
-					// return_url: "https://www.zunka.com.br/checkout/ppp/return/null",
-					// cancel_url: "https://www.zunka.com.br/checkout/ppp/cancel/null"
-				// }
-			// };
-			// // Create payment request.
-			// pppCreatePayment(payReqData, (err, result)=>{
-				// if (err) {
-					// log.error(err.stack);
-					// res.json({ success: false });
-				// } else {
-					// // Save paypal payment request result.
-					// order.payment.pppCreatePayment = result;
-					// order.save((err)=>{
-						// if (err) {
-							// log.error(err.stack);
-							// res.json({ success: false });
-						// }
-						// else {
-							// res.json({ success: true });
-						// }
-					// });
-				// }
-			// });
-		// }
-	// });
-// });
 
 // PayPal Plus approval payment (payment using credit card) - page.
 router.get('/ppp/payment/approval/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
 		if (err) { return next(err); }
 		if (!order) {
-			// todo-test
+			// todo - test.
 			return next(new Error('No order to continue with approval payment.')); }
 		else {
 			// todo - avoid process order again.
@@ -1432,7 +1161,7 @@ router.post('/ppp/payment/approval/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
 		if (err) { return next(err); }
 		if (!order) {
-			// todo-test
+			// todo - test.
 			return next(new Error('No order to continue with approval payment.')); }
 		else {
 			// log.debug(`Paypal approval return: ${JSON.stringify(req.body.pppApprovalPayment, null, 2)}`);
@@ -1446,55 +1175,6 @@ router.post('/ppp/payment/approval/:order_id', (req, res, next)=>{
 		}
 	});
 });
-
-// todo - delete.
-// Paypal Plus execute payment (payment using credit card).
-// router.post('/ppp/payment/execute-old/:order_id', (req, res, next)=>{
-	// Order.findById(req.params.order_id, (err, order)=>{
-		// if (err) { return next(err); }
-		// if (!order) {
-			// // todo-test
-			// return next(new Error('No order to continue with execute payment.')); }
-		// else {
-			// log.debug(`Paypal approval return: ${JSON.stringify(req.body.pppApprovalPayment, null, 2)}`);
-			// order.payment.pppApprovalPayment = req.body.pppApprovalPayment;
-			// order.save(err=>{
-				// if (err) {
-					// res.json({ success: false });
-					// return next(err);
-				// }
-				// executePayment(order, (err, pppExecutePayment)=>{
-					// if (err) {
-						// // Execute payment error.
-						// if (err.response && err.response.status == 400) {
-							// log.debug(`Execute payment error 400: ${JSON.stringify(err, null, 2)}`);
-							// // todo - handle error messages.
-							// if (err.response.data.name == "") {
-								// return res.json({ success: false, msg: "" });
-							// }
-						// } 
-						// return res.json({ success: false, msg: "" });
-						// console.error(err);
-					// }
-
-					// order.pppExecutePayment = pppExecutePayment;
-					// order.save(err=>{
-						// // todo - test if error return next log on file correctly.
-						// if (err) {
-							// res.json({ success: false });
-							// return next(err);
-						// }
-						// return res.json({ 
-							// success: true,
-							// saleId: order.pppExecutePayment.transactions[0].related_resources[0].sale.id,
-							// state: order.pppExecutePayment.transactions[0].related_resources[0].sale.state 
-						// });
-					// });
-				// });
-			// });
-		// }
-	// });
-// });
 
 // Get access token.
 // If not in db or in db but expired, take from paypal server.
@@ -1553,45 +1233,6 @@ function getAccessToken(cb){
 		}); 
 	});
 }
-
-// todo - delete.
-// Create payment request on PyaPal Plus server.
-// function pppCreatePayment(payReqData, cb){
-	// // Get access token.
-	// getAccessToken((err, ppAccessTokenData)=>{
-		// if (err) {
-			// return cb (err);
-		// } 	
-		// payReqData.intent = "sale";
-		// payReqData.payer = { payment_method: "paypal" };
-		// payReqData.application_context = {
-			// brand_name: "Zunka",
-			// shipping_preference: "SET_PROVIDED_ADDRESS"
-		// }, 
-		// log.debug(`payReqData: ${JSON.stringify(payReqData, null, 2)}`);
-		// // Create a payment request.
-		// axios({
-			// method: 'post',
-			// url: `${ppUrl}payments/payment/`,
-			// headers: {
-				// "Accept": "application/json", 
-				// "Accept-Language": "en_US",
-				// "Content-Type": "application/json",
-				// "Authorization": ppAccessTokenData.token_type + " " + ppAccessTokenData.access_token
-			// },
-			// data: payReqData
-		// }).then(response => {
-			// if (response.data.err) {
-				// return cb(new Error(`Creating payment request on paypal web service. ${response.data.err}`));
-			// } else {
-				// log.debug(`Created a payment request on payapl web service: ${JSON.stringify(response.data, null, 2)}`);
-				// return cb(null, response.data);
-			// }
-		// }).catch(err => {
-			// cb(new Error(`Creating payment request on paypal web server. ${err.message}`));
-		// }); 
-	// });
-// }
 
 // Execute payment.
 function executePayment(order, cb){
