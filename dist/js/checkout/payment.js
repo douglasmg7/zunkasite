@@ -60,30 +60,29 @@ let app = new Vue({
 				window.location.href = `/error`;
 			}); 
 		},
-		// todo - delete.
 		// Payment by credit card, using PayPal Plus (ppp).
-		// payPalPlusPayment() {
-			// // Create a paypal payment and redirect to approval payment page.
-			// axios({
-				// method: 'post',
-				// url: `/checkout/payment/order/${order._id}`,
-				// // url: `/checkout/ppp/payment/create/${order._id}`,
-				// headers:{'csrf-token' : csrfToken},
-				// params: { method: 'ppp-credit'}
-			// }).then(response => {
-				// console.log(response.data);
-				// if (response.data.err) {
-					// window.location.href = `/error`
-					// // console.log(response.data.err);
-				// } else {
-					// // console.log(JSON.stringify(response.data, null, 2));
-					// window.location.href = `/checkout/ppp/payment/approval/${order._id}`
-				// }
-			// }).catch(err => {
-				// // console.error(err);
-				// window.location.href = `/error`
-			// }) 
-		// },
+		payPalPlusPayment() {
+			// Create a paypal payment and redirect to approval payment page.
+			axios({
+				method: 'post',
+				url: `/checkout/payment/order/${order._id}`,
+				// url: `/checkout/ppp/payment/create/${order._id}`,
+				headers:{'csrf-token' : csrfToken},
+				params: { method: 'ppp-credit'}
+			}).then(response => {
+				console.log(response.data);
+				if (response.data.err) {
+					window.location.href = `/error`;
+					// console.log(response.data.err);
+				} else {
+					// console.log(JSON.stringify(response.data, null, 2));
+					window.location.href = `/checkout/ppp/payment/approval/${order._id}`;
+				}
+			}).catch(err => {
+				// console.error(err);
+				window.location.href = `/error`;
+			}); 
+		},
 	},
 	filters: {
 		formatMoney: function(val){
@@ -149,10 +148,11 @@ paypal.Button.render({
 		disallowed: [ paypal.FUNDING.CREDIT ]
 	},
 	// todo - move do config.
-	client: {
-		sandbox:    'ASpmuFYrAVJcuEiBR5kP8lBdfEJqz4b8hsPQ0fKV7spzkiYFQc2BtA2q7M5vyXTPFuUELBiOpGmfhSZw',
-		production: 'AS_j3TPURVruBoT5aGQlyiSmvUH5s-q7y998n139LNrroOchlIGxK9BCWM0AcMxP2O9w_q-cZT00qDgi'
-	},
+	client: client,
+	// client: {
+		// sandbox:    'ASpmuFYrAVJcuEiBR5kP8lBdfEJqz4b8hsPQ0fKV7spzkiYFQc2BtA2q7M5vyXTPFuUELBiOpGmfhSZw',
+		// production: 'AS_j3TPURVruBoT5aGQlyiSmvUH5s-q7y998n139LNrroOchlIGxK9BCWM0AcMxP2O9w_q-cZT00qDgi'
+	// },
 	// Set up the payment.
 	payment: function(data, actions) {
 		return actions.payment.create({

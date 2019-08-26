@@ -1011,13 +1011,20 @@ router.get('/ppp/cancel/null', (req, res, next)=>{
 
 // PayPal Plus IPN listener.
 router.get('/ppp/ipn', (req, res, next)=>{
-	log.debug(`ppp ipn message: ${JSON.stringify(req.body, null, 2)}`);
-	// return 200.
-	res.header("Cache-Control", "no-cache, no-store, must-revalidate");
-    res.header("Pragma", "no-cache");
-    res.header("Expires", 0);
-	res.send();
-	// res.status(200).json({});
+	log.debug("IPN Notification Event Received");
+	log.debug(`IPN Notification message: ${JSON.stringify(req.body, null, 2)}`);
+	if (req.method !== "POST") {
+		log.error("IPN notification request method not allowed.");
+		res.status(405).send("Method Not Allowed");
+	} else {
+		// Return empty 200 response to acknowledge IPN post success.
+		log.debug("IPN Notification Event received successfully.");
+		res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+		res.header("Pragma", "no-cache");
+		res.header("Expires", 0);
+		res.status(200).end();
+	}
+	// Certify if message is válid.
 	axios({
 		method: 'post',
 		url: `${ppIpnUrl}`,
@@ -1033,6 +1040,11 @@ router.get('/ppp/ipn', (req, res, next)=>{
 			log.debug(new Error(`Sending POST to Paypal IPN. ${JSON.stringify(response.data.err, null, 3)}`));
 		} else {
 			log.debug(`Response to POST to Paypal IPN. ${JSON.stringify(response.data, null, 3)}`);
+			if (response.data == "VERIFIED") {
+				log.debug("IPN válid.");
+			} else {
+				log.debug("IPN inválid.");
+			}
 		}
 	}).catch(err => {
 		return log.debug(new Error(`Sending POST to Paypal IPN. ${JSON.stringify(err.response, null, 3)}`));
