@@ -470,7 +470,7 @@ router.post('/payment-old/:order_id', (req, res, next)=>{
 						mailOptions.text = 'Parabéns! Sua compra já foi concluída, agora é só aguardar o envio do produto.\n\n' +
 							'Número de pedido: ' + order._id + '\n\n' +
 							'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' +
-							'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
+							'https://' + req.app.get('hostname')+ '/checkout/confirmation/order/' + order._id + '\n\n' +
 							'Muito obrigado por comprar na ZUNKA.'
 					}
 					// Money.
@@ -479,7 +479,7 @@ router.post('/payment-old/:order_id', (req, res, next)=>{
 							'O pagamento será realizado no momento do recebimento do produto.\n\n' +
 							'Número de pedido: ' + order._id + '\n\n' +
 							'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' +
-							'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
+							'https://' + req.app.get('hostname')+ '/checkout/confirmation/order/' + order._id + '\n\n' +
 							'Muito obrigado por comprar na ZUNKA.'
 					}
 					// Transfer.
@@ -494,7 +494,7 @@ router.post('/payment-old/:order_id', (req, res, next)=>{
 							'   Valor a ser depositado: R$ ' + order.totalPrice.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '\n\n' +
 							'Número de pedido: ' + order._id + '\n\n' +
 							'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' +
-							'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
+							'https://' + req.app.get('hostname')+ '/checkout/confirmation/order/' + order._id + '\n\n' +
 							'Muito obrigado por seu pedido.'
 					}
 					// Email confirmation to client.
@@ -774,7 +774,7 @@ function closeOrder(order, req, res) {
 						'O pagamento será realizado no momento do recebimento do produto.\n\n' +
 						'Número de pedido: ' + order._id + '\n\n' +
 						'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' +
-						'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
+						'https://' + req.app.get('hostname')+ '/checkout/confirmation/order/' + order._id + '\n\n' +
 						'Muito obrigado por comprar na ZUNKA.'
 					break;
 				case 'transfer':
@@ -788,14 +788,14 @@ function closeOrder(order, req, res) {
 						'   Valor a ser depositado: R$ ' + order.totalPrice.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '\n\n' +
 						'Número de pedido: ' + order._id + '\n\n' +
 						'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' +
-						'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
+						'https://' + req.app.get('hostname')+ '/checkout/confirmation/order/' + order._id + '\n\n' +
 						'Muito obrigado por seu pedido.'
 					break;
 				default:
 					mailOptions.text = 'Parabéns! Sua compra já foi concluída, agora é só aguardar o envio do produto.\n\n' +
 						'Número de pedido: ' + order._id + '\n\n' +
 						'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' +
-						'https://' + req.app.get('hostname')+ '/checkout/order-confirmation/' + order._id + '\n\n' +
+						'https://' + req.app.get('hostname')+ '/checkout/confirmation/order/' + order._id + '\n\n' +
 						'Muito obrigado por comprar na ZUNKA.'
 					break;
 			}
@@ -899,45 +899,6 @@ router.get('/confirmation/order/:order_id', (req, res, next)=>{
 		}
 	});
 });
-
-
-// todo - delete.
-// Close order.
-// router.post('/close-order-old/:order_id', (req, res, next)=>{
-	// Order.findById(req.params.order_id, (err, order)=>{
-		// if (err) { return next(err); }
-		// if (!order) {
-			// return next(new Error('No order to confirm.')); }
-		// else {
-			// res.render('checkout/orderConfirmation',
-				// {
-					// order: order,
-					// nav: {
-					// }
-				// }
-			// );
-		// }
-	// });
-// });
-
-// todo - delete.
-// Order confirmation - page.
-// router.get('/order-confirmation-old/:order_id', (req, res, next)=>{
-	// Order.findById(req.params.order_id, (err, order)=>{
-		// if (err) { return next(err); }
-		// if (!order) {
-			// return next(new Error('No order to confirm.')); }
-		// else {
-			// res.render('checkout/orderConfirmation',
-				// {
-					// order: order,
-					// nav: {
-					// }
-				// }
-			// );
-		// }
-	// });
-// });
 
 // Estimate shipment.
 router.get('/ship-estimate', (req, res, next)=>{
