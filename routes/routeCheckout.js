@@ -970,39 +970,9 @@ router.post('/update-stock', (req, res, next)=>{
 	res.json({ success: true , cart: req.cart });
 });
 
-// Test post messages.
-router.get('/send-post', (req, res, next)=>{
-	log.debug(`req: ${JSON.stringify(req.headers, null, 3)}`);
-	let t = {a: 'asdf', b: 'zxcv'};
-	log.debug('requesting http post.');
-	log.debug(`csrf token: ${res.locals.csrfToken}`);
-	// axios.post('http://localhost:3080/checkout/debug-post', t, { headers: { 'x-csrf-token': res.locals.csrfToken }})
-	axios({
-		method: 'post',
-		url: 'http://localhost:3080/checkout/debug-post', 
-		data: t,
-		// headers: { 'x-csrf-token': res.locals.csrfToken }
-		headers: {"X-CSRFToken": res.locals.csrfToken}
-	})
-	.then(response => {
-		log.debug(JSON.stringify(response, null, 3));
-		res.end(response.data);
-	})
-	.catch(err => {
-		log.error(err);
-	});
-});
-
-// Test post messages.
-router.post('/debug-post', (req, res, next)=>{
-	log.debug(`debuf-post body: ${req.body}`);
-	res.end('OK');
-});
-
 function converToBRCurrencyString(val) {
 	return val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
-
 
 /******************************************************************************
 / Paypal
@@ -1021,61 +991,6 @@ if (process.env.NODE_ENV == 'production') {
 }
 // Redis keys.
 let redisPaypalAccessTokenKey = "paypalAccessToken"
-
-// PayPal Plus on approval payment call it on continue.
-router.get('/ppp/return/null', (req, res, next)=>{
-	// res.json({ msg: "ppp return" });
-	// res.status(400).send("Bad request.");
-	res.status(400).json({
-		"name":"TRANSACTION_REFUSED",
-		"message":"The request was refused",
-		"information_link":"https://developer.paypal.com/webapps/developer/docs/api/#TRANSA CTION_REFUSED",
-		"debug_id":"5c3b33b7d52d6"
-	});
-});
-
-// PayPal Plus on approval payment call it on cancel.
-router.get('/ppp/cancel/null', (req, res, next)=>{
-	res.json({ msg: "ppp cancel" });
-});
-
-// PayPal Plus IPN listener.
-router.get('/ppp/ipn', (req, res, next)=>{
-	log.debug("IPN Notification Event Received");
-	log.debug(`IPN Notification message: ${JSON.stringify(req.body, null, 2)}`);
-	if (req.method !== "POST") {
-		log.error("IPN notification request method not allowed.");
-		res.status(405).send("Method Not Allowed");
-	} else {
-		// Return empty 200 response to acknowledge IPN post success.
-		log.debug("IPN Notification Event received successfully.");
-		res.header("Cache-Control", "no-cache, no-store, must-revalidate");
-		res.header("Pragma", "no-cache");
-		res.header("Expires", 0);
-		res.status(200).end();
-	}
-	// Certify if message is válid.
-	// Convert JSON ipn data to a query string.
-	let formUrlEncodedBody = qs.stringify(req.body);
-	// Build the body of the verification post message by prefixing 'cmd=_notify-validate'.
-	let verificationBody = `cmd=_notify-validate&${formUrlEncodedBody}`;
-	log.debug(`verificationBody: ${verificationBody}`);
-	axios.post(ppIpnUrl, verificationBody)
-		.then(response => {
-			if (response.data.err) {
-				log.debug(new Error(`Sending POST to Paypal IPN. ${JSON.stringify(response.data.err, null, 3)}`));
-			} else {
-			log.debug(`Response to POST to Paypal IPN. ${JSON.stringify(response.data, null, 3)}`);
-			if (response.data == "VERIFIED") {
-				log.debug("IPN válid.");
-			} else {
-				log.debug("IPN inválid.");
-			}
-		}
-		}).catch(err => {
-			return log.debug(new Error(`Sending POST to Paypal IPN. ${JSON.stringify(err.response, null, 3)}`));
-		}); 
-});
 
 // PayPal Plus create payment.
 function createPayment(order, cb){
@@ -1274,6 +1189,52 @@ function getAccessToken(cb){
 
 // Execute payment.
 function executePayment(order, cb){
+	// Get access token.
+	getAccessToken((err, ppAccessTokenData)=>{
+		if (err) {
+			return cb (err);
+		} 	
+		// Url for execute payment.
+		let urlExecute = "";
+		order.payment.pppCreatePayment.links.forEach(item=>{
+			if (item.rel == "execute") {
+				urlExecute = item.href;
+				return;
+			}
+		});
+		// log.debug(`urlExecute: ${urlExecute}`);
+		if (!urlExecute) {
+			return cb(new Error(`Executing payment, no url execute payment found.`));
+		}
+		// Payer id.
+		let payerId = order.payment.pppApprovalPayment.result.payer.payer_info.payer_id;
+		// log.debug(`payerId: ${payerId}"`);
+		// Execute payment.
+		axios({
+			method: 'post',
+			url: urlExecute,
+			headers: {
+				"Accept": "application/json", 
+				"Accept-Language": "en_US",
+				"Content-Type": "application/json",
+				"Authorization": ppAccessTokenData.token_type + " " + ppAccessTokenData.access_token
+			},
+			data: { payer_id: payerId}
+		}).then(response => {
+			if (response.data.err) {
+				return cb(new Error(`Executing payment on paypal web service. ${response.data.err}`));
+			} else {
+				log.debug(`Pyapal execute payment: ${JSON.stringify(response.data, null, 2)}`);
+				return cb(null, response.data);
+			}
+		}).catch(err => {
+			return cb(err);
+		}); 
+	});
+}
+
+// Get payment.
+function getPayment(order, cb){
 	// Get access token.
 	getAccessToken((err, ppAccessTokenData)=>{
 		if (err) {

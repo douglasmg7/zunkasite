@@ -67,6 +67,7 @@ const routeCheckout = require('./routes/routeCheckout');
 const routeProductConfig = require('./routes/routeProductConfig.js');
 const routeTest = require('./routes/routeTest');
 const routeAdmin = require('./routes/routeAdmin');
+const routeExt = require('./routes/routeExt');
 
 // Run mode.
 if (process.env.NODE_ENV == 'production') {
@@ -149,6 +150,9 @@ var sessionOpts = {
 //   app.set('trust proxy', 1); // trust first proxy
 //   sessionOpts.cookie.secure = true; // serve secure cookies
 // }
+
+// Before csurf, so not block by csrf.
+app.use('/ext', routeExt);
 
 // authentication
 app.use(cookieParser(app.get('secret')));
