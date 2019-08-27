@@ -7,6 +7,7 @@ const soap = require('soap');
 // const https = require('https');
 // const request = require('request');
 const axios = require('axios');
+const qs = require('querystring');
 
 // Personal modules.
 const log = require('../config/log');
@@ -969,6 +970,35 @@ router.post('/update-stock', (req, res, next)=>{
 	res.json({ success: true , cart: req.cart });
 });
 
+// Test post messages.
+router.get('/send-post', (req, res, next)=>{
+	log.debug(`req: ${JSON.stringify(req.headers, null, 3)}`);
+	let t = {a: 'asdf', b: 'zxcv'};
+	log.debug('requesting http post.');
+	log.debug(`csrf token: ${res.locals.csrfToken}`);
+	// axios.post('http://localhost:3080/checkout/debug-post', t, { headers: { 'x-csrf-token': res.locals.csrfToken }})
+	axios({
+		method: 'post',
+		url: 'http://localhost:3080/checkout/debug-post', 
+		data: t,
+		// headers: { 'x-csrf-token': res.locals.csrfToken }
+		headers: {"X-CSRFToken": res.locals.csrfToken}
+	})
+	.then(response => {
+		log.debug(JSON.stringify(response, null, 3));
+		res.end(response.data);
+	})
+	.catch(err => {
+		log.error(err);
+	});
+});
+
+// Test post messages.
+router.post('/debug-post', (req, res, next)=>{
+	log.debug(`debuf-post body: ${req.body}`);
+	res.end('OK');
+});
+
 function converToBRCurrencyString(val) {
 	return val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
@@ -1025,20 +1055,16 @@ router.get('/ppp/ipn', (req, res, next)=>{
 		res.status(200).end();
 	}
 	// Certify if message is válid.
-	axios({
-		method: 'post',
-		url: `${ppIpnUrl}`,
-		headers: {
-			"Accept": "application/json", 
-			"Accept-Language": "en_US",
-			"Content-Type": "application/json",
-			// "Authorization": ppAccessTokenData.token_type + " " + ppAccessTokenData.access_token
-		},
-		data: req.body
-	}).then(response => {
-		if (response.data.err) {
-			log.debug(new Error(`Sending POST to Paypal IPN. ${JSON.stringify(response.data.err, null, 3)}`));
-		} else {
+	// Convert JSON ipn data to a query string.
+	let formUrlEncodedBody = qs.stringify(req.body);
+	// Build the body of the verification post message by prefixing 'cmd=_notify-validate'.
+	let verificationBody = `cmd=_notify-validate&${formUrlEncodedBody}`;
+	log.debug(`verificationBody: ${verificationBody}`);
+	axios.post(ppIpnUrl, verificationBody)
+		.then(response => {
+			if (response.data.err) {
+				log.debug(new Error(`Sending POST to Paypal IPN. ${JSON.stringify(response.data.err, null, 3)}`));
+			} else {
 			log.debug(`Response to POST to Paypal IPN. ${JSON.stringify(response.data, null, 3)}`);
 			if (response.data == "VERIFIED") {
 				log.debug("IPN válid.");
@@ -1046,9 +1072,9 @@ router.get('/ppp/ipn', (req, res, next)=>{
 				log.debug("IPN inválid.");
 			}
 		}
-	}).catch(err => {
-		return log.debug(new Error(`Sending POST to Paypal IPN. ${JSON.stringify(err.response, null, 3)}`));
-	}); 
+		}).catch(err => {
+			return log.debug(new Error(`Sending POST to Paypal IPN. ${JSON.stringify(err.response, null, 3)}`));
+		}); 
 });
 
 // PayPal Plus create payment.
