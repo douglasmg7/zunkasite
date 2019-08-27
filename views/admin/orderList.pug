@@ -89,6 +89,7 @@ block content
             .item
                 h3.sub-title Status
                 p {{status(orderSelec)}}
+                input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='verifyPaymentCompleted(orderSelec)' value='Verificar se pagamento foi realizado')
             .item
                 h3.sub-title Ação
                 p {{action(orderSelec)}}

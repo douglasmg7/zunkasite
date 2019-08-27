@@ -1129,6 +1129,44 @@ router.post('/ppp/payment/approval/:order_id', (req, res, next)=>{
 	});
 });
 
+// Check if payment is complete.
+router.get('/ppp/payment/complete/:order_id', (req, res, next)=>{
+	Order.findById(req.params.order_id, (err, order)=>{
+		if (err) {
+			log.error(new Error(`Checking payment complete. ${err.message}'`)); 
+			return res.json({success: false});
+		}
+		if (!order) {
+			log.error(new Error(`Checking payment complete. No order to continue.`)); 
+			return res.json({success: false});
+		}
+		// if (order.payment.pppExecutePayment.transactions[0].related_resources[0].sale.state === "completed") {
+		if (order.status === "paid") {
+			return res.json({success: true, completed: true});
+		}
+		getPayment(order, (err, payment)=> {
+			if (err) {
+				log.error(new Error(`Checking payment complete. ${err.message}`)); 
+				return res.json({success: false});
+			}
+			if (payment.transactions[0].related_resources[0].sale.state != "completed") {
+				return res.json({success: true, completed: false});
+			}
+			// update order.
+			order.payment.pppExecutePayment.transactions[0].related_resources[0].sale.state = "completed";
+			order.status = 'paid';
+			order.save(err=>{
+				if (err) {
+					log.error(new Error(`Checking payment complete. Saveing order. ${err.message}`));
+					return res.json({success: false});
+				} else {
+					return res.json({success: true, completed: true});
+				}
+			});
+		});
+	});
+});
+
 // Get access token.
 // If not in db or in db but expired, take from paypal server.
 function getAccessToken(cb){
@@ -1238,43 +1276,31 @@ function getPayment(order, cb){
 	// Get access token.
 	getAccessToken((err, ppAccessTokenData)=>{
 		if (err) {
-			return cb (err);
+			return cb(new Error(`Getting payment info from paypal web service. ${err}`));
 		} 	
-		// Url for execute payment.
-		let urlExecute = "";
-		order.payment.pppCreatePayment.links.forEach(item=>{
-			if (item.rel == "execute") {
-				urlExecute = item.href;
-				return;
-			}
-		});
-		// log.debug(`urlExecute: ${urlExecute}`);
-		if (!urlExecute) {
-			return cb(new Error(`Executing payment, no url execute payment found.`));
-		}
 		// Payer id.
-		let payerId = order.payment.pppApprovalPayment.result.payer.payer_info.payer_id;
-		// log.debug(`payerId: ${payerId}"`);
-		// Execute payment.
-		axios({
-			method: 'post',
-			url: urlExecute,
+		let paymentId = order.payment.pppExecutePayment.id;
+		// log.debug(`url: ${ppUrl}payments/payment/${paymentId}`);
+		axios.get(`${ppUrl}payments/payment/${paymentId}`, {
 			headers: {
 				"Accept": "application/json", 
 				"Accept-Language": "en_US",
-				"Content-Type": "application/json",
+				// "Content-Type": "application/json",
 				"Authorization": ppAccessTokenData.token_type + " " + ppAccessTokenData.access_token
-			},
-			data: { payer_id: payerId}
-		}).then(response => {
+			}
+		})
+		.then(response => {
 			if (response.data.err) {
-				return cb(new Error(`Executing payment on paypal web service. ${response.data.err}`));
+				return cb(new Error(`Getting payment info from paypal web service. ${response.data.err}`));
 			} else {
-				log.debug(`Pyapal execute payment: ${JSON.stringify(response.data, null, 2)}`);
+				log.debug(`Payment info: ${JSON.stringify(response.data, null, 2)}`);
 				return cb(null, response.data);
 			}
-		}).catch(err => {
-			return cb(err);
+		})
+		.catch(err => {
+			log.debug(err);
+			log.debug('**** e ****');
+			return cb(new Error(`Getting payment info from paypal web service. ${err}`));
 		}); 
 	});
 }
