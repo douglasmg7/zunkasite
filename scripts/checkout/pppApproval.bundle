@@ -122,7 +122,7 @@ function receiveMessage(event) {
 			if(message['result']['term']){
 				console.log(message['result']['term']);
 			}
-			// todo - test.            
+			// todo - test installments.            
 			if(message['result']['term'] && message['result']['term']['term']){
 				installmentsValue = message['result']['term']['term']; //installments value
 			} else {
@@ -156,20 +156,25 @@ order.payment.pppCreatePayment.links.forEach(item=>{
 });
 // console.log(`approvalURL: ${urlAproval}`);
 
-// Paypal script.
-// todo - config to use mode production.
-let ppp = PAYPAL.apps.PPP({ 
+// To extract first and last name.
+let nameParts  = order.name.split();
+
+let pppConfig = { 
 	approvalUrl: urlAproval,
 	placeholder: "ppplus",
-	mode: "sandbox",
-	payerFirstName: "Sérgio",
-	payerLastName: "Miranda",
-	payerEmail: "douglasmg@gmail.com",
-	payerPhone: "31998830334",
-	payerTaxId: "02806376670",
+	mode: env,	// live or sandbox.
+	payerFirstName: nameParts[0],
+	payerLastName: nameParts[nameParts.length - 1],
+	payerEmail: order.email,
+	payerPhone: order.mobile,
+	payerTaxId: order.cpf,
 	payerTaxIdType: "BR_CPF",	// BR_CNPJ
 	language: "pt_BR",
 	country: "BR",
 	enableContinue: "continueButton",
 	disableContinue: "continueButton"
-});
+};
+console.log(`ppp config: ${JSON.stringify(pppConfig, null, 2)}`);
+
+// Paypal script.
+let ppp = PAYPAL.apps.PPP(pppConfig);

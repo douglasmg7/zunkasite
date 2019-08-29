@@ -10,7 +10,6 @@ let app = new Vue({
 		// console.log(`env: ${env}`);
 	},
 	methods: {
-		// todo - delete.
 		// Confirm payment, called onAuthorize paypal button.
 		confirmPayment(payment){
 			axios({
@@ -143,12 +142,7 @@ paypal.Button.render({
 		// allowed: [ paypal.FUNDING.CREDIT, paypal.FUNDING.CARD ],
 		disallowed: [ paypal.FUNDING.CREDIT ]
 	},
-	// todo - move do config.
 	client: client,
-	// client: {
-		// sandbox:    'ASpmuFYrAVJcuEiBR5kP8lBdfEJqz4b8hsPQ0fKV7spzkiYFQc2BtA2q7M5vyXTPFuUELBiOpGmfhSZw',
-		// production: 'AS_j3TPURVruBoT5aGQlyiSmvUH5s-q7y998n139LNrroOchlIGxK9BCWM0AcMxP2O9w_q-cZT00qDgi'
-	// },
 	// Set up the payment.
 	payment: function(data, actions) {
 		return actions.payment.create({

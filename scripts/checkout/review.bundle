@@ -39,12 +39,11 @@ let app = new Vue({
 				headers:{'csrf-token' : csrfToken},
 			})
 			.then(response => {
-				// Correio answer.
-				if (response.data.err) {
-					console.log(response.data.err);
-					alert(response.data.err);
-				} else {
+				if (response.data.success) {
 					window.location.href = `/checkout/confirmation/order/${order._id}`
+				} else {
+					console.log(JSON.stringify(response.data, null, 2));
+					alert(response.data.message);
 				}
 			})
 			.catch(err => {

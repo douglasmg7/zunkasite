@@ -515,13 +515,30 @@ router.post('/close/order/:order_id', (req, res, next)=>{
 						// Execute payment error.
 						if (err.response && err.response.status == 400) {
 							log.debug(`Execute payment error 400: ${JSON.stringify(err, null, 2)}`);
-							// todo - handle error messages.
-							if (err.response.data.name != "") {
-								return res.json({ success: false, msg: "some" });
+							// todo - test.
+							switch(err.response.data.name.trim()) {
+								case "INTERNAL_SERVICE_ERROR":
+									return res.json({ success: false, message: "Ocorreu um erro inesperado, por favor tente mais tarde." });
+									break;
+								case "INSTRUMENT_DECLINED":
+									return res.json({ success: false, message: "Declínio de banco, pagamento não aprovado." });
+									break;
+								case "CREDIT_CARD_REFUSED":
+								case "TRANSACTION_REFUSED_BY_PAYPAL_RISK":
+								case "PAYER_CANNOT_PAY":
+								case "PAYER_ACCOUNT_RESTRICTED":
+								case "PAYER_ACCOUNT_LOCKED_OR_CLOSED":
+								case "PAYEE_ACCOUNT_RESTRICTED":
+								case "TRANSACTION_REFUSED":
+									return res.json({ success: false, message: "Declínio do PayPal, pagamento não aprovado." });
+									break;
+								default:
+									log.debug(`Execute Payment error 400, No client message defined for error data name: ${err.response.data.name.trin()}`);
+									return res.json({ success: false, message: "Ocorreu um erro inesperado, por favor tente mais tarde." });
 							}
 						} 
 						log.error(`Executing payment. ${err.message}`);
-						return res.json({ success: false, msg: "", err: err });
+						return res.json({ success: false, message: "", err: "Ocorreu um erro inesperado, por favor tente mais tarde."});
 					}
 					order.payment.pppExecutePayment = pppExecutePayment;
 					order.timestamps.placedAt = new Date();
@@ -1092,16 +1109,14 @@ router.get('/ppp/payment/approval/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
 		if (err) { return next(err); }
 		if (!order) {
-			// todo - test.
 			return next(new Error('No order to continue with approval payment.')); }
 		else {
-			// todo - avoid process order again.
 			res.render('checkout/pppApproval',
 				{
 					order: order,
 					nav: {
 					},
-					env: (process.env.NODE_ENV === 'production' ? 'production': 'sandbox')
+					env: (process.env.NODE_ENV === 'production' ? 'live': 'sandbox')
 				}
 			);
 		}
@@ -1114,7 +1129,6 @@ router.post('/ppp/payment/approval/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
 		if (err) { return next(err); }
 		if (!order) {
-			// todo - test.
 			return next(new Error('No order to continue with approval payment.')); }
 		else {
 			// log.debug(`Paypal approval return: ${JSON.stringify(req.body.pppApprovalPayment, null, 2)}`);
