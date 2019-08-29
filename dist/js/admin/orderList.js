@@ -87,8 +87,10 @@ var app = new Vue({
 			this.showModal = true;
 		},
 		// Hide order detail modal.
-		hideOrderDetail(){
-			this.showModal = false;
+		hideOrderDetail(event){
+			if (event && (event.srcElement.id != 'verify-payment-completed')) {
+				this.showModal = false;
+			}
 		},
 		// Get status order.
 		status(order){
@@ -218,18 +220,24 @@ var app = new Vue({
 			});
 		},
 		verifyPaymentCompleted(order){
+			let button = document.getElementById('verify-payment-completed');
+			button.value = 'processando';
 			axios.get(`/checkout/ppp/payment/complete/${order._id}`, { headers: {'csrf-token' : csrfToken} })
 			.then((response)=>{
 				if (!response.data.success) {
+					button.value = 'Verificar se pagamento foi realizado';
 					return alert('Erro ao tentar atualizar o status do pagamento.');
 				}
 				if (response.data.completed) {
-					// order.status = 'paid';
-					// return alert('Pagamento liberado.');
+					order.status = 'paid';
+					button.value = 'Verificar se pagamento foi realizado';
+					return alert('Pagamento liberado.');
 				}
+				button.value = 'Verificar se pagamento foi realizado';
 				return alert('Pagamento não liberado ainda.');
 			})
 			.catch((err)=>{
+				button.value = 'Verificar se pagamento foi realizado';
 				alert('Erro ao tentar atualizar o status do pagamento.\n' + err.message);
 			});
 		},    

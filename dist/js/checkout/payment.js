@@ -140,8 +140,9 @@ paypal.Button.render({
 		// label: 'pay',
 		// label: 'buynow',
 		// layout: 'horizontal',
-		layout: 'vertical',
+		// layout: 'vertical',
 		// fundingicons: 'true',  // Work if "layout: 'horizontal'"
+		tagline: false
 	},
 	funding: {
 		// allowed: [ paypal.FUNDING.CREDIT, paypal.FUNDING.CARD ],

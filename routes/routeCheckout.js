@@ -1140,7 +1140,6 @@ router.get('/ppp/payment/complete/:order_id', (req, res, next)=>{
 			log.error(new Error(`Checking payment complete. No order to continue.`)); 
 			return res.json({success: false});
 		}
-		// if (order.payment.pppExecutePayment.transactions[0].related_resources[0].sale.state === "completed") {
 		if (order.status === "paid") {
 			return res.json({success: true, completed: true});
 		}

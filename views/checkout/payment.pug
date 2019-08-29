@@ -9,7 +9,7 @@ block append css
 block content
 	section.shadow
 		.payment
-			h2 Selecione a forma de pagamento
+			h2.title Selecione a forma de pagamento
 			//- Payment by money.
 			input.btn-primary(type='button' @click='directPayment("money")' v-if='order.shipping.methodDesc === "Motoboy"' value='Dinheiro')
 			//- Payment by transfer.
