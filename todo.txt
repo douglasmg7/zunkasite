@@ -1,3 +1,6 @@
+# Delete branch paypal on origin.
+git push origin --delete paypal
+
 Show number of credit card parcels
 
 include option to cnpj

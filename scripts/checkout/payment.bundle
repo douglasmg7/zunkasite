@@ -4,7 +4,9 @@ import _search from '../lib/_search';
 let app = new Vue({
 	el: '#app',
 	data: {
-		order: order
+		order: order,
+		// todo - remove after tests ok.
+		creditButtonVisibility: false,
 	},
 	created() {
 		// console.log(`env: ${env}`);
@@ -77,6 +79,13 @@ let app = new Vue({
 				window.location.href = `/error`
 			}) 
 		},
+		// todo - remove after tests ok.
+		showCreditButton(event){
+			if (event.ctrlKey) {
+				// console.log('clicked!');
+				this.creditButtonVisibility = true;	
+			}
+		}
 	},
 	filters: {
 		formatMoney: function(val){

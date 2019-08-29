@@ -9,13 +9,14 @@ function _search(text){
 let app = new Vue({
 	el: '#app',
 	data: {
-		order: order
+		order: order,
+		// todo - remove after tests ok.
+		creditButtonVisibility: false,
 	},
 	created() {
 		// console.log(`env: ${env}`);
 	},
 	methods: {
-		// todo - delete.
 		// Confirm payment, called onAuthorize paypal button.
 		confirmPayment(payment){
 			axios({
@@ -83,6 +84,13 @@ let app = new Vue({
 				window.location.href = `/error`;
 			}); 
 		},
+		// todo - remove after tests ok.
+		showCreditButton(event){
+			if (event.ctrlKey) {
+				// console.log('clicked!');
+				this.creditButtonVisibility = true;	
+			}
+		}
 	},
 	filters: {
 		formatMoney: function(val){
@@ -148,12 +156,7 @@ paypal.Button.render({
 		// allowed: [ paypal.FUNDING.CREDIT, paypal.FUNDING.CARD ],
 		disallowed: [ paypal.FUNDING.CREDIT ]
 	},
-	// todo - move do config.
 	client: client,
-	// client: {
-		// sandbox:    'ASpmuFYrAVJcuEiBR5kP8lBdfEJqz4b8hsPQ0fKV7spzkiYFQc2BtA2q7M5vyXTPFuUELBiOpGmfhSZw',
-		// production: 'AS_j3TPURVruBoT5aGQlyiSmvUH5s-q7y998n139LNrroOchlIGxK9BCWM0AcMxP2O9w_q-cZT00qDgi'
-	// },
 	// Set up the payment.
 	payment: function(data, actions) {
 		return actions.payment.create({

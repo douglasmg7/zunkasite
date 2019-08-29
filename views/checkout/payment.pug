@@ -9,15 +9,14 @@ block append css
 block content
 	section.shadow
 		.payment
-			h2.title Selecione a forma de pagamento
+			h2.title(@click='showCreditButton') Selecione a forma de pagamento
 			//- Payment by money.
 			input.btn-primary(type='button' @click='directPayment("money")' v-if='order.shipping.methodDesc === "Motoboy"' value='Dinheiro')
 			//- Payment by transfer.
 			input.btn-info(type='button' @click='directPayment("transfer")' value='Transferência bancária')
 			//- Payment by credit card, using PayPal Plus.
-			//- todo - remove this if.
-			if user.email == "douglasmg7@gmail.com" || user.email == "gilson@hardplus.com.br"
-				input.btn-primary(type='button' @click='payPalPlusPayment()' value='Cartão')
+			// todo - remove v-if after tests ok.
+			input.btn-primary(v-if='creditButtonVisibility === true' type='button' @click='payPalPlusPayment()' value='Cartão')
 			//- Payment by PayPal.
 			#paypal-button
 
