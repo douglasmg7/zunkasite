@@ -1,3 +1,12 @@
+# Last Zunka production.
+commit a4b5aa893144c3a7ef40efe28f58e542af501932 (HEAD -> master, origin/master, origin/HEAD)
+Author: douglasmg7 <douglasmg7@gmail.com>
+Date:   Tue Jun 18 12:48:20 2019 -0300
+
+# Error
+getaddrinfo EAI_AGAIN api.sandbox.paypal.com api.sandbox.paypal.com:443
+
+
 # Delete branch paypal on origin.
 git push origin --delete paypal
 

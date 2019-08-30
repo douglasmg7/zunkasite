@@ -523,6 +523,8 @@ router.post('/close/order/:order_id', (req, res, next)=>{
 								case "INSTRUMENT_DECLINED":
 									return res.json({ success: false, message: "Declínio de banco, pagamento não aprovado." });
 									break;
+								// todo - ask.
+								// case "PAYMENT_NOT_APPROVED_FOR_EXECUTION":
 								case "CREDIT_CARD_REFUSED":
 								case "TRANSACTION_REFUSED_BY_PAYPAL_RISK":
 								case "PAYER_CANNOT_PAY":
@@ -533,12 +535,12 @@ router.post('/close/order/:order_id', (req, res, next)=>{
 									return res.json({ success: false, message: "Declínio do PayPal, pagamento não aprovado." });
 									break;
 								default:
-									log.debug(`Execute Payment error 400, No client message defined for error data name: ${err.response.data.name.trin()}`);
+									log.debug(`Execute Payment error 400, No client message defined for error data name: ${err.response.data.name.trim()}`);
 									return res.json({ success: false, message: "Ocorreu um erro inesperado, por favor tente mais tarde." });
 							}
 						} 
 						log.error(`Executing payment. ${err.message}`);
-						return res.json({ success: false, message: "", err: "Ocorreu um erro inesperado, por favor tente mais tarde."});
+						return res.json({ success: false, message: "Ocorreu um erro inesperado, por favor tente mais tarde.", err: err.message });
 					}
 					order.payment.pppExecutePayment = pppExecutePayment;
 					order.timestamps.placedAt = new Date();

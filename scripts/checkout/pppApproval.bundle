@@ -58,9 +58,19 @@ function receiveMessage(event) {
 		//	iFrame error.
         if (typeof message['cause'] !== 'undefined') { 
             let ppplusError = message['cause'].replace (/['"]+/g,""); //log & attach this error into the order if possible
+			console.log(`Receiving ppp approval message: ${ppplusError}`);
 			// <<Insert Code Here>>
             switch (ppplusError)
                 {
+                    case "CHECK_PROVIDED_USER_DATA":
+                    case "INVALID_DATA_FIRST_NAME": 
+                    case "PPPLUS_NOT_AVAILABLE_FOR_MERCHAN": 
+                    case "SET_INSTALLMENTS_FAIL": 
+                    case "PAYMENT_ALREADY_DONE": 
+						alert ("Ocorreu um erro inesperado, por favor tente novamente. (" + ppplusError + ")"); //pt_BR
+						//Generic error, inform the customer to try again; generate a new approval_url and reload the iFrame.
+						// <<Insert Code Here>>
+						break;
                     case "INTERNAL_SERVICE_ERROR": //javascript fallthrough
                     case "SOCKET_HANG_UP": //javascript fallthrough
                     case "socket hang up": //javascript fallthrough
@@ -71,42 +81,37 @@ function receiveMessage(event) {
                     case "Failed to decrypt term info": //javascript fallthrough
                     case "RESOURCE_NOT_FOUND": //javascript fallthrough
                     case "INTERNAL_SERVER_ERROR": 
-                    alert ("Ocorreu um erro inesperado, por favor tente novamente. (" + ppplusError + ")"); //pt_BR
-                    //Generic error, inform the customer to try again; generate a new approval_url and reload the iFrame.
-                    // <<Insert Code Here>>
-                    break;
-
+						alert ("Ocorreu um erro inesperado, por favor tente novamente. (" + ppplusError + ")"); //pt_BR
+						//Generic error, inform the customer to try again; generate a new approval_url and reload the iFrame.
+						// <<Insert Code Here>>
+						break;
                     case "RISK_N_DECLINE": //javascript fallthrough
                     case "NO_VALID_FUNDING_SOURCE_OR_RISK_REFUSED": //javascript fallthrough
                     case "TRY_ANOTHER_CARD": //javascript fallthrough
                     case "NO_VALID_FUNDING_INSTRUMENT":
-                    alert ("Seu pagamento não foi aprovado. Por favor utilize outro cartão, caso o problema persista entre em contato com o PayPal (0800-047-4482). (" + ppplusError + ")"); //pt_BR
-                    //Risk denial, inform the customer to try again; generate a new approval_url and reload the iFrame.
-                    // <<Insert Code Here>>
-                    break;
-
+						alert ("Seu pagamento não foi aprovado. Por favor utilize outro cartão, caso o problema persista entre em contato com o PayPal (0800-047-4482). (" + ppplusError + ")"); //pt_BR
+						//Risk denial, inform the customer to try again; generate a new approval_url and reload the iFrame.
+						// <<Insert Code Here>>
+						break;
                     case "CARD_ATTEMPT_INVALID":
-                    alert ("Ocorreu um erro inesperado, por favor tente novamente. (" + ppplusError + ")"); //pt_BR
-                    //03 maximum payment attempts with error, inform the customer to try again; generate a new approval_url and reload the iFrame.
-                    // <<Insert Code Here>>
-                    break;
-
+						alert ("Ocorreu um erro inesperado, por favor tente novamente. (" + ppplusError + ")"); //pt_BR
+						//03 maximum payment attempts with error, inform the customer to try again; generate a new approval_url and reload the iFrame.
+						// <<Insert Code Here>>
+						break;
                     case "INVALID_OR_EXPIRED_TOKEN":
-                    alert ("A sua sessão expirou, por favor tente novamente. (" + ppplusError + ")"); //pt_BR
-                    //User session is expired, inform the customer to try again; generate a new approval_url and reload the iFrame.
-                    // <<Insert Code Here>>
-                    break;
-
+						alert ("A sua sessão expirou, por favor tente novamente. (" + ppplusError + ")"); //pt_BR
+						//User session is expired, inform the customer to try again; generate a new approval_url and reload the iFrame.
+						// <<Insert Code Here>>
+						break;
                     case "CHECK_ENTRY":  
-                    alert ("Por favor revise os dados de Cartão de Crédito inseridos. (" + ppplusError + ")"); //pt_BR
-                    //Missing or invalid credit card information, inform your customer to check the inputs.
-                    // <<Insert Code Here>>
-                    break;
-                    
+						alert ("Por favor revise os dados de Cartão de Crédito inseridos. (" + ppplusError + ")"); //pt_BR
+						//Missing or invalid credit card information, inform your customer to check the inputs.
+						// <<Insert Code Here>>
+						break;
                     default:  //unknown error & reload payment flow
-                    alert ("Ocorreu um erro inesperado, por favor tente novamente. (" + ppplusError + ")"); //pt_BR
-                    //Generic error, inform the customer to try again; generate a new approval_url and reload the iFrame.
-                    // <<Insert Code Here>>
+						alert ("Ocorreu um erro inesperado, por favor tente novamente. (" + ppplusError + ")"); //pt_BR
+						//Generic error, inform the customer to try again; generate a new approval_url and reload the iFrame.
+						// <<Insert Code Here>>
                 }
         }
 		//	PPPlus session approved, do logic here.
@@ -173,9 +178,10 @@ let pppConfig = {
 	country: "BR",
 	enableContinue: "continueButton",
 	disableContinue: "continueButton",
+	iframeHeight: "510"
+	// rememberedCards: "",
 	// merchantInstallmentSelectionOptional: true,	// to-ask
 	// merchantInstallmentSelection: 2,
-	iframeHeight: "510"
 };
 console.log(`ppp config: ${JSON.stringify(pppConfig, null, 2)}`);
 
