@@ -88,7 +88,8 @@ var app = new Vue({
 		},
 		// Hide order detail modal.
 		hideOrderDetail(event){
-			if (event && (event.srcElement.id != 'verify-payment-completed')) {
+			// if (event && (event.srcElement.id != 'verify-payment-completed')) {
+			if (event && event.srcElement && (event.srcElement.id != 'verify-payment-completed')) {
 				this.showModal = false;
 			}
 		},

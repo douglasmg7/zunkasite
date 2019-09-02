@@ -57,7 +57,7 @@ function receiveMessage(event) {
 		if (event.data && event.data.devtoolsEnabled) {
 			return;
 		}
-		// console.log("event:", event);
+		console.log("event:", event);
         var message = JSON.parse(event.data);
 		console.log("message:", message);
 		//	iFrame error.
@@ -152,7 +152,7 @@ function receiveMessage(event) {
             // <<Insert Code Here>>
         }
     } catch (e){ //treat exceptions here
-		console.error("Catch:", e);
+		console.error("Processing message from paypal.", e);
     }
 }
 
