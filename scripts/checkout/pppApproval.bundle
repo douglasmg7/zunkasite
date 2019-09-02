@@ -55,7 +55,7 @@ function receiveMessage(event) {
 				return;
 			}
 		}
-		console.log("event:", event);
+		// console.log("event:", event);
         var message = JSON.parse(event.data);
 		console.log("message:", message);
 		//	iFrame error.
