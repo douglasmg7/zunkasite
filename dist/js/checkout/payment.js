@@ -129,7 +129,7 @@ let shippingAddress = {
 // https://developer.paypal.com/docs/api/payments/
 paypal.Button.render({
 	// env: 'sandbox', // production or sandbox,
-	// env: 'production'
+	// env: 'production',
 	env: env, // production or sandbox,
 	commit: true, // Show a 'Pay Now' button.
 	locale: 'pt_BR',
