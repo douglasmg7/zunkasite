@@ -1,5 +1,4 @@
 # Questions to Francisco
-# Questions to Francisco
 	which version of system v1 or v2.
 
 # Last Zunka production.
@@ -7,7 +6,9 @@ commit a4b5aa893144c3a7ef40efe28f58e542af501932 (HEAD -> master, origin/master, 
 Author: douglasmg7 <douglasmg7@gmail.com>
 Date:   Tue Jun 18 12:48:20 2019 -0300
 
-# avoid out of stock products when order by low price.
+# Avoid out of stock products when order by low price.
+
+# Formar pm2 log.
 
 # Error
 getaddrinfo EAI_AGAIN api.sandbox.paypal.com api.sandbox.paypal.com:443
