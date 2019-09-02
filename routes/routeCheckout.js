@@ -1002,12 +1002,13 @@ let ppIpnUrl = ppConfig.sandbox.ppIpnUrl;
 let ppClientId = ppConfig.sandbox.ppClientId;
 let ppSecret = ppConfig.sandbox.ppSecret;
 // Production configurations.
-if (process.env.NODE_ENV == 'production') {
-	ppUrl = ppConfig.production.ppUrl;
-	ppIpnUrl = ppConfig.production.ppIpnUrl;
-	ppClientId = ppConfig.production.ppClientId;
-	ppSecret = ppConfig.production.ppSecret;
-}
+// todo - uncomment.
+// if (process.env.NODE_ENV == 'production') {
+	// ppUrl = ppConfig.production.ppUrl;
+	// ppIpnUrl = ppConfig.production.ppIpnUrl;
+	// ppClientId = ppConfig.production.ppClientId;
+	// ppSecret = ppConfig.production.ppSecret;
+// }
 // Redis keys.
 let redisPaypalAccessTokenKey = "paypalAccessToken"
 

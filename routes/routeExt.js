@@ -47,9 +47,10 @@ router.post('/debug-post', (req, res, next)=>{
 // Sandbox configurations.
 let ppIpnUrl = ppConfig.sandbox.ppIpnUrl;
 // Production configurations.
-if (process.env.NODE_ENV == 'production') {
-	ppIpnUrl = ppConfig.production.ppIpnUrl;
-}
+// todo - uncomment.
+// if (process.env.NODE_ENV == 'production') {
+	// ppIpnUrl = ppConfig.production.ppIpnUrl;
+// }
 
 // PayPal Plus on approval payment call it on continue.
 router.get('/ppp/return/null', (req, res, next)=>{
