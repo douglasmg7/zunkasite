@@ -54,8 +54,11 @@ if (window.addEventListener) {
 function receiveMessage(event) {
     try {
 		// Don't process vue messages.
-		if (event.data && event.data.devtoolsEnabled) {
-			return;
+		// if (event.data && event.data.devtoolsEnabled) {
+		if (event.data) {
+			if (event.data.hasOwnProperty('devtoolsEnabled')) {
+				return;
+			}
 		}
 		console.log("event:", event);
         var message = JSON.parse(event.data);
