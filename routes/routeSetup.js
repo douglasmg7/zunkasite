@@ -4,8 +4,8 @@ const router = express.Router();
 const log = require('../config/log');
 
 // Get Product.
-router.post('/product/', (req, res, next)=>{
-	log.debug(req.body);
+router.post('/product/add', (req, res, next)=>{
+	log.debug(JSON.stringify(req.body, null, 3));
 	res.json(' success: true ');
 		
 	// res.render('producstoretsStore', { user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined }, csrfToken: req.csrfToken() });

@@ -64,7 +64,7 @@ const routeInfo = require('./routes/routeInfo');
 const routeCheckout = require('./routes/routeCheckout');
 // const routeWsAllNations = require('./routes/routeWsAllNations');
 // const routeWsStore = require('./routes/routeWsStore');
-const routeProductConfig = require('./routes/routeProductConfig.js');
+const routeSetup = require('./routes/routeSetup.js');
 const routeTest = require('./routes/routeTest');
 const routeAdmin = require('./routes/routeAdmin');
 const routeExt = require('./routes/routeExt');
@@ -152,6 +152,7 @@ var sessionOpts = {
 // }
 
 // Before csurf, so not block by csrf.
+app.use('/setup', routeSetup);
 app.use('/ext', routeExt);
 
 // authentication
@@ -223,7 +224,6 @@ app.use(function(req, res, next) {
 // Routes.
 // Users.
 app.use('/user', routeUser);
-app.use('/product-config', routeProductConfig);
 app.use('/test', routeTest);
 app.use('/', routeSite);
 app.use('/info', routeInfo);
