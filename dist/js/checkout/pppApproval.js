@@ -172,6 +172,7 @@ order.payment.pppCreatePayment.links.forEach(item=>{
 // To extract first and last name.
 let nameParts  = order.name.split(" ");
 
+console.log(`order.mobileNumber: ${order.mobileNumber}`);
 let pppConfig = { 
 	approvalUrl: urlAproval,
 	placeholder: "ppplus",
@@ -179,7 +180,7 @@ let pppConfig = {
 	payerFirstName: nameParts[0],
 	payerLastName: nameParts[nameParts.length - 1],
 	payerEmail: order.email,
-	payerPhone: order.mobile,
+	payerPhone: order.mobileNumber,
 	payerTaxId: order.cpf,
 	payerTaxIdType: "BR_CPF",	// BR_CNPJ
 	language: "pt_BR",

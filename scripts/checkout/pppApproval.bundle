@@ -174,7 +174,7 @@ let pppConfig = {
 	payerFirstName: nameParts[0],
 	payerLastName: nameParts[nameParts.length - 1],
 	payerEmail: order.email,
-	payerPhone: order.mobile,
+	payerPhone: order.mobileNumber,
 	payerTaxId: order.cpf,
 	payerTaxIdType: "BR_CPF",	// BR_CNPJ
 	language: "pt_BR",

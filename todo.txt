@@ -1,6 +1,10 @@
 # Questions to Francisco
 	which version of system v1 or v2.
 
+# Review data forms for mobile number for user and delivery address.
+
+# User mobile numer must be required so order.mobileNumber always exist.
+
 # Last Zunka production.
 commit a4b5aa893144c3a7ef40efe28f58e542af501932 (HEAD -> master, origin/master, origin/HEAD)
 Author: douglasmg7 <douglasmg7@gmail.com>
