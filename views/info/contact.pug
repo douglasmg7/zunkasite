@@ -1,23 +1,22 @@
-extends ../layout/layout_vue
+extends ../layout/layout_vue_n
 
 block title
-  title Zunka - Contato
+	title Zunka - Contato
 
-block css
-  link(rel="stylesheet" href="/css/info/contact.css" charset="utf-8")
+append css
+	link(rel="stylesheet" href="/css/info/info.css" charset="utf-8")
 
 block content 
-  .panel
-    h2.title Contato
-    p A Zunka oferece alguns meios de comunicação para esclarecer algumas dúvidas técnicas que não foram encontradas nas páginas dos produtos ou algum procedimento na compra, formas de pagamento e outros que não são padrão no processo de compra.
-    p As compras são realizadas exclusivamente pelo site zunka.com.br. Nenhum dos contatos abaixo são para fechamento de pedidos.
-    h4 E-mail
-    p As mensagens enviadas para <span style="font-weight: bold; color: green">zunka@outlook.com.br</span> são respondidas em até 48 horas, de Segunda-feira a Domingo. Caso o cliente tenha interesse em responder orçamentos por e-mail, importante salientar que as especificações e demais informações não devem seguir em arquivos anexos. Por medidas de segurança, todas as informações devem seguir no corpo do próprio e-mail.
-    h4 WhatsApp
-    p Nosso número (31) 99841-8491 opera em horário comercial, de 8:00 hs até as 18:00 hs. As mensagens são respondidas em até 24 horas.
-    h4 Telefones
-    p Os números <span style="font-weight: bold; color: green"> (31) 99610-2412</span> e <span style="font-weight: bold; color: green"> (31) 98534-1997</span> (também possuem WhatsApp e operam de 8:00 às 18:00 hs de Segunda-feira à Domingo).
+	section.shadow
+		h2.title Contato
+		p A Zunka oferece alguns meios de comunicação para esclarecer algumas dúvidas técnicas que não foram encontradas nas páginas dos produtos ou algum procedimento na compra, formas de pagamento e outros que não são padrão no processo de compra.
+		p As compras são realizadas exclusivamente pelo site zunka.com.br. Nenhum dos contatos abaixo são para fechamento de pedidos.
+		h4 E-mail
+		p As mensagens enviadas para <span style="font-weight: bold; color: green">zunka@outlook.com.br</span> são respondidas em até 48 horas, de Segunda-feira a Domingo. Caso o cliente tenha interesse em responder orçamentos por e-mail, importante salientar que as especificações e demais informações não devem seguir em arquivos anexos. Por medidas de segurança, todas as informações devem seguir no corpo do próprio e-mail.
+		h4 WhatsApp
+		p Nosso número (31) 99841-8491 opera em horário comercial, de 8:00 hs até as 18:00 hs. As mensagens são respondidas em até 24 horas.
+		h4 Telefones
+		p Os números <span style="font-weight: bold; color: green"> (31) 99610-2412</span> e <span style="font-weight: bold; color: green"> (31) 98534-1997</span> (também possuem WhatsApp e operam de 8:00 às 18:00 hs de Segunda-feira à Domingo).
 
-block internal_scripts
-
-block external_scripts
+append external_scripts
+	script(src='/js/info/info.js?0002') 

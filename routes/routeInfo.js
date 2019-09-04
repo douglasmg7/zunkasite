@@ -4,8 +4,8 @@ const router = express.Router();
 const log = require('../config/log');
 
 // About company.
-router.get('/about', (req, res, next)=>{
-  res.render('info/about', {
+router.get('/about-company', (req, res, next)=>{
+  res.render('info/aboutCompany', {
     nav: {},
   });
 })
@@ -41,6 +41,13 @@ router.get('/return', (req, res, next)=>{
 // Warranty policy.
 router.get('/warranty', (req, res, next)=>{
   res.render('info/warranty', {
+    nav: {},
+  });
+})
+
+// About site.
+router.get('/about-site', (req, res, next)=>{
+  res.render('info/aboutSite', {
     nav: {},
   });
 })
