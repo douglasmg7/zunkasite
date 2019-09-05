@@ -172,7 +172,6 @@ order.payment.pppCreatePayment.links.forEach(item=>{
 // To extract first and last name.
 let nameParts  = order.name.split(" ");
 
-console.log(`order.mobileNumber: ${order.mobileNumber}`);
 let pppConfig = { 
 	approvalUrl: urlAproval,
 	placeholder: "ppplus",

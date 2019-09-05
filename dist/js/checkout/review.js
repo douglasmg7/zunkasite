@@ -9,7 +9,8 @@ function _search(text){
 let app = new Vue({
 	el: '#app',
 	data: {
-		order: order
+		order: order,
+		paypalMockCode: "INTERNAL_SERVICE_ERROR" 
 	},
 	created() {
 		// console.log(`env: ${env}`);
@@ -37,11 +38,12 @@ let app = new Vue({
 			// }) 
 		// },
 		// Close de order.
-		closeOrder(){
+		closeOrder(paypalMockCode){
 			axios({
 				method: 'post',
 				url: `/checkout/close/order/${order._id}`,
-				headers:{'csrf-token' : csrfToken},
+				headers: {'csrf-token' : csrfToken},
+				data: {paypalMockCode: paypalMockCode.trim()},
 			})
 			.then(response => {
 				if (response.data.success) {

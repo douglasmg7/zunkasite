@@ -1,5 +1,7 @@
 # Questions to Francisco
 	which version of system v1 or v2.
+	Number of parcels.
+	payment complete test.
 
 # Review data forms for mobile number for user and delivery address.
 

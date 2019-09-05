@@ -510,18 +510,19 @@ router.post('/close/order/:order_id', (req, res, next)=>{
 					log.error("Order not have payment approved by payap plus.");
 					return res.json({ success: false, msg: "", err: "Order not have payment approved by payap plus."});
 				}
-				executePayment(order, (err, pppExecutePayment)=>{
+				log.debug(`req.body.paypalMockCode: ${req.body.paypalMockCode}`);
+				executePayment(order, req.body.paypalMockCode, (err, pppExecutePayment)=>{
 					if (err) {
 						// Execute payment error.
 						if (err.response && err.response.status == 400) {
-							log.debug(`Execute payment error 400: ${JSON.stringify(err, null, 2)}`);
+							log.error(`Execute payment returned error 400: ${JSON.stringify(err, null, 2)}`);
 							// todo - test.
 							switch(err.response.data.name.trim()) {
 								case "INTERNAL_SERVICE_ERROR":
-									return res.json({ success: false, message: "Ocorreu um erro inesperado, por favor tente mais tarde." });
+									return res.json({ success: false, message: "Ocorreu um erro interno, por favor tente mais tarde." });
 									break;
 								case "INSTRUMENT_DECLINED":
-									return res.json({ success: false, message: "Declínio de banco, pagamento não aprovado." });
+									return res.json({ success: false, message: "Declínio do banco, pagamento não aprovado." });
 									break;
 								// todo - ask.
 								// case "PAYMENT_NOT_APPROVED_FOR_EXECUTION":
@@ -535,7 +536,7 @@ router.post('/close/order/:order_id', (req, res, next)=>{
 									return res.json({ success: false, message: "Declínio do PayPal, pagamento não aprovado." });
 									break;
 								default:
-									log.debug(`Execute Payment error 400, No client message defined for error data name: ${err.response.data.name.trim()}`);
+									log.error(`Execute Payment error 400, No client message defined for error data name: ${err.response.data.name.trim()}`);
 									return res.json({ success: false, message: "Ocorreu um erro inesperado, por favor tente mais tarde." });
 							}
 						} 
@@ -1244,7 +1245,7 @@ function getAccessToken(cb){
 }
 
 // Execute payment.
-function executePayment(order, cb){
+function executePayment(order, paypalMockCode, cb){
 	// Get access token.
 	getAccessToken((err, ppAccessTokenData)=>{
 		if (err) {
@@ -1265,16 +1266,23 @@ function executePayment(order, cb){
 		// Payer id.
 		let payerId = order.payment.pppApprovalPayment.result.payer.payer_info.payer_id;
 		// log.debug(`payerId: ${payerId}"`);
+		let headers = {
+			"Accept": "application/json", 
+			"Accept-Language": "en_US",
+			"Content-Type": "application/json",
+			"Authorization": ppAccessTokenData.token_type + " " + ppAccessTokenData.access_token
+		};
+		// Only for test, negative test.
+		if (paypalMockCode) {
+			headers["PayPal-Mock-Response"] = `{\"mock_application_codes\":\"${paypalMockCode.trim()}\"}`;
+		}
+		// todo - comment.
+		log.debug(`payapl execute header: ${JSON.stringify(headers, null, 3)}`);
 		// Execute payment.
 		axios({
 			method: 'post',
 			url: urlExecute,
-			headers: {
-				"Accept": "application/json", 
-				"Accept-Language": "en_US",
-				"Content-Type": "application/json",
-				"Authorization": ppAccessTokenData.token_type + " " + ppAccessTokenData.access_token
-			},
+			headers: headers,
 			data: { payer_id: payerId}
 		}).then(response => {
 			if (response.data.err) {
