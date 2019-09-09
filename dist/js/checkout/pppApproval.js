@@ -124,23 +124,12 @@ function receiveMessage(event) {
         }
 		//	PPPlus session approved, do logic here.
         if (message['action'] == 'checkout') {
-        	var rememberedCard = null;
-            var payerID = null;
-            var installmentsValue= null;
+            // var rememberedCard = null;
+            // var payerID = null;
 
-            rememberedCard = message['result']['rememberedCards']; //save on user BD record
-            payerID = message['result']['payer']['payer_info']['payer_id']; //use it on executePayment API
+            // rememberedCard = message['result']['rememberedCards']; //save on user BD record
+            // payerID = message['result']['payer']['payer_info']['payer_id']; //use it on executePayment API
 
-			// Debug.
-			if(message['result']['term']){
-				console.log(message['result']['term']);
-			}
-			// todo - test installments.            
-			if(message['result']['term'] && message['result']['term']['term']){
-				installmentsValue = message['result']['term']['term']; //installments value
-			} else {
-				installmentsValue=1; //no installments
-			}
 			// Execute payment.
 			app.savePPPApprovalPayment(message);
 

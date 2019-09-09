@@ -516,7 +516,6 @@ router.post('/close/order/:order_id', (req, res, next)=>{
 						// Execute payment error.
 						if (err.response && err.response.status == 400) {
 							log.error(`Execute payment returned error 400: ${JSON.stringify(err, null, 2)}`);
-							// todo - test.
 							switch(err.response.data.name.trim()) {
 								case "INTERNAL_SERVICE_ERROR":
 									return res.json({ success: false, message: "Ocorreu um erro interno, por favor tente mais tarde." });
@@ -524,8 +523,7 @@ router.post('/close/order/:order_id', (req, res, next)=>{
 								case "INSTRUMENT_DECLINED":
 									return res.json({ success: false, message: "Declínio do banco, pagamento não aprovado." });
 									break;
-								// todo - ask.
-								// case "PAYMENT_NOT_APPROVED_FOR_EXECUTION":
+								case "PAYMENT_NOT_APPROVED_FOR_EXECUTION":
 								case "CREDIT_CARD_REFUSED":
 								case "TRANSACTION_REFUSED_BY_PAYPAL_RISK":
 								case "PAYER_CANNOT_PAY":
@@ -1003,13 +1001,12 @@ let ppIpnUrl = ppConfig.sandbox.ppIpnUrl;
 let ppClientId = ppConfig.sandbox.ppClientId;
 let ppSecret = ppConfig.sandbox.ppSecret;
 // Production configurations.
-// todo - uncomment.
-// if (process.env.NODE_ENV == 'production') {
-	// ppUrl = ppConfig.production.ppUrl;
-	// ppIpnUrl = ppConfig.production.ppIpnUrl;
-	// ppClientId = ppConfig.production.ppClientId;
-	// ppSecret = ppConfig.production.ppSecret;
-// }
+if (process.env.NODE_ENV == 'production') {
+	ppUrl = ppConfig.production.ppUrl;
+	ppIpnUrl = ppConfig.production.ppIpnUrl;
+	ppClientId = ppConfig.production.ppClientId;
+	ppSecret = ppConfig.production.ppSecret;
+}
 // Redis keys.
 let redisPaypalAccessTokenKey = "paypalAccessToken"
 
@@ -1120,9 +1117,7 @@ router.get('/ppp/payment/approval/:order_id', (req, res, next)=>{
 					order: order,
 					nav: {
 					},
-					// todo - back.
-					// env: (process.env.NODE_ENV === 'production' ? 'live': 'sandbox')
-					env: 'sandbox'
+					env: (process.env.NODE_ENV === 'production' ? 'live': 'sandbox')
 				}
 			);
 		}
@@ -1276,8 +1271,7 @@ function executePayment(order, paypalMockCode, cb){
 		if (paypalMockCode) {
 			headers["PayPal-Mock-Response"] = `{\"mock_application_codes\":\"${paypalMockCode.trim()}\"}`;
 		}
-		// todo - comment.
-		log.debug(`payapl execute header: ${JSON.stringify(headers, null, 3)}`);
+		// log.debug(`payapl execute header: ${JSON.stringify(headers, null, 3)}`);
 		// Execute payment.
 		axios({
 			method: 'post',

@@ -1,30 +1,33 @@
-# Questions to Francisco
-	which version of system v1 or v2.
-	Number of parcels.
-	payment complete test.
+Bom dia Francisco,
+
+Ainda tenho a seguinte dúvidas.
+Estou usando api v1 e não v2, seria isso mesmo?
+Não estou usando redirect_urls para nada. Ok?o
+
+Tentei configurar as parcelas mas não obitive sucesso.
+	merchantInstallmentSelectionOptional: true,
+	merchantInstallmentSelection: 2,
+
+Qual o id que devo forncer para este ítem?
+	rememberedCards: "",
+
+Show in admin/orderList number of parcels if payment is in credit card.
+
+Onde configuro a Url passa receber IPN assíncrono? Tanto para sandbox e live.
+E como faço para gerar uma execute payment com o status não complete e depois receber uma mensagem do IPN assíncrono com status complete, em sandbox?
 
 # Review data forms for mobile number for user and delivery address.
 
 # User mobile numer must be required so order.mobileNumber always exist.
 
-# Last Zunka production.
-commit a4b5aa893144c3a7ef40efe28f58e542af501932 (HEAD -> master, origin/master, origin/HEAD)
-Author: douglasmg7 <douglasmg7@gmail.com>
-Date:   Tue Jun 18 12:48:20 2019 -0300
-
 # Avoid out of stock products when order by low price.
 
-# Formar pm2 log.
-
-# Error
-getaddrinfo EAI_AGAIN api.sandbox.paypal.com api.sandbox.paypal.com:443
+# Format pm2 log.
 
 # Show order canceled on confirmation order, when order canceled.
 
 # Delete branch paypal on origin.
 git push origin --delete paypal
-
-Show number of credit card parcels
 
 include option to cnpj
 

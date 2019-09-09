@@ -10,7 +10,7 @@ let app = new Vue({
 	el: '#app',
 	data: {
 		order: order,
-		// todo - remove after tests ok.
+		// Only in test, to hide ppp credit option.
 		creditButtonVisibility: false,
 	},
 	created() {
@@ -84,7 +84,7 @@ let app = new Vue({
 				window.location.href = `/error`;
 			}); 
 		},
-		// todo - remove after tests ok.
+		// Only in test, to hide ppp credit option.
 		showCreditButton(event){
 			if (event.ctrlKey) {
 				// console.log('clicked!');

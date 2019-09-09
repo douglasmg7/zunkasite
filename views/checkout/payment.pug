@@ -15,8 +15,9 @@ block content
 			//- Payment by transfer.
 			input.btn-info(type='button' @click='directPayment("transfer")' value='Transferência bancária')
 			//- Payment by credit card, using PayPal Plus.
-			// todo - remove v-if after tests ok.
-			input.btn-primary(v-if='creditButtonVisibility === true' type='button' @click='payPalPlusPayment()' value='Cartão')
+			input.btn-primary(type='button' @click='payPalPlusPayment()' value='Cartão')
+			// To hide credit option.
+			//- input.btn-primary(v-if='creditButtonVisibility === true' type='button' @click='payPalPlusPayment()' value='Cartão')
 			//- Payment by PayPal.
 			#paypal-button
 
