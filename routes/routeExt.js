@@ -89,6 +89,7 @@ router.post('/ppp/ipn', (req, res, next)=>{
 	// log.debug(`verificationBody: ${verificationBody}`);
 
 	// axios.post(ppIpnUrl, verificationBody)
+	req.body.cmd = '_notify-validate';
 	log.debug('**** 0 ****');
 	axios.post(ppIpnUrl, req.body)
 	.then(response => {
