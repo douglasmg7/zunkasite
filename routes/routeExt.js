@@ -89,9 +89,12 @@ router.post('/ppp/ipn', (req, res, next)=>{
 	// log.debug(`verificationBody: ${verificationBody}`);
 
 	// axios.post(ppIpnUrl, verificationBody)
+	log.debug('**** 0 ****');
 	axios.post(ppIpnUrl, req.body)
 	.then(response => {
+		log.debug('**** 1 ****');
 		log.debug(`response: ${JSON.stringify(response, null, 2)}`);
+		log.debug(`response.data: ${JSON.stringify(response.data, null, 2)}`);
 		if (response.data == "VERIFIED") {
 			log.debug(`Verified IPN: IPN message for Transaction ID: ${ipnTransactionMessage.txn_id} is verified.`);
 		}
@@ -103,6 +106,9 @@ router.post('/ppp/ipn', (req, res, next)=>{
 		}
 	})
 	.catch(err => {
+		log.debug('**** e ****');
+		log.debug(`err.response: ${JSON.stringify(err.response, null, 2)}`);
+		log.debug(`err: ${JSON.stringify(err, null, 2)}`);
 		return log.debug(new Error(`Sending IPN message to Paypal server. ${JSON.stringify(err.response, null, 3)}`));
 	}); 
 });
