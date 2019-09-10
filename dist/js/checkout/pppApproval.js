@@ -177,8 +177,9 @@ let pppConfig = {
 	disableContinue: "continueButton",
 	iframeHeight: "510"
 	// rememberedCards: "",
-	// merchantInstallmentSelectionOptional: true,	// to-ask
-	// merchantInstallmentSelection: 2,
+	// merchantInstallmentSelectionOptional: true,	// It is the default alredy.
+	// merchantInstallmentSelection: 2,	// Not use if merchantInstallmentSelectionOpional = true.
+	// The number of installments is configured into paypal account.
 };
 console.log(`ppp config: ${JSON.stringify(pppConfig, null, 2)}`);
 

@@ -1,19 +1,8 @@
-main {
-	margin: 0;
-	padding-left: 1em;
-	padding-right: 1em;
-	// display: flex;
-	// flex-direction: column;
-	// flex: 1 0 auto;
-}
 section {
 	background-color: var(--white-lighter);
-	padding: 1em;
-	max-width: 400px;
-	// margin: 2em auto;
-	// display: flex;
-	// flex-direction: column;
-	// flex: 1 0 auto;
+	width: 800px;
+	padding: 0 1em 1em 1em;
+	margin: 1em;
 }
 .title {
     margin-top: 0;
@@ -29,6 +18,21 @@ section li {
 section hr {
     margin-top: 2em;
 }
-#ppplus{
-	// max-width: 800px
-    }
+/* Mobile. */
+@media (min-width: 0px) {
+	section {
+		width: 400px;
+	}
+}
+/* Tablet. */
+@media (min-width: 600px) {
+	section {
+		width: 500px;
+	}
+}
+/* Small laptop. */
+@media (min-width: 800px){
+	section {
+		width: 700px;
+	}
+}
