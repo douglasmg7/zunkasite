@@ -65,6 +65,7 @@ router.get('/ppp/cancel/null', (req, res, next)=>{
 
 // PayPal Plus IPN listener get.
 router.get('/ppp/ipn', (req, res, next)=>{
+	log.debug(`headers: ${JSON.stringify(req.headers, null, 2)}`);
 	log.debug("IPN Notification Event Received");
 	log.error("IPN notification request method not allowed.");
 	res.status(405).send("Method Not Allowed");
@@ -72,8 +73,10 @@ router.get('/ppp/ipn', (req, res, next)=>{
 
 // PayPal Plus IPN listener post.
 router.post('/ppp/ipn', (req, res, next)=>{
+	log.debug(`headers: ${JSON.stringify(req.headers, null, 2)}`);
 	log.debug("IPN Notification Event Received");
-	log.debug(`IPN Notification message: ${JSON.stringify(req.body, null, 2)}`);
+	log.debug(`req.body: ${req.body}`);
+	// log.debug(`IPN Notification message: ${JSON.stringify(req.body, null, 2)}`);
 
 	// Return empty 200 response to acknowledge IPN post success, so it stop to send the same message.
 	res.header("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -83,17 +86,20 @@ router.post('/ppp/ipn', (req, res, next)=>{
 
 	// Certify if message is válid.
 	// Convert JSON ipn data to a query string.
-	let ipnTransactionMessage = req.body;
-	let formUrlEncodedBody = qs.stringify(ipnTransactionMessage);
+	// let ipnTransactionMessage = req.body;
+	// let formUrlEncodedBody = qs.stringify(ipnTransactionMessage);
+
 	// Build the body of the verification post message by prefixing 'cmd=_notify-validate'.
-	let verificationBody = `cmd=_notify-validate&${formUrlEncodedBody}`;
+	// let verificationBody = `cmd=_notify-validate&${formUrlEncodedBody}`;
+	let verificationBody = `cmd=_notify-validate&${req.body}`;
+
 	log.debug(`verificationBody: ${verificationBody}`);
 
 	log.debug('**** 0 ****');
 	axios.post(ppIpnUrl, verificationBody)
 	.then(response => {
 		log.debug('**** 1 ****');
-		log.debug(`response: ${util.inspect(response)}`);
+		// log.debug(`response: ${util.inspect(response)}`);
 		if (response.data == "VERIFIED") {
 			log.debug(`Verified IPN: IPN message for Transaction ID: ${ipnTransactionMessage.txn_id} is verified.`);
 		}
