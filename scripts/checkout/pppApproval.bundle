@@ -117,6 +117,22 @@ function receiveMessage(event) {
 						// <<Insert Code Here>>
                 }
         }
+		// Set element height, avoiding paypal configuration.
+        if (message['action'] == 'loaded') {
+			let ppplusContainerWidth = document.getElementById('ppplus-container').offsetWidth;
+			let ppplusElemet = document.getElementById('ppplus');
+			if (ppplusContainerWidth >= 700) {
+				ppplusElemet.style.height = '400px';	
+			} else if (ppplusContainerWidth >= 500) {
+				ppplusElemet.style.height = '460px';	
+			} else if (ppplusContainerWidth >= 400) {
+				ppplusElemet.style.height = '490px';	
+			} else {
+				ppplusElemet.style.height = '550px';	
+			}
+			console.log(`ppplusContainerWidth: ${ppplusContainerWidth}`);
+			console.log(`ppplusElemet.style.height: ${ppplusElemet.style.height}`);
+		}
 		//	PPPlus session approved, do logic here.
         if (message['action'] == 'checkout') {
             // var rememberedCard = null;
@@ -170,7 +186,7 @@ let pppConfig = {
 	country: "BR",
 	enableContinue: "continueButton",
 	disableContinue: "continueButton",
-	iframeHeight: "510"
+	// iframeHeight: "570"
 	// rememberedCards: "",
 	// merchantInstallmentSelectionOptional: true,	// It is the default alredy.
 	// merchantInstallmentSelection: 2,	// Not use if merchantInstallmentSelectionOpional = true.
