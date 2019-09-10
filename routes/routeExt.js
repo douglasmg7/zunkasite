@@ -73,8 +73,8 @@ router.get('/ppp/ipn', (req, res, next)=>{
 
 // PayPal Plus IPN listener post.
 router.post('/ppp/ipn', (req, res, next)=>{
-	log.debug(`headers: ${JSON.stringify(req.headers, null, 2)}`);
 	log.debug("IPN Notification Event Received");
+	log.debug(`headers: ${JSON.stringify(req.headers, null, 2)}`);
 	log.debug(`req.body: ${req.body}`);
 	// log.debug(`IPN Notification message: ${JSON.stringify(req.body, null, 2)}`);
 
@@ -99,6 +99,7 @@ router.post('/ppp/ipn', (req, res, next)=>{
 	axios.post(ppIpnUrl, verificationBody)
 	.then(response => {
 		log.debug('**** 1 ****');
+		log.debug(`response: ${response}`);
 		// log.debug(`response: ${util.inspect(response)}`);
 		if (response.data == "VERIFIED") {
 			// log.debug(`Verified IPN: IPN message for Transaction ID: ${ipnTransactionMessage.txn_id} is verified.`);
