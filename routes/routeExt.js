@@ -80,15 +80,18 @@ router.post('/ppp/ipn', (req, res, next)=>{
 	res.header("Expires", 0);
 	res.status(200).end();
 
-	// Certify if message is válid.
-	// Convert JSON ipn data to a query string.
-	let ipnTransactionMessage = req.body;
-	let formUrlEncodedBody = qs.stringify(ipnTransactionMessage);
-	// Build the body of the verification post message by prefixing 'cmd=_notify-validate'.
-	let verificationBody = `cmd=_notify-validate&${formUrlEncodedBody}`;
-	log.debug(`verificationBody: ${verificationBody}`);
-	axios.post(ppIpnUrl, verificationBody)
+	// // Certify if message is válid.
+	// // Convert JSON ipn data to a query string.
+	// let ipnTransactionMessage = req.body;
+	// let formUrlEncodedBody = qs.stringify(ipnTransactionMessage);
+	// // Build the body of the verification post message by prefixing 'cmd=_notify-validate'.
+	// let verificationBody = `cmd=_notify-validate&${formUrlEncodedBody}`;
+	// log.debug(`verificationBody: ${verificationBody}`);
+
+	// axios.post(ppIpnUrl, verificationBody)
+	axios.post(ppIpnUrl, req.body)
 	.then(response => {
+		log.debug(`response: ${JSON.stringify(response, null, 2)}`);
 		if (response.data == "VERIFIED") {
 			log.debug(`Verified IPN: IPN message for Transaction ID: ${ipnTransactionMessage.txn_id} is verified.`);
 		}
