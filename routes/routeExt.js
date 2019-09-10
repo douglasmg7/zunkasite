@@ -94,7 +94,10 @@ router.post('/ppp/ipn', (req, res, next)=>{
 	axios.post(ppIpnUrl, req.body)
 	.then(response => {
 		log.debug('**** 1 ****');
+		log.debug(`response-no-stringify: ${response}`);
+		log.debug('**** 2 ****');
 		log.debug(`response: ${JSON.stringify(response, null, 2)}`);
+		log.debug('**** 3 ****');
 		log.debug(`response.data: ${JSON.stringify(response.data, null, 2)}`);
 		if (response.data == "VERIFIED") {
 			log.debug(`Verified IPN: IPN message for Transaction ID: ${ipnTransactionMessage.txn_id} is verified.`);
