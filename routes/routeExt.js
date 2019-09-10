@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const qs = require('querystring');
+const util = require('util');
 
 // Personal modules.
 const log = require('../config/log');
@@ -98,9 +99,12 @@ router.post('/ppp/ipn', (req, res, next)=>{
 		log.debug('**** 2 ****');
 		log.debug(`response.data: ${response.data}`);
 		log.debug('**** 3 ****');
-		log.debug(`response: ${JSON.stringify(response, null, 2)}`);
+		log.debug(`response-util: ${util.inspect(response)}`);
+		log.debug('**** 33 ****');
+		log.debug(`response.data-util: ${util.inspect(response.data)}`);
+		// log.debug(`response.data-json: ${JSON.stringify(response.data, null, 2)}`);
 		log.debug('**** 4 ****');
-		log.debug(`response.data: ${JSON.stringify(response.data, null, 2)}`);
+		log.debug(`response-json: ${JSON.stringify(response, null, 2)}`);
 		if (response.data == "VERIFIED") {
 			log.debug(`Verified IPN: IPN message for Transaction ID: ${ipnTransactionMessage.txn_id} is verified.`);
 		}
@@ -112,10 +116,7 @@ router.post('/ppp/ipn', (req, res, next)=>{
 		}
 	})
 	.catch(err => {
-		log.debug('**** e ****');
 		log.debug(`err: ${err}`);
-		log.debug(`err: ${JSON.stringify(err, null, 2)}`);
-		log.debug(`err.response: ${JSON.stringify(err.response, null, 2)}`);
-		return log.debug(new Error(`Sending IPN message to Paypal server. ${JSON.stringify(err.response, null, 3)}`));
+		log.debug(new Error(`Sending IPN message to Paypal server. ${err}`));
 	}); 
 });
