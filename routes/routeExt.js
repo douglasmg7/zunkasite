@@ -62,21 +62,24 @@ router.get('/ppp/cancel/null', (req, res, next)=>{
 	res.end("Ok cancel.");
 });
 
-// PayPal Plus IPN listener.
+// PayPal Plus IPN listener get.
 router.get('/ppp/ipn', (req, res, next)=>{
 	log.debug("IPN Notification Event Received");
+	log.error("IPN notification request method not allowed.");
+	res.status(405).send("Method Not Allowed");
+});
+
+// PayPal Plus IPN listener post.
+router.post('/ppp/ipn', (req, res, next)=>{
+	log.debug("IPN Notification Event Received");
 	log.debug(`IPN Notification message: ${JSON.stringify(req.body, null, 2)}`);
-	if (req.method !== "POST") {
-		log.error("IPN notification request method not allowed.");
-		res.status(405).send("Method Not Allowed");
-	} else {
-		// Return empty 200 response to acknowledge IPN post success.
-		log.debug("IPN Notification Event received successfully.");
-		res.header("Cache-Control", "no-cache, no-store, must-revalidate");
-		res.header("Pragma", "no-cache");
-		res.header("Expires", 0);
-		res.status(200).end();
-	}
+
+	// Return empty 200 response to acknowledge IPN post success, so it stop to send the same message.
+	res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+	res.header("Pragma", "no-cache");
+	res.header("Expires", 0);
+	res.status(200).end();
+
 	// Certify if message is válid.
 	// Convert JSON ipn data to a query string.
 	let ipnTransactionMessage = req.body;
