@@ -101,10 +101,12 @@ router.post('/ppp/ipn', (req, res, next)=>{
 		log.debug('**** 1 ****');
 		// log.debug(`response: ${util.inspect(response)}`);
 		if (response.data == "VERIFIED") {
-			log.debug(`Verified IPN: IPN message for Transaction ID: ${ipnTransactionMessage.txn_id} is verified.`);
+			// log.debug(`Verified IPN: IPN message for Transaction ID: ${ipnTransactionMessage.txn_id} is verified.`);
+			log.debug(`Verified IPN.`);
 		}
 		else if (response.data === "INVALID"){
-			log.debug(`Invalid IPN: IPN message for Transaction ID: ${ipnTransactionMessage.txn_id} is invalid.`);
+			// log.debug(`Invalid IPN: IPN message for Transaction ID: ${ipnTransactionMessage.txn_id} is invalid.`);
+			log.debug(`Invalid IPN.`);
 		}
 		else {
 			log.debug('Unexpected reponse body.');
