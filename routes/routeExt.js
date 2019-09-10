@@ -81,30 +81,19 @@ router.post('/ppp/ipn', (req, res, next)=>{
 	res.header("Expires", 0);
 	res.status(200).end();
 
-	// // Certify if message is válid.
-	// // Convert JSON ipn data to a query string.
-	// let ipnTransactionMessage = req.body;
-	// let formUrlEncodedBody = qs.stringify(ipnTransactionMessage);
-	// // Build the body of the verification post message by prefixing 'cmd=_notify-validate'.
-	// let verificationBody = `cmd=_notify-validate&${formUrlEncodedBody}`;
-	// log.debug(`verificationBody: ${verificationBody}`);
+	// Certify if message is válid.
+	// Convert JSON ipn data to a query string.
+	let ipnTransactionMessage = req.body;
+	let formUrlEncodedBody = qs.stringify(ipnTransactionMessage);
+	// Build the body of the verification post message by prefixing 'cmd=_notify-validate'.
+	let verificationBody = `cmd=_notify-validate&${formUrlEncodedBody}`;
+	log.debug(`verificationBody: ${verificationBody}`);
 
-	// axios.post(ppIpnUrl, verificationBody)
-	req.body.cmd = '_notify-validate';
 	log.debug('**** 0 ****');
-	axios.post(ppIpnUrl, req.body)
+	axios.post(ppIpnUrl, verificationBody)
 	.then(response => {
 		log.debug('**** 1 ****');
-		log.debug(`response-no-stringify: ${response}`);
-		log.debug('**** 2 ****');
-		log.debug(`response.data: ${response.data}`);
-		log.debug('**** 3 ****');
-		log.debug(`response-util: ${util.inspect(response)}`);
-		log.debug('**** 33 ****');
-		log.debug(`response.data-util: ${util.inspect(response.data)}`);
-		// log.debug(`response.data-json: ${JSON.stringify(response.data, null, 2)}`);
-		log.debug('**** 4 ****');
-		log.debug(`response-json: ${JSON.stringify(response, null, 2)}`);
+		log.debug(`response: ${util.inspect(response)}`);
 		if (response.data == "VERIFIED") {
 			log.debug(`Verified IPN: IPN message for Transaction ID: ${ipnTransactionMessage.txn_id} is verified.`);
 		}
@@ -116,7 +105,6 @@ router.post('/ppp/ipn', (req, res, next)=>{
 		}
 	})
 	.catch(err => {
-		log.debug(`err: ${err}`);
-		log.debug(new Error(`Sending IPN message to Paypal server. ${err}`));
+		log.error(`Sending IPN message to Paypal server. ${err}`);
 	}); 
 });
