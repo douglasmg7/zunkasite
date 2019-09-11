@@ -13,7 +13,7 @@ module.exports = {
     output: '/dev/null',
     error: './log/pm2.log',
     log: '/dev/null',
-    log_type: "json",
+    // log_type: "json",
     // log: './log/pm2_combined.out_err.log',
   }],
   deploy : {
