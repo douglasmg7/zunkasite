@@ -50,7 +50,12 @@
     "nodemon": "^1.19.2",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
+<<<<<<< HEAD
     "pug": "^2.0.4",
+=======
+    "pug": "^2.0.3",
+    "qs": "^6.8.0",
+>>>>>>> 0dad9ef9d65c4e0243f3408dc9bdfedbea7edb53
     "querystring": "^0.2.0",
     "redis": "^2.8.0",
     "request": "^2.88.0",

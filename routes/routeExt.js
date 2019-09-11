@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-const qs = require('querystring');
+const qs = require('qs');
 const util = require('util');
 
 // Personal modules.
@@ -86,12 +86,12 @@ router.post('/ppp/ipn', (req, res, next)=>{
 
 	// Certify if message is válid.
 	// Convert JSON ipn data to a query string.
-	// let ipnTransactionMessage = req.body;
-	// let formUrlEncodedBody = qs.stringify(ipnTransactionMessage);
+	let ipnTransactionMessage = req.body;
+	let formUrlEncodedBody = qs.stringify(ipnTransactionMessage);
 
 	// Build the body of the verification post message by prefixing 'cmd=_notify-validate'.
-	// let verificationBody = `cmd=_notify-validate&${formUrlEncodedBody}`;
-	let verificationBody = `cmd=_notify-validate&${req.body}`;
+	let verificationBody = `cmd=_notify-validate&${formUrlEncodedBody}`;
+	// let verificationBody = `cmd=_notify-validate&${req.body}`;
 
 	log.debug(`verificationBody: ${verificationBody}`);
 
