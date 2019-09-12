@@ -32,6 +32,11 @@ function formatMoney(val){
 	return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
+// Convert to brazilian currency.
+function converToBRCurrencyString(val) {
+	return val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
 // Check permission.
 function checkPermission (req, res, next) {
 	// Should be admin.
@@ -988,13 +993,11 @@ router.post('/update-stock', (req, res, next)=>{
 	res.json({ success: true , cart: req.cart });
 });
 
-function converToBRCurrencyString(val) {
-	return val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-}
 
 /******************************************************************************
 / Paypal
  ******************************************************************************/
+
 // Sandbox configurations.
 let ppUrl = ppConfig.sandbox.ppUrl;
 let ppIpnUrl = ppConfig.sandbox.ppIpnUrl;
@@ -1168,6 +1171,7 @@ router.get('/ppp/payment/complete/:order_id', (req, res, next)=>{
 			}
 			// update order.
 			order.payment.pppExecutePayment.transactions[0].related_resources[0].sale.state = "completed";
+			order.timestamps.paidAt = new Date();
 			order.status = 'paid';
 			order.save(err=>{
 				if (err) {
@@ -1324,3 +1328,5 @@ function getPayment(order, cb){
 		}); 
 	});
 }
+
+module.exports.getPayment = getPayment;

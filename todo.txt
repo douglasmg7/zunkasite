@@ -16,9 +16,6 @@ Rest one product on the last row.
 
 Show in admin/orderList number of parcels if payment is in credit card.
 
-Onde configuro a Url passa receber IPN assíncrono? Tanto para sandbox e live.
-E como faço para gerar uma execute payment com o status não complete e depois receber uma mensagem do IPN assíncrono com status complete, em sandbox?
-
 Create a new page for message Foi enviado um e-mail para... on account creation.
 
 # Review data forms for mobile number for user and delivery address.
