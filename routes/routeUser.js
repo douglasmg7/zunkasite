@@ -559,7 +559,7 @@ router.post('/access/delete-account', checkPermission, (req, res, next)=>{
 });
 
 // Account deleted.
-router.get('/access/account-deleted', checkPermission, (req, res, next)=>{
+router.get('/access/account-deleted', (req, res, next)=>{
   res.render('user/accountDeleted', { nav: {} } );
 });
 

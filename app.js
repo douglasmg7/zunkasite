@@ -134,7 +134,7 @@ app.use(favicon(path.join(__dirname, 'dist', 'favicon.png')));
 // app.use(webpackHotMiddleware);
 
 // body.
-app.use('/ext/ppp/ipn', bodyParser.raw({ type: 'application/json' }));
+// app.use('/ext/ppp/ipn', bodyParser.raw({ type: 'application/json' }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 

@@ -30,7 +30,6 @@ var app = new Vue({
         if (res.data.success) {
           window.location.href = '/user/access/account-deleted';
         }
-        // Not success on signin.
         else {
           this.warnMessage = res.data.message;
         }
