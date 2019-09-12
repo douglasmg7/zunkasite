@@ -1,15 +1,15 @@
-Bom dia Francisco,
+Delete account not show account delete page.
 
-Ainda tenho a seguinte dúvidas.
-Estou usando api v1 e não v2, seria isso mesmo?
-Não estou usando redirect_urls para nada. Ok?o
+cep inválido not in red.
 
-Tentei configurar as parcelas mas não obitive sucesso.
-	merchantInstallmentSelectionOptional: true,
-	merchantInstallmentSelection: 2,
+Textbox is cutting "g" char.
 
-Qual o id que devo forncer para este ítem?
-	rememberedCards: "",
+Remove texbox bottom margin.
+http://localhost:3080/checkout/shipping-address
+Campo deve ser preenchido. Is to low from textbox.
+Is accepting anyere value on mobile number.
+
+Show mobile number and cpf o order resume.
 
 Show in admin/orderList number of parcels if payment is in credit card.
 
