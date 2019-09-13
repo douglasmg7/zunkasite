@@ -89,6 +89,7 @@ router.post('/ppp/webhook-listener', (req, res, next)=>{
 		log.debug("IPN Notification Event Received");
 		log.debug(`headers: ${JSON.stringify(req.headers, null, 2)}`);
 		log.debug(`body: ${util.inspect(req.body)}`);
+		log.debug(`body: ${JSON.stringify(req.body, null, 2)}`);
 
 		// Return empty 200 response to acknowledge IPN post success, so it stop to send the same message.
 		res.header("Cache-Control", "no-cache, no-store, must-revalidate");
