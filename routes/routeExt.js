@@ -88,7 +88,7 @@ router.post('/ppp/webhook-listener', (req, res, next)=>{
 	try {
 		log.debug("IPN Notification Event Received");
 		log.debug(`headers: ${JSON.stringify(req.headers, null, 2)}`);
-		log.debug(`body: ${util.inspect(req.body)}`);
+		// log.debug(`body: ${util.inspect(req.body)}`);
 		log.debug(`body: ${JSON.stringify(req.body, null, 2)}`);
 
 		// Return empty 200 response to acknowledge IPN post success, so it stop to send the same message.
@@ -98,8 +98,9 @@ router.post('/ppp/webhook-listener', (req, res, next)=>{
 		res.status(200).end();
 		
 		// todo - alternate.
-		// let payId = req.body.payid;
-		let payId =  "PAYID-LVSAEAQ6GM59408ND154300L";
+		let payId = req.body.resource.id;
+		// let payId =  "PAYID-LVSAEAQ6GM59408ND154300L";
+		log.debug(`payId: ${payId}`);
 
 		Order.find({"payment.pppExecutePayment.id": payId}, (err, docs)=>{
 			// Error.

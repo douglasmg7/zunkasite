@@ -8,38 +8,39 @@ let uri = null;
 process.env.NODE_ENV === 'unitTest' ? uri = dbConfig.urlUnitTest : uri = dbConfig.url;
 // Options.
 let options = {
-  // useMongoClient: true,  // WARNING: The `useMongoClient` option is no longer necessary in mongoose 5.x, please remove it.
-  socketTimeoutMS: 0,
-  keepAlive: true,
-  reconnectTries: 30,
-  promiseLibrary: global.Promise,  // Set promise for MongoDb Driver.
-  useNewUrlParser: true,
-  useCreateIndex: true
+	// useMongoClient: true,  // WARNING: The `useMongoClient` option is no longer necessary in mongoose 5.x, please remove it.
+	socketTimeoutMS: 0,
+	keepAlive: true,
+	reconnectTries: 30,
+	promiseLibrary: global.Promise,  // Set promise for MongoDb Driver.
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
+	useCreateIndex: true
 };
 mongoose.Promise = global.Promise;  // Set promise for mongoose uses.
 // Mongoose.
 // log.debug(`uri: ${uri}`);
 mongoose.connect(uri, options, function(err){
-  if (err) {
-    log.error(err.stack);
-  }
+	if (err) {
+		log.error(err.stack);
+	}
 });
 // Error.
 mongoose.connection.on('error', function(err){
-  log.error(err.stack);
-  process.exit(1);
+	log.error(err.stack);
+	process.exit(1);
 });
 // Success.
 mongoose.connection.once('open', function() {
-  log.info('Connected to Mongoose.');
+	log.info('Connected to Mongoose.');
 });
 // Disconnected.
 mongoose.connection.on('disconnected', function(){
-  log.info("Mongoose disconnected.");
+	log.info("Mongoose disconnected.");
 });
 // Close.
 mongoose.connection.once('close', function() {
-  log.info('Mongoose closed.');
+	log.info('Mongoose closed.');
 });
 
 module.exports = mongoose.connection;

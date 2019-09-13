@@ -55,6 +55,7 @@
     "querystring": "^0.2.0",
     "redis": "^2.8.0",
     "request": "^2.88.0",
+    "saslprep": "^1.0.3",
     "serve-favicon": "^2.5.0",
     "sharp": "^0.21.3",
     "soap": "^0.24.0",
