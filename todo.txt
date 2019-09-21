@@ -1,4 +1,4 @@
-Delete account not show account delete page.
+# Add "Meu carrion" on "Sua conta".
 
 cep inválido not in red.
 

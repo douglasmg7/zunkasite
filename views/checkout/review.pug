@@ -52,7 +52,7 @@ block content
 			p(v-if='order.payment.method === "ppp-credit"') Cartão de crédito
 			//- form(action=`/checkout/close/order/${order._id}`, method='post')
 				//- input(type='hidden' name='_csrf' value=csrfToken)
-			input.btn-primary(type='submit' @click='closeOrder("")' value='Fechar pedido')
+			input.btn-primary(type='submit' @click='closeOrder("")' value='Finalizar compra')
 
 			// Negative test.
 			//- h2 Fechar pedido com teste negativo
