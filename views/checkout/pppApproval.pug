@@ -17,7 +17,8 @@ block content
 		//- .ppp-content
 		//- h2.title Pagamento com cartão
 		#ppplus
-		input#continueButton.btn-primary(type='submit' onclick='ppp.doContinue(); return false;' value='Continuar')
+		input#continueButton.btn-primary(type='button' onclick='ppp.doContinue(); return false;' value='Continuar')
+	//- input.btn-primary(type='button' onclick='alert("clicked")' value='test')
 
 append internal_scripts
 	script.

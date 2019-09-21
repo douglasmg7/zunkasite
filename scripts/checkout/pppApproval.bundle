@@ -57,7 +57,7 @@ function receiveMessage(event) {
 		}
 		// console.log("event:", event);
         var message = JSON.parse(event.data);
-		console.log("message:", message);
+		console.log("paypal message:", message);
 		//	iFrame error.
         if (typeof message['cause'] !== 'undefined') { 
             let ppplusError = message['cause'].replace (/['"]+/g,""); //log & attach this error into the order if possible
@@ -118,21 +118,21 @@ function receiveMessage(event) {
                 }
         }
 		// Set element height, avoiding paypal configuration.
-        if (message['action'] == 'loaded') {
-			let ppplusContainerWidth = document.getElementById('ppplus-container').offsetWidth;
-			let ppplusElemet = document.getElementById('ppplus');
-			if (ppplusContainerWidth >= 700) {
-				ppplusElemet.style.height = '400px';	
-			} else if (ppplusContainerWidth >= 500) {
-				ppplusElemet.style.height = '460px';	
-			} else if (ppplusContainerWidth >= 400) {
-				ppplusElemet.style.height = '490px';	
-			} else {
-				ppplusElemet.style.height = '550px';	
-			}
-			console.log(`ppplusContainerWidth: ${ppplusContainerWidth}`);
-			console.log(`ppplusElemet.style.height: ${ppplusElemet.style.height}`);
-		}
+        // if (message['action'] == 'loaded') {
+			// let ppplusContainerWidth = document.getElementById('ppplus-container').offsetWidth;
+			// let ppplusElemet = document.getElementById('ppplus');
+			// if (ppplusContainerWidth >= 700) {
+				// ppplusElemet.style.height = '400px';	
+			// } else if (ppplusContainerWidth >= 500) {
+				// ppplusElemet.style.height = '460px';	
+			// } else if (ppplusContainerWidth >= 400) {
+				// ppplusElemet.style.height = '490px';	
+			// } else {
+				// ppplusElemet.style.height = '550px';	
+			// }
+			// // console.log(`ppplusContainerWidth: ${ppplusContainerWidth}`);
+			// // console.log(`ppplusElemet.style.height: ${ppplusElemet.style.height}`);
+		// }
 		//	PPPlus session approved, do logic here.
         if (message['action'] == 'checkout') {
             // var rememberedCard = null;
@@ -186,7 +186,8 @@ let pppConfig = {
 	country: "BR",
 	enableContinue: "continueButton",
 	disableContinue: "continueButton",
-	// iframeHeight: "570"
+	// iframeHeight: "570",
+	iframeHeight: "420",
 	// rememberedCards: "",
 	// merchantInstallmentSelectionOptional: true,	// It is the default alredy.
 	// merchantInstallmentSelection: 2,	// Not use if merchantInstallmentSelectionOpional = true.
