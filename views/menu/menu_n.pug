@@ -35,6 +35,7 @@ if user.name && user.group.includes('admin')
             i.fas.fa-xs.fa-chevron-up.fa-rotate-270
             | &nbspMenu
         if !user.name
+            a.item(href="/cart") Meu carrinho
             a.item(href="/user/signin") Entrar
         if user.name
             p.item #{ user.name }

@@ -9,55 +9,58 @@ block append css
 block content
 	section.shadow
 		h2.title Resumo da compra
-		.address(v-if='order.shipping.address.addressComplement')
-			h3.sub-title Enviar para
-			p {{order.shipping.address.name}}
-			p {{order.shipping.address.address}} {{order.shipping.address.addressNumber}}
-			p {{order.shipping.address.addressComplement}} 
-			p {{order.shipping.address.district}}
-			p {{order.shipping.address.city}}
-			p {{order.shipping.address.state}}
-			p {{order.shipping.address.cep}} 
-			p Brasil   
-		//- Addres complement not exist.
-		.address(v-if='!order.shipping.address.addressComplement')
-			h3.sub-title Enviar para
-			p {{order.shipping.address.name}}
-			p {{order.shipping.address.address}} {{order.shipping.address.addressNumber}}
-			p {{order.shipping.address.district}}
-			p {{order.shipping.address.city}}
-			p {{order.shipping.address.state}}
-			p {{order.shipping.address.cep}} 
-			p Brasil
-		.shipment
-			h3.sub-title Forma de envio
-			p {{order.shipping.methodDesc}}
-			p Entrega em {{order.shipping.deadline}} dia(s)
-			P Valor do frete: {{order.shipping.price | formatMoney}}
-		.items(v-if='order.items.length > 0')
-			h3.sub-title Ítens
-			ul
-				li(v-for='item in order.items')
-					p {{item.name}}
-					p {{item.quantity}} unidade(s)
-					p {{item.price | formatMoney}} 
-		.total
-			h3.sub-title Valor total com frete
-			p {{ order.totalPrice | formatMoney }}
-		.payment
-			h3.sub-title Forma de pagamento
-			p(v-if='order.payment.method === "money"') Pagamento em dinheiro no momento da entrega
-			p(v-if='order.payment.method === "transfer"') Transferência bancária
-			p(v-if='order.payment.method === "paypal"') Paypal
-			p(v-if='order.payment.method === "ppp-credit"') Cartão de crédito
-			//- form(action=`/checkout/close/order/${order._id}`, method='post')
-				//- input(type='hidden' name='_csrf' value=csrfToken)
-			input.btn-primary(type='submit' @click='closeOrder("")' value='Finalizar compra')
+		.rows
+			.col-1
+				.address(v-if='order.shipping.address.addressComplement')
+					h3.sub-title Enviar para
+					p {{order.shipping.address.name}}
+					p {{order.shipping.address.address}} {{order.shipping.address.addressNumber}}
+					p {{order.shipping.address.addressComplement}} 
+					p {{order.shipping.address.district}}
+					p {{order.shipping.address.city}}
+					p {{order.shipping.address.state}}
+					p {{order.shipping.address.cep}} 
+					p Brasil   
+				//- Addres complement not exist.
+				.address(v-if='!order.shipping.address.addressComplement')
+					h3.sub-title Enviar para
+					p {{order.shipping.address.name}}
+					p {{order.shipping.address.address}} {{order.shipping.address.addressNumber}}
+					p {{order.shipping.address.district}}
+					p {{order.shipping.address.city}}
+					p {{order.shipping.address.state}}
+					p {{order.shipping.address.cep}} 
+					p Brasil
+				.shipment
+					h3.sub-title Forma de envio
+					p {{order.shipping.methodDesc}}
+					p Entrega em {{order.shipping.deadline}} dia(s)
+					P Valor do frete: {{order.shipping.price | formatMoney}}
+			.col-2
+				.items(v-if='order.items.length > 0')
+					h3.sub-title Ítens
+					ul
+						li(v-for='item in order.items')
+							p {{item.name}}
+							p {{item.quantity}} unidade(s)
+							p {{item.price | formatMoney}} 
+				.total
+					h3.sub-title Valor total com frete
+					p {{ order.totalPrice | formatMoney }}
+				.payment
+					h3.sub-title Forma de pagamento
+					p(v-if='order.payment.method === "money"') Pagamento em dinheiro no momento da entrega
+					p(v-if='order.payment.method === "transfer"') Transferência bancária
+					p(v-if='order.payment.method === "paypal"') Paypal
+					p(v-if='order.payment.method === "ppp-credit"') Cartão de crédito
+					//- form(action=`/checkout/close/order/${order._id}`, method='post')
+						//- input(type='hidden' name='_csrf' value=csrfToken)
+		input.btn-primary(type='submit' @click='closeOrder("")' value='Finalizar compra')
 
-			// Negative test.
-			//- h2 Fechar pedido com teste negativo
-			//- input(type='text' v-model="paypalMockCode")
-			//- input.btn-primary(type='submit' @click='closeOrder(paypalMockCode)' :value='paypalMockCode')
+		// Negative test.
+		//- h2 Fechar pedido com teste negativo
+		//- input(type='text' v-model="paypalMockCode")
+		//- input.btn-primary(type='submit' @click='closeOrder(paypalMockCode)' :value='paypalMockCode')
 
 append internal_scripts
 	script.

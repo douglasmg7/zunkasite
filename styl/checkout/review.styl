@@ -3,6 +3,11 @@ section {
 	padding: 1em;
 	margin: 2em 1em;
 }
+.rows {
+    background-color: var(--white-lighter);
+    display: grid;
+    grid-template-rows: auto;
+}
 .title {
     margin-top: 0;
 }
@@ -17,3 +22,45 @@ section li {
 section hr {
     margin-top: 2em;
 }
+@media (min-width: 0px) {
+    .rows {
+		grid-template-columns: auto;
+		grid-template-areas: "col-1" "col-2";
+    }
+    .col-1 {
+        grid-area: col-1;
+    }
+    .col-2 {
+        grid-area: col-2;
+    }
+}
+@media (min-width: 500px) {
+
+}
+@media (min-width: 600px) {
+
+}
+@media (min-width: 800px){
+	section {
+		// padding-right: 1.5em;
+		// padding-left: 1.5em;
+		// padding-bottom: 1.5em;
+	}
+    .rows {
+		grid-template-columns: auto auto;
+		grid-template-areas: "col-1 col-2";
+		margin-top: 1em;
+    }
+	.col-1 {
+		padding-right: 1.5em;
+	}
+	.col-2 {
+		padding-left: 1.5em;
+		border-left: 1px solid var(--black-lighter);
+	}
+	.sub-title {
+		margin-top: 0;
+	}
+}
+@media (min-width: 1000px) {}
+@media (min-width: 1212px) {}

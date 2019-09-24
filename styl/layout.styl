@@ -176,6 +176,11 @@ body {
     font-size: 1.2em;
     cursor: pointer;
 }
+#menu p {
+    color: var(--white);
+    font-size: 1.2em;
+	font-weight: bold;
+}
 // Main.
 main {
     max-width: 1200px;
@@ -312,10 +317,9 @@ img {
     /* Menu item. */
     #menu .item {
         display: block;
-        // padding: .4em .5em .4em 1.4em;
-        padding: 1em .5em 1em 2em;
+        padding: .5em .5em .5em 2em;
     }
-    #menu .item:hover {
+    #menu a.item:hover {
         opacity: .7;
     }
     /* Sub-menu items. */
@@ -390,6 +394,10 @@ img {
         border-radius: 4px;
     }
     //- Sub menu items.
+	#menu .items p.item {
+		margin-top: 0;
+	}
+    #menu .items p.item, 
     #menu .items a.item {
         color: var(--black-darker);
         padding: .1em 0;
