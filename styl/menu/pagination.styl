@@ -9,10 +9,18 @@
 }
 .pagination a {
     text-decoration: none;
-    margin: 0 1em 0 1em;
-    color: lightgray;
+    // margin: 0 1em 0 1em;
+    margin: 0; 
+	padding: 0 1em; 
+    color: var(--black-darker);
+    // color: lightgray;
     cursor: pointer;
 }
+.pagination a:hover {
+	font-weight: bold;
+}
 .pagination a[active] {
-    color: var(--black-darker);
+    // color: var(--black-darker);
+    color: var(--green-dark);
+	font-weight: bold;
 }

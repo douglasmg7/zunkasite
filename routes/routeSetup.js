@@ -24,36 +24,41 @@ router.post('/product/add', [
 		check('dealerProductPrice').isNumeric(),
 		check('dealerProductLastUpdate').isISO8601(),
 ], (req, res, next)=>{
-	// log.debug(JSON.stringify(req.body, null, 3));
-	// Check erros.
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		// log.debug(JSON.stringify(errors.array(), null, 2));
-		return res.status(422).json({ erros: errors.array() });
-	}
-	// Create product.
-	let product = new Product();
-	product.dealerName = req.body.dealerName;
-	product.dealerProductId = req.body.dealerProductId;
-	product.dealerProductTitle = req.body.dealerProductTitle;
-	product.dealerProductDesc = req.body.dealerProductDesc;
-	product.dealerProductBrand = req.body.dealerProductBrand;
-	product.dealerProductWarrantDays = req.body.dealerProductWarrantDays;
-	product.dealerProductDeep = req.body.dealerProductDeep;
-	product.dealerProductHeight = req.body.dealerProductHeight;
-	product.dealerProductWidth = req.body.dealerProductWidth;
-	product.dealerProductWeight = req.body.dealerProductWeight;
-	product.dealerProductActive = req.body.dealerProductActive;
-	product.dealerProductPrice = req.body.dealerProductPrice;
-	product.dealerProductLastUpdate = req.body.dealerProductLastUpdate;
-	log.debug(`product: ${JSON.stringify(product, null, 2)}`);
-	// Save product.
-	product.save(err=>{
-		if (err) {
-			return res.status(500).send(err);
+	try {
+		// log.debug(JSON.stringify(req.body, null, 3));
+		// Check erros.
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			// log.debug(JSON.stringify(errors.array(), null, 2));
+			return res.status(422).json({ erros: errors.array() });
 		}
-	});
-	res.json(' success: true ');
+		// Create product.
+		let product = new Product();
+		product.dealerName = req.body.dealerName;
+		product.dealerProductId = req.body.dealerProductId;
+		product.dealerProductTitle = req.body.dealerProductTitle;
+		product.dealerProductDesc = req.body.dealerProductDesc;
+		product.dealerProductBrand = req.body.dealerProductBrand;
+		product.dealerProductWarrantDays = req.body.dealerProductWarrantDays;
+		product.dealerProductDeep = req.body.dealerProductDeep;
+		product.dealerProductHeight = req.body.dealerProductHeight;
+		product.dealerProductWidth = req.body.dealerProductWidth;
+		product.dealerProductWeight = req.body.dealerProductWeight;
+		product.dealerProductActive = req.body.dealerProductActive;
+		product.dealerProductPrice = req.body.dealerProductPrice;
+		product.dealerProductLastUpdate = req.body.dealerProductLastUpdate;
+		log.debug(`product: ${JSON.stringify(product, null, 2)}`);
+		// Save product.
+		product.save(err=>{
+			if (err) {
+				return res.status(500).send(err);
+			}
+		});
+		res.json(' success: true ');
+	} catch(err) {
+		log.error(`Adding Aldo product: ${err.message}`);
+		return res.status(500).send(err);
+	}
 });
 
 // // Store products.

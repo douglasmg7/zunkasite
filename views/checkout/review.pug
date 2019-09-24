@@ -1,14 +1,14 @@
 extends ../layout/layout_vue_n
 
 block title
-	title Zunka - Revisão do pedido
+	title Zunka - Resumo da compra
 
 block append css
 	link(rel="stylesheet" href="/css/checkout/review.css" charset="utf-8")
 
 block content
 	section.shadow
-		h2.title Resumo da ordem
+		h2.title Resumo da compra
 		.address(v-if='order.shipping.address.addressComplement')
 			h3.sub-title Enviar para
 			p {{order.shipping.address.name}}
@@ -64,4 +64,4 @@ append internal_scripts
 		let order = !{JSON.stringify(order)};
 
 append external_scripts
-	script(src='/js/checkout/review.js?0003') 
+	script(src='/js/checkout/review.js?0004') 

@@ -28,7 +28,7 @@ if user.name && user.group.includes('admin')
 //- Account.
 .sub-menu
     a.item.toggle-items(href="#")
-        | Sua conta&nbsp
+        | Minha conta&nbsp
         i.fas.fa-xs.fa-chevron-up.fa-rotate-90
     .items
         a.item.back(href="#")
@@ -37,7 +37,10 @@ if user.name && user.group.includes('admin')
         if !user.name
             a.item(href="/user/signin") Entrar
         if user.name
-            a.item(href="/user/orders") Pedidos
-            a.item(href="/user/address") Endereços
+            p.item #{ user.name }
+            a.item(href="/cart") Meu carrinho
+            a.item(href="/user/orders") Meus pedidos
+            a.item(href="/user/address") Meus endereços
             a.item(href="/user/access") Meus dados
-            a.item(href="/user/signout") Não é <span style="font-weight: bold;">#{user.name}</span>? Sair            
+            a.item(href="/user/signout") Sair            
+            //- a.item(href="/user/signout") Não é <span style="font-weight: bold;">#{user.name}</span>? Sair            

@@ -1,4 +1,9 @@
-# Add "Meu carrion" on "Sua conta".
+# Resumo da ordem
+	For mobile, make it wider.
+	For desktop, make two columns.
+
+# Payment by credit card
+	Include another button [Escolher outra forma de pagamento] - [Continuar]
 
 cep inválido not in red.
 
