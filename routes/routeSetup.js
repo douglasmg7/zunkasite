@@ -36,25 +36,29 @@ router.post('/product/add', [
 		let product = new Product();
 		product.dealerName = req.body.dealerName;
 		product.dealerProductId = req.body.dealerProductId;
-		product.dealerProductTitle = req.body.dealerProductTitle;
-		product.dealerProductDesc = req.body.dealerProductDesc;
+		product.storeProductTitle = product.dealerProductTitle = req.body.dealerProductTitle;
+		product.storeProductDescription = product.dealerProductDesc = req.body.dealerProductDesc;
 		product.dealerProductBrand = req.body.dealerProductBrand;
 		product.dealerProductWarrantDays = req.body.dealerProductWarrantDays;
-		product.dealerProductDeep = req.body.dealerProductDeep;
-		product.dealerProductHeight = req.body.dealerProductHeight;
-		product.dealerProductWidth = req.body.dealerProductWidth;
-		product.dealerProductWeight = req.body.dealerProductWeight;
+		product.storeProductLength = product.dealerProductDeep = req.body.dealerProductDeep;
+		product.storeProductHeight = product.dealerProductHeight = req.body.dealerProductHeight;
+		product.storeProductWidth = product.dealerProductWidth = req.body.dealerProductWidth;
+		product.storeProductWeight = product.dealerProductWeight = req.body.dealerProductWeight;
 		product.dealerProductActive = req.body.dealerProductActive;
 		product.dealerProductPrice = req.body.dealerProductPrice;
 		product.dealerProductLastUpdate = req.body.dealerProductLastUpdate;
+		// Must be verified before close order.
+		product.storeProductQtd = 1;
 		log.debug(`product: ${JSON.stringify(product, null, 2)}`);
 		// Save product.
 		product.save(err=>{
 			if (err) {
+				log.error(`Adding Aldo product: ${err.message}`);
 				return res.status(500).send(err);
 			}
+			log.debug(`product id: ${product._id}`);
+			res.json(' success: true ');
 		});
-		res.json(' success: true ');
 	} catch(err) {
 		log.error(`Adding Aldo product: ${err.message}`);
 		return res.status(500).send(err);
