@@ -15,7 +15,8 @@ let options = {
 	promiseLibrary: global.Promise,  // Set promise for MongoDb Driver.
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
-	useCreateIndex: true
+	useCreateIndex: true,
+	useFindAndModify: false
 };
 mongoose.Promise = global.Promise;  // Set promise for mongoose uses.
 // Mongoose.
