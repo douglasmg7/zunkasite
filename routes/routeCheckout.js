@@ -924,7 +924,7 @@ function estimateAllCorreiosShipping(box, cb) {
 			nVlValorDeclarado  : 0,
 			sCdAvisoRecebimento: 'N'
 		};
-		// log.debug('args: ' + JSON.stringify(args));
+		// log.debug('correio web service args: ' + JSON.stringify(args));
 		// Uncomment for fast debud, to not use Correios webservice.
 		// return cb('Serviço indisponível');
 		// Call webservice.
