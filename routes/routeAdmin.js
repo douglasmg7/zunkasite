@@ -255,26 +255,23 @@ router.delete('/product/:_id', checkPermission, function(req, res) {
 					log.info(`Product ${req.params._id} deleted.`);
 					// Delete from zunkasrv.
 					if (result.dealerName = "Aldo") {
-						log.debug('Inside aldo');
 						// Delete reference product on integration server.
-						axios.delete(`${s.zunkasrv.host}/${result.dealerName}/product/mongodb_id/${result.dealerProductId}`, {
+						axios.delete(`${s.zunkaServer.host}/${result.dealerName}/product/mongodb_id/${result.dealerProductId}`, {
 							headers: {
 								"Accept": "text/plain", 
-								// "Authorization": s.zunkasrv.user + " " + s.zunkasrv.password
 							},
 							auth: {
-								username: s.zunkasrv.user,
-								password: s.zunkasrv.password
+								username: s.zunkaServer.user,
+								password: s.zunkaServer.password
 							},
 						})
 						.then(response => {
-							log.debug(`zunkasrv response: ${response.data}`)
 							if (response.data.err) {
 								log.err(`Deleting mongodbId from zunkasrv, product _id: ${result._id}. ${response.data.err}`);
 							} 
 						})
 						.catch(err => {
-							log.err(`Deleting mongodbId from zunkasrv, product _id: ${result._id}. ${response.data.err}`);
+							log.error(`Deleting mongodbId from zunkasrv, product _id: ${result._id}. ${err}`);
 						}); 
 					}
 				});

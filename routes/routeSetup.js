@@ -101,16 +101,6 @@ router.post('/product/add', [
 				});
 			}
 		});
-
-		// // Save product.
-		// Product.findOneAndUpdate({dealerName: product.dealerName, dealerProductId: product.dealerProductId}, product, {upsert: true, new: true}, (err, doc)=>{
-			// if (err) {
-				// log.error(`Adding Aldo product: ${err.message}`);
-				// return res.status(500).send(err);
-			// }
-			// log.debug(`product id: ${doc._id}`);
-			// res.json(' success: true ');
-		// });
 	} catch(err) {
 		log.error(`Adding Aldo product: ${err.message}`);
 		return res.status(500).send(err);
