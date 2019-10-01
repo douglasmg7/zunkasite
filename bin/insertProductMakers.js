@@ -5,18 +5,19 @@ const ProductMaker = require('../model/productMaker');
 const log = require('../config/log');
 
 const makers = [
+  {name: 'Acer', value: 'Acer'},
+  {name: 'AMD', value: 'AMD'},
+  {name: 'AOC', value: 'AOC'},
+  {name: 'Asus', value: 'Asus'},
+  {name: 'D-link', value: 'D-link'},
   {name: 'Dell', value: 'Dell'},
+  {name: 'Geforce', value: 'Geforce'},
   {name: 'Intel', value: 'Intel'},
-  {name: 'Geforce', value: 'Geforce '},
-  {name: 'AMD', value: 'AMD '},
   {name: 'Kingston', value: 'Kingston'},
   {name: 'LG', value: 'LG'},
-  {name: 'Asus', value: 'Asus'},
   {name: 'Seagate', value: 'Seagate'},
-  {name: 'Western', value: 'Western'},
-  {name: 'AOC', value: 'AOC'},
   {name: 'TP-Link', value: 'TP-Link'},
-  {name: 'D-link', value: 'D-link'}
+  {name: 'Western', value: 'Western'},
 ];
 
 // Remove old values.

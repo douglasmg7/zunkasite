@@ -2,17 +2,22 @@
 const express = require('express');
 const router = express.Router();
 const log = require('../config/log');
+const s = require('../config/s');
 const { check, validationResult } = require('express-validator/check');
-
+// Models.
 const Product = require('../model/product');
+const ProductCategorie = require('../model/productCategorie');
+// Utils.
+const categories = require('../util/categories');
 
 // Add product.
-router.post('/product/add', [
+router.post('/product/add', basicAuth, [
 		check('dealerName').isLength(4, 20),
 		check('dealerProductId').isLength(1, 20),
 		check('dealerProductTitle').isLength(4, 200),
 		check('dealerProductDesc').isLength(4, 6000),
-		check('dealerProductBrand').isLength(4, 200),
+		check('dealerProductCategory').isLength(4, 200),
+		check('dealerProductMaker').isLength(2, 200),
 		check('dealerProductWarrantyDays').isNumeric(),
 		check('dealerProductDeep').isNumeric(),
 		check('dealerProductHeight').isNumeric(),
@@ -23,19 +28,22 @@ router.post('/product/add', [
 		check('dealerProductLastUpdate').isISO8601(),
 ], (req, res, next)=>{
 	try {
-		// log.debug(JSON.stringify(req.body, null, 3));
+		// log.debug("Headers: " + JSON.stringify(req.headers, null, 3));
 		// Check erros.
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			// log.debug(JSON.stringify(errors.array(), null, 2));
 			return res.status(422).json({ erros: errors.array() });
 		}
+		// log.debug("req.body: " + JSON.stringify(req.body, null, 2));
 		// Create product.
 		let product = {};
 		product.dealerName = req.body.dealerName;
 		product.dealerProductId = req.body.dealerProductId;
 		product.dealerProductTitle = req.body.dealerProductTitle;
-		product.dealerProductBrand = req.body.dealerProductBrand;
+		product.dealerProductCategory = categories.selectCategory(req.body.dealerProductCategory);
+		log.debug('After select category');
+		product.dealerProductMaker = req.body.dealerProductMaker;
 		product.dealerProductWarrantDays = req.body.dealerProductWarrantDays;
 		product.dealerProductDeep = req.body.dealerProductDeep;
 		product.dealerProductHeight = req.body.dealerProductHeight;
@@ -44,7 +52,7 @@ router.post('/product/add', [
 		product.dealerProductPrice = req.body.dealerProductPrice;
 		product.dealerProductActive = req.body.dealerProductActive;
 		product.dealerProductLastUpdate = req.body.dealerProductLastUpdate;
-		// log.debug(`product: ${JSON.stringify(product, null, 2)}`);
+		log.debug(`product: ${JSON.stringify(product, null, 2)}`);
 		// Verify if product exist.
 		Product.findOne({dealerName: product.dealerName, dealerProductId: product.dealerProductId}, (err, doc)=>{
 			if (err) {
@@ -124,6 +132,23 @@ function checkPermission (req, res, next) {
 		return next();
 	}
 	res.redirect('/');
+}
+
+// Basic authentification for api access.
+function basicAuth(req, res, next) {
+    // Check for basic auth header.
+    if (!req.headers.authorization || req.headers.authorization.indexOf('Basic ') === -1) {
+        return res.status(401).send('Missing Authorization Header');
+    }
+    // Verify auth credentials.
+    const base64Credentials =  req.headers.authorization.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
+    const [user, pass] = credentials.split(':');
+	if (user === s.zunkaSite.user && pass === s.zunkaSite.password) {
+		next();
+	} else { 
+        return res.status(401).send('Unauthorised.\n');
+	}
 }
 
 module.exports = router;

@@ -18,6 +18,10 @@ let product = new mongoose.Schema({
 	dealerProductActive: { type: Boolean },
 	dealerProductCommercialize: { type: Boolean },
 	dealerProductPrice: { type: Number },
+	// New items. todo - test. 
+	dealerProductMaker: { type: String },
+	dealerProductCategory: { type: String },
+
 	// Store.
 	storeProductId: { type: String },
 	storeProductTitle: { type: String },
