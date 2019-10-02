@@ -21,7 +21,7 @@ block content
         .category
             label(for='category') Categoria
             select(id='category' v-model='product.storeProductCategory')
-                option(v-for='category in productCategories') {{category.name}}   
+                option(v-for='category in productCategories') {{category}}   
         //- Maker.
         .maker
             label(for='maker') Fabricante

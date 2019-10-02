@@ -6,9 +6,8 @@ const s = require('../config/s');
 const { check, validationResult } = require('express-validator/check');
 // Models.
 const Product = require('../model/product');
-const ProductCategorie = require('../model/productCategorie');
 // Utils.
-const categories = require('../util/categories');
+const categories = require('../util/productCategories');
 
 // Add product.
 router.post('/product/add', basicAuth, [

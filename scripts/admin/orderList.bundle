@@ -1,4 +1,4 @@
-import MONTHS from '../lib/month-names'
+import MONTHS from '../lib/month-names';
 import _search from '../lib/_search';
 
 // Vue.

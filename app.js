@@ -62,8 +62,6 @@ const routeUser = require('./routes/routeUser');
 const routeSite = require('./routes/routeSite');
 const routeInfo = require('./routes/routeInfo');
 const routeCheckout = require('./routes/routeCheckout');
-// const routeWsAllNations = require('./routes/routeWsAllNations');
-// const routeWsStore = require('./routes/routeWsStore');
 const routeSetup = require('./routes/routeSetup.js');
 const routeTest = require('./routes/routeTest');
 const routeAdmin = require('./routes/routeAdmin');
@@ -191,10 +189,8 @@ app.use(validator({
   }
 }));
 
-// // Routes.
-// // Web service - they no need the cart middleware.
+// // Routes that not need the cart middleware.
 // app.use('/ws/allnations', routeWsAllNations);
-// app.use('/ws/store', routeWsStore);
 
 // Cart.
 app.use(function(req, res, next) {

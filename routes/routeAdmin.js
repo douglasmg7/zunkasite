@@ -12,8 +12,9 @@ const sharp = require('sharp');
 // Models.
 const Product = require('../model/product');
 const ProductMaker = require('../model/productMaker');
-const ProductCategorie = require('../model/productCategorie');
 const Order = require('../model/order');
+// Lists.
+const productCategories = require('../util/productCategories');
 // Redis.
 const redis = require('../db/redis');
 // Internal.
@@ -112,20 +113,19 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
 		productPromise = Product.findById(req.params.product_id);
 	}
 	let productMakerPromise = ProductMaker.find().exec();
-	let productCategoriePromise = ProductCategorie.find().exec();
-	Promise.all([productPromise, productMakerPromise, productCategoriePromise])
-		.then(([product, productMakers, productCategories])=>{
-			res.render('admin/product', {
-				nav: {
-					showAdminLinks: true
-				},
-				product: product,
-				productMakers: productMakers,
-				productCategories: productCategories
-			});
-		}).catch(err=>{
-			return next(err);
+	Promise.all([productPromise, productMakerPromise])
+	.then(([product, productMakers])=>{
+		res.render('admin/product', {
+			nav: {
+				showAdminLinks: true
+			},
+			product: product,
+			productMakers: productMakers,
+			productCategories: productCategories.categories
 		});
+	}).catch(err=>{
+		return next(err);
+	});
 });
 
 // Save product.

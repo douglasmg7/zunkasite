@@ -55,8 +55,6 @@ const dbConfig = {
   collStoreProducts: 'products',
   // makers list, use in dropdown
   collProductMakers: 'productMakers',
-  // product categories, use in dropdown
-  collProductCategories: 'productCategories',
   // User.
   collUser: 'user',
   // sessions
