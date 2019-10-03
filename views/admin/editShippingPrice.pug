@@ -1,0 +1,38 @@
+extends ../layout/layout_vue_n
+
+block title
+  title Zunka - Adicionar do custo do frete
+
+block append css
+  link(rel="stylesheet" href="/css/admin/editShippingPrice.css" charset="utf-8")
+
+block content 
+  section.shadow
+    //- title.
+    h2.title {{ isNewShippingPrice ? "Adicionar custo do frete": "Alteração custo do frete" }}
+    //- Warn message.
+    p.warn-message {{ warnMessage }}    
+    //- Unidade federativa.
+    label(for='uf') UF
+    input(type='text' id='uf' v-model='shippingPrice.uf')             
+    //- City.
+    label(for='city') Cidade
+    input(type='text' id='city' v-model='shippingPrice.city')
+    //- Dead line.
+    label(for='deadLine') Prazo (dias)
+    input(type='text' id='deadLine' v-model='shippingPrice.deadLine')
+    //- Max weight.
+    label(for='maxWeight') Peso máximo (kg)
+    input(type='text' id='maxWeight' v-model='shippingPrice.maxWeight')
+    //- Price.
+    label(for='Price') Preço (R$)
+    input(type='text' id='price' v-model='shippingPrice.price')
+    input.btn-primary(type='button', :value='isNewShippingPrice ? "Salvar": "Salvar"' @click='saveShippingPrice()')
+
+append internal_scripts
+  script.
+    let isNewShippingPrice = !{JSON.stringify(isNewShippingPrice)};
+    let shippingPrice = !{JSON.stringify(shippingPrice)};
+
+append external_scripts
+  script(src='/js/admin/editShippingPrice.js?0003')

@@ -5,6 +5,7 @@ const log = require('../config/log');
 const path = require('path');
 const fse = require('fs-extra');
 const axios = require('axios');
+const { check, validationResult } = require('express-validator/check');
 // File upload.
 const formidable = require('formidable');
 // Resize images.
@@ -13,6 +14,7 @@ const sharp = require('sharp');
 const Product = require('../model/product');
 const ProductMaker = require('../model/productMaker');
 const Order = require('../model/order');
+const ShippingPrice = require('../model/shippingPrice');
 // Lists.
 const productCategories = require('../util/productCategories');
 // Redis.
@@ -625,7 +627,118 @@ router.post('/motoboy-delivery', checkPermission, (req, res, next)=>{
 	});
 });
 
+// Shipping price region.
+router.get('/shipping/price/region', checkPermission, (req, res, next)=>{
+    try {
+        redis.get('shippingPriceRegion', (err, shippingPriceRegion)=>{
+            // Internal error.
+            if (err) { return next(err) }
+            // Not have shipping price region.
+            if (!shippingPriceRegion) {
+                shippingPriceRegion = {
+                    north: {
+                    },
+                    south: {
+                    }
 
+                }
+            } 
+            // Have shipping price region.
+            else {
+                shippingPriceRegion = JSON.parse(shippingPriceRegion);
+            }
+            // Render page.
+            return res.render('admin/shippingPriceRegion', { nav: {}, shippingPriceRegion: shippingPriceRegion});
+        });
+    } 
+    catch(err) {
+        return next(err);
+    }
+});
+
+// Edit shipping price.
+router.get('/shipping/price/edit', checkPermission, (req, res, next)=>{
+    try {
+        // New.
+        log.debug(`1 - ${req.query.shippingPriceId}`);
+        if (req.query.shippingPriceId === 'new') {
+            log.debug('2');
+            let shippingPrice = new ShippingPrice();
+            res.render('admin/editShippingPrice', { nav: {}, isNewShippingPrice: true, shippingPrice: shippingPrice });
+        } 
+        // Existing item.
+        else {
+            log.debug('3');
+            ShippingPrice.findById(req.query.shippingPriceId, (err, shippingPrice)=>{
+                if (err) return next(err);
+                if (!shippingPrice) return next(new Error('No shippingPrice found on db to edit.'));
+                res.render('admin/editShippingPrice', { nav: {}, isNewShippingPrice: false, shippingPrice: shippingPrice } );
+            });
+        }
+    } 
+    catch(err) {
+        return next(err);
+    }
+});
+
+// Save shipping price.
+router.post('/shipping/price/edit', checkPermission, [
+    // check('dealerName').isLength(4, 20),
+    check('shippingPrice.uf').isLength(1, 20).withMessage('Valor inválido para uf'),
+    // check('dealerProductMaker').isLength(2, 200),
+    // check('dealerProductDeep').isNumeric(),
+    // check('dealerProductHeight').isNumeric(),
+    // check('dealerProductActive').isBoolean(),
+    // check('dealerProductPrice').isNumeric(),
+],(req, res, next)=>{
+    log.debug(`req.body: ${JSON.stringify(req.body, null, 2)}`);
+    // Check erros.
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        // log.debug(JSON.stringify(errors.array(), null, 2));
+        return res.status(422).json({ erros: errors.array() });
+    }
+    // // Send validations errors to client.
+    // if (!result.isEmpty()) {
+      // let messages = [];
+      // messages.push(result.array()[0].msg);
+      // return res.json({ success: false, message: messages[0]});
+    // } 
+    // Save address new address.
+    else if (req.query.isNewShippingPrice === 'new'){
+      let shippingPrice = new Address(req.shippingPrice);
+      // address.user_id = req.user._id;
+      // address.name = req.body.address.name;
+      // address.cep = req.body.address.cep;
+      shippingPrice.save(function(err) {
+        if (err) { return next(err); } 
+        return res.send();
+      });        
+    }
+    // save specific address.
+    else if (req.query.shippingPriceId) {
+      ShippingPrice.findByIdAndUpdate(req.query.shippingPriceId, { 
+        $set: { 
+          name: req.body.address.name,
+          cep: req.body.address.cep,
+          address: req.body.address.address,
+          addressNumber: req.body.address.addressNumber,
+          addressComplement: req.body.address.addressComplement,
+          district: req.body.address.district,
+          city: req.body.address.city,
+          state: req.body.address.state,
+          phone: req.body.address.phone
+        }}, err=>{
+          if (err) return next(err);
+          return res.json({ success: true });
+      });
+    }
+    // Not new no edit addres.
+    else{
+      // return res.json({ success: false, message: 'Erro interno do sistema.' });
+      return res.status(500).send('Erro interno do sistema.');
+    }
+});
 
 /******************************************************************************
 /   UTIL
@@ -652,7 +765,7 @@ function updateCategoriesInUse(){
 	})
 }
 
-
+// Create resized images.
 function createResizedImgs(images){
 	images.forEach(imgPath=>{
 		var ext = /_[0-9a-z]{1,6}\.[0-9a-z]+$/i;
