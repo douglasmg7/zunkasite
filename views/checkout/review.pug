@@ -34,8 +34,8 @@ block content
 				.shipment
 					h3.sub-title Forma de envio
 					p {{order.shipping.methodDesc}}
-					p Entrega em {{order.shipping.deadline}} dia(s)
-					P Valor do frete: {{order.shipping.price | formatMoney}}
+					p(v-if='order.shipping.carrier !== ""') Entrega em {{order.shipping.deadline}} dia(s)
+					P(v-if='order.shipping.carrier !== ""') Valor do frete: {{order.shipping.price | formatMoney}}
 			.col-2
 				.items(v-if='order.items.length > 0')
 					h3.sub-title Ítens
@@ -67,4 +67,4 @@ append internal_scripts
 		let order = !{JSON.stringify(order)};
 
 append external_scripts
-	script(src='/js/checkout/review.js?0004') 
+	script(src='/js/checkout/review.js?0005') 

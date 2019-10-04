@@ -54,12 +54,18 @@ if (window.addEventListener) {
 function receiveMessage(event) {
     try {
 		// Don't process vue messages.
-		// if (event.data && event.data.devtoolsEnabled) {
 		if (event.data) {
 			if (event.data.hasOwnProperty('devtoolsEnabled')) {
 				return;
 			}
-		}
+			if (event.data.source) {
+			    if (event.data.source.includes('vue-devtools')) {
+				    return;
+                }
+			}
+		} else {
+            return;
+        }
 		// console.log("event:", event);
         var message = JSON.parse(event.data);
 		console.log("paypal message:", message);
@@ -161,6 +167,8 @@ function receiveMessage(event) {
         }
     } catch (e){ //treat exceptions here
 		console.error("Processing message from paypal.", e);
+        console.log(`event.data: ${JSON.stringify(event.data, null, 2)}`);
+        console.log(`event: ${JSON.stringify(event, null, 2)}`);
     }
 }
 

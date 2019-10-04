@@ -274,7 +274,7 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
 router.post('/shipping-method/order/:order_id', (req, res, next)=>{
 	// Set shipment method to default.
 	Order.findById(req.params.order_id, (err, order)=>{
-		// console.log(`req.body: ${JSON.stringify(req.body)}`);
+        // log.debug(`req.body: ${JSON.stringify(req.body)}`);
 		if (req.body.shippingMethod == 'motoboy'){
 			order.shipping.carrier = 'Sérgio Delivery';
 			order.shipping.methodCode = '00001';
@@ -283,6 +283,14 @@ router.post('/shipping-method/order/:order_id', (req, res, next)=>{
 			order.shipping.price = order.shipping.motoboyResult.price.replace('.', '').replace(',', '.');
 			order.shipping.deadline = order.shipping.motoboyResult.deadline;
 		} 
+        else if (req.body.shippingMethod == 'agreement') {
+            // log.debug('A combinar.');
+			order.shipping.carrier = '';
+			order.shipping.methodCode = '';
+			order.shipping.methodDesc = 'A combinar';
+			order.shipping.price = 0; 
+			order.shipping.deadline = 0;
+        }
 		// Correios delivery type.
 		else {
 			for (let index = 0; index < order.shipping.correioResults.length; index++) {
@@ -325,7 +333,7 @@ router.get('/payment/order/:order_id', (req, res, next)=>{
 				}
 			);
 		}
-		// Rnder payment page.
+		// Render payment page.
 		else {
 			res.render('checkout/payment',
 				{
@@ -658,6 +666,12 @@ function closeOrder(order, req, res) {
 					default:
 						break;
 				}
+                // Not show deadline and price shipping if carrier not defined (agreement shipment)..
+                let shippingDeadlineAndPrice = "";
+                if (order.shipping.carrier !== "") {
+                    shippingDeadlineAndPrice = '\nPrazo: ' + order.shipping.deadline + 'dia(s)\n' +  
+					'Valor: R$ ' + converToBRCurrencyString(order.shipping.price);
+                }
 				// Email to store admin.
 				let toAdminMailOptions = {
 					from: '',
@@ -686,9 +700,7 @@ function closeOrder(order, req, res) {
 					'Método: ' + strPaymentMethod + '\n\n' +  
 
 					'Envio\n' + 
-					'Método: ' + order.shipping.methodDesc + '\n' +  
-					'Prazo: ' + order.shipping.deadline + 'dia(s)\n' +  
-					'Valor: R$ ' + converToBRCurrencyString(order.shipping.price) + '\n\n' +  
+					'Método: ' + order.shipping.methodDesc + shippingDeadlineAndPrice + '\n\n' +
 
 					'Ítens\n' +
 					strItens + '\n' +

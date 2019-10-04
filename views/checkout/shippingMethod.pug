@@ -21,6 +21,10 @@ block content
           span Motoboy
           p Prazo de entrega: {{order.shipping.motoboyResult.deadline}} dia(s) após a confirmação do pagamento
           p Valor: R${{order.shipping.motoboyResult.price}}
+        label
+          input(type='radio' name='shipmentOption' id='agreement' value='agreement' v-model='shippingMethod')/ 
+          span A combinar
+          p Valor, forma de pagamento e transportadora deverá ser combinado através de e-mail ou WhatsUp.
       input.btn-primary(type='button' @click='shipmentSelected()' value='Continuar')
 
 append internal_scripts
@@ -28,4 +32,4 @@ append internal_scripts
     let order = !{JSON.stringify(order)};
 
 append external_scripts
-  script(src='/js/checkout/shippingMethod.js?0003')            
+  script(src='/js/checkout/shippingMethod.js?0004')            

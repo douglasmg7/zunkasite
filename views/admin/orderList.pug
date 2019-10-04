@@ -78,8 +78,8 @@ block content
                 p(v-if='orderSelec.shipping.method === "correios" || orderSelec.shipping.method === "standard"') Correios
                 p(v-if='orderSelec.shipping.method === "motoboy"') Motoboy
                 //- Deprected:end.
-                p Prazo: {{orderSelec.shipping.deadline}} dia(s)
-                p Valor: {{orderSelec.shipping.price | formatMoney}}          
+                p(v-if='orderSelec.shipping.carrier !== ""') Prazo: {{orderSelec.shipping.deadline}} dia(s)
+                p(v-if='orderSelec.shipping.carrier !== ""') Valor: {{orderSelec.shipping.price | formatMoney}}          
             .item(v-if='orderSelec.items.length > 0')
                 h3.sub-title Itens
                 ul
@@ -141,4 +141,4 @@ append internal_scripts
         let cart = !{JSON.stringify(cart)};
 
 append external_scripts
-    script(src='/js/admin/orderList.js?0002')
+    script(src='/js/admin/orderList.js?0004')

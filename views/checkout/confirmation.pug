@@ -63,8 +63,8 @@ block content
         .shipment
             h2 Frete
             p {{order.shipping.methodDesc}}
-            p Prazo: {{order.shipping.deadline}} dia(s)
-            p Valor do frete {{order.shipping.price | formatMoney}}
+            p(v-if='order.shipping.carrier !== ""') Prazo: {{order.shipping.deadline}} dia(s)
+            p(v-if='order.shipping.carrier !== ""') Valor do frete {{order.shipping.price | formatMoney}}
         .items(v-if='order.items.length > 0')
             h2 Itens
             ul
@@ -82,4 +82,4 @@ append internal_scripts
 
 append external_scripts
   include ../components/accounting.js.pug
-  script(src='/js/checkout/confirmation.js?0002') 
+  script(src='/js/checkout/confirmation.js?0004') 
