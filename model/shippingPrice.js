@@ -2,8 +2,7 @@
 const mongoose = require('mongoose');
 // Schema.
 let schema = new mongoose.Schema({
-  uf: { type: String, required: true },       // Used by carrier for contact.
-  city: { type: String, default: '', required: true },
+  region: { type: String, enum: ['north', 'northeast', 'midwest', 'southeast', 'south'] },       // Used by carrier for contact.
   deadLine: { type: Number, required: true },
   maxWeight: { type: Number, required: true },
   price: { type: Number, required: true },     // price * 100.

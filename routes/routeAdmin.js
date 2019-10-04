@@ -630,26 +630,23 @@ router.post('/motoboy-delivery', checkPermission, (req, res, next)=>{
 // Shipping price region.
 router.get('/shipping/price/region', checkPermission, (req, res, next)=>{
     try {
-        redis.get('shippingPriceRegion', (err, shippingPriceRegion)=>{
-            // Internal error.
-            if (err) { return next(err) }
-            // Not have shipping price region.
-            if (!shippingPriceRegion) {
-                shippingPriceRegion = {
-                    north: {
-                    },
-                    south: {
-                    }
-
+        ShippingPrice.find()
+            .then(docs=>{
+                if (!docs.length){
+                    return next(new Error('No shipping price doc on db.'));
                 }
-            } 
-            // Have shipping price region.
-            else {
-                shippingPriceRegion = JSON.parse(shippingPriceRegion);
-            }
-            // Render page.
-            return res.render('admin/shippingPriceRegion', { nav: {}, shippingPriceRegion: shippingPriceRegion});
-        });
+                let shippingPriceRegion = {};
+                docs.forEach(item=>{
+                    if (!shippingPriceRegion[item.region]) {
+                        shippingPriceRegion[item.region] = [];
+                    }
+                    shippingPriceRegion[item.region].push(item);
+                });
+                return res.render('admin/shippingPriceRegion', { nav: {}, shippingPriceRegion: shippingPriceRegion});
+            }) 
+            .catch(err=>{
+                return next(err);
+            })
     } 
     catch(err) {
         return next(err);

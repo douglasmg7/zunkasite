@@ -10,8 +10,37 @@ block content
   section.shadow
     //- title.
     h2.title Frete por região
-    //- Warn message.
-    p.warn-message {{ warnMessage }}    
+    h3 Norte
+    p(v-for='item in shippingPriceRegion.north') 
+        | R${{ item.price / 100 }} &nbsp 
+        | {{ item.deadLine }}dias &nbsp 
+        | {{ item.maxWeight / 1000 }}kg &nbsp 
+        | {{ item.maxVolume }}m³
+    h3 Nordeste
+    p(v-for='item in shippingPriceRegion.northeast') 
+        | R${{ item.price / 100 }} &nbsp 
+        | {{ item.deadLine }}dias &nbsp 
+        | {{ item.maxWeight / 1000 }}kg &nbsp 
+        | {{ item.maxVolume }}m³
+    h3 Centro-oeste
+    p(v-for='item in shippingPriceRegion.midwest') 
+        | R${{ item.price / 100 }} &nbsp 
+        | {{ item.deadLine }}dias &nbsp 
+        | {{ item.maxWeight / 1000 }}kg &nbsp 
+        | {{ item.maxVolume }}m³
+    h3 Sudeste
+    p(v-for='item in shippingPriceRegion.southeast') 
+        | R${{ item.price / 100 }} &nbsp 
+        | {{ item.deadLine }}dias &nbsp 
+        | {{ item.maxWeight / 1000 }}kg &nbsp 
+        | {{ item.maxVolume }}m³
+    h3 Sul
+    p(v-for='item in shippingPriceRegion.south') 
+        | R${{ item.price / 100 }} &nbsp 
+        | {{ item.deadLine }}dias &nbsp 
+        | {{ item.maxWeight / 1000 }}kg &nbsp 
+        | {{ item.maxVolume }}m³
+
     //- //- Unidade federativa.
     //- label(for='uf') UF
     //- input(type='text' id='uf' v-model='shippingPrice.uf')             
