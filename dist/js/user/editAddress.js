@@ -90,7 +90,7 @@ var app = new Vue({
         })
         .then((res)=>{
           this.loadingCepInfo = false;
-          // console.log(`res: ${JSON.stringify(res)}`);
+          console.log(`res.data: ${JSON.stringify(res.data)}`);
           // Not found CEP.
           if (res.data.erro) {
             this.cepNotFound = true;
@@ -109,6 +109,11 @@ var app = new Vue({
           }
         })
         .catch((err)=>{
+          this.cepNotFound = true;
+          this.address.address = '';            
+          this.address.district = '';
+          this.address.city = '';
+          this.address.state = '';
           console.error(`Error - watch - cep, err: ${err}`);
         });        
       }

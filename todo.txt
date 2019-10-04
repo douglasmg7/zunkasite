@@ -1,11 +1,10 @@
-# Run insertProductMaker on server.
+Image zoom not scrolling.
 
-# Resumo da ordem
-	For mobile, make it wider.
-	For desktop, make two columns.
+Min width window 720px
 
-# Payment by credit card
-	Include another button [Escolher outra forma de pagamento] - [Continuar]
+More space between title and text on order resume.
+
+Run insertProductMaker on server.
 
 cep inválido not in red.
 

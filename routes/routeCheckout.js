@@ -22,8 +22,8 @@ const redis = require('../db/redis');
 
 // CEP origin, Rua Bicas - 31030160.
 const CEP_ORIGIN = '31030160';
-const STANDARD_DELIVERY_DEADLINE = 10;
-const STANDARD_DELIVERY_PRICE = '60.00';
+// const STANDARD_DELIVERY_DEADLINE = 10;
+// const STANDARD_DELIVERY_PRICE = '60.00';
 
 module.exports = router;
 
@@ -212,11 +212,11 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
 				log.debug('Receive correios ws answer.');
 				// No Correio info.
 				if (err) {
-					log.debug(`Correios ws error, using default delivery price and deadline. Price: ${STANDARD_DELIVERY_PRICE}, Deadline: ${STANDARD_DELIVERY_DEADLINE}`)
+					// log.debug(`Correios ws error, using default delivery price and deadline. Price: ${STANDARD_DELIVERY_PRICE}, Deadline: ${STANDARD_DELIVERY_DEADLINE}`)
 					order.shipping.correioResult = {};
 					order.shipping.correioResults = [];
-					order.shipping.price = STANDARD_DELIVERY_PRICE;
-					order.shipping.deadline = STANDARD_DELIVERY_DEADLINE;
+					// order.shipping.price = STANDARD_DELIVERY_PRICE;
+					// order.shipping.deadline = STANDARD_DELIVERY_DEADLINE;
 				}
 				// Got correio info.
 				else {
@@ -983,6 +983,59 @@ function estimateAllCorreiosShipping(box, cb) {
 		});
 	});
 };
+
+/******************************************************************************
+/ UTIL
+ ******************************************************************************/
+
+// Get default shipping price.
+function getDefaultShippingPrice(region, productWeight){
+    ShippingPrice.find({region :region}).sort({price: 1, deadline: 1})
+        .then(docs=>{
+        })
+        .catch(err=>{
+        });
+}
+
+// Get brazilian region from uf.
+function regionFromUf(uf) {
+    uf = uf.trim().toLowerCase();
+    switch (uf) {
+        case "ro":
+        case "ac":
+        case "am":
+        case "rr":
+        case "pa":
+        case "ap":
+        case "to":
+            return "north" 
+        case "ma":
+        case "pi":
+        case "ce":
+        case "rn":
+        case "pb":
+        case "pe":
+        case "al":
+        case "se":
+        case "ba":
+            return "northeast" 
+        case "ms":
+        case "mt":
+        case "go":
+        case "df":
+            return "midwest" 
+        case "mg":
+        case "es":
+        case "rj":
+        case "sp":
+            return "southeast" 
+        case "pr":
+        case "sc":
+        case "rs":
+            return "south" 
+    }
+}
+
 
 /******************************************************************************
 / TEST
