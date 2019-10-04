@@ -12,12 +12,14 @@ block content
     h2.title {{ isNewShippingPrice ? "Adicionar custo do frete": "Alteração custo do frete" }}
     //- Warn message.
     p.warn-message {{ warnMessage }}    
-    //- Unidade federativa.
-    label(for='uf') UF
-    input(type='text' id='uf' v-model='shippingPrice.uf')             
-    //- City.
-    label(for='city') Cidade
-    input(type='text' id='city' v-model='shippingPrice.city')
+    //- Region.
+    label(for='region') Região
+    select(id='region' v-model='shippingPrice.region')
+        option(value='north') Norte
+        option(value='northeast') Nordeste
+        option(value='midwest') Centro-oeste
+        option(value='southeast') Sudeste
+        option(value='south') Sul
     //- Dead line.
     label(for='deadLine') Prazo (dias)
     input(type='text' id='deadLine' v-model='shippingPrice.deadLine')
@@ -28,6 +30,7 @@ block content
     label(for='Price') Preço (R$)
     input(type='text' id='price' v-model='shippingPrice.price')
     input.btn-primary(type='button', :value='isNewShippingPrice ? "Salvar": "Salvar"' @click='saveShippingPrice()')
+    input.btn-exit(type='button' onclick='window.location.href="/admin/shipping/prices"' value='Sair') 
 
 append internal_scripts
   script.

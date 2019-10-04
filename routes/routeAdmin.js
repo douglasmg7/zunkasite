@@ -627,22 +627,22 @@ router.post('/motoboy-delivery', checkPermission, (req, res, next)=>{
 	});
 });
 
-// Shipping price region.
-router.get('/shipping/price/region', checkPermission, (req, res, next)=>{
+// Shipping price list.
+router.get('/shipping/prices', checkPermission, (req, res, next)=>{
     try {
         ShippingPrice.find()
             .then(docs=>{
                 if (!docs.length){
                     return next(new Error('No shipping price doc on db.'));
                 }
-                let shippingPriceRegion = {};
+                let shippingPrices = {};
                 docs.forEach(item=>{
-                    if (!shippingPriceRegion[item.region]) {
-                        shippingPriceRegion[item.region] = [];
+                    if (!shippingPrices[item.region]) {
+                        shippingPrices[item.region] = [];
                     }
-                    shippingPriceRegion[item.region].push(item);
+                    shippingPrices[item.region].push(item);
                 });
-                return res.render('admin/shippingPriceRegion', { nav: {}, shippingPriceRegion: shippingPriceRegion});
+                return res.render('admin/shippingPrice', { nav: {}, shippingPrices: shippingPrices});
             }) 
             .catch(err=>{
                 return next(err);
@@ -653,22 +653,19 @@ router.get('/shipping/price/region', checkPermission, (req, res, next)=>{
     }
 });
 
-// Edit shipping price.
-router.get('/shipping/price/edit', checkPermission, (req, res, next)=>{
+// Shipping price.
+router.get('/shipping/price/:_id', checkPermission, (req, res, next)=>{
     try {
         // New.
-        log.debug(`1 - ${req.query.shippingPriceId}`);
-        if (req.query.shippingPriceId === 'new') {
-            log.debug('2');
+        if (req.params._id === 'new') {
             let shippingPrice = new ShippingPrice();
             res.render('admin/editShippingPrice', { nav: {}, isNewShippingPrice: true, shippingPrice: shippingPrice });
         } 
         // Existing item.
         else {
-            log.debug('3');
-            ShippingPrice.findById(req.query.shippingPriceId, (err, shippingPrice)=>{
+            ShippingPrice.findById(req.params._id, (err, shippingPrice)=>{
                 if (err) return next(err);
-                if (!shippingPrice) return next(new Error('No shippingPrice found on db to edit.'));
+                if (!shippingPrice) return next(new Error('Not found shipping price id ${req.params._id}'));
                 res.render('admin/editShippingPrice', { nav: {}, isNewShippingPrice: false, shippingPrice: shippingPrice } );
             });
         }
