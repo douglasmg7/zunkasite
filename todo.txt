@@ -1,3 +1,7 @@
+Descrição com mesmo padrão de informações técnicas.
+
+Detalhe técnico para detales técnicos.
+
 Image zoom not scrolling.
 
 Min width window 720px

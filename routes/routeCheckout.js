@@ -745,155 +745,149 @@ router.get('/ship-estimate', (req, res, next)=>{
 	let deliveryData = [];
 	// console.log('req.query', req.query);
 	// Get product information.
-	Product.findById(req.query.productId, (err, product)=>{
-		if (err) { return next(err); }
-		if (!product) {  return next(new Error('Product not found.')); }
-		let box = {
-			cepOrigin: CEP_ORIGIN,
-			cepDestiny: req.query.cepDestiny.replace(/\D/g, ''),
-			length: product.storeProductLength,
-			height: product.storeProductHeight,
-			width: product.storeProductWidth,
-			weight: product.storeProductWeight
-		}
+	Product.findById(req.query.productId)
+        .then(product=>{
+            if (!product) {  return next(new Error('Product not found.')); }
+            let box = {
+                cepOrigin: CEP_ORIGIN,
+                cepDestiny: req.query.cepDestiny.replace(/\D/g, ''),
+                length: product.storeProductLength,
+                height: product.storeProductHeight,
+                width: product.storeProductWidth,
+                weight: product.storeProductWeight
+            }
+            // Correio shipping estimate.
+            const promiseCorreiosShipping = new Promise((resolve, reject)=>{
+                log.debug("pr-correios-1");
+                // console.log(`box: ${JSON.stringify(box)}`);
+                estimateAllCorreiosShipping(box, (err, result)=>{
+                    log.debug("pr-correios-2");
+                    if (err) { 
+                        return reject(err); 
+                    }
+                    var deliveryData = []
+                    for (let index = 0; index < result.length; index++) {
+                        deliveryData.push({
+                            method: result[index].DescServico,
+                            price: result[index].Valor,
+                            deadline: result[index].PrazoEntrega
+                        });
+                    }
+                    // log.debug(`promiseCorreiosShipping result: ${JSON.stringify(deliveryData)}`);
+                    resolve(deliveryData);
+                });
+            });
+            // Correio shipping estimate.
+            const promiseMotoboyDelivery = new Promise((resolve, reject)=>{
+                // Get address information.
+                getAddress(box.cepDestiny)
+                .then(address=>{
+                    log.debug("pr-motoboy-1");
+                    return getMotoboyDelivery(address.uf, address.localidade);
+                })
+                .then(delivery=>{
+                    log.debug("pr-motoboy-2");
+                    resolve(delivery); 
+                })
+                .catch(err=>{
+                    log.error(`promise motoboyDelivery catch. ${err}`);
+                    reject(err);
+                });
+            });
 
-		// Correio shipping estimate.
-		const promiseCorreiosShipping = new Promise((resolve, reject)=>{
-			// console.log(`box: ${JSON.stringify(box)}`);
-			estimateAllCorreiosShipping(box, (err, result)=>{
-				if (err) { 
-					return reject(err); 
-				}
-				var deliveryData = []
-				for (let index = 0; index < result.length; index++) {
-					deliveryData.push({
-						method: result[index].DescServico,
-						price: result[index].Valor,
-						deadline: result[index].PrazoEntrega
-					});
-				}
-				// log.debug(`promiseCorreiosShipping result: ${JSON.stringify(deliveryData)}`);
-				resolve(deliveryData);
-				// reject("asdf");
-			});
-		});
-		// Motoboy shipping estimate.
-		const promiseMotoboyShipping = new Promise((resolve, reject)=>{
-			getMotoboyDeliveryFromCEP(box.cepDestiny, (err, result)=>{
-				// if (err) { reject(err); }
-				if (err) { 
-					return reject(err); 
-				}
-				// log.debug(`promiseMotoboyShipping result: ${JSON.stringify(result)}`);
-				resolve(result);
-				// reject("asdf");
-			});
-		});
-		// When receive all return.
-		Promise.all([
-			promiseCorreiosShipping.catch(err=>{log.error(err.stack)}), 
-			promiseMotoboyShipping.catch(err=>{log.error(err.stack)})
-		]).then(([deliveryCorreio, deliveryMotoboy])=>{
-			// log.debug("Promisse.all");
-			// log.debug(`deliveryCorreio: ${JSON.stringify(deliveryCorreio)}`);
-			// log.debug(`deliveryMotoboy: ${JSON.stringify(deliveryMotoboy)}`);
-			if(deliveryMotoboy) {
-				// deliveryCorreio.push(deliveryMotoboy);
-				deliveryCorreio.unshift(deliveryMotoboy);
-			}
-			// log.debug(`delivery: ${JSON.stringify(deliveryCorreio)}`);
-			if(deliveryCorreio) {
-				res.json({ delivery: deliveryCorreio });
-			} else {
-				res.json({ err: "Serviço indisponível." });
-			}
-		});
-
-		// // When receive all return.
-		// Promise.all([promiseCorreiosShipping, promiseMotoboyShipping]).then(([deliveryCorreio, deliveryMotoboy])=>{
-		//   log.debug("Promisse.all");
-		//   // log.debug(`deliveryCorreio: ${JSON.stringify(deliveryCorreio)}`);
-		//   // log.debug(`deliveryMotoboy: ${JSON.stringify(deliveryMotoboy)}`);
-		//   if(deliveryMotoboy) {
-		//     // deliveryCorreio.push(deliveryMotoboy);
-		//     deliveryCorreio.unshift(deliveryMotoboy);
-		//   }
-		//   log.debug(`delivery: ${JSON.stringify(deliveryCorreio)}`);
-		//   res.json({ delivery: deliveryCorreio });
-		//   // res.json({ err: "Promisse no err." });
-		// }).catch(err=>{
-		//   log.error(err);
-		// });
-
-	});
+            // When receive all return.
+            Promise.all([
+                promiseCorreiosShipping.catch(err=>{log.error(`Estimating Correios shipping. ${err}`)}), 
+                promiseMotoboyDelivery.catch(err=>{log.error(`Estimating motoboy delivery. ${err}`)})
+            ]).then(([deliveryCorreio, deliveryMotoboy])=>{
+                // log.debug("Promisse.all");
+                // log.debug(`deliveryCorreio: ${JSON.stringify(deliveryCorreio)}`);
+                log.debug(`deliveryMotoboy - promise.all: ${JSON.stringify(deliveryMotoboy)}`);
+                if(deliveryMotoboy) {
+                    log.debug(`deliveryMotoboy: ${JSON.stringify(deliveryMotoboy)}`);
+                    // deliveryCorreio.push(deliveryMotoboy);
+                    deliveryCorreio.unshift(deliveryMotoboy);
+                }
+                // log.debug(`delivery: ${JSON.stringify(deliveryCorreio)}`);
+                if(deliveryCorreio) {
+                    res.json({ delivery: deliveryCorreio });
+                } else {
+                    res.json({ err: "Serviço indisponível." });
+                }
+            });
+        }).catch(err=>{
+            log.error(`catch promisse all`);
+            return next(err);
+        });
 });
 
 // Get motoboy delivery from CEP.
-function getMotoboyDeliveryFromCEP(cep, cb) {
-	getAddressFromCEP(cep, (err, addressResult)=> {
-		// If MG.
-		if(err) {
-			return cb(err);
-		}
-		if(addressResult.uf === "MG"){
-			// Get motoboy shipping values.
-			redis.get('motoboy-delivery', (err, motoboyDeliveries)=>{
-				// Internal error.
-				if (err) {
-					return cb(err);
-				}
-				motoboyDeliveries = JSON.parse(motoboyDeliveries) || [];
-				let cityNormalized = addressResult.localidade.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '');
-				motoboyDeliveries.forEach(motoboyDelivery=>{
-					if (motoboyDelivery.city.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '') === cityNormalized) {
-						return cb(null, {
-							method: "Motoboy",
-							price: motoboyDelivery.price,
-							deadline: motoboyDelivery.deadline
-						});
-						// return;
-					}
-				});
-			});
-		} else {
-			// No motoboy delivery.
-			return cb(null, null);
-		}
-	});
+function getMotoboyDelivery(uf, city, cb) {
+    // log.debug(`getMotoboyDelivery new promise city: ${city}`);
+    return new Promise((resolve, reject)=>{
+        // log.debug(`getMotoboyDelivery run promise, uf: ${uf}, city: ${city}`);
+        if(uf.toLowerCase() === "mg"){
+            // Get motoboy shipping values.
+            redis.get('motoboy-delivery', (err, motoboyDeliveries)=>{
+                // Internal error.
+                if (err) {
+                    reject(err);
+                }
+                motoboyDeliveries = JSON.parse(motoboyDeliveries) || [];
+                let cityNormalized = city.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '');
+                motoboyDeliveries.forEach(motoboyDelivery=>{
+                    if (motoboyDelivery.city.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '') === cityNormalized) {
+                        resolve({
+                            method: "Motoboy",
+                            price: motoboyDelivery.price,
+                            deadline: motoboyDelivery.deadline
+                        });
+                    }
+                });
+                // log.debug('getMotoboyDelivery city not found: resolve()');
+                resolve();
+            });
+        } else {
+            // No motoboy delivery.
+            // log.debug('getMotoboyDelivery not mg: resolve()');
+            resolve();
+        }
+    });
 };
 
 // Get address from CEP.
-function getAddressFromCEP(val, cb) {
-	// Cep is valid if 00000-000 or 00000000.
-	if (val.match(/^\d{5}-?\d{3}$/)) {
-		val = val.replace("-", "");
-		axios({
-			method: 'get',
-			url: `https://viacep.com.br/ws/${val}/json/`,
-		})
-			.then((res)=>{
-				// console.log(`res: ${JSON.stringify(res)}`);
-				// log.debug(JSON.stringify(res.data));
-				// Some error, no more information from ws.
-				if (res.data.erro) {
-					return cb(res.data.erro);
-				}
-				// Found CEP.
-				else {
-					// log.debug(JSON.stringify(res.data));
-					cb(null, res.data);
-				}
-			})
-			.catch((err)=>{
-				log.error(`getAddressFromCEP(), ${err.stack}`);
-				return cb(err);
-			});        
-	} 
-	// Inválid cep format.
-	else {
-		return cb('Cep inválido.');
-	}
-}
+function getAddress(cep){
+    return new Promise((resolve, reject)=>{
+        // Cep is valid if 00000-000 or 00000000.
+        if (cep.match(/^\d{5}-?\d{3}$/)) {
+            cep = cep.replace("-", "");
+            axios({
+                method: 'get',
+                url: `https://viacep.com.br/ws/${cep}/json/`,
+            })
+                .then((res)=>{
+                    // console.log(`res: ${JSON.stringify(res)}`);
+                    // log.debug(JSON.stringify(res.data));
+                    // Some error, no more information from ws.
+                    if (res.data.erro) {
+                        reject(res.data.erro);
+                    }
+                    // Found CEP.
+                    else {
+                        // log.debug(`address: ${JSON.stringify(res.data)}`);
+                        resolve(res.data);
+                    }
+                })
+                .catch((err)=>{
+                    reject(err);
+                });        
+        } 
+        // Inválid cep format.
+        else {
+            resolve('Cep inválido.');
+        }
+    })
+};
 
 // Estimate shipment.
 // box = {lenght, height, wdith, weight}
@@ -943,7 +937,7 @@ function estimateAllCorreiosShipping(box, cb) {
 		client.CalcPrecoPrazo(args, (err, result)=>{
 			// log.debug("Correio retuned");
 			if (err) {
-				log.error('client.CalcPrecoPrazo, ' + err.stack);
+				// log.error('client.CalcPrecoPrazo, ' + err.stack);
 				return cb('Serviço indisponível');
 			}
 			// Log and remove CSerivco with erros.
@@ -973,8 +967,8 @@ function estimateAllCorreiosShipping(box, cb) {
 			}
 			// Error in all codes.
 			if (result.CalcPrecoPrazoResult.Servicos.cServico.length == 0) {
-				let errMsg = "Serviço indisponível."
-				log.error(new Error(errMsg).stack);
+				let errMsg = "Serviço indisponível. error in al codes."
+				// log.error(new Error(errMsg).stack);
 				return cb(errMsg);
 			}
 			// Have at least one valid code.
