@@ -742,7 +742,9 @@ router.get('/confirmation/order/:order_id', (req, res, next)=>{
 
 // Estimate shipment.
 router.get('/ship-estimate', (req, res, next)=>{
-	let deliveryData = [];
+    // Test.
+    // return res.json({ err: 'Simulated error' });
+    // return res.json({ delivery: [] });
 	// console.log('req.query', req.query);
 	// Get product information.
 	Product.findById(req.query.productId)
@@ -758,10 +760,8 @@ router.get('/ship-estimate', (req, res, next)=>{
             }
             // Correio shipping estimate.
             const promiseCorreiosShipping = new Promise((resolve, reject)=>{
-                log.debug("pr-correios-1");
                 // console.log(`box: ${JSON.stringify(box)}`);
                 estimateAllCorreiosShipping(box, (err, result)=>{
-                    log.debug("pr-correios-2");
                     if (err) { 
                         return reject(err); 
                     }
@@ -782,15 +782,9 @@ router.get('/ship-estimate', (req, res, next)=>{
                 // Get address information.
                 getAddress(box.cepDestiny)
                 .then(address=>{
-                    log.debug("pr-motoboy-1");
-                    return getMotoboyDelivery(address.uf, address.localidade);
-                })
-                .then(delivery=>{
-                    log.debug("pr-motoboy-2");
-                    resolve(delivery); 
+                    resolve(getMotoboyDelivery(address.uf, address.localidade));
                 })
                 .catch(err=>{
-                    log.error(`promise motoboyDelivery catch. ${err}`);
                     reject(err);
                 });
             });
@@ -802,22 +796,31 @@ router.get('/ship-estimate', (req, res, next)=>{
             ]).then(([deliveryCorreio, deliveryMotoboy])=>{
                 // log.debug("Promisse.all");
                 // log.debug(`deliveryCorreio: ${JSON.stringify(deliveryCorreio)}`);
-                log.debug(`deliveryMotoboy - promise.all: ${JSON.stringify(deliveryMotoboy)}`);
+                let delivery = [];
                 if(deliveryMotoboy) {
-                    log.debug(`deliveryMotoboy: ${JSON.stringify(deliveryMotoboy)}`);
-                    // deliveryCorreio.push(deliveryMotoboy);
-                    deliveryCorreio.unshift(deliveryMotoboy);
+                    // log.debug(`deliveryMotoboy: ${JSON.stringify(deliveryMotoboy)}`);
+                    delivery.push(deliveryMotoboy);
                 }
                 // log.debug(`delivery: ${JSON.stringify(deliveryCorreio)}`);
-                if(deliveryCorreio) {
-                    res.json({ delivery: deliveryCorreio });
+                // No erros.
+                if (deliveryCorreio) {
+                    // Some result.
+                    if (deliveryCorreio.length) {
+                        deliveryCorreio.forEach(item=>{
+                            delivery.push(item);
+                        });
+                    } 
+                    // No result.
+                    else {
+                        log.debug(`Correios webservice não retornou resultados para o cep: ${box.cepDestiny}`);
+                    }
                 } else {
-                    res.json({ err: "Serviço indisponível." });
                 }
+                res.json({ delivery: delivery });
             });
         }).catch(err=>{
-            log.error(`catch promisse all`);
-            return next(err);
+            log.err(`Shipping estimate. ${err}`);
+            return res.json({ err: err });
         });
 });
 
@@ -894,6 +897,9 @@ function getAddress(cep){
 // length, height, width in cm.
 // weight in grams.
 function estimateAllCorreiosShipping(box, cb) {
+    // Test.
+    // return cb('Simulated error.');
+    // return cb(null, []);
 	// Length can not be less than 16cm (correio error);
 	if (box.length < 16) { box.length = 16 };
 	// Height can not be less than 2cm (correio error);
@@ -908,16 +914,30 @@ function estimateAllCorreiosShipping(box, cb) {
 		}
 		// Argments.
 		let args = {
-			nCdEmpresa: '',  // Código administrativo junto à ECT (para clientes com contrato) .
-			sDsSenha: '',
+            nCdEmpresa: '18037020',  // Código administrativo junto à ECT (para clientes com contrato) .
+            sDsSenha: '15178404',
+			// nCdEmpresa: '',  // Código administrativo junto à ECT (para clientes com contrato) .
+			// sDsSenha: '',
 			// 40045 - Error: WS Correios - Code: 40045, err: Código de serviço inválido/inativo.
 			// 40290 - Error: WS Correios - Code: 40290, err: Não foi encontrada precificação. MSG-015: Para o serviço: 40290 o preço nã$ se aplica para origem: 31030160 para o destino: 91710000(-1).
+            // Á varejo.
 			// 40010 - SEDEX Varejo
 			// 40045 - SEDEX a Cobrar Varejo
 			// 40215 - SEDEX 10 Varejo
 			// 40290 - SEDEX Hoje Varejo
 			// 41106 - PAC Varejo
-			nCdServico: "41106, 40010, 40215",
+            // nCdServico: "41106, 40010, 40215",
+            // Á vista.
+            // 04014 SEDEX à vista
+            // 04510 PAC à vista
+            // 04782 SEDEX 12 ( à vista)
+            // 04790 SEDEX 10 (à vista)
+            // 04804 SEDEX Hoje à vista
+            // nCdServico: "4014, 4510, 4782, 4790, 4804",
+            // Contrato.
+            // nCdServico: "4472, 77992",
+            // Moça do correio.
+            nCdServico: "4596, 4553",
 			sCepOrigem: box.cepOrigin.replace(/\D/g, ''),
 			sCepDestino: box.cepDestiny.replace(/\D/g, ''),
 			nVlPeso: (box.weight / 1000).toString(),    // Weight in Kg.
@@ -930,15 +950,15 @@ function estimateAllCorreiosShipping(box, cb) {
 			nVlValorDeclarado  : 0,
 			sCdAvisoRecebimento: 'N'
 		};
-		// log.debug('correio web service args: ' + JSON.stringify(args));
+        // log.debug('correio web service args: ' + JSON.stringify(args));
 		// Uncomment for fast debud, to not use Correios webservice.
-		// return cb('Serviço indisponível');
+		// return cb('Debug mode, not calling Correios service.');
 		// Call webservice.
 		client.CalcPrecoPrazo(args, (err, result)=>{
 			// log.debug("Correio retuned");
 			if (err) {
 				// log.error('client.CalcPrecoPrazo, ' + err.stack);
-				return cb('Serviço indisponível');
+				return cb(err);
 			}
 			// Log and remove CSerivco with erros.
 			for (let index = 0; index < result.CalcPrecoPrazoResult.Servicos.cServico.length; index++) {
@@ -947,30 +967,36 @@ function estimateAllCorreiosShipping(box, cb) {
 					result.CalcPrecoPrazoResult.Servicos.cServico.splice(index, 1);
 					index--;
 				}
-				// Set method description.
-				else {
-					switch (result.CalcPrecoPrazoResult.Servicos.cServico[index].Codigo.toString().trim()) {
-						case "41106":
-							result.CalcPrecoPrazoResult.Servicos.cServico[index].DescServico = "PAC (Correios)";
+                // Set method description.
+                else {
+                    switch (result.CalcPrecoPrazoResult.Servicos.cServico[index].Codigo.toString().trim()) {
+                        case "41106":
+                        case "4510":
+                        case "4596":
+                            result.CalcPrecoPrazoResult.Servicos.cServico[index].DescServico = "PAC (Correios)";
+                            break;
+                        case "40010":
+						case "4014":
+						case "4553":
+							result.CalcPrecoPrazoResult.Servicos.cServico[index].DescServico = "SEDEX (Correios)";
 							break;
-						case "40215":
-							result.CalcPrecoPrazoResult.Servicos.cServico[index].DescServico = "Sedex 10 (Correios)";
+						case "4804":
+							result.CalcPrecoPrazoResult.Servicos.cServico[index].DescServico = "SEDEX Hoje (Correios)";
 							break;
-						case "40010":
-							result.CalcPrecoPrazoResult.Servicos.cServico[index].DescServico = "Sedex (Correios)";
+                        case "40215":
+                        case "4790":
+                            result.CalcPrecoPrazoResult.Servicos.cServico[index].DescServico = "SEDEX 10 (Correios)";
+                            break;
+						case "4782":
+							result.CalcPrecoPrazoResult.Servicos.cServico[index].DescServico = "SEDEX 12 (Correios)";
 							break;
-						default:
-							result.CalcPrecoPrazoResult.Servicos.cServico[index].DescServico = "?";
-							break;
-					}
-				}
+                        default:
+                            result.CalcPrecoPrazoResult.Servicos.cServico[index].DescServico = "?";
+                            break;
+                    }
+                }
 			}
-			// Error in all codes.
-			if (result.CalcPrecoPrazoResult.Servicos.cServico.length == 0) {
-				let errMsg = "Serviço indisponível. error in al codes."
-				// log.error(new Error(errMsg).stack);
-				return cb(errMsg);
-			}
+            // log.debug(`correio result: ${JSON.stringify(result, null, 2)}`);
 			// Have at least one valid code.
 			// log.debug(JSON.stringify(result.CalcPrecoPrazoResult.Servicos.cServico, " "));
 			return cb(null, result.CalcPrecoPrazoResult.Servicos.cServico);

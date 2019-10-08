@@ -32,12 +32,20 @@ var app = new Vue({
         data: { productId: this.product._id, cepDestiny: this.cepDestiny }
       })
       .then(response => {
-        // Correio answer.
+        // Server error.
         if (response.data.err) {
           console.log(response.data.err);
           this.showEstimatedShipment = false;
-          this.cepErrMsg = response.data.err;
-        } else {
+          // this.cepErrMsg = response.data.err;
+          this.cepErrMsg = 'Serviço indisponível';
+        } 
+        // No result.
+        else if (response.data.delivery.length == 0){
+          this.showEstimatedShipment = false;
+          this.cepErrMsg = 'Sem resultados para o CEP informado';
+        } 
+        // Some result.
+        else {
           this.cepErrMsg = '';
           // console.log(`response.data.correio: ${JSON.stringify(response.data.correio)}`);
           this.estimateShipmentData = [];
