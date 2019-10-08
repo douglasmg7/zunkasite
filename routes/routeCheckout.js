@@ -207,6 +207,123 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
 				// Box shipping dimensions.
 				order.shipping.box = shippingBox;
 			}
+            // Correio shipping estimate.
+            const promiseCorreiosShipping = new Promise((resolve, reject)=>{
+                // console.log(`box: ${JSON.stringify(box)}`);
+                estimateAllCorreiosShipping(box, (err, result)=>{
+                    if (err) { 
+                        return reject(err); 
+                    }
+                    resolve(result);
+                });
+            });
+            // Promise for motoboy and default delivery.
+            const promiseMotoboyAndDefaultDelivery = new Promise((resolve, reject)=>{
+                // Get address information.
+                getAddress(box.cepDestiny)
+                // Get motoboy and default delivery prices.
+                .then(address=>{
+                    Promise.all([
+                        defaultDelivery(regionFromUf(address.uf), order.shipping.box.weight).catch(err=>{log.error(`Estimating default shipping. ${err}`)}), 
+                        motoboyDelivery(address.uf, address.localidade).catch(err=>{log.error(`Estimating motoboy delivery. ${err}`)})
+                    ]).then(([defaultDeliveries, motoboyDelivery])=>{
+                        // log.debug("Promisse.all");
+                        // log.debug(`deliveryCorreio: ${JSON.stringify(deliveryCorreio)}`);
+                        let deliveries = {
+                        };
+                        if(deliveryMotoboy) {
+                            // log.debug(`deliveryMotoboy: ${JSON.stringify(deliveryMotoboy)}`);
+                            deliveries.motoboy = deliveryMotoboy;
+                        }
+                        if (defaultDeliveries) {
+                            deliveries.default = defaultDeliveries;
+                        }
+                        resolve(deliveries);
+                    });
+                })
+                .catch(err=>{
+                    reject(err);
+                });
+            });
+            // When receive all return.
+            Promise.all([
+                promiseCorreiosShipping.catch(err=>{log.error(`Estimating Correios shipping. ${err}`)}), 
+                promiseMotoboyAndDefaultDelivery.catch(err=>{log.error(`Estimating motoboy and default delivery. ${err}`)})
+            ]).then(([deliveryCorreios, deliveryMotoboyAndDefault])=>{
+                // Motoboy delivery.
+                order.shipping.motoboyResult.price = 0;
+                order.shipping.motoboyResult.deadline = 0;
+                order.Shipping.defaultDeliveries = [];
+                if (deliveryMotoboyAndDefault) {
+                    if (deliveryMotoboyAndDefault.motoboy) {
+                        order.shipping.motoboyResult.price = deliveryMotoboyAndDefault.motoboy.price = 0;
+                        order.shipping.motoboyResult.deadline = deliveryMotoboyAndDefault.motoboy.deadline = 0;
+                    }
+                }
+                // Correios delivery.
+                order.shipping.correioResult = {};
+                order.shipping.correioResults = [];
+                if (deliveryCorreios) {
+				    order.shipping.correioResults = deliveryCorreios;
+                }
+                // Default delivery.
+                else {
+                    deliveryMotoboyAndDefault.default.forEach(item=>{
+                        order.Shipping.defaultDeliveries.push({
+                            price: item.prie, 
+                            deadline: item.deadline
+                        });
+                    });
+                }
+                // Save order.
+                order.save(err=>{
+                    if (err) {
+                        res.json({err});
+                        return next(err);
+                    } else {
+                        res.render('checkout/shippingMethod', {
+                            nav: {
+                            },
+                            order
+                        });
+                    }
+                });
+            });
+		}
+	});
+});
+
+/***************************************
+/ OLD
+***************************************/
+// Select shipment old - page.
+router.get('/shipping-method-old/order/:order_id', (req, res, next)=>{
+	// Find order not placed yet.
+	Order.findById(req.params.order_id, (err, order)=>{
+		if (err) { return next(err); }
+		if (!order) {
+			return next(new Error('No order to continue with shipping method selection.')); }
+		else {
+			// Calculate box size shipment approximately.
+			let shippingBox = { cepOrigin: CEP_ORIGIN, cepDestiny: order.shipping.address.cep, length: 0, height: 0, width: 0, weight: 0 };
+			// For each item.
+			for (let i = 0; i < order.items.length; i++) {
+				// Get dimensions.
+				let dimemsions = [order.items[i].length, order.items[i].height, order.items[i].width];
+				// Sort dimensions.
+				dimemsions = dimemsions.sort(function (a,b){
+					if (a < b) { return -1 }
+					if (a > b) { return 1 }
+					return 0;
+				});
+				// Get the big dimension for the box.
+				if (dimemsions[2] > shippingBox.length) { shippingBox.length = dimemsions[2]; }
+				if (dimemsions[1] > shippingBox.height) { shippingBox.height = dimemsions[1]; }
+				shippingBox.width += dimemsions[0];
+				shippingBox.weight += order.items[i].weight;
+				// Box shipping dimensions.
+				order.shipping.box = shippingBox;
+			}
 			log.debug('Wating correios ws...');
 			estimateAllCorreiosShipping(shippingBox, (err, result)=>{
 				log.debug('Receive correios ws answer.');
@@ -745,6 +862,8 @@ router.get('/ship-estimate', (req, res, next)=>{
     // Test.
     // return res.json({ err: 'Simulated error' });
     // return res.json({ delivery: [] });
+    // Spend time.
+    // let initTime = Date.now();
 	// console.log('req.query', req.query);
 	// Get product information.
 	Product.findById(req.query.productId)
@@ -782,7 +901,7 @@ router.get('/ship-estimate', (req, res, next)=>{
                 // Get address information.
                 getAddress(box.cepDestiny)
                 .then(address=>{
-                    resolve(getMotoboyDelivery(address.uf, address.localidade));
+                    resolve(motoboyDelivery(address.uf, address.localidade));
                 })
                 .catch(err=>{
                     reject(err);
@@ -816,6 +935,7 @@ router.get('/ship-estimate', (req, res, next)=>{
                     }
                 } else {
                 }
+                // log.debug(`Time to process estimate time: ${Date.now() - initTime}ms`);
                 res.json({ delivery: delivery });
             });
         }).catch(err=>{
@@ -825,10 +945,10 @@ router.get('/ship-estimate', (req, res, next)=>{
 });
 
 // Get motoboy delivery from CEP.
-function getMotoboyDelivery(uf, city, cb) {
-    // log.debug(`getMotoboyDelivery new promise city: ${city}`);
+function motoboyDelivery(uf, city, cb) {
+    // log.debug(`motoboyDelivery new promise city: ${city}`);
     return new Promise((resolve, reject)=>{
-        // log.debug(`getMotoboyDelivery run promise, uf: ${uf}, city: ${city}`);
+        // log.debug(`motoboyDelivery run promise, uf: ${uf}, city: ${city}`);
         if(uf.toLowerCase() === "mg"){
             // Get motoboy shipping values.
             redis.get('motoboy-delivery', (err, motoboyDeliveries)=>{
@@ -847,12 +967,12 @@ function getMotoboyDelivery(uf, city, cb) {
                         });
                     }
                 });
-                // log.debug('getMotoboyDelivery city not found: resolve()');
+                // log.debug('motoboyDelivery city not found: resolve()');
                 resolve();
             });
         } else {
             // No motoboy delivery.
-            // log.debug('getMotoboyDelivery not mg: resolve()');
+            // log.debug('motoboyDelivery not mg: resolve()');
             resolve();
         }
     });
@@ -900,6 +1020,8 @@ function estimateAllCorreiosShipping(box, cb) {
     // Test.
     // return cb('Simulated error.');
     // return cb(null, []);
+    // Spend time.
+    let initTime = Date.now();
 	// Length can not be less than 16cm (correio error);
 	if (box.length < 16) { box.length = 16 };
 	// Height can not be less than 2cm (correio error);
@@ -997,8 +1119,8 @@ function estimateAllCorreiosShipping(box, cb) {
                 }
 			}
             // log.debug(`correio result: ${JSON.stringify(result, null, 2)}`);
-			// Have at least one valid code.
 			// log.debug(JSON.stringify(result.CalcPrecoPrazoResult.Servicos.cServico, " "));
+            log.debug(`Time to process correios estimate time: ${Date.now() - initTime}ms`);
 			return cb(null, result.CalcPrecoPrazoResult.Servicos.cServico);
 		});
 	});
@@ -1009,12 +1131,16 @@ function estimateAllCorreiosShipping(box, cb) {
  ******************************************************************************/
 
 // Get default shipping price.
-function getDefaultShippingPrice(region, productWeight){
-    ShippingPrice.find({region :region}).sort({price: 1, deadline: 1})
-        .then(docs=>{
-        })
-        .catch(err=>{
-        });
+function defaultDelivery(region, productWeight){
+    return new Promise((resolve, reject)=>{
+        ShippingPrice.find({region :region}).sort({price: 1, deadline: 1})
+            .then(docs=>{
+                resolve([]);
+            })
+            .catch(err=>{
+                reject(err);
+            });
+    });
 }
 
 // Get brazilian region from uf.

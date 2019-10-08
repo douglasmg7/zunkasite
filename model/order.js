@@ -49,6 +49,12 @@ let motoboyResult = new mongoose.Schema({
 	deadline: { type: String },
 });
 
+// Schema - default delivery result.
+let defaultDeliveryResult = new mongoose.Schema({
+	price: { type: String },
+	deadline: { type: String },
+});
+
 // Schema - Shipping box dimensions.
 let boxDimensions = new mongoose.Schema({
 	length: { type: Number, required: true },
@@ -70,10 +76,11 @@ let shipping = new mongoose.Schema({
 	deadline: { type: Number },
 	// Deprected.
 	correioResult: correioResult, // Deprected - Result from correio search ws for shipment price and deadline.
-	correioResults: [correioResult], // Result from correio search ws for shipment price and deadline.
 	// All result from correio search ws for shipment price and deadline.
 	// The correioResult is deprected, use this instead.
+	correioResults: [correioResult], // Result from correio search ws for shipment price and deadline.
 	motoboyResult: motoboyResult, // Result from motoboy search for shipment price and deadline.
+    defaultDeliveries: [defaultDelivery], // Result from default delivery.
 });
 
 // Schema - Payment.
