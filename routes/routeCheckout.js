@@ -15,6 +15,7 @@ const User = require('../model/user');
 const Address = require('../model/address');
 const Order = require('../model/order');
 const Product = require('../model/product');
+const ShippingPrice = require('../model/shippingPrice');
 const ppConfig = require('../config/s').paypal;
 
 // Redis.
@@ -210,7 +211,7 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
             // Correio shipping estimate.
             const promiseCorreiosShipping = new Promise((resolve, reject)=>{
                 // console.log(`box: ${JSON.stringify(box)}`);
-                estimateAllCorreiosShipping(box, (err, result)=>{
+                estimateAllCorreiosShipping(order.shipping.box, (err, result)=>{
                     if (err) { 
                         return reject(err); 
                     }
@@ -220,20 +221,21 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
             // Promise for motoboy and default delivery.
             const promiseMotoboyAndDefaultDelivery = new Promise((resolve, reject)=>{
                 // Get address information.
-                getAddress(box.cepDestiny)
+                getAddress(order.shipping.box.cepDestiny)
                 // Get motoboy and default delivery prices.
                 .then(address=>{
                     Promise.all([
-                        defaultDelivery(regionFromUf(address.uf), order.shipping.box.weight).catch(err=>{log.error(`Estimating default shipping. ${err}`)}), 
+                        defaultDelivery(regionFromUf(address.uf), order.shipping.box.weight).catch(err=>{log.error(`Estimating default delivery. ${err}`)}), 
                         motoboyDelivery(address.uf, address.localidade).catch(err=>{log.error(`Estimating motoboy delivery. ${err}`)})
                     ]).then(([defaultDeliveries, motoboyDelivery])=>{
                         // log.debug("Promisse.all");
                         // log.debug(`deliveryCorreio: ${JSON.stringify(deliveryCorreio)}`);
                         let deliveries = {
                         };
-                        if(deliveryMotoboy) {
+                        // log.debug(`motoboyDelivery: ${JSON.stringify(motoboyDelivery)}`);
+                        if(motoboyDelivery) {
                             // log.debug(`deliveryMotoboy: ${JSON.stringify(deliveryMotoboy)}`);
-                            deliveries.motoboy = deliveryMotoboy;
+                            deliveries.motoboy = motoboyDelivery;
                         }
                         if (defaultDeliveries) {
                             deliveries.default = defaultDeliveries;
@@ -251,13 +253,12 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                 promiseMotoboyAndDefaultDelivery.catch(err=>{log.error(`Estimating motoboy and default delivery. ${err}`)})
             ]).then(([deliveryCorreios, deliveryMotoboyAndDefault])=>{
                 // Motoboy delivery.
-                order.shipping.motoboyResult.price = 0;
-                order.shipping.motoboyResult.deadline = 0;
-                order.Shipping.defaultDeliveries = [];
+                order.shipping.motoboyResult = { price: '', deadline: '' };
+                order.shipping.defaultDeliveryResults = [];
                 if (deliveryMotoboyAndDefault) {
                     if (deliveryMotoboyAndDefault.motoboy) {
-                        order.shipping.motoboyResult.price = deliveryMotoboyAndDefault.motoboy.price = 0;
-                        order.shipping.motoboyResult.deadline = deliveryMotoboyAndDefault.motoboy.deadline = 0;
+                        order.shipping.motoboyResult.price = deliveryMotoboyAndDefault.motoboy.price;
+                        order.shipping.motoboyResult.deadline = deliveryMotoboyAndDefault.motoboy.deadline;
                     }
                 }
                 // Correios delivery.
@@ -268,12 +269,9 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                 }
                 // Default delivery.
                 else {
-                    deliveryMotoboyAndDefault.default.forEach(item=>{
-                        order.Shipping.defaultDeliveries.push({
-                            price: item.prie, 
-                            deadline: item.deadline
-                        });
-                    });
+                    order.shipping.defaultDeliveryResults = deliveryMotoboyAndDefault.default;
+                    // log.debug(`order._id: ${order._id}`);
+                    // log.debug(`order.shipping.defaultDeliveryResults: ${JSON.stringify(order.shipping.defaultDeliveryResults, null, 2)}`);
                 }
                 // Save order.
                 order.save(err=>{
@@ -288,104 +286,11 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                         });
                     }
                 });
-            });
+            })
 		}
 	});
 });
 
-/***************************************
-/ OLD
-***************************************/
-// Select shipment old - page.
-router.get('/shipping-method-old/order/:order_id', (req, res, next)=>{
-	// Find order not placed yet.
-	Order.findById(req.params.order_id, (err, order)=>{
-		if (err) { return next(err); }
-		if (!order) {
-			return next(new Error('No order to continue with shipping method selection.')); }
-		else {
-			// Calculate box size shipment approximately.
-			let shippingBox = { cepOrigin: CEP_ORIGIN, cepDestiny: order.shipping.address.cep, length: 0, height: 0, width: 0, weight: 0 };
-			// For each item.
-			for (let i = 0; i < order.items.length; i++) {
-				// Get dimensions.
-				let dimemsions = [order.items[i].length, order.items[i].height, order.items[i].width];
-				// Sort dimensions.
-				dimemsions = dimemsions.sort(function (a,b){
-					if (a < b) { return -1 }
-					if (a > b) { return 1 }
-					return 0;
-				});
-				// Get the big dimension for the box.
-				if (dimemsions[2] > shippingBox.length) { shippingBox.length = dimemsions[2]; }
-				if (dimemsions[1] > shippingBox.height) { shippingBox.height = dimemsions[1]; }
-				shippingBox.width += dimemsions[0];
-				shippingBox.weight += order.items[i].weight;
-				// Box shipping dimensions.
-				order.shipping.box = shippingBox;
-			}
-			log.debug('Wating correios ws...');
-			estimateAllCorreiosShipping(shippingBox, (err, result)=>{
-				log.debug('Receive correios ws answer.');
-				// No Correio info.
-				if (err) {
-					// log.debug(`Correios ws error, using default delivery price and deadline. Price: ${STANDARD_DELIVERY_PRICE}, Deadline: ${STANDARD_DELIVERY_DEADLINE}`)
-					order.shipping.correioResult = {};
-					order.shipping.correioResults = [];
-					// order.shipping.price = STANDARD_DELIVERY_PRICE;
-					// order.shipping.deadline = STANDARD_DELIVERY_DEADLINE;
-				}
-				// Got correio info.
-				else {
-					// log.debug(`Result: ${JSON.stringify(result)}`);
-					// order.shipping.correioResult = result[0]; // Deprected.
-					order.shipping.correioResults = result;
-				}
-				// Get motoboy shipping values.
-				// log.debug(JSON.stringify(order.address));
-				redis.get('motoboy-delivery', (err, motoboyDeliveries)=>{
-					// Internal error.
-					if (err) {
-						log.error(err.stack);
-						return res.render('/error', { message: 'Can not find motoboy delivery data.', error: err });
-					}
-					motoboyDeliveries = JSON.parse(motoboyDeliveries) || [];
-					// Find city.
-					order.shipping.motoboyResult = {
-						price: '',
-						deadline: ''
-					};
-					let cityNormalized = order.shipping.address.city.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '');
-					motoboyDeliveries.forEach(motoboyDelivery=>{
-						// log.info('--------');
-						// log.info(motoboyDelivery.cityNormalized);
-						// log.info(cityNormalized);
-						// log.info('--------');
-						if (motoboyDelivery.city.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '') === cityNormalized) {
-							order.shipping.motoboyResult.price = motoboyDelivery.price;
-							order.shipping.motoboyResult.deadline = motoboyDelivery.deadline;
-						}
-					});
-					// Uncomment to test with free shipping todo.
-					// order.shipping.price = 0;
-					// Save correio result.
-					order.save((err, newAddress) => {
-						if (err) {
-							res.json({err});
-							return next(err);
-						} else {
-							res.render('checkout/shippingMethod', {
-								nav: {
-								},
-								order
-							});
-						}
-					});
-				});
-			})
-		}
-	});
-});
 
 // Select shipment.
 router.post('/shipping-method/order/:order_id', (req, res, next)=>{
@@ -394,7 +299,7 @@ router.post('/shipping-method/order/:order_id', (req, res, next)=>{
         // log.debug(`req.body: ${JSON.stringify(req.body)}`);
 		if (req.body.shippingMethod == 'motoboy'){
 			order.shipping.carrier = 'Sérgio Delivery';
-			order.shipping.methodCode = '00001';
+			order.shipping.methodCode = '';
 			order.shipping.methodDesc = 'Motoboy';
 			// Motoboy result using ',' as decimal point.
 			order.shipping.price = order.shipping.motoboyResult.price.replace('.', '').replace(',', '.');
@@ -407,6 +312,17 @@ router.post('/shipping-method/order/:order_id', (req, res, next)=>{
 			order.shipping.methodDesc = 'A combinar';
 			order.shipping.price = 0; 
 			order.shipping.deadline = 0;
+        }
+        else if (req.body.shippingMethod.includes("default-carrier-")) {
+            // log.debug('A combinar.');
+            let index = parseInt(req.body.shippingMethod.replace("default-carrier-", ""));
+            // log.debug(`index: ${index}`);
+			order.shipping.carrier = 'defaultCarrier';
+			order.shipping.methodCode = (index + 1).toString();
+			order.shipping.methodDesc = 'Transportadora ' + (index + 1);
+			order.shipping.price = order.shipping.defaultDeliveryResults[index].price; 
+			order.shipping.deadline = order.shipping.defaultDeliveryResults[index].deadline; 
+            // log.debug(`order.shipping: ${JSON.stringify(order.shipping, null, 2)}`);
         }
 		// Correios delivery type.
 		else {
@@ -1018,7 +934,7 @@ function getAddress(cep){
 // weight in grams.
 function estimateAllCorreiosShipping(box, cb) {
     // Test.
-    // return cb('Simulated error.');
+    return cb('Simulated error.');
     // return cb(null, []);
     // Spend time.
     let initTime = Date.now();
@@ -1132,10 +1048,23 @@ function estimateAllCorreiosShipping(box, cb) {
 
 // Get default shipping price.
 function defaultDelivery(region, productWeight){
+    // log.debug(`defaultDelivery(), region: ${region}, productWeight: ${productWeight}`);
     return new Promise((resolve, reject)=>{
         ShippingPrice.find({region :region}).sort({price: 1, deadline: 1})
             .then(docs=>{
-                resolve([]);
+                // log.debug(`defaultDelivery(), docs count: ${docs.length}`);
+                let shippingPrices = [];
+                docs.forEach(item=>{
+                    // log.debug(`defaultDelivery(), item: ${JSON.stringify(item, null, 2)}`);
+                    if (productWeight <= item.maxWeight) {
+                        shippingPrices.push({ 
+                            price: (item.price / 100).toFixed(2).replace(',', '').replace('.', ','),
+                            deadline: item.deadline.toString() 
+                        });
+                    }
+                });
+                // log.debug(`defaultDelivery(), shippingPrices: ${JSON.stringify(shippingPrices, null, 2)}`);
+                resolve(shippingPrices);
             })
             .catch(err=>{
                 reject(err);

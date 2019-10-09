@@ -5,18 +5,18 @@ const ShippingPrice = require('../model/shippingPrice');
 const log = require('../config/log');
 
 const prices = [
-  { region: 'north', deadLine: 10, maxWeight: 100000, price: 10000 },
-  { region: 'north', deadLine: 10, maxWeight: 3000, price: 10000 },
-  { region: 'north', deadLine: 5, maxWeight: 100000, price: 10000 },
-  { region: 'north', deadLine: 5, maxWeight: 3000, price: 10000 },
-  { region: 'northeast', deadLine: 10, maxWeight: 100000, price: 10000 },
-  { region: 'northeast', deadLine: 5, maxWeight: 100000, price: 10000 },
-  { region: 'midwest', deadLine: 10, maxWeight: 100000, price: 10000 },
-  { region: 'midwest', deadLine: 5, maxWeight: 100000, price: 10000 },
-  { region: 'southeast', deadLine: 10, maxWeight: 100000, price: 5000 },
-  { region: 'southeast', deadLine: 5, maxWeight: 100000, price: 7000 },
-  { region: 'south', deadLine: 10, maxWeight: 100000, price: 7000 },
-  { region: 'south', deadLine: 5, maxWeight: 100000, price: 9000 },
+  { region: 'north', deadline: 10, maxWeight: 100000, price: 10000 },
+  { region: 'north', deadline: 10, maxWeight: 3000, price: 10000 },
+  { region: 'north', deadline: 5, maxWeight: 100000, price: 10000 },
+  { region: 'north', deadline: 5, maxWeight: 3000, price: 10000 },
+  { region: 'northeast', deadline: 10, maxWeight: 100000, price: 10000 },
+  { region: 'northeast', deadline: 5, maxWeight: 100000, price: 10000 },
+  { region: 'midwest', deadline: 10, maxWeight: 100000, price: 10000 },
+  { region: 'midwest', deadline: 5, maxWeight: 100000, price: 10000 },
+  { region: 'southeast', deadline: 10, maxWeight: 100000, price: 5000 },
+  { region: 'southeast', deadline: 5, maxWeight: 100000, price: 7000 },
+  { region: 'south', deadline: 10, maxWeight: 100000, price: 7000 },
+  { region: 'south', deadline: 5, maxWeight: 100000, price: 9000 },
 ];
 
 // Remove old values.

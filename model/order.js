@@ -80,7 +80,7 @@ let shipping = new mongoose.Schema({
 	// The correioResult is deprected, use this instead.
 	correioResults: [correioResult], // Result from correio search ws for shipment price and deadline.
 	motoboyResult: motoboyResult, // Result from motoboy search for shipment price and deadline.
-    defaultDeliveries: [defaultDelivery], // Result from default delivery.
+    defaultDeliveryResults: [defaultDeliveryResult], // Result from default delivery.
 });
 
 // Schema - Payment.
