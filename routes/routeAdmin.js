@@ -676,7 +676,7 @@ router.get('/shipping/price/:_id', checkPermission, (req, res, next)=>{
 });
 
 // Save shipping price.
-router.post('/shipping/price/edit', checkPermission, [
+router.post('/shipping/price/:_id', checkPermission, [
     // check('dealerName').isLength(4, 20),
     check('shippingPrice.uf').isLength(1, 20).withMessage('Valor inválido para uf'),
     // check('dealerProductMaker').isLength(2, 200),
@@ -692,46 +692,36 @@ router.post('/shipping/price/edit', checkPermission, [
         // log.debug(JSON.stringify(errors.array(), null, 2));
         return res.status(422).json({ erros: errors.array() });
     }
-    // // Send validations errors to client.
-    // if (!result.isEmpty()) {
-      // let messages = [];
-      // messages.push(result.array()[0].msg);
-      // return res.json({ success: false, message: messages[0]});
-    // } 
-    // Save address new address.
+    // Save new shipping price.
     else if (req.query.isNewShippingPrice === 'new'){
-      let shippingPrice = new Address(req.shippingPrice);
-      // address.user_id = req.user._id;
-      // address.name = req.body.address.name;
-      // address.cep = req.body.address.cep;
-      shippingPrice.save(function(err) {
-        if (err) { return next(err); } 
-        return res.send();
-      });        
+        let shippingPrice = new Address(req.shippingPrice);
+        shippingPrice.save()
+        .then(()=>{
+            return res.send();
+        })
+        .cath(err=>{
+            log.error(`Saving shipping price, _id: ${req.params._id}`);
+            return res.status(500).send();
+        });
     }
-    // save specific address.
-    else if (req.query.shippingPriceId) {
-      ShippingPrice.findByIdAndUpdate(req.query.shippingPriceId, { 
-        $set: { 
-          name: req.body.address.name,
-          cep: req.body.address.cep,
-          address: req.body.address.address,
-          addressNumber: req.body.address.addressNumber,
-          addressComplement: req.body.address.addressComplement,
-          district: req.body.address.district,
-          city: req.body.address.city,
-          state: req.body.address.state,
-          phone: req.body.address.phone
-        }}, err=>{
-          if (err) return next(err);
-          return res.json({ success: true });
-      });
-    }
-    // Not new no edit addres.
-    else{
-      // return res.json({ success: false, message: 'Erro interno do sistema.' });
-      return res.status(500).send('Erro interno do sistema.');
-    }
+    // Update shipping price.
+    else {
+        ShippingPrice.findByIdAndUpdate(req.query.shippingPriceId, { 
+            $set: { 
+                region: req.body.region,
+                deadline: req.body.deadline,
+                price: req.body.price,
+                maxWeight: req.body.maxWeight,
+            }
+        })
+        .then(()=>{
+            return res.send();
+        })
+        .catch(err=>{
+            log.error(`Updating shipping price, _id: ${req.params._id}`);
+            return res.status(500).send();
+        });
+     }
 });
 
 /******************************************************************************

@@ -1,7 +1,7 @@
 extends ../layout/layout_vue_n
 
 block title
-  title Zunka - Adicionar do custo do frete
+  title Zunka - Frete
 
 block append css
   link(rel="stylesheet" href="/css/admin/editShippingPrice.css" charset="utf-8")
@@ -9,7 +9,7 @@ block append css
 block content 
   section.shadow
     //- title.
-    h2.title {{ isNewShippingPrice ? "Adicionar custo do frete": "Alteração custo do frete" }}
+    h2.title {{ isNewShippingPrice ? "Novo frete": "Alterar frete" }}
     //- Warn message.
     p.warn-message {{ warnMessage }}    
     //- Region.
@@ -21,15 +21,16 @@ block content
         option(value='southeast') Sudeste
         option(value='south') Sul
     //- Dead line.
-    label(for='deadLine') Prazo (dias)
-    input(type='text' id='deadLine' v-model='shippingPrice.deadLine')
+    label(for='deadline') Prazo (dias)
+    input(type='text' id='deadline' v-model='shippingPrice.deadline')
     //- Max weight.
     label(for='maxWeight') Peso máximo (kg)
     input(type='text' id='maxWeight' v-model='shippingPrice.maxWeight')
     //- Price.
     label(for='Price') Preço (R$)
     input(type='text' id='price' v-model='shippingPrice.price')
-    input.btn-primary(type='button', :value='isNewShippingPrice ? "Salvar": "Salvar"' @click='saveShippingPrice()')
+    input.btn-primary(type='button', :value='isNewShippingPrice ? "Criar frete": "Salvar"' @click='saveShippingPrice()')
+    input.btn-danger(v-if='!isNewShippingPrice' type='button' value='Apagar' @click='deleteShippingPrice()')
     input.btn-exit(type='button' onclick='window.location.href="/admin/shipping/prices"' value='Sair') 
 
 append internal_scripts

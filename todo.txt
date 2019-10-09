@@ -10,8 +10,6 @@ Min width window 720px
 
 More space between title and text on order resume.
 
-Run insertProductMaker on server.
-
 cep inválido not in red.
 
 Textbox is cutting "g" char.
