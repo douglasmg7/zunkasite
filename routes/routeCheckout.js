@@ -269,7 +269,12 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                 }
                 // Default delivery.
                 else {
-                    order.shipping.defaultDeliveryResults = deliveryMotoboyAndDefault.default;
+                    deliveryMotoboyAndDefault.default.forEach(item=>{
+                        order.shipping.defaultDeliveryResults.push({
+                            deadline: item.deadline,
+                            price: item.price
+                        });
+                    });
                     // log.debug(`order._id: ${order._id}`);
                     // log.debug(`order.shipping.defaultDeliveryResults: ${JSON.stringify(order.shipping.defaultDeliveryResults, null, 2)}`);
                 }
@@ -813,11 +818,24 @@ router.get('/ship-estimate', (req, res, next)=>{
                 });
             });
             // Correio shipping estimate.
-            const promiseMotoboyDelivery = new Promise((resolve, reject)=>{
+            const promiseDeliveries = new Promise((resolve, reject)=>{
                 // Get address information.
                 getAddress(box.cepDestiny)
                 .then(address=>{
-                    resolve(motoboyDelivery(address.uf, address.localidade));
+                    Promise.all([
+                        defaultDelivery(regionFromUf(address.uf), box.weight).catch(err=>{log.error(`Estimating default shipping. ${err}`)}),  
+                        motoboyDelivery(address.uf, address.localidade).catch(err=>{log.error(`Estimating motoboy shipping. ${err}`)})
+                    ])
+                    .then(([deliveryDefault, deliveryMotoboy])=>{
+                        let deliveries = {};
+                        if (deliveryDefault) {
+                            deliveries.default = deliveryDefault;
+                        }
+                        if (deliveryMotoboy) {
+                            deliveries.motoboy = deliveryMotoboy;
+                        }
+                        resolve(deliveries);
+                    });
                 })
                 .catch(err=>{
                     reject(err);
@@ -827,14 +845,15 @@ router.get('/ship-estimate', (req, res, next)=>{
             // When receive all return.
             Promise.all([
                 promiseCorreiosShipping.catch(err=>{log.error(`Estimating Correios shipping. ${err}`)}), 
-                promiseMotoboyDelivery.catch(err=>{log.error(`Estimating motoboy delivery. ${err}`)})
-            ]).then(([deliveryCorreio, deliveryMotoboy])=>{
+                promiseDeliveries.catch(err=>{log.error(`Estimating motoboy and default deliveries. ${err}`)})
+            ])
+            .then(([deliveryCorreio, deliveryMotoboyAndDefault])=>{
                 // log.debug("Promisse.all");
                 // log.debug(`deliveryCorreio: ${JSON.stringify(deliveryCorreio)}`);
                 let delivery = [];
-                if(deliveryMotoboy) {
+                if (deliveryMotoboyAndDefault && deliveryMotoboyAndDefault.motoboy) {
                     // log.debug(`deliveryMotoboy: ${JSON.stringify(deliveryMotoboy)}`);
-                    delivery.push(deliveryMotoboy);
+                    delivery.push(deliveryMotoboyAndDefault.motoboy);
                 }
                 // log.debug(`delivery: ${JSON.stringify(deliveryCorreio)}`);
                 // No erros.
@@ -850,6 +869,11 @@ router.get('/ship-estimate', (req, res, next)=>{
                         log.debug(`Correios webservice não retornou resultados para o cep: ${box.cepDestiny}`);
                     }
                 } else {
+                    if (deliveryMotoboyAndDefault && deliveryMotoboyAndDefault.default) {
+                        deliveryMotoboyAndDefault.default.forEach(item=>{
+                            delivery.push(item);
+                        });
+                    }
                 }
                 // log.debug(`Time to process estimate time: ${Date.now() - initTime}ms`);
                 res.json({ delivery: delivery });
@@ -934,7 +958,7 @@ function getAddress(cep){
 // weight in grams.
 function estimateAllCorreiosShipping(box, cb) {
     // Test.
-    return cb('Simulated error.');
+    // return cb('Simulated error.');
     // return cb(null, []);
     // Spend time.
     let initTime = Date.now();
@@ -1054,10 +1078,11 @@ function defaultDelivery(region, productWeight){
             .then(docs=>{
                 // log.debug(`defaultDelivery(), docs count: ${docs.length}`);
                 let shippingPrices = [];
-                docs.forEach(item=>{
+                docs.forEach((item, index)=>{
                     // log.debug(`defaultDelivery(), item: ${JSON.stringify(item, null, 2)}`);
                     if (productWeight <= item.maxWeight) {
                         shippingPrices.push({ 
+                            method: 'Transportadora ' + (index + 1),
                             price: (item.price / 100).toFixed(2).replace(',', '').replace('.', ','),
                             deadline: item.deadline.toString() 
                         });
