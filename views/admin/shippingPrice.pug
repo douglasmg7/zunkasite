@@ -10,36 +10,22 @@ block content
   section.shadow
     //- title.
     h2.title Fretes
-    h3 Norte
-    a(v-for='item in shippingPrices.north' :href='`/admin/shipping/price/${item._id}`') 
-        | R${{ item.price / 100 }} &nbsp &nbsp
-        | {{ item.deadline }} dias &nbsp &nbsp
-        | {{ item.maxWeight / 1000 }}kg
-    h3 Nordeste
-    a(v-for='item in shippingPrices.northeast' :href='`/admin/shipping/price/${item._id}`') 
-        | R${{ item.price / 100 }} &nbsp &nbsp
-        | {{ item.deadline }} dias &nbsp &nbsp
-        | {{ item.maxWeight / 1000 }}kg
-    h3 Centro-oeste
-    a(v-for='item in shippingPrices.midwest' :href='`/admin/shipping/price/${item._id}`') 
-        | R${{ item.price / 100 }} &nbsp &nbsp
-        | {{ item.deadline }} dias &nbsp &nbsp
-        | {{ item.maxWeight / 1000 }}kg
-    h3 Sudeste
-    a(v-for='item in shippingPrices.southeast' :href='`/admin/shipping/price/${item._id}`') 
-        | R${{ item.price / 100 }} &nbsp &nbsp
-        | {{ item.deadline }} dias &nbsp &nbsp
-        | {{ item.maxWeight / 1000 }}kg
-    h3 Sul
-    a(v-for='item in shippingPrices.south' :href='`/admin/shipping/price/${item._id}`') 
-        | R${{ item.price / 100 }} &nbsp &nbsp
-        | {{ item.deadline }} dias &nbsp &nbsp
-        | {{ item.maxWeight / 1000 }}kg
+
+    //- Regions.
+    each region in regions
+        h3 #{region.name}
+        // Shipping
+        each item in region.items
+            //- p #{ item.deadline.toString().length }
+            a(href=`/admin/shipping/price/${item._id}`) 
+                span.deadline !{item.deadline}
+                span.max-weight !{item.maxWeight}
+                span.price !{item.price}
     input.btn-info(type='button' onclick='window.location.href="/admin/shipping/price/new"' value='Criar frete') 
 
 append internal_scripts
   script.
-    let shippingPrices = !{JSON.stringify(shippingPrices)};
+    let regions = !{JSON.stringify(regions)};
 
 append external_scripts
   script(src='/js/admin/shippingPrice.js?0004')

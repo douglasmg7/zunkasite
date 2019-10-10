@@ -933,6 +933,7 @@ function getAddress(cep){
                     // log.debug(JSON.stringify(res.data));
                     // Some error, no more information from ws.
                     if (res.data.erro) {
+                        // log.debug(`getAddress data: ${JSON.stringify(res.data, null, 2)}`);
                         reject(res.data.erro);
                     }
                     // Found CEP.
@@ -958,7 +959,7 @@ function getAddress(cep){
 // weight in grams.
 function estimateAllCorreiosShipping(box, cb) {
     // Test.
-    // return cb('Simulated error.');
+    return cb('Simulated error.');
     // return cb(null, []);
     // Spend time.
     let initTime = Date.now();
@@ -1074,7 +1075,7 @@ function estimateAllCorreiosShipping(box, cb) {
 function defaultDelivery(region, productWeight){
     // log.debug(`defaultDelivery(), region: ${region}, productWeight: ${productWeight}`);
     return new Promise((resolve, reject)=>{
-        ShippingPrice.find({region :region}).sort({price: 1, deadline: 1})
+        ShippingPrice.find({ region :region, maxWeight: { $gte: productWeight } }).sort({price: 1, deadline: 1})
             .then(docs=>{
                 // log.debug(`defaultDelivery(), docs count: ${docs.length}`);
                 let shippingPrices = [];

@@ -630,19 +630,27 @@ router.post('/motoboy-delivery', checkPermission, (req, res, next)=>{
 // Shipping price list.
 router.get('/shipping/prices', checkPermission, (req, res, next)=>{
     try {
-        ShippingPrice.find()
+        ShippingPrice.find().sort({ region: 1, deadline: 1, maxWeight: 1, price: 1 })
             .then(docs=>{
                 if (!docs.length){
                     return next(new Error('No shipping price doc on db.'));
                 }
-                let shippingPrices = {};
+                let regions = {
+                    north: { name: 'Norte', items: [] },
+                    northeast: { name: 'Nordeste', items: [] },
+                    midwest: { name: 'Centro-oeste', items: [] },
+                    southeast: { name: 'Sudeste', items: [] },
+                    south: { name: 'Sul', items: [] }
+                };
                 docs.forEach(item=>{
-                    if (!shippingPrices[item.region]) {
-                        shippingPrices[item.region] = [];
-                    }
-                    shippingPrices[item.region].push(item);
+                    regions[item.region].items.push({
+                        _id: item._id,
+                        deadline: `${item.deadline} dia(s)`,
+                        maxWeight:  `${toKg(item.maxWeight)} kg`,
+                        price: `${toReal(item.price)}`
+                    });
                 });
-                return res.render('admin/shippingPrice', { nav: {}, shippingPrices: shippingPrices});
+                return res.render('admin/shippingPrice', { nav: {}, regions: regions });
             }) 
             .catch(err=>{
                 return next(err);
@@ -652,6 +660,20 @@ router.get('/shipping/prices', checkPermission, (req, res, next)=>{
         return next(err);
     }
 });
+
+// Convert decimal * 100 to real (1.000.000,00).
+function toReal(val) {
+    return 'R$ ' + (val / 100).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+// Convert grams to kg, despise decimal part. 
+function toKg(val) {
+    return (val / 1000).toFixed(0);
+};
+// Padding with &nbsp;.
+function padNbspStart(val, padSize) {
+    val = val.toString();
+    return '&nbsp; '.repeat(padSize - val.length) + val;
+};
 
 // Shipping price.
 router.get('/shipping/price/:_id', checkPermission, (req, res, next)=>{
@@ -692,7 +714,7 @@ router.post('/shipping/price/:_id', checkPermission, [
     // Max R$1.000.000,00
     check('price').isInt({ min: 1, max: 100000000 }).withMessage('Valor inválido para preço'),
 ],(req, res, next)=>{
-    log.debug(`req.body: ${JSON.stringify(req.body, null, 2)}`);
+    // log.debug(`req.body: ${JSON.stringify(req.body, null, 2)}`);
     // Check erros.
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -701,19 +723,32 @@ router.post('/shipping/price/:_id', checkPermission, [
     }
     // Save new shipping price.
     else if (req.params._id === 'new'){
-        ShippingPrice.create({ region: req.body.region, deadline: req.body.deadline, maxWeight: req.body.maxWeight, price: req.body.price })
-            .then((newShippingPrice)=>{
-                return res.send();
-            })
-            .catch(err=>{
-                log.error(`Creating shipping price. {$err}`);
-                return res.status(500).send();
-             });
+        ShippingPrice.findOne({ region: req.body.region, deadline: req.body.deadline, maxWeight: req.body.maxWeight })
+        .then(existingShippingPrice=>{
+            if (existingShippingPrice) {
+                throw new Error('1');
+            }
+        })
+        .then(()=>{
+            ShippingPrice.create({ region: req.body.region, deadline: req.body.deadline, maxWeight: req.body.maxWeight, price: req.body.price })
+                .then((newShippingPrice)=>{
+                    return res.send();
+                })
+        })
+        .catch(err=>{
+            switch (err.message) {
+                case '1':
+                    res.status(422).json({ erros: [{ msg: 'Frete já existe'}] });
+                    break;
+                default:
+                    log.error(`Saving new shipping price. ${err}`);
+                    return res.status(500).send();
+            }
+         });
     }
     // Update shipping price.
     else {
         // log.debug(`Updating shipping price, id: ${JSON.stringify(req.params, null, 2)}`);
-        log.debug(`Updating shipping price, id: ${JSON.stringify(req.query, null, 2)}`);
         ShippingPrice.findByIdAndUpdate(req.params._id, { 
             $set: { 
                 region: req.body.region,
@@ -730,6 +765,19 @@ router.post('/shipping/price/:_id', checkPermission, [
             return res.status(500).send();
         });
      }
+});
+
+// delete shipping price.
+router.delete('/shipping/price/:_id', checkPermission, (req, res, next)=>{
+    // Check erros.
+    ShippingPrice.findByIdAndDelete(req.params._id)
+    .then(()=>{
+        return res.send();
+    })
+    .catch(err=>{
+        log.error(`Deleting shipping price. {$err}`);
+        return res.status(500).send();
+     });
 });
 
 /******************************************************************************
