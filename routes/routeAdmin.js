@@ -658,8 +658,15 @@ router.get('/shipping/price/:_id', checkPermission, (req, res, next)=>{
     try {
         // New.
         if (req.params._id === 'new') {
-            let shippingPrice = new ShippingPrice();
-            res.render('admin/editShippingPrice', { nav: {}, isNewShippingPrice: true, shippingPrice: shippingPrice });
+            let shippingPrice = {
+                _id: 'new',
+                region: 'north',
+                deadline: 10,
+                maxWeight: 100000,
+                price: 10000
+            }
+            log.debug(`new shippingPrice: ${JSON.stringify(shippingPrice, null, 2)}`);
+            res.render('admin/editShippingPrice', { nav: {}, shippingPrice: shippingPrice });
         } 
         // Existing item.
         else {
@@ -678,12 +685,12 @@ router.get('/shipping/price/:_id', checkPermission, (req, res, next)=>{
 // Save shipping price.
 router.post('/shipping/price/:_id', checkPermission, [
     // check('dealerName').isLength(4, 20),
-    check('shippingPrice.uf').isLength(1, 20).withMessage('Valor inválido para uf'),
-    // check('dealerProductMaker').isLength(2, 200),
-    // check('dealerProductDeep').isNumeric(),
-    // check('dealerProductHeight').isNumeric(),
-    // check('dealerProductActive').isBoolean(),
-    // check('dealerProductPrice').isNumeric(),
+    check('region').isIn(['north', 'northeast', 'midwest', 'southeast', 'south']).withMessage('Valor inválido para região'),
+    check('deadline').isInt({ min: 1, max: 90 }).withMessage('Valor inválido para prazo'),
+    // Max 100kg
+    check('maxWeight').isInt({ min: 1, max: 100000 }).withMessage('Valor inválido para peso máximo'),
+    // Max R$1.000.000,00
+    check('price').isInt({ min: 1, max: 100000000 }).withMessage('Valor inválido para preço'),
 ],(req, res, next)=>{
     log.debug(`req.body: ${JSON.stringify(req.body, null, 2)}`);
     // Check erros.
@@ -693,20 +700,21 @@ router.post('/shipping/price/:_id', checkPermission, [
         return res.status(422).json({ erros: errors.array() });
     }
     // Save new shipping price.
-    else if (req.query.isNewShippingPrice === 'new'){
-        let shippingPrice = new Address(req.shippingPrice);
-        shippingPrice.save()
-        .then(()=>{
-            return res.send();
-        })
-        .cath(err=>{
-            log.error(`Saving shipping price, _id: ${req.params._id}`);
-            return res.status(500).send();
-        });
+    else if (req.params._id === 'new'){
+        ShippingPrice.create({ region: req.body.region, deadline: req.body.deadline, maxWeight: req.body.maxWeight, price: req.body.price })
+            .then((newShippingPrice)=>{
+                return res.send();
+            })
+            .catch(err=>{
+                log.error(`Creating shipping price. {$err}`);
+                return res.status(500).send();
+             });
     }
     // Update shipping price.
     else {
-        ShippingPrice.findByIdAndUpdate(req.query.shippingPriceId, { 
+        // log.debug(`Updating shipping price, id: ${JSON.stringify(req.params, null, 2)}`);
+        log.debug(`Updating shipping price, id: ${JSON.stringify(req.query, null, 2)}`);
+        ShippingPrice.findByIdAndUpdate(req.params._id, { 
             $set: { 
                 region: req.body.region,
                 deadline: req.body.deadline,

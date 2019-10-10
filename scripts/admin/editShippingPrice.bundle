@@ -5,46 +5,63 @@ var app = new Vue({
     el: '#app',
     data: {
         warnMessage: '',
-        isNewShippingPrice: isNewShippingPrice,
-        shippingPrice: shippingPrice
+        shippingPrice: shippingPrice,
+        price: 0,
+        maxWeight: 0,
+    },
+    created() {
+        console.log(`shippingPrice: ${JSON.stringify(shippingPrice, null, 2)}`);
+        this.price = this.toReal(shippingPrice.price);
+        this.maxWeight = this.toKg(shippingPrice.maxWeight);
     },
     methods: {
+        toReal(val) {
+            return (val / 100).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        },
+        fromReal(val) {
+            // console.log(`type of val: ${typeof val}`);
+            // To a valid string number.
+            // Regex remove all ',' but the last.
+            val = val.replace('.', '').replace(/\,(?=[^,]*\,)/g, '').replace(',', '.');            
+            val = parseFloat(val) * 100;
+            val = parseInt(val);
+            // console.log(`val: ${val}`);
+            return val;
+        },
+        toKg(val) {
+            return (val / 1000).toFixed(0);
+        },
+        toGrams(val) {
+            return val * 1000;
+        },
         // Set default address.
-        saveShippingPrice(shippingPriceId){
-            axios({
-                method: 'post',
-                url: `/admin/shipping/price/edit`,
-                headers: {'csrf-token' : csrfToken},
-                data: { shippingPrice: this.shippingPrice },
-                params: { isNewShippingPrice: isNewShippingPrice }
-            })
-            .then((res)=>{
-                // Successful set address as default.
-                if (res.data.success) {
-                    console.log('success');
-                    // window.location.href = '/user/address';
-                }
-                // Something wrong.
-                else
-                {
-                    console.log('error');
-                    this.warnMessage = res.data.message;
-                }
-            })
-            .catch((err)=>{
-                // System internal error.
-                if (err.response.status == 500) {
-                    this.warnMessage = err.response.data;
-                } 
-                // Invalid form data.
-                else if (err.response.status = 422) {
-                    console.log(JSON.stringify(err.response.data.erros[0], null, 2));
-                    this.warnMessage = err.response.data.erros[0].msg;
-                }
-                else {
-                    console.error(`Error saveShippingPrice(). ${JSON.stringify(err, null, 2)}`);
-                }
-            });
+        save(){
+            this.warnMessage = '';
+            let headers = { 'csrf-token': csrfToken };
+            let data = {
+                region: shippingPrice.region,
+                deadline: shippingPrice.deadline,
+                maxWeight: this.toGrams(this.maxWeight),
+                price: this.fromReal(this.price)
+            }
+            axios.post(`/admin/shipping/price/${this.shippingPrice._id}`, data, { headers: headers })
+                .then(()=>{
+                    // window.location.href = '/admin/shipping/prices';
+                })
+                .catch((err)=>{
+                    // System internal error.
+                    if (err.response.status == 500) {
+                        this.warnMessage = 'Alguma coisa deu errada :(';
+                    } 
+                    // Invalid form data.
+                    else if (err.response.status = 422) {
+                        console.log(JSON.stringify(err.response.data.erros[0], null, 2));
+                        this.warnMessage = err.response.data.erros[0].msg;
+                    }
+                    else {
+                        console.error(`save(). ${JSON.stringify(err, null, 2)}`);
+                    }
+                });
         }
     },
 });

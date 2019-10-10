@@ -5,7 +5,7 @@ const ShippingPrice = require('../model/shippingPrice');
 const log = require('../config/log');
 
 const prices = [
-  { region: 'north', deadline: 10, maxWeight: 100000, price: 10000 },
+  { region: 'north', deadline: 10, maxWeight: 1234567, price: 567853 },
   { region: 'north', deadline: 10, maxWeight: 3000, price: 10000 },
   { region: 'north', deadline: 5, maxWeight: 100000, price: 10000 },
   { region: 'north', deadline: 5, maxWeight: 3000, price: 10000 },

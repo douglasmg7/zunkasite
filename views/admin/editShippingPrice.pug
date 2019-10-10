@@ -9,7 +9,7 @@ block append css
 block content 
   section.shadow
     //- title.
-    h2.title {{ isNewShippingPrice ? "Novo frete": "Alterar frete" }}
+    h2.title {{ shippingPrice._id === 'new' ? "Novo frete": "Alterar frete" }}
     //- Warn message.
     p.warn-message {{ warnMessage }}    
     //- Region.
@@ -25,18 +25,17 @@ block content
     input(type='text' id='deadline' v-model='shippingPrice.deadline')
     //- Max weight.
     label(for='maxWeight') Peso máximo (kg)
-    input(type='text' id='maxWeight' v-model='shippingPrice.maxWeight')
+    input(type='text' id='maxWeight' v-model='maxWeight')
     //- Price.
     label(for='Price') Preço (R$)
-    input(type='text' id='price' v-model='shippingPrice.price')
-    input.btn-primary(type='button', :value='isNewShippingPrice ? "Criar frete": "Salvar"' @click='saveShippingPrice()')
-    input.btn-danger(v-if='!isNewShippingPrice' type='button' value='Apagar' @click='deleteShippingPrice()')
+    input(type='text' id='price' v-model='price')
+    input.btn-primary(type='button', :value='shippingPrice._id === "new" ? "Criar frete": "Salvar"' @click='save()')
+    input.btn-danger(v-if='!(shippingPrice._id === "new")' type='button' value='Apagar' @click='remove()')
     input.btn-exit(type='button' onclick='window.location.href="/admin/shipping/prices"' value='Sair') 
 
 append internal_scripts
   script.
-    let isNewShippingPrice = !{JSON.stringify(isNewShippingPrice)};
     let shippingPrice = !{JSON.stringify(shippingPrice)};
 
 append external_scripts
-  script(src='/js/admin/editShippingPrice.js?0003')
+  script(src='/js/admin/editShippingPrice.js?0004')
