@@ -1075,20 +1075,46 @@ function estimateAllCorreiosShipping(box, cb) {
 function defaultDelivery(region, productWeight){
     // log.debug(`defaultDelivery(), region: ${region}, productWeight: ${productWeight}`);
     return new Promise((resolve, reject)=>{
+        // Get wheigh using days, to remove the records with higher weights.
         ShippingPrice.find({ region :region, maxWeight: { $gte: productWeight } }).sort({price: 1, deadline: 1})
             .then(docs=>{
                 // log.debug(`defaultDelivery(), docs count: ${docs.length}`);
-                let shippingPrices = [];
+                let shippingByDeadline = new Map();
+                let maxWeight = 0;
+                let shipping = undefined;
+                // Generate list with only one max weight for deadline.
                 docs.forEach((item, index)=>{
-                    // log.debug(`defaultDelivery(), item: ${JSON.stringify(item, null, 2)}`);
-                    if (productWeight <= item.maxWeight) {
+                    // log.debug(`doc: ${JSON.stringify(item, null, 2)}`);
+                    // Remove higher weights.
+                    shipping = shippingByDeadline.get(item.deadline); 
+                    if (shipping) {
+                        maxWeight = shipping.maxWeight;
+                    } else {
+                        maxWeight = 0;
+                    }
+                    // log.debug(`maxWeight: ${JSON.stringify(maxWeight, null, 2)}, item.maxWeight: ${JSON.stringify(item.maxWeight, null, 2)}`);
+                    // Not exist max weight for this deadline yet or this maxWeight is less, use it.
+                    if (!maxWeight || item.maxWeight < maxWeight) {
+                        shippingByDeadline.set(item.deadline, item);
+                    }
+                });
+                // Select shipping prices. This way keep the correct order.
+                let index = 1;
+                let shippingPrices = [];
+                docs.forEach(item=>{
+                    // log.debug(`doc: ${JSON.stringify(item, null, 2)}`);
+                    // Remove higher weights.
+                    shipping = shippingByDeadline.get(item.deadline); 
+                    if (shipping && item.maxWeight === shipping.maxWeight) {
                         shippingPrices.push({ 
-                            method: 'Transportadora ' + (index + 1),
+                            method: 'Transportadora ' + index,
                             price: (item.price / 100).toFixed(2).replace(',', '').replace('.', ','),
                             deadline: item.deadline.toString() 
                         });
+                        index++;
                     }
                 });
+
                 // log.debug(`defaultDelivery(), shippingPrices: ${JSON.stringify(shippingPrices, null, 2)}`);
                 resolve(shippingPrices);
             })

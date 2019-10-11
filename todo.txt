@@ -2,15 +2,7 @@ Tooltip for email and whatsapp.
 
 Descrição com mesmo padrão de informações técnicas.
 
-Detalhe técnico para detales técnicos.
-
 Image zoom not scrolling.
-
-Min width window 720px
-
-More space between title and text on order resume.
-
-cep inválido not in red.
 
 Textbox is cutting "g" char.
 

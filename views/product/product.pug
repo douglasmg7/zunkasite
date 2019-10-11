@@ -43,12 +43,16 @@ block content
                                 td R$ {{estShip.price}}
                                 td {{estShip.time}}
             .product-description(v-if='product.storeProductDescription.trim() !== ""')
-                h1.title Descrição do produto
-                p(v-for='prodDescItem in productDescription') 
+                //- h1.title Descrição
+                //- p(v-for='prodDescItem in productDescription') 
                     | {{ prodDescItem }}
                     br
+                //- h1.title Descrição
+                div(v-for='item in productDescription')
+                    h2.sub-title {{item[0]}}
+                    p {{item[1]}}
             .product-technical(v-if='productInformationTechnical.length > 0')
-                h1.title Detalhe técnico
+                h1.title Detalhes técnicos
                 div(v-for='infoTech in productInformationTechnical')
                     h2.sub-title {{infoTech[0]}}
                     p {{infoTech[1]}}
