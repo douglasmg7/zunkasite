@@ -117,6 +117,20 @@ var app = new Vue({
         hideZoomImg(){
             this.showModal = false;
         },
+        makeList(text) {
+            text = text.toString().trim();
+            if (text == '') { return list; }
+            let list = [];
+            text.split('\n').forEach(line=>{
+                if (line.includes(';')) {
+                    list.push(line.split(';'));
+                } else {
+                    list.push(line);
+                }
+            });
+            // console.log(JSON.stringify(list[0], null, 2));
+            return list;
+        },
     },
     computed:{
         // Each line of product detail become one array item.
@@ -128,59 +142,15 @@ var app = new Vue({
         },
         // Each line become one array item.
         productDescription(){
-            let prodDescs = [];
-            if (this.product.storeProductDescription.trim() !== '') {
-                this.product.storeProductDescription.split('\n').forEach(desc=>{
-                    if (this.product.storeProductDescription.includes(';')) {
-                        prodDescs.push(desc.split(';'));
-                    } else {
-                        prodDescs.push(desc);
-                    }
-                });
-            }
-            return prodDescs;
-            
-            // // Product description using title format.
-            // if (this.product.storeProductDescription.includes(';')) {
-                // this.productDescriptionWithTitle = true;
-                // let prodDescs = [];
-                // if (this.product.storeProductDescription.trim() !== '') {
-                    // this.product.storeProductDescription.split('\n').forEach(desc=>{
-                        // prodDescs.push(desc.split(';'));
-                    // });
-                // }
-                // return prodDescs;
-            // }
-            // else {
-                // if (this.product.storeProductDescription.trim() === '') {
-                    // return new Array();
-                // }
-                // return this.product.storeProductDescription.split('\n');
-            // }
+            return this.makeList(this.product.storeProductDescription)
         },
         // Each line of technical information become a array item, each item in line separeted by ; become array item.
         productInformationTechnical(){
-            let infoTech = [];
-            // Avoid create elements if there is nothing.
-            if (this.product.storeProductTechnicalInformation.trim() === '') {
-                return infoTech;
-            }
-            this.product.storeProductTechnicalInformation.split('\n').forEach(function(info) {
-                infoTech.push(info.split(';'));
-            });
-            return infoTech;
+            return this.makeList(this.product.storeProductTechnicalInformation  )
         },
         // Each line of additional information become a array item, each item in line separeted by ; become array item.
         productInformationAdditional(){
-            let infoAdd = [];
-            // Avoid create elements if there is nothing.
-            if (this.product.storeProductAdditionalInformation.trim() === '') {
-                return infoAdd;
-            }
-            this.product.storeProductAdditionalInformation.split('\n').forEach(function(info) {
-                infoAdd.push(info.split(';'));
-            });
-            return infoAdd;
+            return this.makeList(this.product.storeProductAdditionalInformation  )
         }
     },
     filters: {
