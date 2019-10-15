@@ -42,28 +42,58 @@ block content
                                 td {{estShip.service}}
                                 td R$ {{estShip.price}}
                                 td {{estShip.time}}
+            //- Description.
+            .product-description(v-if='product.storeProductDescription.trim() !== ""')
+                h2.title Descrição
+                div(v-for='item in productDescription')
+                    //- With title.
+                    h3(v-if='item.length > 1').sub-title {{item[0]}}
+                    p(v-if='item.length > 1') {{item[1]}}
+                    //- Without title.
+                    p(v-if='item.length == 1 && item[0] != ""') {{item[0]}}
+                    p(v-if='item.length == 1 && item[0] == ""') &nbsp 
+            //- Tech info.
+            .product-technical(v-if='productInformationTechnical.length > 0')
+                h2.title Detalhes técnicos
+                div(v-for='item in productInformationTechnical')
+                    //- With title.
+                    h3(v-if='item.length > 1').sub-title {{item[0]}}
+                    p(v-if='item.length > 1') {{item[1]}}
+                    //- Without title.
+                    p(v-if='item.length == 1 && item[0] != ""') {{item[0]}}
+                    p(v-if='item.length == 1 && item[0] == ""') &nbsp 
+            //- Add info.
+            .product-additional(v-if='productInformationAdditional.length > 0')
+                h2.title Informações adicionais
+                div(v-for='item in productInformationAdditional')
+                    //- With title.
+                    h3(v-if='item.length > 1').sub-title {{item[0]}}
+                    p(v-if='item.length > 1') {{item[1]}}
+                    //- Without title.
+                    p(v-if='item.length == 1 && item[0] != ""') {{item[0]}}
+                    p(v-if='item.length == 1 && item[0] == ""') &nbsp 
             //- With title.
-            .product-description(v-if='(product.storeProductDescription.trim() !== "") && this.productDescriptionWithTitle')
+            //- .product-description(v-if='(product.storeProductDescription.trim() !== "") && this.productDescriptionWithTitle')
                 h2.title Descrição
                 div(v-for='item in productDescription')
                     h3.sub-title {{item[0]}}
                     p {{item[1]}}
             //- No title.
-            .product-description(v-if='(product.storeProductDescription.trim() !== "") && !this.productDescriptionWithTitle')
+            //- .product-description(v-if='(product.storeProductDescription.trim() !== "") && !this.productDescriptionWithTitle')
                 h2.title Descrição
                 p(v-for='prodDescItem in productDescription') 
                     | {{ prodDescItem }}
                     br
-            .product-technical(v-if='productInformationTechnical.length > 0')
-                h2.title Detalhes técnicos
-                div(v-for='infoTech in productInformationTechnical')
-                    h3.sub-title {{infoTech[0]}}
-                    p {{infoTech[1]}}
-            .product-additional(v-if='productInformationAdditional.length > 0')
-                h2.title Informações adicionais
-                div(v-for='infoAdd in productInformationAdditional')
-                    h3.sub-title {{infoAdd[0]}}
-                    p {{infoAdd[1]}}
+            //- .product-technical(v-if='productInformationTechnical.length > 0')
+                //- h2.title Detalhes técnicos
+                //- div(v-for='infoTech in productInformationTechnical')
+                    //- h3.sub-title {{infoTech[0]}}
+                    //- p {{infoTech[1]}}
+            //- .product-additional(v-if='productInformationAdditional.length > 0')
+                //- h2.title Informações adicionais
+                //- div(v-for='infoAdd in productInformationAdditional')
+                    //- h3.sub-title {{infoAdd[0]}}
+                    //- p {{infoAdd[1]}}
         .modal(v-if='showModal')
             .panel
                 i.close.far.fa-window-close(@click='hideZoomImg')
@@ -79,4 +109,4 @@ append internal_scripts
 
 append external_scripts
     include ../components/accounting.js.pug
-    script(src='/js/product/product.js?0003')
+    script(src='/js/product/product.js?0004')

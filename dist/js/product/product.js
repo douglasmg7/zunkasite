@@ -128,23 +128,35 @@ var app = new Vue({
         },
         // Each line become one array item.
         productDescription(){
-            // Product description using title format.
-            if (this.product.storeProductDescription.includes(';')) {
-                this.productDescriptionWithTitle = true;
-                let prodDescs = [];
-                if (this.product.storeProductDescription.trim() !== '') {
-                    this.product.storeProductDescription.split('\n').forEach(desc=>{
+            let prodDescs = [];
+            if (this.product.storeProductDescription.trim() !== '') {
+                this.product.storeProductDescription.split('\n').forEach(desc=>{
+                    if (this.product.storeProductDescription.includes(';')) {
                         prodDescs.push(desc.split(';'));
-                    });
-                }
-                return prodDescs;
+                    } else {
+                        prodDescs.push(desc);
+                    }
+                });
             }
-            else {
-                if (this.product.storeProductDescription.trim() === '') {
-                    return new Array();
-                }
-                return this.product.storeProductDescription.split('\n');
-            }
+            return prodDescs;
+            
+            // // Product description using title format.
+            // if (this.product.storeProductDescription.includes(';')) {
+                // this.productDescriptionWithTitle = true;
+                // let prodDescs = [];
+                // if (this.product.storeProductDescription.trim() !== '') {
+                    // this.product.storeProductDescription.split('\n').forEach(desc=>{
+                        // prodDescs.push(desc.split(';'));
+                    // });
+                // }
+                // return prodDescs;
+            // }
+            // else {
+                // if (this.product.storeProductDescription.trim() === '') {
+                    // return new Array();
+                // }
+                // return this.product.storeProductDescription.split('\n');
+            // }
         },
         // Each line of technical information become a array item, each item in line separeted by ; become array item.
         productInformationTechnical(){
