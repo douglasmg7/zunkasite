@@ -14,7 +14,7 @@ block content
             .product-image(@click='showZoomImg')
                 img(:src='srcImg0300(product, selectedThumbnail)' v-if='product.images.length > 0')
             .product-summary
-                h1.title {{product.storeProductTitle}}
+                h2.title {{product.storeProductTitle}}
                 h2.price(v-if='accountingParse(this.product.storeProductPrice, ",") > 0')
                     sup R$
                     | {{ product.storeProductPrice | currency | currencyInt }}
@@ -42,24 +42,27 @@ block content
                                 td {{estShip.service}}
                                 td R$ {{estShip.price}}
                                 td {{estShip.time}}
-            .product-description(v-if='product.storeProductDescription.trim() !== ""')
-                //- h1.title Descrição
-                //- p(v-for='prodDescItem in productDescription') 
+            //- With title.
+            .product-description(v-if='(product.storeProductDescription.trim() !== "") && this.productDescriptionWithTitle')
+                h2.title Descrição
+                div(v-for='item in productDescription')
+                    h3.sub-title {{item[0]}}
+                    p {{item[1]}}
+            //- No title.
+            .product-description(v-if='(product.storeProductDescription.trim() !== "") && !this.productDescriptionWithTitle')
+                h2.title Descrição
+                p(v-for='prodDescItem in productDescription') 
                     | {{ prodDescItem }}
                     br
-                //- h1.title Descrição
-                div(v-for='item in productDescription')
-                    h2.sub-title {{item[0]}}
-                    p {{item[1]}}
             .product-technical(v-if='productInformationTechnical.length > 0')
-                h1.title Detalhes técnicos
+                h2.title Detalhes técnicos
                 div(v-for='infoTech in productInformationTechnical')
-                    h2.sub-title {{infoTech[0]}}
+                    h3.sub-title {{infoTech[0]}}
                     p {{infoTech[1]}}
             .product-additional(v-if='productInformationAdditional.length > 0')
-                h1.title Informações adicionais
+                h2.title Informações adicionais
                 div(v-for='infoAdd in productInformationAdditional')
-                    h2.sub-title {{infoAdd[0]}}
+                    h3.sub-title {{infoAdd[0]}}
                     p {{infoAdd[1]}}
         .modal(v-if='showModal')
             .panel

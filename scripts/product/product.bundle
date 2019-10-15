@@ -14,6 +14,7 @@ var app = new Vue({
         // Delivery time in days.
         estimateShipmentData: [],
         showModal: false,
+        productDescriptionWithTitle: false,
     },
     methods: {
         // Accaunting.
@@ -122,19 +123,23 @@ var app = new Vue({
         },
         // Each line become one array item.
         productDescription(){
-            let prodDescs = [];
-            if (this.product.storeProductDescription.trim() === '') {
+            // Product description using title format.
+            if (this.product.storeProductDescription.includes(';')) {
+                this.productDescriptionWithTitle = true;
+                let prodDescs = [];
+                if (this.product.storeProductDescription.trim() !== '') {
+                    this.product.storeProductDescription.split('\n').forEach(desc=>{
+                        prodDescs.push(desc.split(';'));
+                    });
+                }
                 return prodDescs;
             }
-            this.product.storeProductDescription.split('\n').forEach(desc=>{
-                prodDescs.push(desc.split(';'));
-            });
-            return prodDescs;
-
-            // if (this.product.storeProductDescription.trim() === '') {
-                // return new Array();
-            // }
-            // return this.product.storeProductDescription.split('\n');
+            else {
+                if (this.product.storeProductDescription.trim() === '') {
+                    return new Array();
+                }
+                return this.product.storeProductDescription.split('\n');
+            }
         },
         // Each line of technical information become a array item, each item in line separeted by ; become array item.
         productInformationTechnical(){
