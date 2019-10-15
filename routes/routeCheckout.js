@@ -959,7 +959,7 @@ function getAddress(cep){
 // weight in grams.
 function estimateAllCorreiosShipping(box, cb) {
     // Test.
-    return cb('Simulated error.');
+    // return cb('Simulated error.');
     // return cb(null, []);
     // Spend time.
     let initTime = Date.now();
