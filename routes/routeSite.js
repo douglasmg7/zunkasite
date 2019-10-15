@@ -24,7 +24,7 @@ router.get('/error', function(req, res, next) {
 	});
 });
 
-// Get products page by class (news, more selled...).
+// Get products page by class (news, more sold...).
 router.get('/full', function(req, res, next) {
 	redis.get('banners', (err, banners)=>{
 		// Internal error.
@@ -42,7 +42,7 @@ router.get('/full', function(req, res, next) {
 	});
 });
 
-// Get products page by class (news, more selled...).
+// Get products page by class (news, more sold...).
 router.get('/', function(req, res, next) {
 	redis.get('banners', (err, banners)=>{
 		// Internal error.
@@ -115,8 +115,8 @@ router.get('/api/products', function (req, res) {
 	const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
 	// log.debug(JSON.stringify(req.query.sort));
 	// Not qtd 0.
-	// const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
-	const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$gt: 0}};
+    const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
+	// const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$gt: 0}};
 	// Text search.
 	if (req.query.search) {
 		search.storeProductTitle = {$regex: req.query.search, $options: 'i'};
@@ -205,8 +205,8 @@ router.get('/api/new-products', function (req, res) {
 router.get('/api/best-selling-products', function (req, res) {
 	const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
 	// const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
-	const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
-	// const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductQtdSold': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
+    const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
+    // const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductQtdSold': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
 	// Find products.
 	// let productPromise = Product.find(search).sort({'createdAt': -1}).limit(4).exec();
 	let productPromise = Product.find(search).sort({'storeProductQtdSold': -1, 'storeProductQtd': 1}).limit(6).exec();
