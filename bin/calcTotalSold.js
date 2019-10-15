@@ -32,7 +32,7 @@ Order.find({status: {$in: ["paid", "shipped", "delivered"]}}).sort({ "timestamps
     });
     log.debug(`Quantity: ${docs.length}`);
     log.debug(`sold: ${toBrMoney(totalSold)}`);
-    log.debug(`markup: ${toBrMoney(totalSold * .3)}`);
+    log.debug(`markup: ${toBrMoney(totalSold * .28)}`);
     mongoose.close(()=>{
         process.exit();
     });
