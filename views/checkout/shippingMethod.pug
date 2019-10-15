@@ -30,7 +30,7 @@ block content
           p Prazo de entrega: {{ item.deadline }} dia(s) após a confirmação do pagamento
           p Valor: R${{ item.price }}
         //- A combinar.
-        label
+        //- label
           input(type='radio' name='shipmentOption' id='agreement' value='agreement' v-model='shippingMethod')/ 
           span A combinar
           p Valor, pagamento e transportadora devem ser combinados pelo e-mail ou WhatsApp.
@@ -41,4 +41,4 @@ append internal_scripts
     let order = !{JSON.stringify(order)};
 
 append external_scripts
-  script(src='/js/checkout/shippingMethod.js?0004')            
+  script(src='/js/checkout/shippingMethod.js?0005')            

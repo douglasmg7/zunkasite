@@ -250,7 +250,7 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
             // When receive all return.
             Promise.all([
                 promiseCorreiosShipping.catch(err=>{log.error(`Estimating Correios shipping. ${err}`)}), 
-                promiseMotoboyAndDefaultDelivery.catch(err=>{log.error(`Estimating motoboy and default delivery. ${err}`)})
+                promiseMotoboyAndDefaultDelivery.catch(err=>{log.error(`Estimating motoboy and default deliveries. ${err}`)})
             ]).then(([deliveryCorreios, deliveryMotoboyAndDefault])=>{
                 // Motoboy delivery.
                 order.shipping.motoboyResult = { price: '', deadline: '' };
@@ -300,6 +300,7 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
 // Select shipment.
 router.post('/shipping-method/order/:order_id', (req, res, next)=>{
 	// Set shipment method to default.
+    log.debug(`req.body: ${JSON.stringify(req.body)}`);
 	Order.findById(req.params.order_id, (err, order)=>{
         // log.debug(`req.body: ${JSON.stringify(req.body)}`);
 		if (req.body.shippingMethod == 'motoboy'){
@@ -318,9 +319,9 @@ router.post('/shipping-method/order/:order_id', (req, res, next)=>{
 			order.shipping.price = 0; 
 			order.shipping.deadline = 0;
         }
-        else if (req.body.shippingMethod.includes("default-carrier-")) {
+        else if (req.body.shippingMethod.toString().includes('default-carrier-')) {
             // log.debug('A combinar.');
-            let index = parseInt(req.body.shippingMethod.replace("default-carrier-", ""));
+            let index = parseInt(req.body.shippingMethod.replace('default-carrier-', ""));
             // log.debug(`index: ${index}`);
 			order.shipping.carrier = 'defaultCarrier';
 			order.shipping.methodCode = (index + 1).toString();

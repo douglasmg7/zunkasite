@@ -687,7 +687,7 @@ router.get('/shipping/price/:_id', checkPermission, (req, res, next)=>{
                 maxWeight: 100000,
                 price: 10000
             }
-            log.debug(`new shippingPrice: ${JSON.stringify(shippingPrice, null, 2)}`);
+            // log.debug(`new shippingPrice: ${JSON.stringify(shippingPrice, null, 2)}`);
             res.render('admin/editShippingPrice', { nav: {}, shippingPrice: shippingPrice });
         } 
         // Existing item.
