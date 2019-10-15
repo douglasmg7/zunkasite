@@ -300,7 +300,7 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
 // Select shipment.
 router.post('/shipping-method/order/:order_id', (req, res, next)=>{
 	// Set shipment method to default.
-    log.debug(`req.body: ${JSON.stringify(req.body)}`);
+    // log.debug(`req.body: ${JSON.stringify(req.body)}`);
 	Order.findById(req.params.order_id, (err, order)=>{
         // log.debug(`req.body: ${JSON.stringify(req.body)}`);
 		if (req.body.shippingMethod == 'motoboy'){
