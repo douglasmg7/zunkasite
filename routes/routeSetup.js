@@ -8,6 +8,7 @@ const { check, validationResult } = require('express-validator/check');
 const Product = require('../model/product');
 // Utils.
 const categories = require('../util/productCategories');
+const makers = require('../util/productMakers.js');
 
 // Add product.
 router.post('/product/add', basicAuth, [
@@ -41,8 +42,7 @@ router.post('/product/add', basicAuth, [
 		product.dealerProductId = req.body.dealerProductId;
 		product.dealerProductTitle = req.body.dealerProductTitle;
 		product.dealerProductCategory = categories.selectCategory(req.body.dealerProductCategory);
-		log.debug('After select category');
-		product.dealerProductMaker = req.body.dealerProductMaker;
+		product.dealerProductMaker = makers.selectMaker(req.body.dealerProductMaker);
 		product.dealerProductWarrantDays = req.body.dealerProductWarrantDays;
 		product.dealerProductDeep = req.body.dealerProductDeep;
 		product.dealerProductHeight = req.body.dealerProductHeight;
@@ -79,8 +79,8 @@ router.post('/product/add', basicAuth, [
 				product.storeProductDetail = "";
 				product.storeProductTechnicalInformation = "";
 				product.storeProductAdditionalInformation = "";
-				product.storeProductMaker = "";
-				product.storeProductCategory = "";
+				product.storeProductCategory = product.dealerProductCategory;
+				product.storeProductMaker = product.dealerProductMaker;;
 				product.storeProductLength = product.dealerProductDeep;
 				product.storeProductHeight = product.dealerProductHeight;
 				product.storeProductWidth = product.dealerProductWidth;

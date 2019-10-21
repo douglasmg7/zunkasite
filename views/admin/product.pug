@@ -16,7 +16,7 @@ block content
         input(type='text' id='title' v-model='product.storeProductTitle')
         //- Dealer.
         label(for='dealer') Fornecedor   
-        input(type='text' id='dealer' v-model='product.dealerName')   
+        input(type='text' id='dealer' :disabled='product.dealerProductId' v-model='product.dealerName')   
         //- Categories.
         .category
             label(for='category') Categoria
@@ -26,7 +26,7 @@ block content
         .maker
             label(for='maker') Fabricante
             select(id='maker' v-model='product.storeProductMaker')
-                option(v-for='maker in productMakers') {{maker.name}}                   
+                option(v-for='maker in productMakers') {{maker}}                   
         //- Images.
         label Imagens 
         .images 
@@ -70,14 +70,14 @@ block content
             label.mt0(for='length') Comprimento (cm) 
             input.input-integer(type='text' id='length' v-model='product.storeProductLength')
             p.validation(v-if='validation.storeProductLength') {{validation.storeProductLength}}
-            //- Heigh.
-            label(for='height') Altura (cm)
-            input.input-integer(type='text' id='height' v-model='product.storeProductHeight')
-            p.validation(v-if='validation.storeProductHeight') {{validation.storeProductHeight}}
             //- Wide.
             label(for='width') Largura (cm)
             input(type='text' id='width' v-model='product.storeProductWidth')        
             p.validation(v-if='validation.storeProductWidth') {{validation.storeProductWidth}}
+            //- Heigh.
+            label(for='height') Altura (cm)
+            input.input-integer(type='text' id='height' v-model='product.storeProductHeight')
+            p.validation(v-if='validation.storeProductHeight') {{validation.storeProductHeight}}
             //- Wheight
             label(for='weight') Peso (gramas)
             input(type='text' id='weight' v-model='product.storeProductWeight')        

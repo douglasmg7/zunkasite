@@ -8,11 +8,11 @@ const log = require('./config/log');
 const HOSTNAME = 'www.zunka.com.br';
 // Run mode.
 if (process.env.NODE_ENV == 'development') {
-  log.info(`Starting app in development mode.`);
+    log.info(`Starting app in development mode.`);
 } else if (process.env.NODE_ENV == 'production'){
-  log.info(`Starting app in production mode.`);
+    log.info(`Starting app in production mode.`);
 } else {
-  log.info(`Starting app with run mode not defined.`);
+    log.info(`Starting app with run mode not defined.`);
 }
 // Log transaction.
 const morgan = require('morgan');
@@ -69,21 +69,21 @@ const routeExt = require('./routes/routeExt');
 
 // Run mode.
 if (process.env.NODE_ENV == 'production') {
-  app.set('hostname', HOSTNAME);
+    app.set('hostname', HOSTNAME);
 } else {
-  app.set('hostname', 'localhost');
+    app.set('hostname', 'localhost');
 }
 
 // Transaction log - no log in test mode.
 if (app.get('env') !== 'test') {
-  app.use(morgan('dev'));
+    app.use(morgan('dev'));
 }
 
 // For cookie and json web token.
 app.set('secret', 'd7ga8gat3kaz0m');
 // Pretty in development.
 if (app.get('env') === 'development') {
-  app.locals.pretty = false;  // Avoid extra whitespace on HTML rendered by pug.
+    app.locals.pretty = false;  // Avoid extra whitespace on HTML rendered by pug.
 }
 
 // View engine setup.
@@ -94,28 +94,28 @@ app.use(stylus.middleware({
     src: __dirname + '/styl',
     dest: __dirname + '/dist/css',
     compile: function compile(str, path){
-      return stylus(str).set('filename', path);
-      }
-    })
+        return stylus(str).set('filename', path);
+    }
+})
 );
 
 // Livereload.
 if (app.get('env') === 'development') {
-  log.info('Starting Livereload.');
-  const livereload = require('livereload');
-  let livereloadServer = livereload.createServer({debug: false, exts: ['pug', 'styl', 'js', 'bundle']});
-  livereloadServer.watch([__dirname + "/views", __dirname + "/styl", __dirname + "/dist/js", __dirname + "/scripts"]);  
+    log.info('Starting Livereload.');
+    const livereload = require('livereload');
+    let livereloadServer = livereload.createServer({debug: false, exts: ['pug', 'styl', 'js', 'bundle']});
+    livereloadServer.watch([__dirname + "/views", __dirname + "/styl", __dirname + "/dist/js", __dirname + "/scripts"]);  
 }
 
 // Rollup.
 app.use(rollup({
-  src: 'scripts',
-  dest: 'dist/js',
-  root: __dirname,
-  prefix: '/js',
-  bundleOpts: { format: 'cjs' },
-  // Import mode in not use too.
-  rollupOpts: { treeshake: false }
+    src: 'scripts',
+    dest: 'dist/js',
+    root: __dirname,
+    prefix: '/js',
+    bundleOpts: { format: 'cjs' },
+    // Import mode in not use too.
+    rollupOpts: { treeshake: false }
 }));
 
 // Statics files.
@@ -138,11 +138,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // Session options.
 var sessionOpts = {
-  secret: app.get('secret'),
-  resave: false, // Save just when changed.
-  saveUninitialized: false, // Create if have some thing.
-  cookie: { maxAge: 2419200000 }, // configure when sessions expires in ms.
-  store: new redisStore({ client: redis })
+    secret: app.get('secret'),
+    resave: false, // Save just when changed.
+    saveUninitialized: false, // Create if have some thing.
+    cookie: { maxAge: 2419200000 }, // configure when sessions expires in ms.
+    store: new redisStore({ client: redis })
 };
 
 // if (app.get('env') === 'production') {
@@ -165,28 +165,28 @@ require('./config/passport');
 
 // Set vars for using in views.
 app.use((req, res, next)=>{
-  // log.debug('Generated csrfToken: ', req.csrfToken());
-  res.locals.csrfToken = req.csrfToken();
-  res.locals.user = req.user ? req.user : { name: undefined, group: undefined };
-  res.locals.path = req.path;
-  redis.get('categoriesInUse', (err, categories)=>{
-    // Internal error.
-    if (err) { 
-      log.error(err.stack);
-      return res.render('/error', { message: 'Não foi possível encontrar as categorias.', error: err });
-    } 
-    res.locals.categories = JSON.parse(categories) || []
-    next();
-  });  
+    // log.debug('Generated csrfToken: ', req.csrfToken());
+    res.locals.csrfToken = req.csrfToken();
+    res.locals.user = req.user ? req.user : { name: undefined, group: undefined };
+    res.locals.path = req.path;
+    redis.get('categoriesInUse', (err, categories)=>{
+        // Internal error.
+        if (err) { 
+            log.error(err.stack);
+            return res.render('/error', { message: 'Não foi possível encontrar as categorias.', error: err });
+        } 
+        res.locals.categories = JSON.parse(categories) || []
+        next();
+    });  
 });
 
 // Validation.
 app.use(validator({
-  customValidators: {
-    isCpf: function(value){ return cpfValidator.validate(value); },
-    // isCep: function(value){ return value.match(/^\d{8}$/); }
-    isCep: function(value){ return value.match(/^\d{5}-\d{3}$/); }
-  }
+    customValidators: {
+        isCpf: function(value){ return cpfValidator.validate(value); },
+        // isCep: function(value){ return value.match(/^\d{8}$/); }
+        isCep: function(value){ return value.match(/^\d{5}-\d{3}$/); }
+    }
 }));
 
 // // Routes that not need the cart middleware.
@@ -194,28 +194,28 @@ app.use(validator({
 
 // Cart.
 app.use(function(req, res, next) {
-  // log.warn('req.sessionID: ', req.sessionID);
-  // Get cart.
-  let cartKey = req.isAuthenticated() ? req.user.email : req.sessionID;
-  redis.get(`cart:${cartKey}`, (err, value)=>{
-    if (value) {
-      req.cart = new Cart(JSON.parse(value));
-    } else {
-      req.cart = new Cart();
-    }
-    // To use in the views.
-    res.locals.cart = req.cart;
-    next();
-  }); 
-  // Save cart when the response finish.
-  res.on('finish', function(){
-    if (req.cart.changed) {
-      let cartKey = req.isAuthenticated() ? req.user.email : req.sessionID;
-      redis.set(`cart:${cartKey}`, JSON.stringify(req.cart), (err)=>{
-        if (err) { log.error(new Error(err).stack) ;}
-      });
-    }
-  })  
+    // log.warn('req.sessionID: ', req.sessionID);
+    // Get cart.
+    let cartKey = req.isAuthenticated() ? req.user.email : req.sessionID;
+    redis.get(`cart:${cartKey}`, (err, value)=>{
+        if (value) {
+            req.cart = new Cart(JSON.parse(value));
+        } else {
+            req.cart = new Cart();
+        }
+        // To use in the views.
+        res.locals.cart = req.cart;
+        next();
+    }); 
+    // Save cart when the response finish.
+    res.on('finish', function(){
+        if (req.cart.changed) {
+            let cartKey = req.isAuthenticated() ? req.user.email : req.sessionID;
+            redis.set(`cart:${cartKey}`, JSON.stringify(req.cart), (err)=>{
+                if (err) { log.error(new Error(err).stack) ;}
+            });
+        }
+    })  
 });
 
 // Routes.
@@ -228,22 +228,22 @@ app.use('/checkout', routeCheckout);
 app.use('/admin', routeAdmin);
 // CSRF error handler.
 app.use(function (err, req, res, next) {
-  if (err.code !== 'EBADCSRFTOKEN') return next(err);
-  log.warn('CRSF attack!');
-  res.status(403).send('CRSF attack!');
+    if (err.code !== 'EBADCSRFTOKEN') return next(err);
+    log.warn('CRSF attack!');
+    res.status(403).send('CRSF attack!');
 })
 
 // Production error handler (using default error handle for development).
 if (app.get('env') !== 'development') {
-  app.use(function(err, req, res, next) {
-    log.error(err.stack);
-    res.status(err.status || 500).render('error/500');
-  });  
+    app.use(function(err, req, res, next) {
+        log.error(err.stack);
+        res.status(err.status || 500).render('error/500');
+    });  
 }
 
 // Catch 404.
 app.use(function(req, res, next) {
-  res.status(404).send('Página não encontrada.');
+    res.status(404).send('Página não encontrada.');
 });
 
 module.exports = app;

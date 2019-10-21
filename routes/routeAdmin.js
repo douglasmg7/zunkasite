@@ -12,11 +12,11 @@ const formidable = require('formidable');
 const sharp = require('sharp');
 // Models.
 const Product = require('../model/product');
-const ProductMaker = require('../model/productMaker');
 const Order = require('../model/order');
 const ShippingPrice = require('../model/shippingPrice');
 // Lists.
 const productCategories = require('../util/productCategories');
+const productMakers = require('../util/productMakers.js');
 // Redis.
 const redis = require('../db/redis');
 // Internal.
@@ -114,15 +114,14 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
 	else{
 		productPromise = Product.findById(req.params.product_id);
 	}
-	let productMakerPromise = ProductMaker.find().exec();
-	Promise.all([productPromise, productMakerPromise])
-	.then(([product, productMakers])=>{
+	Promise.all([productPromise])
+	.then(([product])=>{
 		res.render('admin/product', {
 			nav: {
 				showAdminLinks: true
 			},
 			product: product,
-			productMakers: productMakers,
+			productMakers: productMakers.makers,
 			productCategories: productCategories.categories
 		});
 	}).catch(err=>{
