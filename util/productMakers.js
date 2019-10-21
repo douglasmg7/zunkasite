@@ -23,7 +23,7 @@ regexMakers.forEach(item=>{
 	makers.push(item.name);
 });
 makers.sort();
-console.log(`Generated Product makers: ${makers}`);
+// console.log(`Generated Product makers: ${makers}`);
 
 // Select maker.
 function selectMaker(text) {

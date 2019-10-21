@@ -1,3 +1,6 @@
+db.productCategories.drop()
+db.productMakers.drop()
+
 Tooltip for email and whatsapp.
 
 Descrição com mesmo padrão de informações técnicas.

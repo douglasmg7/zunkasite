@@ -1,4 +1,6 @@
 'use strict';
+let Product = require('../model/product');
+let log = require('../config/log');
 
 // The order of items matter.
 let regexCategories = [
@@ -41,6 +43,19 @@ regexCategories.forEach(item=>{
 categories.sort();
 // console.log(`Generated Product categires: ${categories}`);
 
+// mongoose.connection.db.collection('products').distinct("storeProductCategory")
+// let categoriesInUse = [];
+Product.find().distinct('storeProductCategory')
+.then(categories=>{
+    // categoriesInUse = categories;
+    module.exports.categoriesInUse = categories;
+    log.debug('categoriesInUse init');
+    // log.debug(`util categoriesInUse: ${JSON.stringify(categoriesInUse, null, 2)}`);
+})
+.catch(err=>{
+    log.error('Get categories in use. ' + err.message);
+});
+
 // Select category.
 function selectCategory(text) {
 	let category = "";
@@ -55,3 +70,5 @@ function selectCategory(text) {
 
 module.exports.categories = categories;
 module.exports.selectCategory = selectCategory;
+// module.exports.categoriesInUse = categoriesInUse;
+// log.debug(`util end categoriesInUse: ${JSON.stringify(categoriesInUse, null, 2)}`);
