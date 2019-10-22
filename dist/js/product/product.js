@@ -118,9 +118,9 @@ var app = new Vue({
             this.showModal = false;
         },
         makeList(text) {
+            let list = [];
             text = text.toString().trim();
             if (text == '') { return list; }
-            let list = [];
             text.split('\n').forEach(line=>{
                 if (line.includes(';')) {
                     list.push(line.split(';'));

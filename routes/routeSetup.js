@@ -41,6 +41,7 @@ router.post('/product/add', basicAuth, [
 		product.dealerName = req.body.dealerName;
 		product.dealerProductId = req.body.dealerProductId;
 		product.dealerProductTitle = req.body.dealerProductTitle;
+        product.dealerProductDesc = req.body.dealerProductDesc;
 		product.dealerProductCategory = categories.selectCategory(req.body.dealerProductCategory);
 		product.dealerProductMaker = makers.selectMaker(req.body.dealerProductMaker);
 		product.dealerProductWarrantDays = req.body.dealerProductWarrantDays;
@@ -96,7 +97,7 @@ router.post('/product/add', basicAuth, [
 				product.storeProductQtdSold = 0;
 				// Must be verified on aldo ws before close order.
 				product.storeProductQtd = 1;
-				product.storeProductActive = false;
+				product.storeProductActive = product.dealerProductActive;
 				let newProduct = new Product(product);
 				newProduct.save((err, doc)=>{
 					if (err) {
