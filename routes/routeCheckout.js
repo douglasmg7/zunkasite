@@ -264,11 +264,13 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                 // Correios delivery.
                 order.shipping.correioResult = {};
                 order.shipping.correioResults = [];
-                if (deliveryCorreios) {
+                // Correios returned at least one result.
+                if (deliveryCorreios && deliveryCorreios.length) {
 				    order.shipping.correioResults = deliveryCorreios;
                 }
                 // Default delivery.
                 else {
+                    log.warn(`Correios webservice não retornou resultados para:\n${JSON.stringify(order.shipping.box, null, 2)}`);
                     deliveryMotoboyAndDefault.default.forEach(item=>{
                         order.shipping.defaultDeliveryResults.push({
                             deadline: item.deadline,
@@ -857,19 +859,14 @@ router.get('/ship-estimate', (req, res, next)=>{
                     delivery.push(deliveryMotoboyAndDefault.motoboy);
                 }
                 // log.debug(`delivery: ${JSON.stringify(deliveryCorreio)}`);
-                // No erros.
-                if (deliveryCorreio) {
+                // No erros and some result from correios.
+                if (deliveryCorreio && deliveryCorreio.length) {
                     // Some result.
-                    if (deliveryCorreio.length) {
-                        deliveryCorreio.forEach(item=>{
-                            delivery.push(item);
-                        });
-                    } 
-                    // No result.
-                    else {
-                        log.debug(`Correios webservice não retornou resultados para o cep: ${box.cepDestiny}`);
-                    }
+                    deliveryCorreio.forEach(item=>{
+                        delivery.push(item);
+                    });
                 } else {
+                    log.warn(`Correios webservice não retornou resultados para:\n ${JSON.stringify(box, null, 2)}`);
                     if (deliveryMotoboyAndDefault && deliveryMotoboyAndDefault.default) {
                         deliveryMotoboyAndDefault.default.forEach(item=>{
                             delivery.push(item);
@@ -1014,7 +1011,7 @@ function estimateAllCorreiosShipping(box, cb) {
 			nVlValorDeclarado  : 0,
 			sCdAvisoRecebimento: 'N'
 		};
-        // log.debug('correio web service args: ' + JSON.stringify(args));
+        // log.debug('correio web service args: ' + JSON.stringify(args, null, 2));
 		// Uncomment for fast debud, to not use Correios webservice.
 		// return cb('Debug mode, not calling Correios service.');
 		// Call webservice.
