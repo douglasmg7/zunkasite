@@ -192,7 +192,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 			} else {
 				log.info(`Produto ${newProduct._id} saved.`);
 				res.json({ isNew: true, product: newProduct });
-				updateCategoriesInUse();
+                productCategories.updateInUse();
 			}
 		});
 	}
@@ -206,7 +206,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 			} else {
 				log.info(`Produto ${product._id} updated.`);
 				res.json({});
-				updateCategoriesInUse();
+                productCategories.updateInUse();
 				// Sync upladed images with product.images.
 				// Get list of uploaded images.
 				fse.readdir(path.join(__dirname, '..', 'dist/img/', req.body.product._id), (err, files)=>{
@@ -782,28 +782,6 @@ router.delete('/shipping/price/:_id', checkPermission, (req, res, next)=>{
 /******************************************************************************
 /   UTIL
  ******************************************************************************/
-
-// Update list of categories in use.
-function updateCategoriesInUse(){
-	// mongoose.connection.db.collection('products').distinct("storeProductCategory")
-	Product.find().distinct('storeProductCategory', (err, categories)=>{
-		if (err) {
-			log.error(new Error(err).stack);
-			return;
-		}
-		let index = categories.indexOf("");
-		if (index > -1) {
-			categories.splice(index, 1);
-		}
-		// log.debug(JSON.stringify(categories));
-		redis.set('categoriesInUse', JSON.stringify(categories), (err)=>{
-			if (err) {
-				log.error(new Error(err).stack);
-			}
-		});
-	})
-}
-
 // Create resized images.
 function createResizedImgs(images){
 	images.forEach(imgPath=>{

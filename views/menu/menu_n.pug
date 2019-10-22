@@ -8,7 +8,7 @@
             i.fas.fa-xs.fa-chevron-up.fa-rotate-270
             | &nbspMenu
             //- i.fas.fa-search.fa-lg i.fa.fa-chevron-up  Menu
-        each categorie in categories
+        each categorie in categoriesInUse
             a.item(href=`/all/${categorie}`)= categorie
 //- Admin.
 if user.name && user.group.includes('admin')

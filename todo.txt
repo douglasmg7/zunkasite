@@ -1,3 +1,7 @@
+# redis-cli
+del categoriesInUse
+
+# mongodb
 db.productCategories.drop()
 db.productMakers.drop()
 

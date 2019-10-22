@@ -172,19 +172,11 @@ app.use((req, res, next)=>{
     res.locals.csrfToken = req.csrfToken();
     res.locals.user = req.user ? req.user : { name: undefined, group: undefined };
     res.locals.path = req.path;
-    // redis.get('categoriesInUse', (err, categories)=>{
-        // // Internal error.
-        // if (err) { 
-            // log.error(err.stack);
-            // return res.render('/error', { message: 'Não foi possível encontrar as categorias.', error: err });
-        // } 
-        // res.locals.categories = JSON.parse(categories) || []
-        // next();
-    // });  
-    res.locals.categories = productCategories.categoriesInUse;
-    log.debug(`categoriesInUse: ${JSON.stringify(res.locals.categories, null, 2)}`);
-    // log.debug(`request: ${JSON.stringify(req.method)}`);
-    log.debug(`request: ${JSON.stringify(req.url)}`);
+    if (req.method === 'GET') {
+        res.locals.categoriesInUse = productCategories.inUse();
+        // log.debug(`categoriesInUse: ${JSON.stringify(res.locals.categoriesInUse, null, 2)}`);
+        // log.debug(`request: ${JSON.stringify(req.method)} ${JSON.stringify(req.url)}`);
+    }
     next();
 });
 

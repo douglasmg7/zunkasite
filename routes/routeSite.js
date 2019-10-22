@@ -153,15 +153,7 @@ router.get('/api/products', function (req, res) {
 	let productCountPromise = Product.countDocuments(search).exec();
 	Promise.all([productPromise, productCountPromise])
 		.then(([products, count])=>{
-			redis.get('categoriesInUse', (err, categories)=>{
-				// Internal error.
-				if (err) {
-					log.error(err.stack);
-					return res.render('/error', { message: 'Não foi possível encontrar as categorias.', error: err });
-				}
-				// Render page.
-				res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE), categories: JSON.parse(categories) || []});
-			});
+			res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE), categories: res.locals.categoriesInUse});
 		}).catch(err=>{
 			return next(err);
 		});

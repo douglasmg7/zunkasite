@@ -1,4 +1,4 @@
-'use strict';
+'us estrict';
 let Product = require('../model/product');
 let log = require('../config/log');
 
@@ -35,27 +35,6 @@ let regexCategories = [
 	{ name: 'Pen drives', regex: /\bpen\s+drives?\b/i},
 ];
 
-// Categories list.
-let categories = []; 
-regexCategories.forEach(item=>{
-	categories.push(item.name);
-});
-categories.sort();
-// console.log(`Generated Product categires: ${categories}`);
-
-// mongoose.connection.db.collection('products').distinct("storeProductCategory")
-// let categoriesInUse = [];
-Product.find().distinct('storeProductCategory')
-.then(categories=>{
-    // categoriesInUse = categories;
-    module.exports.categoriesInUse = categories;
-    log.debug('categoriesInUse init');
-    // log.debug(`util categoriesInUse: ${JSON.stringify(categoriesInUse, null, 2)}`);
-})
-.catch(err=>{
-    log.error('Get categories in use. ' + err.message);
-});
-
 // Select category.
 function selectCategory(text) {
 	let category = "";
@@ -68,7 +47,36 @@ function selectCategory(text) {
 	return category;
 }
 
+// Categories list.
+let categories = []; 
+regexCategories.forEach(item=>{
+	categories.push(item.name);
+});
+categories.sort();
+// console.log(`Generated Product categires: ${categories}`);
+
+// Categories in use.
+let categoriesInUse = [];
+// Get categories in use.
+function getCategoriesInUse() {
+    return categoriesInUse;
+}
+// Update categories in use.
+function updateCategoriesInUse(){
+	let filter = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
+    Product.find(filter).distinct('storeProductCategory')
+    .then(categories=>{
+        categoriesInUse = categories;
+        // log.debug('categoriesInUse init');
+        // log.debug(`util categoriesInUse: ${JSON.stringify(categoriesInUse, null, 2)}`);
+    })
+    .catch(err=>{
+        log.error('Get categories in use. ' + err.message);
+    });
+}
+updateCategoriesInUse();
+
 module.exports.categories = categories;
 module.exports.selectCategory = selectCategory;
-// module.exports.categoriesInUse = categoriesInUse;
-// log.debug(`util end categoriesInUse: ${JSON.stringify(categoriesInUse, null, 2)}`);
+module.exports.inUse = getCategoriesInUse;
+module.exports.updateInUse = updateCategoriesInUse;
