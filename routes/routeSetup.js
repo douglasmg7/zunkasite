@@ -35,7 +35,7 @@ router.post('/product/add', basicAuth, [
 			// log.debug(JSON.stringify(errors.array(), null, 2));
 			return res.status(422).json({ erros: errors.array() });
 		}
-		// log.debug("req.body: " + JSON.stringify(req.body, null, 2));
+        log.debug("req.body: " + JSON.stringify(req.body, null, 2));
 		// Create product.
 		let product = {};
 		product.dealerName = req.body.dealerName;
@@ -44,12 +44,12 @@ router.post('/product/add', basicAuth, [
         product.dealerProductDesc = req.body.dealerProductDesc;
 		product.dealerProductCategory = categories.selectCategory(req.body.dealerProductCategory);
 		product.dealerProductMaker = makers.selectMaker(req.body.dealerProductMaker);
-		product.dealerProductWarrantDays = req.body.dealerProductWarrantDays;
+		product.dealerProductWarrantyDays = req.body.dealerProductWarrantyDays;
 		product.dealerProductDeep = req.body.dealerProductDeep;
 		product.dealerProductHeight = req.body.dealerProductHeight;
 		product.dealerProductWidth = req.body.dealerProductWidth;
 		product.dealerProductWeight = req.body.dealerProductWeight;
-		product.dealerProductPrice = req.body.dealerProductPrice;
+		product.dealerProductPrice = parseFloat(req.body.dealerProductPrice) / 100;
 		product.dealerProductActive = req.body.dealerProductActive;
 		product.dealerProductLastUpdate = req.body.dealerProductLastUpdate;
 		log.debug(`product: ${JSON.stringify(product, null, 2)}`);
@@ -86,9 +86,9 @@ router.post('/product/add', basicAuth, [
 				product.storeProductHeight = product.dealerProductHeight;
 				product.storeProductWidth = product.dealerProductWidth;
 				product.storeProductWeight = product.dealerProductWeight;
-				product.storeProductPrice =  (product.dealerProductPrice * 1.3) / 100;
+				product.storeProductPrice =  (product.dealerProductPrice * 1.28);
 				product.storeProductCommercialize = false;
-				product.storeProductMarkup = 30;
+				product.storeProductMarkup = 28;
 				product.storeProductDiscountEnable = false;
 				product.storeProductDiscountType = "%";
 				product.storeProductDiscountValue = 5;
@@ -96,7 +96,7 @@ router.post('/product/add', basicAuth, [
 				product.storeProductWarrantyDetail = "";
 				product.storeProductQtdSold = 0;
 				// Must be verified on aldo ws before close order.
-				product.storeProductQtd = 1;
+				product.storeProductQtd = 4;
 				product.storeProductActive = product.dealerProductActive;
 				let newProduct = new Product(product);
 				newProduct.save((err, doc)=>{

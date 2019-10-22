@@ -40,7 +40,7 @@ function selectCategory(text) {
 	let category = "";
 	regexCategories.forEach(item=>{
 		if (item.regex.test(text)) {
-			console.log(`category selected a: ${item.name}`);
+			// console.log(`category selected a: ${item.name}`);
 			category = item.name;
 		}
 	});

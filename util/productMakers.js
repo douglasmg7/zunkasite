@@ -30,7 +30,7 @@ function selectMaker(text) {
 	let maker = "";
 	regexMakers.forEach(item=>{
 		if (item.regex.test(text)) {
-			console.log(`maker selected a: ${item.name}`);
+			// console.log(`maker selected a: ${item.name}`);
 			maker = item.name;
 		}
 	});
