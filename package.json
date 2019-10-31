@@ -8,7 +8,7 @@
     "build": "./bin/compile_styl",
     "start": "pm2 start ecosystem.config.js --env production",
     "stop": "pm2 delete ecosystem.config.js",
-    "restart": "pm2 restart ecosystem.config.js",
+    "restart": "pm2 restart ecosystem.config.js --env production",
     "start_t": "NODE_ENV=production DB=production ./bin/www",
     "dev": "NODE_ENV=development nodemon ./bin/www",
     "icon": "./node_modules/svg-sprite/bin/svg-sprite.js --symbol --symbol-dest='' --symbol-sprite='dist/icon/sprite.svg' dist/icon/*.svg",
