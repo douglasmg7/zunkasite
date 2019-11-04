@@ -42,16 +42,20 @@ block content
                                 td {{estShip.service}}
                                 td R$ {{estShip.price}}
                                 td {{estShip.time}}
+            //- Info Markdown.
+            if productInfo.trim() !== ""
+                .product-info!= productInfo
             //- Description.
-            .product-description(v-if='product.storeProductDescription.trim() !== ""')
-                h2.title Descrição
-                div(v-for='item in productDescription')
-                    //- With title.
-                    h3(v-if='typeof item != "string"').sub-title {{item[0]}}
-                    p(v-if='typeof item != "string"') {{item[1]}}
-                    //- Without title.
-                    p(v-if='(typeof item == "string") && (item != "")') {{ item }}
-                    p(v-if='(typeof item == "string") && (item == "")') &nbsp 
+            if productInfo.trim() === ""
+                .product-description(v-if='product.storeProductDescription.trim() !== ""')
+                    h2.title Descrição
+                    div(v-for='item in productDescription')
+                        //- With title.
+                        h3(v-if='typeof item != "string"').sub-title {{item[0]}}
+                        p(v-if='typeof item != "string"') {{item[1]}}
+                        //- Without title.
+                        p(v-if='(typeof item == "string") && (item != "")') {{ item }}
+                        p(v-if='(typeof item == "string") && (item == "")') &nbsp 
             //- Tech info.
             .product-technical(v-if='productInformationTechnical.length > 0')
                 h2.title Detalhes técnicos

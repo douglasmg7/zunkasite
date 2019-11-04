@@ -1,6 +1,9 @@
 # redis-cli
 del categoriesInUse
 
+# h2 Ordem cancelada h2 when order canceled.
+https://www.zunka.com.br/checkout/confirmation/order/5dbe2adeeb57392565c3dea9
+
 # mongodb
 db.productCategories.drop()
 db.productMakers.drop()

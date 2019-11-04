@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const log = require('../config/log');
+const marked = require('marked');
 // Models.
 const Product = require('../model/product');
 // Redis.
@@ -95,10 +96,13 @@ router.get('/product/:_id', function(req, res, next) {
 		.then(product=>{
 			if (product._id) {
 				// console.log(JSON.stringify(result));
+                console.log(`md: ${product.storeProductInfoMD}`);
+                console.log(`html: ${marked(product.storeProductInfoMD)}`);
 				res.render('product/product', {
 					nav: {
 					},
-					product
+					product,
+                    productInfo: marked(product.storeProductInfoMD)
 				});
 			} else {
 				log.info(`product ${req.params._id} not found`);

@@ -27,6 +27,7 @@ let product = new mongoose.Schema({
 	storeProductTitle: { type: String },
 	storeProductActive: { type: Boolean },
 	storeProductCommercialize: { type: Boolean },
+	storeProductInfoMD: { type: String },
 	storeProductDetail: { type: String },
 	storeProductDescription: { type: String },
 	storeProductTechnicalInformation: { type: String },
