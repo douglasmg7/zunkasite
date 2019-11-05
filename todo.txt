@@ -1,5 +1,11 @@
-# redis-cli
-del categoriesInUse
+# aldowsc log time inside xml file.
+
+# npm run upgrade
+if zunka not changed, not call npm run build and not restart server
+If zunkasrv not changed not restart
+if package.json changed call npm install
+if secret files change call git reveal
+save pm2 again to system boot
 
 # h2 Ordem cancelada h2 when order canceled.
 https://www.zunka.com.br/checkout/confirmation/order/5dbe2adeeb57392565c3dea9
