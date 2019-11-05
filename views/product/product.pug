@@ -42,11 +42,12 @@ block content
                                 td {{estShip.service}}
                                 td R$ {{estShip.price}}
                                 td {{estShip.time}}
-            //- Info Markdown.
+            //- With Markdown.
             if productInfo.trim() !== ""
                 .product-info!= productInfo
-            //- Description.
+            //- Without markdown.
             if productInfo.trim() === ""
+                //- Description.
                 .product-description(v-if='product.storeProductDescription.trim() !== ""')
                     h2.title Descrição
                     div(v-for='item in productDescription')
@@ -56,26 +57,26 @@ block content
                         //- Without title.
                         p(v-if='(typeof item == "string") && (item != "")') {{ item }}
                         p(v-if='(typeof item == "string") && (item == "")') &nbsp 
-            //- Tech info.
-            .product-technical(v-if='productInformationTechnical.length > 0')
-                h2.title Detalhes técnicos
-                div(v-for='item in productInformationTechnical')
-                    //- With title.
-                    h3(v-if='typeof item != "string"').sub-title {{item[0]}}
-                    p(v-if='typeof item != "string"') {{item[1]}}
-                    //- Without title.
-                    p(v-if='(typeof item == "string") && (item != "")') {{ item }}
-                    p(v-if='(typeof item == "string") && (item == "")') &nbsp 
-            //- Add info.
-            .product-additional(v-if='productInformationAdditional.length > 0')
-                h2.title Informações adicionais
-                div(v-for='item in productInformationAdditional')
-                    //- With title.
-                    h3(v-if='typeof item != "string"').sub-title {{item[0]}}
-                    p(v-if='typeof item != "string"') {{item[1]}}
-                    //- Without title.
-                    p(v-if='(typeof item == "string") && (item != "")') {{ item }}
-                    p(v-if='(typeof item == "string") && (item == "")') &nbsp 
+                //- Tech info.
+                .product-technical(v-if='productInformationTechnical.length > 0')
+                    h2.title Detalhes técnicos
+                    div(v-for='item in productInformationTechnical')
+                        //- With title.
+                        h3(v-if='typeof item != "string"').sub-title {{item[0]}}
+                        p(v-if='typeof item != "string"') {{item[1]}}
+                        //- Without title.
+                        p(v-if='(typeof item == "string") && (item != "")') {{ item }}
+                        p(v-if='(typeof item == "string") && (item == "")') &nbsp 
+                //- Add info.
+                .product-additional(v-if='productInformationAdditional.length > 0')
+                    h2.title Informações adicionais
+                    div(v-for='item in productInformationAdditional')
+                        //- With title.
+                        h3(v-if='typeof item != "string"').sub-title {{item[0]}}
+                        p(v-if='typeof item != "string"') {{item[1]}}
+                        //- Without title.
+                        p(v-if='(typeof item == "string") && (item != "")') {{ item }}
+                        p(v-if='(typeof item == "string") && (item == "")') &nbsp 
         .modal(v-if='showModal')
             .panel
                 i.close.far.fa-window-close(@click='hideZoomImg')
