@@ -1,0 +1,6 @@
+//- Production.
+if settings.env === 'production'
+  script(src='https://cdn.jsdelivr.net/npm/marked@0.7.0/marked.min.js')
+//- Development.
+else
+  script(src='/bower_components/marked/marked.min.js')

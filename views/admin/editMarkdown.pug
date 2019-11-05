@@ -1,0 +1,35 @@
+extends ../layout/layout_vue_n
+
+block title
+    title Zunka - Frete
+
+block append css
+    link(rel="stylesheet" href="/css/admin/editMarkdown.css" charset="utf-8")
+
+block content 
+    section.shadow
+        //- title.
+        h2.title {{ md._id === 'new' ? "Novo markdown": "Alterar markdown" }}
+        //- Warn message.
+        p.warn-message {{ warnMessage }}    
+        //- Dead line.
+        label(for='name') Nome
+        input(type='text' id='name' v-model='md.name')
+        //- Max weight.
+        label(for='markdown') Markdown 
+        textarea(id='markdown' rows='8' v-model='md.markdown')
+
+        .markdown(v-html='compiledMd')
+        //- .markdown(v-html='marked(md.markdown)')
+
+        input.btn-primary(type='button', :value='md._id === "new" ? "Criar": "Salvar"' @click='save()')
+        input.btn-danger(v-if='!(md._id === "new")' type='button' value='Apagar' @click='remove()')
+        input.btn-exit(type='button' onclick='window.location.href="/admin/markdown"' value='Sair') 
+
+append internal_scripts
+    script.
+        let md = !{JSON.stringify(md)};
+
+append external_scripts
+    include ../components/marked.js.pug
+    script(src='/js/admin/editMarkdown.js?0001')

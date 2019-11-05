@@ -1,0 +1,76 @@
+'use strict';
+
+// Search for products.
+function _search(text){
+  window.location.href = `/all?page=1&search=${text}`;
+}
+
+// Vue.
+var app = new Vue({
+    el: '#app',
+    data: {
+        warnMessage: '',
+        md: md,
+    },
+    created() {
+    },
+    methods: {
+        // Set default address.
+        save(){
+            this.warnMessage = '';
+            let headers = { 'csrf-token': csrfToken };
+            let data = {
+                name: md.name,
+                markdown: md.markdown,
+                id: md._id
+            };
+            // console.log(`md: ${JSON.stringify(md, null, 2)}`);
+            axios.post(`/admin/markdown/${this.md._id}`, data, { headers: headers })
+                .then(()=>{
+                    window.location.href = '/admin/markdown';
+                })
+                .catch((err)=>{
+                    // System internal error.
+                    if (err.response.status == 500) {
+                        this.warnMessage = 'Alguma coisa deu errada :(';
+                    } 
+                    // Invalid form data.
+                    else if (err.response.status = 422) {
+                        console.log(JSON.stringify(err.response.data.erros[0], null, 2));
+                        this.warnMessage = err.response.data.erros[0].msg;
+                    }
+                    else {
+                        console.error(`save(). ${JSON.stringify(err, null, 2)}`);
+                    }
+                });
+        },
+        // Set default address.
+        remove(){
+            this.warnMessage = '';
+            let headers = { 'csrf-token': csrfToken };
+            axios.delete(`/admin/markdown/${this.md._id}`, { headers: headers })
+            .then(()=>{
+                window.location.href = '/admin/markdown';
+            })
+            .catch((err)=>{
+                // System internal error.
+                if (err.response.status == 500) {
+                    this.warnMessage = 'Alguma coisa deu errada :(';
+                } 
+                // Invalid form data.
+                else if (err.response.status = 422) {
+                    console.log(JSON.stringify(err.response.data.erros[0], null, 2));
+                    this.warnMessage = err.response.data.erros[0].msg;
+                }
+                else {
+                    console.error(`delete(). ${JSON.stringify(err, null, 2)}`);
+                }
+            });
+        }
+    },
+    computed: {
+        compiledMd: function() {
+            return marked(md.markdown);
+        }
+    }
+});

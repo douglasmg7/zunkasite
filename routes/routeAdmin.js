@@ -14,6 +14,8 @@ const sharp = require('sharp');
 const Product = require('../model/product');
 const Order = require('../model/order');
 const ShippingPrice = require('../model/shippingPrice');
+const Markdown = require('../model/markdown');
+const markdownCache = require('../model/markdownCache');
 // Lists.
 const productCategories = require('../util/productCategories');
 const productMakers = require('../util/productMakers.js');
@@ -626,6 +628,9 @@ router.post('/motoboy-delivery', checkPermission, (req, res, next)=>{
 	});
 });
 
+/******************************************************************************
+/   SHIPPING PRICE LIST
+ ******************************************************************************/
 // Shipping price list.
 router.get('/shipping/prices', checkPermission, (req, res, next)=>{
     try {
@@ -775,6 +780,135 @@ router.delete('/shipping/price/:_id', checkPermission, (req, res, next)=>{
     })
     .catch(err=>{
         log.error(`Deleting shipping price. {$err}`);
+        return res.status(500).send();
+     });
+});
+
+/******************************************************************************
+/   MARKDOWN LIST
+ ******************************************************************************/
+// Show markdown list.
+router.get('/markdown', checkPermission, (req, res, next)=>{
+    Markdown.find({}, { name: true }).sort({ name: 1 })
+        .then(docs=>{
+            return res.render('admin/markdownList', { nav: {}, mds: docs });
+        }) 
+        .catch(err=>{
+            return next(err);
+        })
+});
+
+// Show specific markdown.
+router.get('/markdown/:_id', checkPermission, (req, res, next)=>{
+    try {
+        // New.
+        if (req.params._id === 'new') {
+            let md = {
+                _id: 'new',
+                name: '',
+                markdown: '',
+            }
+            // log.debug(`new shippingPrice: ${JSON.stringify(shippingPrice, null, 2)}`);
+            res.render('admin/editMarkdown', { nav: {}, md: md });
+        } 
+        // Existing item.
+        else {
+            Markdown.findById(req.params._id, (err, md)=>{
+                if (err) return next(err);
+                if (!md) return next(new Error('Not found markdown id ${req.params._id}'));
+                res.render('admin/editMarkdown', { nav: {}, md: md } );
+            });
+        }
+    } 
+    catch(err) {
+        return next(err);
+    }
+});
+
+// Save markdown.
+router.post('/markdown/:_id', checkPermission, [
+    check('name').isLength({ min: 1 }).withMessage('Nome não definido'),
+    check('name').isLength({ max: 100 }).withMessage('Nome tem que ser menor que 100 carácters'),
+    check('name').matches(/^\S+$/).withMessage('Nome não pode conter espaços'),
+    check('markdown').isLength({ min: 1  }).withMessage('Markdown não definido'),
+    check('markdown').isLength({ max: 10000 }).withMessage('Markdown tem que ser menor que 10000 carácters'),
+],(req, res, next)=>{
+    try {
+        // log.debug(`req.body: ${JSON.stringify(req.body, null, 2)}`);
+        // Check erros.
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            // log.debug(JSON.stringify(errors.array(), null, 2));
+            return res.status(422).json({ erros: errors.array() });
+        }
+        // New.
+        else if (req.params._id === 'new'){
+            // Check if exist.
+            Markdown.findOne({ name: req.body.name })
+            .then(md=>{
+                log.debug(`md: ${JSON.stringify(md, null, 2)}`);
+                // Name alredy in use.
+                if (md) {
+                    return res.status(422).json({ erros: errors.array() });
+                }
+                else {
+                    Markdown.create({ name: req.body.name, markdown: req.body.markdown })
+                    .then((newMarkdown)=>{
+                        markdownCache.updateCache();
+                        return res.send();
+                    })
+                    .catch(err=>{
+                        log.error(`Saving new markdown. ${err}`);
+                        return res.status(500).send();
+                    });
+                }
+            })
+            .catch(err=>{
+                switch (err.message) {
+                    case '1':
+                        res.status(422).json({ erros: [{ msg: 'error message'}] });
+                        break;
+                    default:
+                        log.error(`Saving new markdown. ${err}`);
+                        return res.status(500).send();
+                }
+             });
+        }
+        // Update.
+        else {
+            // log.debug(`Updating markdown, id: ${JSON.stringify(req.params, null, 2)}`);
+            Markdown.findByIdAndUpdate(req.params._id, { 
+                $set: { 
+                    name: req.body.name,
+                    markdown: req.body.markdown,
+                }
+            })
+            .then(()=>{
+                markdownCache.updateCache();
+                return res.send();
+            })
+            .catch(err=>{
+                log.error(`Updating markdown, _id: ${req.params._id}. ${err}`);
+                return res.status(500).send();
+            });
+         }
+    } catch(err) {
+        log.error(`Updating markdown, _id: ${req.params._id}. ${err}`);
+        return res.status(500).send();
+
+    }
+});
+
+// delete shipping price.
+router.delete('/markdown/:_id', checkPermission, (req, res, next)=>{
+    // Check erros.
+    Markdown.findByIdAndDelete(req.params._id)
+    .then(()=>{
+        markdownCache.updateCache();
+        return res.send();
+    })
+    .catch(err=>{
+        log.error(`Deleting markdown. {$err}`);
         return res.status(500).send();
      });
 });

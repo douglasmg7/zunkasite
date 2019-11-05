@@ -6,6 +6,7 @@ const marked = require('marked');
 marked.setOptions({
     headerIds: false
 });
+const markdownCache = require('../model/markdownCache');
 // Models.
 const Product = require('../model/product');
 // Redis.
@@ -101,11 +102,15 @@ router.get('/product/:_id', function(req, res, next) {
 				// console.log(JSON.stringify(result));
                 // console.log(`md: ${product.storeProductInfoMD}`);
                 // console.log(`html: ${marked(product.storeProductInfoMD)}`);
+                let productInfo = '';
+                if (product.storeProductInfoMD) {
+                    productInfo = marked(replaceIncludeTokens(product.storeProductInfoMD));
+                }
 				res.render('product/product', {
 					nav: {
 					},
 					product,
-                    productInfo: product.storeProductInfoMD && marked(product.storeProductInfoMD) || ""
+                    productInfo 
 				});
 			} else {
 				log.info(`product ${req.params._id} not found`);
@@ -115,6 +120,28 @@ router.get('/product/:_id', function(req, res, next) {
 			return next(err);
 		});
 });
+
+// Replace include tokens.
+function replaceIncludeTokens(text) {
+    let lines = text.split("\n");
+    let newLines = [];
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i].trim().startsWith('#include')) {
+            let token = lines[i].split(" ")[1]
+            lines[i] = markdownCache.getCache().get(token);
+            // log.info(`token: ${token}`);
+            // log.info(`token value: ${markdownCache.getCache().get(token)}`);
+            if (lines[i]) {
+                newLines.push(lines[i]);
+                newLines.push('');
+            }
+        }
+        else {
+            newLines.push(lines[i]);
+        }
+    }
+    return newLines.join('\r\n');
+}
 
 // Get products.
 router.get('/api/products', function (req, res) {

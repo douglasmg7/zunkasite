@@ -1,0 +1,24 @@
+extends ../layout/layout_vue_n
+
+block title
+  title Zunka - Markdown
+
+block append css
+  link(rel="stylesheet" href="/css/admin/markdownList.css" charset="utf-8")
+
+block content 
+  section.shadow
+    //- title.
+    h2.title Markdowns
+
+    //- Regions.
+    each md in mds
+        a(href=`/admin/markdown/${md._id}`)=  md.name
+    input.btn-info(type='button' onclick='window.location.href="/admin/markdown/new"' value='Criar markdown') 
+
+append internal_scripts
+  script.
+    let mds = !{JSON.stringify(mds)};
+
+append external_scripts
+  script(src='/js/admin/markdownList.js?0001')
