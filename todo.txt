@@ -1,10 +1,3 @@
-# Product page admin button save and view (redirect to product page).
-# Product page sitei, when admin button to edit product.
-# Confirmation to delete markdown.
-
-# style for markdown list.
-# link to product from admin product.
-# On admin product ctl+save not exit page.
 # Add image (image list like markdown list).
 
 # aldowsc log time inside xml file.

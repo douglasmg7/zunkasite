@@ -2,7 +2,7 @@ section.shadow {
 	background-color: var(--white-lighter);
 	padding: 1em;
     margin: 2em 1em;
-    min-width: var(--width-large);    
+    min-width: var(--width-medium);    
 }
 .mt0 {
     margin-top: 0;
@@ -31,12 +31,13 @@ section input[type='checkbox'] + label {
 }
 .buttons {
     display: flex;
-    justify-content: space-between;
+    flex-flow: column;
+    // justify-content: space-between;
 }
-.buttons input[type='button'] {
-    margin-top: 1em;
-    flex: 0 1 32%;
-}
+// .buttons input[type='button'] {
+    // margin-top: 1em;
+    // flex: 0 1 32%;
+// }
 .upload-image {
     margin-top: .3em;
 }

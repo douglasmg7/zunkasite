@@ -4,7 +4,7 @@ block title
     title Admin - Produto
 
 block append css
-    link(rel="stylesheet" href="/css/admin/product.css" charset="utf-8")
+    link(rel="stylesheet" href="/css/admin/product.css?001" charset="utf-8")
 
 block content 
     section.shadow
@@ -137,9 +137,10 @@ block content
             input(type='text' id='stock' v-model='product.storeProductQtd')
             p.validation(v-if='validation.storeProductQtd') {{validation.storeProductQtd}}
         .buttons
-            input.btn-danger(type='button' v-on:click='deleteProduct()' value='Apagar') 
-            input.btn-success(type='button' v-on:click='saveProduct()' value='Salvar')
+            input.btn-success(type='button' v-on:click='saveProduct()' value='Salvar e voltar')
+            input.btn-success(type='button' v-on:click='saveProduct(`/product/${product._id}`)' value='Salvar e ver produto')
             input.btn-exit(type='button' onclick='window.location.href="/admin"' value='Sair') 
+            input.btn-danger(type='button' v-on:click='deleteProduct()' value='Apagar') 
 
 block footer
   

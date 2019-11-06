@@ -78,7 +78,7 @@ var app = new Vue({
             this.storeProductMarkupeBr = this.toBRCurrencyString(product.storeProductMarkup);
         },
         // Save product.
-        saveProduct(){
+        saveProduct(link){
             // console.debug(product.storeProductCategory);
             axios({
                 method: 'post',
@@ -106,7 +106,11 @@ var app = new Vue({
                     // } else if (response.data.isNew) {
                         // window.location.href = `/admin/product/${response.data.product._id}`
                     } else {
-                        window.location.href = '/admin/';
+                        if (link) {
+                            window.location.href = link;
+                        } else {
+                            window.location.href = '/admin/';
+                        }
                     }
                 })
                 .catch(err => {

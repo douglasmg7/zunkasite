@@ -4,7 +4,7 @@ block title
   title Zunka - Produto
 
 block append css
-  link(rel="stylesheet" href="/css/product/product.css?0002" charset="utf-8")
+  link(rel="stylesheet" href="/css/product/product.css?0003" charset="utf-8")
 
 block content
     section
@@ -14,7 +14,10 @@ block content
             .product-image(@click='showZoomImg')
                 img(:src='srcImg0300(product, selectedThumbnail)' v-if='product.images.length > 0')
             .product-summary
-                h2.title {{product.storeProductTitle}}
+                if user.name && user.group.includes('admin')
+                    a.title(href=`/admin/product/${product._id}`) {{product.storeProductTitle}}
+                else
+                    h2.title {{product.storeProductTitle}}
                 h2.price(v-if='accountingParse(this.product.storeProductPrice, ",") > 0')
                     sup R$
                     | {{ product.storeProductPrice | currency | currencyInt }}
@@ -92,4 +95,4 @@ append internal_scripts
 
 append external_scripts
     include ../components/accounting.js.pug
-    script(src='/js/product/product.js?0009')
+    script(src='/js/product/product.js?0010')

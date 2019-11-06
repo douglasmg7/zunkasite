@@ -50,26 +50,28 @@ var app = new Vue({
         },
         // Set default address.
         remove(){
-            this.warnMessage = '';
-            let headers = { 'csrf-token': csrfToken };
-            axios.delete(`/admin/markdown/${this.md._id}`, { headers: headers })
-            .then(()=>{
-                window.location.href = '/admin/markdown';
-            })
-            .catch((err)=>{
-                // System internal error.
-                if (err.response.status == 500) {
-                    this.warnMessage = 'Alguma coisa deu errada :(';
-                } 
-                // Invalid form data.
-                else if (err.response.status = 422) {
-                    console.log(JSON.stringify(err.response.data.erros[0], null, 2));
-                    this.warnMessage = err.response.data.erros[0].msg;
-                }
-                else {
-                    console.error(`delete(). ${JSON.stringify(err, null, 2)}`);
-                }
-            });
+            if(confirm('Confirma a remoção do markdown?')){
+                this.warnMessage = '';
+                let headers = { 'csrf-token': csrfToken };
+                axios.delete(`/admin/markdown/${this.md._id}`, { headers: headers })
+                .then(()=>{
+                    window.location.href = '/admin/markdown';
+                })
+                .catch((err)=>{
+                    // System internal error.
+                    if (err.response.status == 500) {
+                        this.warnMessage = 'Alguma coisa deu errada :(';
+                    } 
+                    // Invalid form data.
+                    else if (err.response.status = 422) {
+                        console.log(JSON.stringify(err.response.data.erros[0], null, 2));
+                        this.warnMessage = err.response.data.erros[0].msg;
+                    }
+                    else {
+                        console.error(`delete(). ${JSON.stringify(err, null, 2)}`);
+                    }
+                });
+            }
         }
     },
     computed: {
