@@ -5,6 +5,10 @@ function _search(text){
   window.location.href = `/all?page=1&search=${text}`;
 }
 
+marked.setOptions({
+    headerIds: false
+});
+
 // Vue.
 var app = new Vue({
     el: '#app',

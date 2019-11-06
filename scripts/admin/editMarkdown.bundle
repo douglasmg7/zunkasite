@@ -1,4 +1,7 @@
 import _search from '../lib/_search';
+marked.setOptions({
+    headerIds: false
+});
 
 // Vue.
 var app = new Vue({
