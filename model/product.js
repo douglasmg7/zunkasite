@@ -48,7 +48,9 @@ let product = new mongoose.Schema({
 	storeProductDiscountValue: { type: Number },
 	storeProductQtd: { type: Number, required: true},
 	storeProductQtdSold: { type: Number, default: 0 },   // To filter by best selling products.
-	images: [String]
+	images: [String],
+    includeWarrantyText: { type: Boolean, default: false },
+    includeOutletText: { type: Boolean, default: false }
 },
 {
 	timestamps: true

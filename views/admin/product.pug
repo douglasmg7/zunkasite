@@ -52,6 +52,14 @@ block content
         //- Tech add.
         label(for='extraInfo') Informações adicionais
         textarea(id='extraInfo' rows='8' v-model='product.storeProductAdditionalInformation')     
+        br
+        //- Include warranty text.
+        input(type='checkbox' id='includeWarratyTextEnable'  v-model:checked='product.includeWarrantyText')
+        label(for='includeWarratyTextEnable') Garantia (Incluir informação padrão)
+        br
+        //- Include additional information text.
+        input(type='checkbox' id='includeOutletTextEnable'  v-model:checked='product.includeOutletText')
+        label(for='includeOutletTextEnable') Outlet (Incluir informação padrão)
         //- Warranty.
         .warranty
             h2 Garantia

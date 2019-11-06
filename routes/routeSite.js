@@ -102,15 +102,34 @@ router.get('/product/:_id', function(req, res, next) {
 				// console.log(JSON.stringify(result));
                 // console.log(`md: ${product.storeProductInfoMD}`);
                 // console.log(`html: ${marked(product.storeProductInfoMD)}`);
+                // Markdown text.
                 let productInfo = '';
                 if (product.storeProductInfoMD) {
                     productInfo = marked(replaceIncludeTokens(product.storeProductInfoMD));
+                }
+                // Warranty text.
+                let warrantyText = '';
+                if (product.includeWarrantyText) {
+                    let markdownText = markdownCache.getCache().get('garantia');
+                    if (markdownText) {
+                        warrantyText = marked(markdownText);
+                    }
+                }
+                // Outlet text.
+                let outletText = '';
+                if (product.includeOutletText) {
+                    let markdownText = markdownCache.getCache().get('outlet');
+                    if (markdownText) {
+                        outletText = marked(markdownText);
+                    }
                 }
 				res.render('product/product', {
 					nav: {
 					},
 					product,
-                    productInfo 
+                    productInfo,
+                    warrantyText,
+                    outletText
 				});
 			} else {
 				log.info(`product ${req.params._id} not found`);
