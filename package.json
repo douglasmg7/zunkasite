@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "upgrade": "npm run update; npm run restart",
-    "update": "git pull; npm run build; $GS/zunkasrv/bin/update-all.sh",
+    "update": "./bin/update-and-restart-systems.sh",
     "build": "./bin/compile_styl",
     "start": "pm2 start ecosystem.config.js --env production",
     "stop": "pm2 delete ecosystem.config.js",
