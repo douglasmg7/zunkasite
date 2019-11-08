@@ -56,23 +56,21 @@ router.get('/', function(req, res, next) {
 			return res.render('/error', { message: 'Não foi possível encontrar os banners.', error: err });
 		}
 		// Render page.
-		return res.render('product/productList', {
-			nav: {
-			},
-			search: req.query.search ? req.query.search : '',
-			banners: JSON.parse(banners) || [],
-		});
+        try {
+            log.debug(`Before render GET /`);
+            log.debug(`user: ${JSON.stringify(res.locals.user, null, 2)}`);
+            return res.render('product/productList', {
+                nav: {
+                },
+                search: req.query.search ? req.query.search : '',
+                banners: JSON.parse(banners) || [],
+            });
+        } catch(err){
+            log.error(`Rendering product/productList(err): ${err}. ${err.stack}`);
+            log.error(`Rendering product/productList(err.stack): ${err}. ${err.stack}`);
+        }
 	});
 });
-
-// // Get products page.
-// router.get('/search', function(req, res, next) {
-//   res.render('product/productListSearch', {
-//     nav: {
-//     },
-//     search: req.query.search ? req.query.search : '',
-//   });
-// });
 
 // Get all products page.
 router.get('/all', function(req, res, next) {

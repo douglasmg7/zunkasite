@@ -846,7 +846,7 @@ router.post('/markdown/:_id', checkPermission, [
             // Check if exist.
             Markdown.findOne({ name: req.body.name })
             .then(md=>{
-                log.debug(`md: ${JSON.stringify(md, null, 2)}`);
+                // log.debug(`md: ${JSON.stringify(md, null, 2)}`);
                 // Name alredy in use.
                 if (md) {
                     return res.status(422).json({ erros: errors.array() });
