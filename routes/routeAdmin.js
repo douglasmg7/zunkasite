@@ -6,6 +6,7 @@ const path = require('path');
 const fse = require('fs-extra');
 const axios = require('axios');
 const { check, validationResult } = require('express-validator/check');
+const { exec } = require('child_process');
 // File upload.
 const formidable = require('formidable');
 // Resize images.
@@ -27,6 +28,9 @@ const s = require('../config/s');
 const PRODUCT_QTD_BY_PAGE = 20;
 // Max order quantity by Page.
 const ORDER_QTD_BY_PAGE = 20;
+
+// Time to update zoom xml list.
+var zoomwscTimeout;
 
 // Check permission.
 function checkPermission (req, res, next) {
@@ -192,9 +196,9 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 				res.json({err});
 				return next(err);
 			} else {
-				log.info(`Produto ${newProduct._id} saved.`);
+				log.info(`Produto ${newProduct._id} was created.`);
 				res.json({ isNew: true, product: newProduct });
-                productCategories.updateInUse();
+                productListChanged();
 			}
 		});
 	}
@@ -208,7 +212,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 			} else {
 				log.info(`Produto ${product._id} updated.`);
 				res.json({});
-                productCategories.updateInUse();
+                productListChanged();
 				// Sync upladed images with product.images.
 				// Get list of uploaded images.
 				fse.readdir(path.join(__dirname, '..', 'dist/img/', req.body.product._id), (err, files)=>{
@@ -256,6 +260,7 @@ router.delete('/product/:_id', checkPermission, function(req, res) {
 					if (err) { log.error(err.stack); }
 					res.json({});
 					log.info(`Product ${req.params._id} deleted.`);
+                    productListChanged();
 					// Delete from zunkasrv.
 					if (result.dealerName = "Aldo") {
 						// Delete reference product on integration server.
@@ -956,3 +961,29 @@ function createResizedImgs(images){
 			});
 	})
 }
+
+// Is called every time list of products change (insert, update and delete).
+function productListChanged(){
+    // Update categories in use.
+    productCategories.updateInUse();
+    // Update zoom products list after some time, stop current time.
+    if (zoomwscTimeout) {
+        clearTimeout(zoomwscTimeout);
+    }
+    // Call zoomwsc (10 min)
+    zoomwscTimeout = setTimeout(callZoomwsc, 10 * 60 * 1000);
+    // Call zoomwsc (1 min) - for test.
+    // zoomwscTimeout = setTimeout(callZoomwsc, 1000);
+}
+
+// Call zoomwsc to upate zoom xml product list.
+function callZoomwsc() {
+    log.debug(`Calling zoomwsc`);
+    exec('zoomwsc', (err, stdout, stderr) => {
+          if (err) {
+              log.error(`Calling zoomwsc. ${err}`);
+          }
+          // log.debug(`stdout: ${stdout}`);
+          // log.debug(`stderr: ${stderr}`);
+    })
+};
