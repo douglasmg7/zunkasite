@@ -179,6 +179,9 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 	}
 	// EAN (13 digits).
     // ^(?![\s\S]) - Empty match.
+    if (req.body.product.ean === undefined) {
+        req.body.product.ean = '';
+    }
     req.body.product.ean = req.body.product.ean.trim();
 	validation.ean = req.body.product.ean.match(/^(\d{13}|)$/) ? undefined: 'Deve conter 13 digitos ou vazio';
 	// Send validation erros if some.

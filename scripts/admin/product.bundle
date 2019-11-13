@@ -89,6 +89,7 @@ var app = new Vue({
                     for (let key in this.validation){
                         this.validation[key] = response.data.validation[key];
                     }
+                    alert('Não foi possível salvar.\nConfira as mensagens de erro nos campos.');
                     return;
                     // No error validation.
                 } else {

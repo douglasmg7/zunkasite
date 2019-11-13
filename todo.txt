@@ -1,3 +1,7 @@
+# put downloaded aldo xml into the paste xml/aldo
+
+# reload nginx when nginx files change.
+
 # Update script to save dbs on server.
 
 # Update nginx configuration file.

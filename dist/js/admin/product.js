@@ -91,10 +91,13 @@ var app = new Vue({
                 // Validation error.
                 // console.log(JSON.stringify(response.data, null, 2));
                 if (response.data.validation) {
+                    console.log("*** 1 ***");
                     for (let key in this.validation){
                         this.validation[key] = response.data.validation[key];
                     }
+                    alert('Não foi possível salvar.\nConfira as mensagens de erro nos campos.');
                     return;
+                    console.log("*** 2 ***");
                     // No error validation.
                 } else {
                     // Clean error validation.
@@ -109,6 +112,7 @@ var app = new Vue({
                 // } else if (response.data.isNew) {
                     // window.location.href = `/admin/product/${response.data.product._id}`
                 } else {
+                    console.log("*** 3 ***");
                     if (link) {
                         window.location.href = link;
                     } else {
