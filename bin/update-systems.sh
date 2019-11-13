@@ -7,13 +7,8 @@
 cd $ZUNKA_SITE_PATH
 echo :: Fetching zunka site...
 git fetch
-# Check if some style file changed.
 STYLE_FILES_CHANGED=`git diff --name-only master...origin/master | grep "*.styl"`
-
-# Check if some secret file changed.
 SECRET_FILES_CHANGED=`git diff --name-only master...origin/master | grep "*.secret"`
-
-# Check if some file was changed.
 FILES_CHANGED=`git diff --name-only master...origin/master`
 # Merge.
 if [[ ! -z $FILES_CHANGED ]]; then
