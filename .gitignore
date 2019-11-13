@@ -16,6 +16,11 @@ dist/css/*
 !dist/css/.gitkeep 
 dist/banner/*
 !dist/banner/.gitkeep 
+dist/xml/*
+!dist/xml/.gitkeep 
+!dist/xml/zoom/ 
+dist/xml/zoom/*
+!dist/xml/zoom/.gitkeep 
 
 # Git secret.
 config/s.js

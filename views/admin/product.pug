@@ -11,6 +11,10 @@ block content
         //- Code.
         label.mt0(for='id') Código
         input(type='text' id='id' v-model='product.storeProductId')
+        //- EAN
+        label(for='ean') EAN (European Article Number)
+        input(type='text' id='ean' v-model='product.ean')
+        p.validation(v-if='validation.ean') {{validation.ean}}
         //- Title.
         label(for='title') Título
         input(type='text' id='title' v-model='product.storeProductTitle')
@@ -152,4 +156,4 @@ append internal_scripts
         let user = !{JSON.stringify(user)}; 
 
 append external_scripts
-    script(src='/js/admin/product.js?0002')
+    script(src='/js/admin/product.js?0003')

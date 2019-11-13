@@ -24,7 +24,8 @@ var app = new Vue({
             storeProductHeight: '',
             storeProductLength: '',
             storeProductWeight: '',
-            storeProductWidth: ''
+            storeProductWidth: '',
+            ean: ''
         },
         // Only for from use.
         storeProductPriceBr: '',
@@ -86,37 +87,39 @@ var app = new Vue({
                 headers:{'csrf-token' : csrfToken},
                 data: { product: product }
             })
-                .then(response => {
-                    // Validation error.
-                    if (response.data.validation) {
-                        for (let key in this.validation){
-                            this.validation[key] = response.data.validation[key];
-                        }
-                        // No error validation.
-                    } else {
-                        // Clean error validation.
-                        for (let key in this.validation){
-                            this.validation[key] = '';
-                        }
+            .then(response => {
+                // Validation error.
+                // console.log(JSON.stringify(response.data, null, 2));
+                if (response.data.validation) {
+                    for (let key in this.validation){
+                        this.validation[key] = response.data.validation[key];
                     }
-                    // Server side error.
-                    if (response.data.err) {
-                        alert('Não foi possível salvar.');
-                    // Saved.
-                    // } else if (response.data.isNew) {
-                        // window.location.href = `/admin/product/${response.data.product._id}`
-                    } else {
-                        if (link) {
-                            window.location.href = link;
-                        } else {
-                            window.location.href = '/admin/';
-                        }
+                    return;
+                    // No error validation.
+                } else {
+                    // Clean error validation.
+                    for (let key in this.validation){
+                        this.validation[key] = '';
                     }
-                })
-                .catch(err => {
+                }
+                // Server side error.
+                if (response.data.err) {
                     alert('Não foi possível salvar.');
-                    console.error(err);
-                });
+                // Saved.
+                // } else if (response.data.isNew) {
+                    // window.location.href = `/admin/product/${response.data.product._id}`
+                } else {
+                    if (link) {
+                        window.location.href = link;
+                    } else {
+                        window.location.href = '/admin/';
+                    }
+                }
+            })
+            .catch(err => {
+                alert('Não foi possível salvar.');
+                console.error(err);
+            });
         },
         // Delete product.
         deleteProduct(){

@@ -177,10 +177,14 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 	else {
 		validation.storeProductWeight = req.body.product.storeProductWeight > 0 ? undefined: 'Valor inválido';
 	}
+	// EAN (13 digits).
+    // ^(?![\s\S]) - Empty match.
+    req.body.product.ean = req.body.product.ean.trim();
+	validation.ean = req.body.product.ean.match(/^(\d{13}|)$/) ? undefined: 'Deve conter 13 digitos ou vazio';
 	// Send validation erros if some.
 	for (let key in validation){
 		if (validation[key]) {
-			// log.debug(validation)
+            log.debug(`Validations: ${JSON.stringify(validation, null, 2)}`);
 			res.json({validation});
 			return;
 		}
@@ -971,9 +975,9 @@ function productListChanged(){
         clearTimeout(zoomwscTimeout);
     }
     // Call zoomwsc (10 min)
-    zoomwscTimeout = setTimeout(callZoomwsc, 10 * 60 * 1000);
-    // Call zoomwsc (1 min) - for test.
-    // zoomwscTimeout = setTimeout(callZoomwsc, 1000);
+    // zoomwscTimeout = setTimeout(callZoomwsc, 10 * 60 * 1000);
+    // Call zoomwsc (1 second) - for test.
+    zoomwscTimeout = setTimeout(callZoomwsc, 1000);
 }
 
 // Call zoomwsc to upate zoom xml product list.

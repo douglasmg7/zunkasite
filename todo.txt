@@ -1,3 +1,11 @@
+# Update nginx configuration file.
+
+# Update script update to include zoomwsc.
+
+# Correct css for markdown list.
+
+# Make script to del old xml files.
+
 # Update nginx zunka.conf with new rules.
 
 # Add image (image list like markdown list).
