@@ -9,7 +9,7 @@ const log = require('../config/log');
 
 // Test page.
 router.get('/', (req, res, next)=>{
-  res.render('sendEmail');
+  res.render('test/sendEmail');
 });
 
 // Test.
