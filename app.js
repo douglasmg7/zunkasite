@@ -5,6 +5,7 @@ const path = require('path');
 const favicon = require('serve-favicon');
 // General log.
 const log = require('./config/log');
+// const util = require('util');
 const version = require('./version');
 const HOSTNAME = 'www.zunka.com.br';
 // Run mode.
@@ -16,7 +17,7 @@ if (process.env.NODE_ENV == 'development') {
 }
 log.info(`*** Starting zunka site in ${mode} mode (version ${version}) ***`);
 // Log transaction.
-const morgan = require('morgan');
+// const morgan = require('morgan');
 // Body.
 const bodyParser = require('body-parser');
 // Stylus.
@@ -88,10 +89,20 @@ if (process.env.NODE_ENV == 'production') {
     app.set('hostname', 'localhost');
 }
 
-// Transaction log - no log in test mode.
-if (app.get('env') !== 'test') {
-    app.use(morgan('dev'));
-}
+// Use morgan here to have access to user without immediate.
+// Log user.
+// morgan.token('logged-user', req => {
+  // return req.user ? req.user.email: "anonymous";
+// })
+// // Transaction log - no log in test mode.
+// if (app.get('env') !== 'test') {
+    // // app.use(morgan('dev', { 'stream': log.stream }));
+    // app.use(morgan(
+        // // '":method :url HTTP/:http-version :status :res[content-length]" :logged-user :remote-addr :remote-user :user-agent', 
+        // ':method :url HTTP/:http-version :status :res[content-length] bytes :response-time[0] ms :logged-user :remote-addr :user-agent', 
+        // { stream: log.stream  }
+    // ));
+// }
 
 // For cookie and json web token.
 app.set('secret', 'd7ga8gat3kaz0m');
@@ -176,6 +187,48 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 require('./config/passport');
+
+// Use morgan here to have access to user when using option immediate.
+// // Log user.
+// morgan.token('logged-user', req => {
+  // return req.user ? req.user.email: "anonymous";
+// })
+// // Transaction log - no log in test mode.
+// if (app.get('env') !== 'test') {
+    // // app.use(morgan('dev', { 'stream': log.stream }));
+    // app.use(morgan(
+        // // '":method :url HTTP/:http-version :status :res[content-length]" :logged-user :remote-addr :remote-user :user-agent', 
+        // '":method :url HTTP/:http-version :status" :logged-user :remote-addr :user-agent', 
+        // { stream: log.stream, immediate: true }
+    // ));
+// }
+
+// Log request.
+app.use(function(req, res, next) {
+    // Log now.
+    log.info(`${req.method} ${req.url}    ${req.user ? req.user.email : "anonymous"}    ${req.ip}`);
+
+    // let initTime = Date.now();
+    // // Log on response.
+    // res.on('finish', ()=>{
+        // log.info('request: ' + 
+        // `{ method: ${req.method} }, ` + 
+        // `{ url: ${req.url} }, ` + 
+        // `{ status: ${res.statusCode} }, ` + 
+        // `{ length: ${res.get('content-length')} }, ` + 
+        // `{ time: ${Date.now() - initTime} }, ` +  
+        // `{ ip: ${req.ip} }`);
+        // // log.info(`Response finish sent: ${res.headersSent}`);
+    // });
+
+    // res.on('finish', ()=>{
+        // log.info('request: ' + 
+        // `adf ${req.method} ${req.url} ${res.statusCode} ${res.get('content-length')} bytes ${Date.now() - initTime} ms ${req.ip} `);
+        // log.info(`Response finish sent: ${res.headersSent}`);
+    // });
+
+    next();
+});
 
 // Set vars for using in views.
 app.use((req, res, next)=>{

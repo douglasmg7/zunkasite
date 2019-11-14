@@ -1,8 +1,6 @@
-# Update script not working to git secret reveal.
+# Update script exit when git secret fail.
 
 # put downloaded aldo xml into the paste xml/aldo
-
-# put into update script to reload nginx when nginx files change.
 
 # Update script to save dbs on server.
 

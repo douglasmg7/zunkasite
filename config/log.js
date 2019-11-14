@@ -74,4 +74,10 @@ if(process.env.NODE_ENV !== 'test'){
   }));
 }
 
+log.stream = { 
+  write: function(message, encoding){ 
+    log.info(message); 
+  } 
+}; 
+
 module.exports = log;

@@ -57,8 +57,8 @@ router.get('/', function(req, res, next) {
 		}
 		// Render page.
         try {
-            log.debug(`Before render GET /`);
-            log.debug(`user: ${JSON.stringify(res.locals.user, null, 2)}`);
+            // log.debug(`Before render GET /`);
+            // log.debug(`user: ${JSON.stringify(res.locals.user, null, 2)}`);
             return res.render('product/productList', {
                 nav: {
                 },
