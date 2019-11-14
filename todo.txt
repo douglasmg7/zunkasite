@@ -1,12 +1,10 @@
+# Update script not working to git secret reveal.
+
 # put downloaded aldo xml into the paste xml/aldo
 
-# reload nginx when nginx files change.
+# put into update script to reload nginx when nginx files change.
 
 # Update script to save dbs on server.
-
-# Update nginx configuration file.
-
-# Update script update to include zoomwsc.
 
 # Correct css for markdown list.
 
@@ -15,6 +13,8 @@
 # Add image (image list like markdown list).
 
 # aldowsc log time inside xml file.
+
+# size up images from GET / (not good in mobile)
 
 # npm run upgrade
 if package.json changed call npm install
