@@ -7,9 +7,12 @@
 cd $ZUNKA_SITE_PATH
 echo :: Fetching zunka site...
 git fetch
-STYLE_FILES_CHANGED=`git diff --name-only master...origin/master | grep "*.styl"`
-SECRET_FILES_CHANGED=`git diff --name-only master...origin/master | grep "*.secret"`
 FILES_CHANGED=`git diff --name-only master...origin/master`
+STYLE_FILES_CHANGED=`git diff --name-only master...origin/master | grep "\.styl$"`
+SECRET_FILES_CHANGED=`git diff --name-only master...origin/master | grep "\.secret$"`
+RESTART_ZUNKA_SITE=`git diff --name-only master...origin/master | egrep \.'(json|secret|pug|js|styl|bundle)'$`
+RELOAD_NGINX=`git diff --name-only master...origin/master | egrep '(nginx.conf.secret|zunka.conf.secret)'$`
+
 # Merge.
 if [[ ! -z $FILES_CHANGED ]]; then
     echo :: Merging zunka site...
@@ -29,9 +32,15 @@ if [[ ! -z $SECRET_FILES_CHANGED ]]; then
 fi
 
 # Set zunka site to be restarted.
-if [[ ! -z $FILES_CHANGED ]]; then
+if [[ ! -z $RESTART_ZUNKA_SITE ]]; then
     echo :: Signaling to restart zunka_site...
     echo true > $ZUNKAPATH/restart-zunka-site
+fi
+
+# Set zunka site to be restarted.
+if [[ ! -z $RELOAD_NGINX ]]; then
+    echo :: Reolading nginx...
+    sudo systemctl reload nginx
 fi
 
 # Upgrade zunkasrv.
