@@ -61,6 +61,7 @@
     "soap": "^0.24.0",
     "svg-sprite": "^1.5.0",
     "winston": "^3.2.1",
+    "winston-daily-rotate-file": "^4.2.1",
     "yargs": "^11.1.0"
   },
   "devDependencies": {

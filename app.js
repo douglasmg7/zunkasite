@@ -206,20 +206,20 @@ require('./config/passport');
 // Log request.
 app.use(function(req, res, next) {
     // Log now.
-    log.info(`${req.method} ${req.url}    ${req.user ? req.user.email : "anonymous"}    ${req.ip}`);
+    log.info(`${req.method} ${req.url} ${req.user ? req.user.email : "anonymous"}`);
 
-    // let initTime = Date.now();
-    // // Log on response.
-    // res.on('finish', ()=>{
-        // log.info('request: ' + 
-        // `{ method: ${req.method} }, ` + 
-        // `{ url: ${req.url} }, ` + 
-        // `{ status: ${res.statusCode} }, ` + 
-        // `{ length: ${res.get('content-length')} }, ` + 
-        // `{ time: ${Date.now() - initTime} }, ` +  
-        // `{ ip: ${req.ip} }`);
-        // // log.info(`Response finish sent: ${res.headersSent}`);
-    // });
+    let initTime = Date.now();
+    // Log on response.
+    res.on('finish', ()=>{
+        log.silly('request: ' + 
+        `{ method: ${req.method} }, ` + 
+        `{ url: ${req.url} }, ` + 
+        `{ status: ${res.statusCode} }, ` + 
+        `{ length: ${res.get('content-length')} }, ` + 
+        `{ time: ${Date.now() - initTime} }, ` +  
+        `{ ip: ${req.ip} }`);
+        // log.info(`Response finish sent: ${res.headersSent}`);
+    });
 
     // res.on('finish', ()=>{
         // log.info('request: ' + 
