@@ -49,6 +49,16 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt-nodejs');
 
+// Send email, system started.
+const emailSender = require('./config/email');
+let devMailOptions = {
+    from: '',
+    to: emailSender.devEmail,
+    subject: 'Zunka site started.',
+    text: (new Date).toString()
+};
+emailSender.sendMail(devMailOptions, err=>{})
+
 // Cart.
 const Cart = require('./model/cart');
 

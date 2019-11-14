@@ -73,7 +73,7 @@ passport.use('local.signup', new LocalStrategy({
               from: '',
               to: req.body.email,
               subject: 'Solicitação de criação de conta no site da Zunka.',
-              text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a criação de uma conta no site da Zunka (https://www.zunka.com.br) usando este e-mail.\n\n' + 
+              text: 'Você recebeu este e-mail porquê você (ou alguém) requisitou a criação de uma conta no site da Zunka (https://www.zunka.com.br) usando este e-mail.\n\n' + 
               'Por favor clique no link, ou cole-o no seu navegador de internet para concluir a criação da conta.\n\n' + 
               'https://' + req.app.get('hostname') + '/user/signin/' + token + '\n\n' +
               'Se não foi você que requisitou esta criação de conta, por favor, ignore este e-mail e nenhuma conta será criada.',

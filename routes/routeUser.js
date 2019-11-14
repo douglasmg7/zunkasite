@@ -204,7 +204,7 @@ router.post('/api/forgottenPassword', (req, res, next)=>{
                 from: '',
                 to: req.body.email,
                 subject: 'Solicitação para Redefinir senha.',
-                text: 'Você recebeu este e-mail porquê você (ou alguem) requisitou a redefinição da senha de sua conta.\n\n' + 
+                text: 'Você recebeu este e-mail porquê você (ou alguém) requisitou a redefinição da senha de sua conta.\n\n' + 
                       'Por favor clique no link, ou cole-o no seu navegador de internet para completar o processo.\n\n' + 
                       'https://' + req.app.get('hostname') + '/user/reset-password/' + token + '\n\n' +
                       // 'Esta solicitação de redefinição expira em duas horas.\n' +
