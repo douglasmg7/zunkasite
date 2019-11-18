@@ -681,7 +681,7 @@ function closeOrder(order, req, res) {
 				if (err) {
 					log.error(err.stack);
 				} else {
-					log.info(`Email with order confirmation sent to ${req.user.email}`);
+					// log.info(`Email with order confirmation sent to ${req.user.email}`);
 				}
 				res.json({ success: true });
 				// Listed itens string.
@@ -755,7 +755,7 @@ function closeOrder(order, req, res) {
 					if (err) {
 						log.error(err.stack);
 					} else {
-						log.info(`Email with alert of new order sent to ${emailSender.adminEmail}`);
+						// log.info(`Email with alert of new order sent to ${emailSender.adminEmail}`);
 					}
 				})
 			})

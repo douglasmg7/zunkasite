@@ -111,7 +111,7 @@ const log = createLogger({
 // Console only on dev.
 if(process.env.NODE_ENV === 'development'){
     log.add(new transports.Console({
-        level: 'silly',
+        level: 'debug',
         format: format.combine(
             format.label({ label: '[zunka]' }),
             format.printf(info=>colors[levelColors[info.level]](`${info.label} ${info.message}`)),

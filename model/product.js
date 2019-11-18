@@ -1,5 +1,6 @@
 'use strict';
 const mongoose = require('mongoose');
+const log = require('../config/log');
 
 // Product.
 let product = new mongoose.Schema({
@@ -78,6 +79,26 @@ product.pre('save', function(next){
 		this.storeProductTitle = this.storeProductTitle.charAt(0).toUpperCase() + this.storeProductTitle.slice(1);
 	}
 	next();
+});
+
+// When a new product was created.
+product.post('save', function () {
+    log.debug('middleware post - product created');
+});
+
+// When a product was saved.
+product.post('findOneAndUpdate', function () {
+    log.debug('middleware post - product saved');
+});
+
+// When a product was removed (fired by findByIdAndRemove too).
+product.post('findOneAndRemove', function () {
+    log.debug('middleware post - product removed');
+});
+
+// When a product quantity was changed.
+product.post('updateOne', function () {
+    log.debug('middleware post - product quantity changed');
 });
 
 module.exports = mongoose.model('product', product, 'products');

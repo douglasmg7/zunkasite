@@ -187,7 +187,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 	// Send validation erros if some.
 	for (let key in validation){
 		if (validation[key]) {
-            log.debug(`Validations: ${JSON.stringify(validation, null, 2)}`);
+            // log.debug(`Validations: ${JSON.stringify(validation, null, 2)}`);
 			res.json({validation});
 			return;
 		}

@@ -208,7 +208,7 @@ router.post('/ppp/webhook-listener', (req, res, next)=>{
 										if (err) {
 											log.error(err.stack);
 										} else {
-											log.info(`Email with alert of order paid completed sent to ${emailSender.adminEmail}`);
+											// log.info(`Email with alert of order paid completed sent to ${emailSender.adminEmail}`);
 										}
 									})
 								}
