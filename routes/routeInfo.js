@@ -98,4 +98,17 @@ router.get('/about-site', (req, res, next)=>{
     });
 })
 
+// Politics
+router.get('/politics', (req, res, next)=>{
+    let text = '';
+    let markdownText = markdownCache.getCache().get('info-políticas');
+    if (markdownText) {
+        text = marked(markdownText);
+    }
+    res.render('info/politics', {
+        nav: {},
+        text
+    });
+})
+
 module.exports = router;
