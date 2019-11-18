@@ -211,12 +211,17 @@ app.use(function(req, res, next) {
     let initTime = Date.now();
     // Log on response.
     res.on('finish', ()=>{
+        // In kilobytes.
+        let length = 0;
+        if (res.get('content-length')) {
+            length = (res.get('content-length') / 1024).toFixed(0);
+        }
         log.silly('request: ' + 
         `{ method: ${req.method} }, ` + 
         `{ url: ${req.url} }, ` + 
         `{ status: ${res.statusCode} }, ` + 
-        `{ length: ${res.get('content-length')} }, ` + 
-        `{ time: ${Date.now() - initTime} }, ` +  
+        `{ length: ${length} }, ` +     // Kilobytes. 
+        `{ time: ${Date.now() - initTime} }, ` +    // Miliseconds. 
         `{ user: ${req.user ? req.user.email : "anonymous"} }`);
         // log.info(`Response finish sent: ${res.headersSent}`);
     });
