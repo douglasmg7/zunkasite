@@ -4,23 +4,10 @@ block title
     title Zunka - Como comprar
 
 append css
-    link(rel="stylesheet" href="/css/info/info.css" charset="utf-8")
+    link(rel="stylesheet" href="/css/info/info.css?003" charset="utf-8")
 
 block content 
-    section.shadow
-        h2.title Como Comprar
-        p Todo processo de compras no site Zunka é automatizado, basta criar uma conta ou entrar com o seu usuário e senha em nosso site, incluir os produtos desejados no carrinho e então finalizar a compra.
-        //- br
-        p O pagamento poderá ser feito com cartão de crédito, transferência bancária, dinheiro ou boleto bancário.
-        p Se o pagamento escolhido for transferência bancária, dinheiro ou cartão, a entrega será feita no mesmo dia a tarde pelo nosso motoqueiro para grande Belo Horizonte ou despachado no mesmo dia a tarde pelos Correios para as demais regiões Brasileiras.
-        p Se o pagamento for realizado via boleto bancário, a entrega ou despacho será realizado no próximo dia útil, também na parte da tarde.
-        //- br
-        p Caso tenha uma dúvida técnica que não esteja na página do produto, você pode entrar em pelo WhatsApp 31 99610-2412, 31 98534-1997 ou pelo e-mal zunka@outlook.com.br.
-        //- br
-        p Após a confirmação de pagamento pelo nosso setor financeiro, o produto será entregue no local que solicitar, dentro do horário comercial (de 10:00 hs às 20:00 hs de segunda-feira à domingo) pelo motoqueiro.
-        p Pelos Correios a postagem será feita de segunda-feira à sexta-feira no período vespertino.
-        p Caso seja necessário o serviço de reentrega, os custos adicionais serão pagos pelo cliente.
-        p Não aceite equipamentos que tenham a sua embalagem violada, peça ao entregador para devolver e informe imediatamente à nossa equipe sobre o ocorrido.
+    section.shadow.markdown!= text
 
 append external_scripts
     script(src='/js/info/info.js?0002') 

@@ -1,33 +1,13 @@
 extends ../layout/layout_vue_n
 
 block title
-	title Zunka - Pagamento
+    title Zunka - Pagamento
 
 append css
-	link(rel="stylesheet" href="/css/info/info.css" charset="utf-8")
+    link(rel="stylesheet" href="/css/info/info.css?002" charset="utf-8")
 
 block content 
-	section.shadow
-		h2.title Pagamento
-		p Oferecemos algumas opções de pagamento, podendo ser em dinheiro, depósito, transferência, boleto bancário e cartão débito e credito.
-		p Veja maiores detalhes abaixo:
-		h4 Dinheiro
-		p O pagamento em dinheiro pode ser feito no ato da entrega quando o frete for via motoqueiro para grande Belo Horizonte.
-		p Você ganha até 5% de desconto.
-		h4 Transferência bancária
-		p Você pode realizar uma transferência bancária por DOC, TED, transferência entre contas do Santander e depósito nas agências, os valores praticados poderão ser os mesmos do pagamento em dinheiro.
-		p Solicite um dos nossos consultores de vendas o número da nossa conta bancária.
-		p O tempo de confirmação de pagamento pelo nosso setor financeiro depende do tipo de transferência bancária que você realizou.
-		p No caso de DOC, esta confirmação só será realizada no próximo dia útil, se for TED, o prazo é em torno de 30 minutos e se for transferência entre contas do Santander, até 30 minutos.
-		p Ao concluir a sua compra, o site irá lhe informar os dados bancários para depósito.
-		h4 Boleto Bancário
-		p Para as compras realizadas com o pagamento via boleto bancário, você também consegue descontos em nosso site, porém, o envio de seus produtos só será realizado após a compensação bancária, confirmada pelo nosso setor financeiro.
-		p Este prazo leva em torno de dois dias úteis.
-		h4 Cartão
-		p Você pode pagar suas compras com cartões de crédito ou débito Visa, Mastercard, Diners Club, American Express entre muitos outros, tanto pelo site quanto pelo terminal móvel para compras via motoqueiro.
-		p O nosso atual processador de pagamento é o PayPal.
-		p Com o intuito de facilitar as suas compras, a Zunka lhe oferece ainda a opção de dividi-las em até 12 vezes no cartão de crédito com juros em torno de 2% ao mês.
-		p Pelo site, as compras pelo cartão serão processadas pelo PayPal.
+    section.shadow.markdown!= text
 
 append external_scripts
-	script(src='/js/info/info.js?0002') 
+    script(src='/js/info/info.js?0002') 

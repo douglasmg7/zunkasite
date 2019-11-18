@@ -1,25 +1,13 @@
 extends ../layout/layout_vue_n
 
 block title
-	title Zunka - Garantia
+    title Zunka - Garantia
 
 append css
-	link(rel="stylesheet" href="/css/info/info.css" charset="utf-8")
+    link(rel="stylesheet" href="/css/info/info.css" charset="utf-8")
 
 block content 
-	section.shadow
-		h2.title Garantia
-		p Todos os produtos comercializados pela Zunka possuem um prazo de cobertura de 3 meses contra defeito de fabricação a contar da data da compra.
-		p Este prazo já inclui a garantia legal, conforme Artigo 26 do Código de Defesa do Consumidor.
-		p Todos os acessórios, caixas, discos de instalação, manual e qualquer outro item e a embalagem original do produto devem ser preservados enquanto vigorar o prazo de garantia.
-		//- br
-		p Importante: A reposição ou conserto de um produto não se constitui em nova compra, não sendo, portanto, motivo de extensão ou renovação do prazo de garantia.
-		p Esta garantia limita-se ao conserto ou eventual substituição do produto em caso de defeito comprovado pelo suporte técnico do representante da marca no Brasil, de acordo com o estabelecido no Código de Defesa do Consumidor.
-		p Não existe qualquer outra garantia implícita ou indireta e o fabricante não é obrigado a trocar todo o equipamento para sanar o vício.
-		//- br
-		p Não garantimos compatibilidade entre componentes físicos (hardware), sistemas operacionais ou outros softwares.
-		p É de total responsabilidade do cliente a escolha do produto adequado ao que se destina o mesmo.
-		p As informações técnicas disponíveis estão em conformidade com as especificações disponibilizadas pelo próprio fabricante, sendo meramente de caráter informativas, com o objetivo de contribuir na sua decisão de compra.
+    section.shadow.markdown!= text
 
 append external_scripts
-	script(src='/js/info/info.js?0002') 
+    script(src='/js/info/info.js?0002') 

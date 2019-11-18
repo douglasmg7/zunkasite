@@ -4,20 +4,10 @@ block title
     title Zunka - Contato
 
 append css
-    link(rel="stylesheet" href="/css/info/info.css" charset="utf-8")
+    link(rel="stylesheet" href="/css/info/info.css?002" charset="utf-8")
 
 block content 
-    section.shadow!= text
-        //- h2.title Contato
-        //- p A Zunka oferece alguns meios de comunicação para esclarecer algumas dúvidas técnicas que não foram encontradas nas páginas dos produtos ou algum procedimento na compra, formas de pagamento e outros que não são padrão no processo de compra.
-        //- p As compras são realizadas exclusivamente pelo site zunka.com.br. Nenhum dos contatos abaixo são para fechamento de pedidos.
-        //- h4 E-mail
-        //- p As mensagens enviadas para <span style="font-weight: bold; color: green">zunka@outlook.com.br</span> são respondidas em até 48 horas. Caso o cliente tenha interesse em responder orçamentos por e-mail, importante salientar que as especificações e demais informações não devem seguir em arquivos anexos. Por medidas de segurança, todas as informações devem seguir no corpo do próprio e-mail.
-        //- h4 WhatsApp (de segunda a sexta-feira de 8 as 18 horas)
-        //- p <span style="font-weight: bold; color: green"> (31) 99841-8491</span> (as mensagens são respondidas em até 24 horas)
-        //- h4 Telefone (todos os dias de 8 às 18 horas)
-        //- p <span style="font-weight: bold; color: green"> (31) 99999-5565</span> (WhatsApp também)
-        //- p <span style="font-weight: bold; color: green"> (31) 2010-9785</span> 
+    section.shadow.markdown!= text
 
 append external_scripts
     script(src='/js/info/info.js?0004') 

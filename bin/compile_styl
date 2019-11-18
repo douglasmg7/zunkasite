@@ -24,3 +24,6 @@ stylus ../styl/user --out ../dist/css/user/
 # Info.
 mkdir -p ../dist/css/info
 stylus ../styl/info --out ../dist/css/info/
+# Markdown.
+mkdir -p ../dist/css/misc
+stylus ../styl/misc --out ../dist/css/misc/

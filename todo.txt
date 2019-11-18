@@ -1,3 +1,8 @@
+# message
+markdown for infos
+log for each access
+correção selecione um endereço para envio
+
 # Update script exit when git secret fail.
 
 # put downloaded aldo xml into the paste xml/aldo

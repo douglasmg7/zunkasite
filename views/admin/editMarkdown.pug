@@ -12,15 +12,15 @@ block content
         h2.title {{ md._id === 'new' ? "Novo markdown": "Alterar markdown" }}
         //- Warn message.
         p.warn-message {{ warnMessage }}    
-        //- Dead line.
+        //- Name.
         label(for='name') Nome
-        input(type='text' id='name' v-model='md.name')
-        //- Max weight.
-        label(for='markdown') Markdown 
-        textarea(id='markdown' rows='8' v-model='md.markdown')
-
+        input(type='text' id='name' v-model='md.name' autofocus)
+        //- Compiled markdown.
         .markdown(v-html='compiledMd')
         //- .markdown(v-html='marked(md.markdown)')
+        //- Markdown.
+        label(for='markdown') Markdown 
+        textarea(id='markdown' v-model='md.markdown')
 
         input.btn-primary(type='button', :value='md._id === "new" ? "Criar": "Salvar"' @click='save()')
         input.btn-danger(v-if='!(md._id === "new")' type='button' value='Apagar' @click='remove()')

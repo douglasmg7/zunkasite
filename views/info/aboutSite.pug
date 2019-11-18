@@ -1,32 +1,13 @@
 extends ../layout/layout_vue_n
 
 block title
-	title Zunka - Sobre o site
+    title Zunka - Sobre o site
 
 append css
-	link(rel="stylesheet" href="/css/info/info.css" charset="utf-8")
+    link(rel="stylesheet" href="/css/info/info.css?0003" charset="utf-8")
 
 block content 
-	section.shadow
-		h2.title Sobre o site
-		p Um site rápido e seguro.
-		p Uma boa loja virtual deve ter um eficiente sistema de segurança e uma alta velocidade na abertura e processamento das páginas, por isso, adotamos os mais avançados recursos de programação e um design limpo e simples de navegar para que os usuários possam ter um melhor conforto operacional em nosso site.
-		p Entre as principais tecnologias utilizadas estão o 
-			a(href="https://nodejs.org/en/") Node.js,&nbsp 
-			a(href="https://expressjs.com/") Express,&nbsp 
-			a(href="https://vuejs.org/") Vue.js,&nbsp 
-			a(href="https://www.mongodb.com/") Mongodb,&nbsp 
-			a(href="https://redis.io/") Redis,&nbsp 
-			a(href="https://pugjs.org") Pug,&nbsp 
-			a(href="http://stylus-lang.com") Stylus,&nbsp 
-			a(href="https://golang.org/") Golang,&nbsp 
-			a(href="https://www.sqlite.org") Sqlite e&nbsp 
-			a(href="https://www.paypal.com") PayPal,&nbsp 
-			| que também são adotadas por grandes corporações, como Uber, ebay, Facebook, Google, PayPal entre outras, desta forma, mantemos o nosso site seguro e rápido para você realizar as suas compras com tranquilidade.
-		p O aprimoramento é uma característica que deve ser buscada constantemente, por isso, 
-			| deixamos aqui o contato <span style="font-weight: bold; color: green">zunka@outlook.com.br</span> para que você possa enviar as suas críticas e/ou sugestões, pois o website 
-			a(href="/") Zunka&nbsp
-			| foi desenvolvido para você.
+    section.shadow.markdown!= text
 
 append external_scripts
-	script(src='/js/info/info.js?0002') 
+    script(src='/js/info/info.js?0002') 
