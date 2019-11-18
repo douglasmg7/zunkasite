@@ -12,7 +12,7 @@ if (!process.env.ZUNKAPATH) {
     console.error(`ZUNKAPATH not defined.`);
     process.exit(1);
 } 
-const logDir = path.join(process.env.ZUNKAPATH, 'log');
+const logDir = path.join(process.env.ZUNKAPATH, 'log', 'zunka-site');
 
 // Custom levels.
 const levels = {
@@ -41,7 +41,7 @@ try {
 }
 
 let fileTransportError = new transports.DailyRotateFile({
-    filename: path.join(logDir, 'zunka-site-error-%DATE%.log'),
+    filename: path.join(logDir, 'error-zunka-site-%DATE%.log'),
     datePattern: 'YYYY-MM-DD',
     maxsize: '2m',
     maxFiles: '15d',
@@ -54,7 +54,7 @@ let fileTransportError = new transports.DailyRotateFile({
 })
 
 let fileTransportDebug = new transports.DailyRotateFile({
-    filename: path.join(logDir, 'zunka-site-debug-%DATE%.log'),
+    filename: path.join(logDir, 'debug-zunka-site-%DATE%.log'),
     datePattern: 'YYYY-MM-DD',
     maxsize: '2m',
     maxFiles: '15d',
@@ -67,7 +67,7 @@ let fileTransportDebug = new transports.DailyRotateFile({
 })
 
 let fileTransportSilly = new transports.DailyRotateFile({
-    filename: path.join(logDir, 'zunka-site-silly-%DATE%.log'),
+    filename: path.join(logDir, 'silly-zunka-site-%DATE%.log'),
     datePattern: 'YYYY-MM-DD',
     maxsize: '2m',
     maxFiles: '15d',

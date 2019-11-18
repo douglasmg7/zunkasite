@@ -217,7 +217,7 @@ app.use(function(req, res, next) {
         `{ status: ${res.statusCode} }, ` + 
         `{ length: ${res.get('content-length')} }, ` + 
         `{ time: ${Date.now() - initTime} }, ` +  
-        `{ ip: ${req.ip} }`);
+        `{ user: ${req.user ? req.user.email : "anonymous"} }`);
         // log.info(`Response finish sent: ${res.headersSent}`);
     });
 
