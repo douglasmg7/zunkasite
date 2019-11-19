@@ -1,3 +1,5 @@
+# Log checkout process.
+
 # Correct date log time to local time.
 
 # npm run upgrade

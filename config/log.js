@@ -6,6 +6,7 @@ const { createLogger, format, transports, addColors } = require('winston');
 require('winston-daily-rotate-file');
 const fs = require('fs');
 const colors = require('colors/safe');
+const moment = require('moment-timezone');
 
 // ZUNKAPATH must be defined.
 if (!process.env.ZUNKAPATH) {
@@ -51,7 +52,8 @@ let fileTransportError = new transports.DailyRotateFile({
         format.printf(info=>`${info.timestamp}  ${info.level.padEnd(5)}  ${info.message}`)
         // format.printf(info=>colors[levelColors[info.level]](`${info.timestamp}  ${info.level.padEnd(5)}  ${info.message}`))
     ),
-})
+}) 
+
 
 let fileTransportDebug = new transports.DailyRotateFile({
     filename: path.join(logDir, 'debug-zunka-site-%DATE%.log'),
@@ -60,8 +62,9 @@ let fileTransportDebug = new transports.DailyRotateFile({
     maxFiles: '15d',
     level: 'debug',
     format: format.combine(
-        format.timestamp(),
-        format.printf(info=>`${info.timestamp}  ${info.level.padEnd(5)}  ${info.message}`)
+        format.timestamp({'format': () => { moment().tz('America/Sao_Paulo').format() } }),
+        format.ms(),
+        format.printf(info=>`${info.timestamp}  ${info.ms.padEnd(6)}  ${info.level.padEnd(6)}  ${info.message}`)
         // format.printf(info=>colors[levelColors[info.level]](`${info.timestamp}  ${info.level.padEnd(5)}  ${info.message}`))
     ),
 })
