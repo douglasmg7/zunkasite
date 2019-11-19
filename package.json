@@ -45,7 +45,7 @@
     "marked": "^0.7.0",
     "moment-timezone": "^0.5.27",
     "mongodb": "^3.3.2",
-    "mongoose": "^5.7.0",
+    "mongoose": "^5.7.5",
     "morgan": "^1.9.1",
     "nodemailer": "^4.7.0",
     "nodemon": "^1.19.2",
