@@ -79,7 +79,7 @@ const routeTest = require('./routes/routeTest');
 const routeAdmin = require('./routes/routeAdmin');
 const routeExt = require('./routes/routeExt');
 
-// Util.
+// Product categories init.
 let productCategories = require('./util/productCategories');
 
 // Run mode.

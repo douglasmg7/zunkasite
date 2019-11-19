@@ -1,6 +1,11 @@
 'use strict';
 const mongoose = require('mongoose');
 const log = require('../config/log');
+const productCategories = require('../util/productCategories');
+const { exec } = require('child_process');
+
+// Time to update zoom xml list.
+var zoomwscTimeout;
 
 // Product.
 let product = new mongoose.Schema({
@@ -82,23 +87,38 @@ product.pre('save', function(next){
 });
 
 // When a new product was created.
-product.post('save', function () {
-    log.debug('middleware post - product created');
+// save - when a new product was created.
+// findOneAndUpdate - when a product was saved.
+// findOneAndRemove - when a product was removed (fired by findByIdAndRemove too).
+// updateOne - when a product quantity was changed.
+product.post(['save', 'findOneAndUpdate', 'findOneAndRemove','updateOne'], function () {
+    productListChanged();
 });
 
-// When a product was saved.
-product.post('findOneAndUpdate', function () {
-    log.debug('middleware post - product saved');
-});
+// Is called every time list of products change (insert, update and delete).
+function productListChanged(){
+    // Update categories in use.
+    productCategories.updateInUse();
+    // Update zoom products list after some time, stop current time.
+    if (zoomwscTimeout) {
+        clearTimeout(zoomwscTimeout);
+    }
+    // Call zoomwsc (10 min)
+    // zoomwscTimeout = setTimeout(callZoomwsc, 10 * 60 * 1000);
+    // Call zoomwsc (1 second) - for test.
+    zoomwscTimeout = setTimeout(callZoomwsc, 1000);
+}
 
-// When a product was removed (fired by findByIdAndRemove too).
-product.post('findOneAndRemove', function () {
-    log.debug('middleware post - product removed');
-});
-
-// When a product quantity was changed.
-product.post('updateOne', function () {
-    log.debug('middleware post - product quantity changed');
-});
+// Call zoomwsc to upate zoom xml product list.
+function callZoomwsc() {
+    log.debug(`zoomwsc was called...`);
+    exec('zoomwsc', (err, stdout, stderr) => {
+          if (err) {
+              log.error(`Calling zoomwsc. ${err}`);
+          }
+          // log.debug(`stdout: ${stdout}`);
+          // log.debug(`stderr: ${stderr}`);
+    })
+};
 
 module.exports = mongoose.model('product', product, 'products');

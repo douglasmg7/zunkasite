@@ -1,6 +1,6 @@
 'us estrict';
-let Product = require('../model/product');
-let log = require('../config/log');
+const log = require('../config/log');
+const mongoose = require('mongoose');
 
 // The order of items matter.
 let regexCategories = [
@@ -63,17 +63,30 @@ function getCategoriesInUse() {
 }
 // Update categories in use.
 function updateCategoriesInUse(){
-	let filter = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
-    Product.find(filter).distinct('storeProductCategory')
-    .then(categories=>{
-        categoriesInUse = categories;
-        // log.debug('categoriesInUse init');
-        // log.debug(`util categoriesInUse: ${JSON.stringify(categoriesInUse, null, 2)}`);
-    })
-    .catch(err=>{
-        log.error('Get categories in use. ' + err.message);
-    });
+    try{
+        // Wait for mongoose drive to connect.
+        let mongooseConnTime = setInterval(()=>{
+            // log.info(`test mongoose db: ${mongoose.connection.db}`);
+            if (mongoose.connection.db) {
+                clearTimeout(mongooseConnTime);
+                let filter = {
+                    'storeProductCommercialize': true, 
+                    'storeProductTitle': {$regex: /\S/}, 
+                    'storeProductQtd': {$gt: 0}, 
+                    'storeProductPrice': {$gt: 0},
+                    'storeProductCategory': {$regex: /\S/}
+                };
+                mongoose.connection.db.collection('products').distinct('storeProductCategory', filter, (err, categories)=>{
+                    // log.debug(`categories: ${JSON.stringify(categories, null, 2)}`);
+                    categoriesInUse = categories;
+                });
+            } 
+        }, 300);
+    } catch(err) {
+        log.error('Get categories in use. ' + err.stack);
+    }
 }
+// Init product categories.
 updateCategoriesInUse();
 
 module.exports.categories = categories;
