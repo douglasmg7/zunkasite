@@ -1,3 +1,8 @@
+# Correct date log time to local time.
+
+# npm run upgrade
+if package.json changed call npm install
+
 # Update script exit when git secret fail.
 
 # put downloaded aldo xml into the paste xml/aldo
@@ -13,10 +18,6 @@
 # aldowsc log time inside xml file.
 
 # size up images from GET / (not good in mobile)
-
-# npm run upgrade
-if package.json changed call npm install
-if secret files change call git reveal
 
 # mongodb
 db.productCategories.drop()

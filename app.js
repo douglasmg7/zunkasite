@@ -241,11 +241,7 @@ app.use((req, res, next)=>{
     res.locals.csrfToken = req.csrfToken();
     res.locals.user = req.user ? req.user : { name: undefined, group: undefined };
     res.locals.path = req.path;
-    if (req.method === 'GET') {
-        res.locals.categoriesInUse = productCategories.inUse();
-        // log.debug(`categoriesInUse: ${JSON.stringify(res.locals.categoriesInUse, null, 2)}`);
-        // log.debug(`request: ${JSON.stringify(req.method)} ${JSON.stringify(req.url)}`);
-    }
+    res.locals.categoriesInUse = productCategories.inUse();
     next();
 });
 

@@ -57,8 +57,7 @@ router.get('/', function(req, res, next) {
 		}
 		// Render page.
         try {
-            // log.debug(`Before render GET /`);
-            // log.debug(`user: ${JSON.stringify(res.locals.user, null, 2)}`);
+            // log.debug(`user: ${JSON.stringify(res.locals, null, 2)}`);
             return res.render('product/productList', {
                 nav: {
                 },
@@ -66,8 +65,7 @@ router.get('/', function(req, res, next) {
                 banners: JSON.parse(banners) || [],
             });
         } catch(err){
-            log.error(`Rendering product/productList(err): ${err}. ${err.stack}`);
-            log.error(`Rendering product/productList(err.stack): ${err}. ${err.stack}`);
+            log.error(`Rendering product/productList. ${err.stack}`);
         }
 	});
 });
@@ -209,25 +207,6 @@ router.get('/api/products', function (req, res) {
 			return next(err);
 		});
 });
-
-// // Get products.
-// router.get('/api/products', function (req, res) {
-//   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
-//   const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
-//   const search = req.query.search
-//     ? {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}, 'storeProductTitle': {$regex: req.query.search, $options: 'i'}}
-//     : {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
-//   // Find products.
-//   let productPromise = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
-//   // Product count.
-//   let productCountPromise = Product.countDocuments(search).exec();
-//   Promise.all([productPromise, productCountPromise])
-//   .then(([products, count])=>{
-//     res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)});
-//   }).catch(err=>{
-//     return next(err);
-//   });
-// });
 
 // Get news products.
 router.get('/api/new-products', function (req, res) {
