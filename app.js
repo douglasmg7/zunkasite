@@ -52,11 +52,12 @@ const bcrypt = require('bcrypt-nodejs');
 
 // Send email, system started.
 const emailSender = require('./config/email');
+const moment = require('moment-timezone');
 let devMailOptions = {
     from: '',
     to: emailSender.devEmail,
     subject: 'Zunka site started.',
-    text: (new Date).toString()
+    text: moment().tz('America/Sao_Paulo').format()
 };
 emailSender.sendMail(devMailOptions, err=>{})
 
