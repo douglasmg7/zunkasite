@@ -1,0 +1,37 @@
+** Dentro da página "Selecione a forma de pagamento" **
+GET /checkout/payment/order/5dd530f708e1971cdfef8ffb douglasmg7@gmail.com
+
+**  Dinheiro selecionado **
+POST /checkout/payment/order/5dd530f708e1971cdfef8ffb?method=money douglasmg7@gmail.com
+// Dentro da página de finalização de compra (Resumo da compra).
+GET /checkout/review/order/5dd530f708e1971cdfef8ffb douglasmg7@gmail.com
+// Pedido concluído.
+POST /checkout/close/order/5dd5380059a1ef22e5b843c3 douglasmg7@gmail.com
+// Dentro da página de confirmação do pedido.
+GET /checkout/confirmation/order/5dd5380059a1ef22e5b843c3 douglasmg7@gmail.com
+
+** Transferência bancária selecionado **
+POST /checkout/payment/order/5dd530f708e1971cdfef8ffb?method=transfer douglasmg7@gmail.com
+// Dentro da página de finalização de compra (Resumo da compra).
+GET /checkout/review/order/5dd530f708e1971cdfef8ffb douglasmg7@gmail.com
+// Pedido concluído.
+POST /checkout/close/order/5dd538a759a1ef22e5b84493 douglasmg7@gmail.com
+// Dentro da página de confirmação do pedido.
+GET /checkout/confirmation/order/5dd538a759a1ef22e5b84493 douglasmg7@gmail.com
+
+** Credit card selecionado **
+POST /checkout/payment/order/5dd530f708e1971cdfef8ffb?method=ppp-credit douglasmg7@gmail.com
+// Dentro da página do paypal.
+GET /checkout/ppp/payment/approval/5dd530f708e1971cdfef8ffb douglasmg7@gmail.com
+// Dentro da página de finalização de compra (Resumo da compra).
+GET /checkout/review/order/5dd530f708e1971cdfef8ffb douglasmg7@gmail.com
+// Pedido concluído.
+POST /checkout/close/order/5dd530f708e1971cdfef8ffb douglasmg7@gmail.com
+// Dentro da página de confirmação do pedido.
+GET /checkout/confirmation/order/5dd530f708e1971cdfef8ffb douglasmg7@gmail.com
+
+** PayPal selecionado **
+// Pedido concluído atraveś do PayPal front end client.
+POST /checkout/payment/order/5dd5392159a1ef22e5b845d1?method=paypal douglasmg7@gmail.com
+// Dentro da página de confirmação do pedido.
+GET /checkout/confirmation/order/5dd5392159a1ef22e5b845d1 douglasmg7@gmail.com

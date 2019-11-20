@@ -564,7 +564,8 @@ router.post('/close/order/:order_id', (req, res, next)=>{
 					log.error("Order not have payment approved by payap plus.");
 					return res.json({ success: false, msg: "", err: "Order not have payment approved by payap plus."});
 				}
-				log.debug(`req.body.paypalMockCode: ${req.body.paypalMockCode}`);
+				// log.silly(`req.body.paypalMockCode: ${req.body.paypalMockCode}`);
+                // log.info(`Executing payPal payment... Order: ${order._id}`);
 				executePayment(order, req.body.paypalMockCode, (err, pppExecutePayment)=>{
 					if (err) {
 						// Execute payment error.
@@ -1271,7 +1272,7 @@ function createPayment(order, cb){
 			brand_name: "Zunka",
 			shipping_preference: "SET_PROVIDED_ADDRESS"
 		}, 
-		log.debug(`payReqData: ${JSON.stringify(payReqData, null, 2)}`);
+		// log.silly(`payReqData: ${JSON.stringify(payReqData, null, 2)}`);
 		// Create a payment request.
 		axios({
 			method: 'post',
@@ -1287,7 +1288,8 @@ function createPayment(order, cb){
 			if (response.data.err) {
 				return cb(new Error(`Creating payment request on paypal web service. ${response.data.err}`));
 			} else {
-				log.debug(`Created a payment request on payapl web service: ${JSON.stringify(response.data, null, 2)}`);
+				// log.silly(`Created a payment request on payapl web service: ${JSON.stringify(response.data, null, 2)}`);
+				// log.info(`PayPal payment request created. Order: ${order._id}`);
 				order.payment.pppCreatePayment = response.data;
 				// return cb(null, response.data);
 				return cb(null);
@@ -1416,7 +1418,7 @@ function getAccessToken(cb){
 			} else {
 				response.data.get_date = reqTime;
 				response.data.expires_date = new Date(response.data.expires_in * 1000 + reqTime.getTime());
-				log.debug(`A new paypal access token was retrived from paypal web server.`);
+				// log.silly(`A new paypal access token was retrived from paypal web server.`);
 				// log.debug(`${JSON.stringify(response.data, null, 2)}`);
 				redis.set(redisPaypalAccessTokenKey, JSON.stringify(response.data), (err)=>{
 					if (err) {
@@ -1476,7 +1478,8 @@ function executePayment(order, paypalMockCode, cb){
 			if (response.data.err) {
 				return cb(new Error(`Executing payment on paypal web service. ${response.data.err}`));
 			} else {
-				log.debug(`Pyapal execute payment: ${JSON.stringify(response.data, null, 2)}`);
+				// log.silly(`Pyapal execute payment: ${JSON.stringify(response.data, null, 2)}`);
+				// log.info(`PayPal payment executed. Order: ${order._id}`);
 				return cb(null, response.data);
 			}
 		}).catch(err => {
@@ -1507,13 +1510,12 @@ function getPayment(order, cb){
 			if (response.data.err) {
 				return cb(new Error(`Getting payment info from paypal web service. ${response.data.err}`));
 			} else {
-				log.debug(`Payment info: ${JSON.stringify(response.data, null, 2)}`);
+				// log.silly(`Payment info: ${JSON.stringify(response.data, null, 2)}`);
 				return cb(null, response.data);
 			}
 		})
 		.catch(err => {
-			log.debug(err);
-			log.debug('**** e ****');
+			log.error(err.stack);
 			return cb(new Error(`Getting payment info from paypal web service. ${err}`));
 		}); 
 	});

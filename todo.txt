@@ -1,6 +1,4 @@
-# Log checkout process.
-
-# Correct date log time to local time.
+# Define checkout request that need be tracked or by db.order.find().
 
 # npm run upgrade
 if package.json changed call npm install

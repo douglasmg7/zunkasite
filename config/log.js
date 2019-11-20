@@ -41,50 +41,48 @@ try {
     console.log(e);
 }
 
+// console.log(`time: ${ moment().tz('America/Sao_Paulo').format() }`);
+
+// General configurations.
+let datePattern = 'YYYY-MM-DD';
+let maxSize = '2m';
+let maxFiles = '15d';
+let _format = format.combine(
+    format.timestamp({'format': () => { return moment().tz('America/Sao_Paulo').format() } }),
+    format.printf(info=>`${info.timestamp}  ${info.level.padEnd(6)}  ${info.message}`)
+);
+
+// Error log.
 let fileTransportError = new transports.DailyRotateFile({
     filename: path.join(logDir, 'error-zunka-site-%DATE%.log'),
-    datePattern: 'YYYY-MM-DD',
-    maxsize: '2m',
-    maxFiles: '15d',
+    datePattern: datePattern,
+    maxSize: maxSize,
+    maxFiles: maxFiles,
     level: 'error',
-    format: format.combine(
-        format.timestamp(),
-        format.printf(info=>`${info.timestamp}  ${info.level.padEnd(5)}  ${info.message}`)
-        // format.printf(info=>colors[levelColors[info.level]](`${info.timestamp}  ${info.level.padEnd(5)}  ${info.message}`))
-    ),
+    format: _format
 }) 
-
-
+// Debug log.
 let fileTransportDebug = new transports.DailyRotateFile({
     filename: path.join(logDir, 'debug-zunka-site-%DATE%.log'),
-    datePattern: 'YYYY-MM-DD',
-    maxsize: '2m',
-    maxFiles: '15d',
+    datePattern: datePattern,
+    maxSize: maxSize,
+    maxFiles: maxFiles,
     level: 'debug',
-    format: format.combine(
-        format.timestamp({'format': () => { moment().tz('America/Sao_Paulo').format() } }),
-        format.ms(),
-        format.printf(info=>`${info.timestamp}  ${info.ms.padEnd(6)}  ${info.level.padEnd(6)}  ${info.message}`)
-        // format.printf(info=>colors[levelColors[info.level]](`${info.timestamp}  ${info.level.padEnd(5)}  ${info.message}`))
-    ),
-})
-
+    format: _format
+}) 
+// Silly log.
 let fileTransportSilly = new transports.DailyRotateFile({
     filename: path.join(logDir, 'silly-zunka-site-%DATE%.log'),
-    datePattern: 'YYYY-MM-DD',
-    maxsize: '2m',
-    maxFiles: '15d',
+    datePattern: datePattern,
+    maxSize: maxSize,
+    maxFiles: maxFiles,
     level: 'silly',
     format: format.combine(
-        format.timestamp(),
-        format.printf(info=>`${info.timestamp}  ${info.level.padEnd(5)}  ${info.message}`)
-        // format.printf(info=>colors[levelColors[info.level]](`${info.timestamp}  ${info.level.padEnd(5)}  ${info.message}`))
-    ),
-})
-
-// transport.on('rotate', function(oldFilename, newFilename) {
-// // do something fun
-// });
+        format.timestamp({'format': () => { return moment().tz('America/Sao_Paulo').format() } }),
+        format.ms(),
+        format.printf(info=>`${info.timestamp}  ${info.ms.padEnd(6)}  ${info.level.padEnd(6)}  ${info.message}`)
+    )
+}) 
 
 // Log configuration.
 const log = createLogger({
@@ -92,40 +90,16 @@ const log = createLogger({
     transports: [ fileTransportError, fileTransportDebug, fileTransportSilly ]
 });
 
-// // Log configuration.
-// const log = createLogger({
-// levels: levels,
-// transports: [
-// new transports.File({
-// filename: logFilename,
-// level: 'debug',
-// format: format.combine(
-// format.timestamp(),
-// format.printf(info=>`${info.timestamp}  ${info.level.padEnd(5)}  ${info.message}`)
-// // format.printf(info=>colors[levelColors[info.level]](`${info.timestamp}  ${info.level.padEnd(5)}  ${info.message}`))
-// ),
-// maxsize: 100 * 1000,
-// maxFiles: 20,
-// // pid: 2323
-// })
-// ]
-// });
-
-// Console only on dev.
+// Console (dev).
 if(process.env.NODE_ENV === 'development'){
     log.add(new transports.Console({
         level: 'debug',
         format: format.combine(
+            format.timestamp({'format': () => { return moment().tz('America/Sao_Paulo').format() } }),
             format.label({ label: '[zunka]' }),
-            format.printf(info=>colors[levelColors[info.level]](`${info.label} ${info.message}`)),
+            format.printf(info=>colors[levelColors[info.level]](`${info.label}  ${info.message}`)),
         )
     }));
 }
-
-// log.stream = { 
-    // write: function(message, encoding){ 
-        // log.info(message); 
-    // } 
-// }; 
 
 module.exports = log;
