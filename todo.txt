@@ -1,7 +1,6 @@
-# Define checkout request that need be tracked or by db.order.find().
+# Log rotation must rotate at midnight.
 
-# npm run upgrade
-if package.json changed call npm install
+# Define checkout request that need be tracked or by db.order.find().
 
 # Update script exit when git secret fail.
 
