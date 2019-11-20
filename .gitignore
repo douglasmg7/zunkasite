@@ -6,7 +6,7 @@ bower_components/
 public/js/bundle*
 bin/xml/
 
-# Mongo bakcup.
+# Backups.
 dump/
 
 # Include directories but not the files.

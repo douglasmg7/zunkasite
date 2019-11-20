@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 cd $(dirname $0)
 
-# which log.
-read -p "Qual lof file to download: " LOG_FILE
+# Clean.
+rm -rf ../dump/downloaded-logs
+mkdir -p ../dump/downloaded-logs/nginx
 
-# Get images backup.
-scp douglasmg7@vps10092.publiccloud.com.br:/home/douglasmg7/zunka/log/$LOG_FILE ../dump/
+# Get system logs from server.
+scp -r douglasmg7@vps10092.publiccloud.com.br:/home/douglasmg7/.local/share/zunka/log ../dump/downloaded-logs
+
+# Get nginx logs from server.
+scp -r root@vps10092.publiccloud.com.br:/var/log/nginx ../dump/downloaded-logs
+
+# Backup logs.
+tar -zcvf ../dump/downloaded-logs-$(date +%Y-%h-%dT%H%M%S).tar.gz ../dump/downloaded-logs/
