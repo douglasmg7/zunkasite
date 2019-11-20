@@ -7,8 +7,10 @@
 cd $ZUNKA_SITE_PATH
 echo :: Fetching zunka site...
 git fetch
+
 FILES_CHANGED=`git diff --name-only master...origin/master`
 STYLE_FILES_CHANGED=`git diff --name-only master...origin/master | grep "\.styl$"`
+PACKAGE_JSON_FILE_CHANGED=`git diff --name-only master...origin/master | grep "package\.json$"`
 SECRET_FILES_CHANGED=`git diff --name-only master...origin/master | grep "\.secret$"`
 RESTART_ZUNKA_SITE=`git diff --name-only master...origin/master | egrep \.'(json|secret|pug|js|styl|bundle)'$`
 RELOAD_NGINX=`git diff --name-only master...origin/master | egrep '(nginx.conf.secret|zunka.conf.secret)'$`
@@ -17,6 +19,12 @@ RELOAD_NGINX=`git diff --name-only master...origin/master | egrep '(nginx.conf.s
 if [[ ! -z $FILES_CHANGED ]]; then
     echo :: Merging zunka site...
     git merge
+fi
+
+# Npm install.
+if [[ ! -z $PACKAGE_JSON_FILE_CHANGED ]]; then
+    echo :: Updating npm packages...
+    npm install
 fi
 
 # Compile style files.
