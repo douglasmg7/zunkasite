@@ -35,3 +35,12 @@ GET /checkout/confirmation/order/5dd530f708e1971cdfef8ffb douglasmg7@gmail.com
 POST /checkout/payment/order/5dd5392159a1ef22e5b845d1?method=paypal douglasmg7@gmail.com
 // Dentro da página de confirmação do pedido.
 GET /checkout/confirmation/order/5dd5392159a1ef22e5b845d1 douglasmg7@gmail.com
+
+# Lista pagamentos selecionados.
+grep "POST\s*/checkout/payment" debug-zunka-site*
+
+# Lista revisão de pedido.
+grep "GET\s*/checkout/review" debug-zunka-site*
+
+# Lista pedidos finalizados.
+grep "POST\s*/checkout/close" debug-zunka-site*
