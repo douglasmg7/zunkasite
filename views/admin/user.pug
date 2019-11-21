@@ -1,0 +1,41 @@
+extends ../layout/layout_vue_n
+
+block title
+    title Zunka - Usuário
+
+block append css
+    link(rel="stylesheet" href="/css/admin/user.css?0001" charset="utf-8")
+
+block content 
+    section.shadow
+        //- Title.
+        h2.title {{ user.name }}
+
+        //- Email.
+        h3 Email
+        a(:href='`mailto:${this.user.email}`') {{ user.email }}
+        //- Cpf.
+        h3(v-if='user.cpf') Cpf
+        p(v-if='user.cpf') {{ user.cpf }}
+        //- Mobile number..
+        h3(v-if='user.mobileNumber') Celular
+        a(:href='`tel:${this.user.mobileNumber }`') {{ user.mobileNumber }}
+
+        //- Orders.
+        h3 Pedidos
+        //- a(:href='`/admin/order/${order._id}`' v-for='order in orders') {{ order.timestamps.placedAt }}
+        a(:href='`/admin/order/${order._id}`' v-for='order in orders') {{ placedAt(order) }} &nbsp&nbsp&nbsp {{ order.totalPrice | formatMoney }} 
+            //- p {{ order.timestamps }}
+
+        input.btn-exit(type='button' onclick='window.location.href="/admin/users"' value='Sair') 
+
+         
+
+append internal_scripts
+    script.
+        let userInfo = !{JSON.stringify(userInfo)};
+        let orders = !{JSON.stringify(orders)};
+
+append external_scripts
+    include ../components/moment-timezone.js.pug
+    script(src='/js/admin/user.js?0001')

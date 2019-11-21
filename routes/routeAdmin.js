@@ -500,10 +500,6 @@ router.get('/users', checkPermission, function(req, res, next) {
     // let [err, users, count] = getUsers('');
     getUsers('').then(val=>{
         let [err, users, totalUsers] = val;
-        // log.debug(`count: ${count}`);
-        // log.debug(`err: ${err}`);
-        // log.debug(`users: ${users}`);
-        // log.debug(`count: ${count}`);
         if (err) {
             return next(err);
         }
@@ -511,20 +507,29 @@ router.get('/users', checkPermission, function(req, res, next) {
     });
 });
 
+// User information page.
+router.get('/user/:_id', checkPermission, function(req, res, next) {
+    let promises = [
+        User.findById(req.params._id).exec(),
+        Order.find({ user_id: req.params._id }).sort({ updatedAt: -1 }).limit(10).exec()
+    ]
+    Promise.all(promises)
+        .then(([userInfo, orders])=>{
+            res.render('admin/user', { nav: {}, userInfo, orders });
+        }).catch(err=>{
+            return next(err);
+        });
+});
+
 // Get users.
 router.get('/api/users', checkPermission, function(req, res, next) {
-    // let [err, users, count] = getUsers('');
     getUsers(req.query.search).then(val=>{
         let [err, users, totalUsers] = val;
-        // log.debug(`count: ${count}`);
-        // log.debug(`err: ${err}`);
-        // log.debug(`users: ${users}`);
-        // log.debug(`count: ${count}`);
         if (err) {
             return next(err);
         }
         log.debug(`users before json: ${JSON.stringify(users, null, 2)}`);
-        res.json(users);
+        res.json({ users });
     });
 });
 
@@ -539,7 +544,7 @@ async function getUsers(search) {
                 { name: {$regex: search, $options: 'i'} },
                 { email: {$regex: search, $options: 'i'} },
             ]
-        }
+        };
     } 
     // Promises.
     let promises = [User.find(filter).sort({name: -1}).limit(10).exec()];
@@ -547,18 +552,13 @@ async function getUsers(search) {
     if (!search) {
         promises.push(User.find().countDocuments().exec());
     }
-    // log.debug(`filter: ${JSON.stringify(filter, null, 2)}`);
     return Promise.all(promises)
         .then(([users, totalUsers])=>{
-            // log.debug(`users: ${JSON.stringify(users, null, 2)}`);
-            // log.debug(`totalUsers: ${totalUsers}`);
             return [null, users, totalUsers];
         }).catch(err=>{
-            // log.debug(`Getting users. ${err.stack}`);
             return [err, null, null]
         });
 };
-
 
 /******************************************************************************
 /   BANNERS

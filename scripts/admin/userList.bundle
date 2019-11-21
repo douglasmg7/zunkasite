@@ -14,14 +14,8 @@ var app = new Vue({
 	},
 	methods: {
 		getUsers(){
-			// axios({
-				// method: 'get',
-				// url: `/admin/api/users?&search=${this.searchUsers}`,
-				// headers:{'csrf-token' : csrfToken}
-			// })
 			axios.get(`/admin/api/users?&search=${this.searchUsers}`, { headers: { 'csrf-token' : csrfToken } })
 			.then((res)=>{
-                console.log(JSON.stringify(res.data, null, 2));
 				this.users = res.data.users;
 			})
 			.catch((err)=>{
