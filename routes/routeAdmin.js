@@ -528,7 +528,6 @@ router.get('/api/users', checkPermission, function(req, res, next) {
         if (err) {
             return next(err);
         }
-        log.debug(`users before json: ${JSON.stringify(users, null, 2)}`);
         res.json({ users });
     });
 });

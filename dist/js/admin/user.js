@@ -45,7 +45,8 @@ var app = new Vue({
             }
             // Set to brazilian zone.
             d.setHours(d.getHours() - 3);
-			return `${d.getUTCDate()}-${MONTHS[d.getUTCMonth()]}-${d.getUTCFullYear()} ${d.getUTCHours()}:${d.getUTCMinutes()}`;
+			// return `${('0' + d.getUTCDate()).slice(-2)}-${MONTHS[d.getUTCMonth()]}-${d.getUTCFullYear()} ${('0' + d.getUTCHours()).slice(-2)}:${('0' + d.getUTCMinutes()).slice(-2)}`;
+			return `${d.getUTCDate()}-${MONTHS[d.getUTCMonth()]}-${d.getUTCFullYear()} ${('0' + d.getUTCHours()).slice(-2)}:${('0' + d.getUTCMinutes()).slice(-2)}`;
 		}
 	}
 });
