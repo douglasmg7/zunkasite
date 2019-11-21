@@ -14,6 +14,7 @@ const sharp = require('sharp');
 // Models.
 const Product = require('../model/product');
 const Order = require('../model/order');
+const User = require('../model/user');
 const ShippingPrice = require('../model/shippingPrice');
 const Markdown = require('../model/markdown');
 const markdownCache = require('../model/markdownCache');
@@ -488,6 +489,75 @@ router.post('/api/order/status/:_id/:status', checkPermission, function(req, res
 		}
 	});
 });
+
+
+/******************************************************************************
+/   USERS INFO
+ ******************************************************************************/
+
+// User list page.
+router.get('/users', checkPermission, function(req, res, next) {
+    // let [err, users, count] = getUsers('');
+    getUsers('').then(val=>{
+        let [err, users, totalUsers] = val;
+        // log.debug(`count: ${count}`);
+        // log.debug(`err: ${err}`);
+        // log.debug(`users: ${users}`);
+        // log.debug(`count: ${count}`);
+        if (err) {
+            return next(err);
+        }
+        res.render('admin/userList', { nav: {}, users, totalUsers });
+    });
+});
+
+// Get users.
+router.get('/api/users', checkPermission, function(req, res, next) {
+    // let [err, users, count] = getUsers('');
+    getUsers(req.query.search).then(val=>{
+        let [err, users, totalUsers] = val;
+        // log.debug(`count: ${count}`);
+        // log.debug(`err: ${err}`);
+        // log.debug(`users: ${users}`);
+        // log.debug(`count: ${count}`);
+        if (err) {
+            return next(err);
+        }
+        log.debug(`users before json: ${JSON.stringify(users, null, 2)}`);
+        res.json(users);
+    });
+});
+
+// Get users from db.
+async function getUsers(search) {
+    search = search.trim();
+    let filter = {};
+    // Find orders.
+    if (search) {
+        filter = {
+            $or: [
+                { name: {$regex: search, $options: 'i'} },
+                { email: {$regex: search, $options: 'i'} },
+            ]
+        }
+    } 
+    // Promises.
+    let promises = [User.find(filter).sort({name: -1}).limit(10).exec()];
+    // Only get total users count if no search (initial page reload).
+    if (!search) {
+        promises.push(User.find().countDocuments().exec());
+    }
+    // log.debug(`filter: ${JSON.stringify(filter, null, 2)}`);
+    return Promise.all(promises)
+        .then(([users, totalUsers])=>{
+            // log.debug(`users: ${JSON.stringify(users, null, 2)}`);
+            // log.debug(`totalUsers: ${totalUsers}`);
+            return [null, users, totalUsers];
+        }).catch(err=>{
+            // log.debug(`Getting users. ${err.stack}`);
+            return [err, null, null]
+        });
+};
 
 
 /******************************************************************************

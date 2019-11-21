@@ -1,0 +1,29 @@
+extends ../layout/layout_vue_n
+
+block title
+    title Admin - Pedidos
+
+block append css
+    link(rel="stylesheet" href="/css/admin/userList.css?0001" charset="utf-8")
+
+block content
+    section.shadow
+        h2.title Usuários - {{totalUsers}}
+        .search-user
+            input(type='text' v-model='searchUsers' @keyup.enter='getUsers()' placeholder='Pesquisar por usuários')
+            i.fas.fa-search.fa-lg(@click='getUsers()')
+        .users
+            .user(v-for='user, index in users')
+                a(:href='`/admin/user/${user._id}`')
+                    p {{user.name}} ({{user.email}})
+
+block footer
+
+append internal_scripts
+    script.
+        let cart = !{JSON.stringify(cart)};
+        let users = !{JSON.stringify(users)};
+        let totalUsers = !{JSON.stringify(totalUsers)};
+
+append external_scripts
+    script(src='/js/admin/userList.js?0001')

@@ -22,13 +22,15 @@ if user.name && user.group.includes('admin')
                 | &nbspMenu
             a.item(href="/admin/orders") Pedidos
             a.item(href="/admin") Produtos
-            a.item(href="/xml/zoom/zoom-produtos.xml") Produtos xml zoom
             a.item(href="/admin/product/new") Criar produto
+            a.item(href="/admin/users") Usuários
+            a.item(href="/admin") Produtos
             a.item(href="/admin/banner") Banners
             a.item(href="/admin/shipping/prices") Fretes
             a.item(href="/admin/motoboy-delivery") Motoboy
             a.item(href="/admin/markdown") Markdown
             a.item(href="/ns/aldo/products") Aldo
+            a.item(href="/xml/zoom/zoom-produtos.xml") Zoom
 //- Account.
 .sub-menu
     a.item.toggle-items(href="#")
