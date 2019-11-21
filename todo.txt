@@ -1,10 +1,6 @@
 # Log rotation must rotate at midnight.
 
-# Define checkout request that need be tracked or by db.order.find().
-
 # Update script exit when git secret fail.
-
-# put downloaded aldo xml into the paste xml/aldo
 
 # Update script to save dbs on server.
 
@@ -14,8 +10,6 @@
 
 # Add image (image list like markdown list).
 
-# aldowsc log time inside xml file.
-
 # size up images from GET / (not good in mobile)
 
 # mongodb
@@ -23,8 +17,6 @@ db.productCategories.drop()
 db.productMakers.drop()
 
 Tooltip for email and whatsapp.
-
-Descrição com mesmo padrão de informações técnicas.
 
 Image zoom not scrolling.
 
@@ -46,11 +38,7 @@ Create a new page for message Foi enviado um e-mail para... on account creation.
 
 # Review data forms for mobile number for user and delivery address.
 
-# User mobile numer must be required so order.mobileNumber always exist.
-
-# Avoid out of stock products when order by low price.
-
-# Format pm2 log.
+# User mobile number must be required so order.mobileNumber always exist.
 
 # Show order canceled on confirmation order, when order canceled.
 
@@ -78,10 +66,6 @@ Admin/product
 Não permitir cancelar ordem depois de entregue.
 Não mostrar ação quando não houver opção.
 
-timeout for correio response
-
-test quilljs.com
-
 Verify if certbot.service is running.
 When certbot renew nginx must reload to.
 
@@ -90,11 +74,7 @@ Create a timer to backup (mongo and redis).
 nginx alert on starting service
 2018/08/27 10:53:29 [warn] 19827#19827: could not build optimal types_hash, you should increase either types_hash_max_siz>
 
-Verify app.log size limit.
-
 Some models not update updatedAt field.
 
 Alterar a forma de remover o usurio, just set flag on user, to keep all information for 2 months.
 After two months remove user and all information on other documents.
-
-run: "git secret hide" when change s.js
