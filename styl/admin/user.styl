@@ -32,3 +32,18 @@ section p {
     // padding: 0;
     // font-weight: 400;
 }
+section a.order p {
+}
+section a.order p.delivered,
+section a.order p.shipped {
+    color: var(--green-dark);
+}
+section a.order p.placed,
+section a.order p.paid {
+    color: var(--black-darkest);
+    background-color: var(--yellow-light);
+    padding-left: .5em;
+}
+section a.order p.canceled {
+    color: var(--red);
+}

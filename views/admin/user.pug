@@ -24,8 +24,11 @@ block content
         //- Orders.
         h3 Pedidos
         //- a(:href='`/admin/order/${order._id}`' v-for='order in orders') {{ order.timestamps.placedAt }}
-        a(:href='`/admin/order/${order._id}`' v-for='order in orders') {{ placedAt(order) }} &nbsp&nbsp&nbsp {{ order.totalPrice | formatMoney }} 
-            //- p {{ order.timestamps }}
+        a.order(:href='`/admin/order/${order._id}`' v-for='order in orders') 
+            // No closed orders.
+            p(v-if='!order.timestamps.placedAt') {{ order.timestamps.shippingAddressSelectedAt | formatDate }} &nbsp&nbsp&nbspNão concluído
+            // Closed orders.
+            p(v-if='order.timestamps.placedAt', v-bind:class='[ order.status ]') {{ order.timestamps.placedAt | formatDate }} &nbsp&nbsp&nbsp {{ order.totalPrice | formatMoney }} 
 
         input.btn-exit(type='button' onclick='window.location.href="/admin/users"' value='Sair') 
 
@@ -37,5 +40,5 @@ append internal_scripts
         let orders = !{JSON.stringify(orders)};
 
 append external_scripts
-    include ../components/moment-timezone.js.pug
+    //- include ../components/moment-timezone.js.pug
     script(src='/js/admin/user.js?0001')

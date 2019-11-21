@@ -1,5 +1,8 @@
 'use strict';
 
+// Brasilian months names.
+const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
 // Search for products.
 function _search(text){
   window.location.href = `/all?page=1&search=${text}`;
@@ -34,8 +37,15 @@ var app = new Vue({
 		},
 		// Format number to money format.
 		formatDate(val){
-			let d = new Date(val);
-			return `${d.getDate()}-${MONTHS[d.getMonth()]}-${d.getFullYear()}`;
+            let d;
+            if (val) {
+			    d = new Date(val);
+            } else {
+                d = new Date(); 
+            }
+            // Set to brazilian zone.
+            d.setHours(d.getHours() - 3);
+			return `${d.getUTCDate()}-${MONTHS[d.getUTCMonth()]}-${d.getUTCFullYear()} ${d.getUTCHours()}:${d.getUTCMinutes()}`;
 		}
 	}
 });

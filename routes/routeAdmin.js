@@ -511,7 +511,7 @@ router.get('/users', checkPermission, function(req, res, next) {
 router.get('/user/:_id', checkPermission, function(req, res, next) {
     let promises = [
         User.findById(req.params._id).exec(),
-        Order.find({ user_id: req.params._id }).sort({ updatedAt: -1 }).limit(10).exec()
+        Order.find({ user_id: req.params._id }).sort({ updatedAt: -1 }).limit(30).exec()
     ]
     Promise.all(promises)
         .then(([userInfo, orders])=>{

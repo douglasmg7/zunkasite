@@ -1,3 +1,5 @@
+# canceledAt not updated when order canceled.
+
 # Log rotation must rotate at midnight.
 
 # Update script exit when git secret fail.
