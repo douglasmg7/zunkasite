@@ -8,11 +8,13 @@ block append css
 
 block content 
     section.shadow
-        h2.title Pedido - {{status(order)}}
+        h2.title(:class='[order.status]') Pedido &nbsp [{{status(order)}}]
 
-        //- Action.
-        h3 Ação
-        p {{action(order)}}
+        //- //- Action.
+        //- h3(:class='[action(order).id]') {{action(order).text}}
+
+        //- h3 Data do pedido 
+        //- p {{order.timestamps.placedAt | formatDate}}
 
         //- User.
         h3 Usuário - {{ order.email }}
@@ -40,38 +42,54 @@ block content
         p(v-if='order.shipping.method === "motoboy"') Motoboy
         //- Deprected:end.
 
-        //- Payment.
-        h3(v-if='order.payment.method === "money"') Pagamento - dinheiro
-        h3(v-if='order.payment.method === "transfer"') Pagamento - transferência
-        h3(v-if='order.payment.method === "paypal" || order.payment.method === undefined') Pagamento - Paypal
-        h3(v-if='order.payment.method === "ppp-credit"' :title='`${order.payment.pppExecutePayment.transactions[0].related_resources[0].sale.id}`') Pagamento - cartão de crédito 
-        p {{ order.totalPrice | formatMoney }}
+        //- //- Payment.
+        //- h3(v-if='order.payment.method === "money"') Pagamento - dinheiro
+        //- h3(v-if='order.payment.method === "transfer"') Pagamento - transferência
+        //- h3(v-if='order.payment.method === "paypal" || order.payment.method === undefined') Pagamento - Paypal
+        //- h3(v-if='order.payment.method === "ppp-credit"' :title='`${order.payment.pppExecutePayment.transactions[0].related_resources[0].sale.id}`') Pagamento - cartão de crédito 
+        //- p {{ order.totalPrice | formatMoney }}
 
-        //- Items.
-        h3(v-if='order.items.length > 0') Produtos
-        ul(v-if='order.items.length > 0')
-            li(v-for='item in order.items') 
-                p {{item.name}}
-                p {{item.quantity}} unidade{{ item.quantity | addS }}
-                p {{item.price | formatMoney}}
+        //- //- Verify payment complete for credit card.
+        //- input#verify-payment-completed.btn-primary(type='button' v-if='status(order) === "aberto" && order.payment.method === "ppp-credit"' @click='verifyPaymentCompleted(order)' value='Verificar se pagamento foi realizado')
 
-        input#verify-payment-completed.btn-primary(type='button' v-if='status(order) === "Aberto" && order.payment.method === "ppp-credit"' @click='verifyPaymentCompleted(order)' value='Verificar se pagamento foi realizado')
+        //- //- Items.
+        //- h3(v-if='order.items.length > 0') Produtos
+        //- ul(v-if='order.items.length > 0')
+            //- li(v-for='item in order.items') 
+                //- p {{item.name}}
+                //- p {{item.quantity}} unidade{{ item.quantity | addS }}
+                //- p {{item.price | formatMoney}}
 
-        //- .item.change-status(v-if='status(order) !== "Cancelado"')
-            h3.sub-title Alterar status
-            //- No type (older orders).
-            .buttons(v-if='order.payment.method === undefined || order.payment.method === "paypal" || order.payment.method === "transfer" || order.payment.method === "ppp-credit"')
-                input.btn-primary(type='button' v-if='status(order) === "Aberto"' @click='showSetStatusWindow("paid")' value='Pago')
-                input.btn-primary(type='button' v-if='status(order) === "Pago"' @click='showSetStatusWindow("shipped")' value='Enviado')
-                input.btn-primary(type='button' v-if='status(order) === "Enviado"' @click='showSetStatusWindow("delivered")' value='Entregue')
-                input.btn-danger(type='button' v-if='status(order) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')            
-            //- Money.   
-            .buttons(v-if='order.payment.method === "money"')
-                input.btn-primary(type='button' v-if='status(order) === "Aberto"' @click='showSetStatusWindow("shipped")' value='Enviado')
-                input.btn-primary(type='button' v-if='status(order) === "Enviado"' @click='showSetStatusWindow("paid")' value='Pago')
-                input.btn-primary(type='button' v-if='status(order) === "Pago"' @click='showSetStatusWindow("delivered")' value='Entregue')
-                input.btn-danger(type='button' v-if='status(order) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')
-        input.btn-exit(type='button' onclick='window.location.href="/admin/users"' value='Sair') 
+        //- //- Change order status.
+        //- .change-status(v-if='status(order) !== "cancelado"')
+            //- //- No type (older orders).
+            //- .buttons(v-if='order.payment.method === undefined || order.payment.method === "paypal" || order.payment.method === "transfer" || order.payment.method === "ppp-credit"')
+                //- input.btn-primary(type='button' v-if='status(order) === "aberto"' @click='showSetStatusWindow("paid")' value='Pedido pago')
+                //- input.btn-primary(type='button' v-if='status(order) === "pago"' @click='showSetStatusWindow("shipped")' value='Pedido enviado')
+                //- input.btn-primary(type='button' v-if='status(order) === "enviado"' @click='showSetStatusWindow("delivered")' value='Pedido entregue')
+            //- //- Money.   
+            //- .buttons(v-if='order.payment.method === "money"')
+                //- input.btn-primary(type='button' v-if='status(order) === "aberto"' @click='showSetStatusWindow("shipped")' value='Pedido enviado')
+                //- //- input.btn-primary(type='button' v-if='status(order) === "enviado"' @click='showSetStatusWindow("paid")' value='Pedido pago')
+                //- //- input.btn-primary(type='button' v-if='status(order) === "pago"' @click='showSetStatusWindow("delivered")' value='Pedido entregue')
+
+        //- //- Cancel order.
+        //- input.btn-danger(type='button' v-if='status(order) !== "cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelar pedido')            
+
+        //- //- Exit.
+        //- input.btn-exit(type='button' onclick='window.location.href="/admin/users"' value='Sair') 
+
+        //- //- Window to return product to stock.
+        //- .set-status(v-if='setStatusWindow.show')
+            //- .panel
+                //- .item
+                    //- h3.title {{ setStatusWindow.message }}
+                    //- .options(v-if='setStatusWindow.showCheckboxUpdateStock')
+                        //- input(type='checkbox' id='updateStock' v-model:checked='setStatusWindow.updateStock')
+                        //- label(for='updateStock') Voltar com o produto para o estoque
+                //- .buttons
+                    //- input.btn-primary(type='button' @click='setStatus()' value='Sim')
+                    //- input.btn-exit(type='button' @click='setStatusWindow.show=false' value='Não')
 
 append internal_scripts
     script.

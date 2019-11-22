@@ -6,6 +6,16 @@ var app = new Vue({
     el: '#app',
     data: {
         order: order,
+		// Window to change status.
+		setStatusWindow: {
+			show: false,
+			message: '',
+			showCheckboxUpdateStock: false,
+			// Change to this status.
+			status: '',
+			// Update stock quantity when intem is canceled.
+			updateStock: false,
+		},
     },
     methods: {
 		// Get status order.
@@ -29,21 +39,21 @@ var app = new Vue({
 		action(order){
 			switch(order.status) {
 				case 'canceled':
-					return '';
+					return { id: '', text: '' };
 				case 'delivered':
-					return '';
+					return { id: '', text: '' };
 			}
 			// Money, only by motoboy.
 			if(order.payment.method === 'money'){
 				switch(order.status) {
 					case 'shipped':
-						return '';
+					    return { id: '', text: '' };
 					case 'paid':
-						return 'Pago';
+					    return { id: 'paid', text: 'Pedido foi pago' };
 					case 'placed':
-						return 'Enviar';
+					    return { id: 'send', text: 'Pedido deve ser enviado' };
 					default:
-						return '';
+					    return { id: '', text: '' };
 				}
 			} 
 			else if(order.payment.method === 'transfer'){
@@ -51,23 +61,23 @@ var app = new Vue({
 					case 'shipped':
 						return '';
 					case 'paid':
-						return 'Enviar';
+					    return { id: 'send', text: 'Pedido deve ser enviado' };
 					case 'placed':
-						return 'Verificar pagamento';
+					    return { id: 'verifyPayment', text: 'Verificar pagamento' };
 					default:
-						return '';
+					    return { id: '', text: '' };
 				}
 			}
 			else if (order.payment.method === 'paypal' || order.payment.method === undefined) {
 				switch(order.status) {
 					case 'shipped':
-						return '';
+					    return { id: '', text: '' };
 					case 'paid':
-						return 'Enviar';
+					    return { id: 'send', text: 'Pedido deve ser enviado' };
 					case 'placed':
-						return 'Erro';
+					    return { id: 'error', text: 'Erro' };
 					default:
-						return '';
+					    return { id: '', text: '' };
 				}
 			} 
 			else if (order.payment.method === 'ppp-credit') {
@@ -75,7 +85,7 @@ var app = new Vue({
 					case 'shipped':
 						return '';
 					case 'paid':
-						return 'Enviar';
+						return 'Pedido deve ser enviado';
 					case 'placed':
 						return 'Verificar pagamento';
 					default:
@@ -83,7 +93,79 @@ var app = new Vue({
 				}
 			} 
 		},    
-
+		// Set order status from selected order.
+		showSetStatusWindow(status){
+			// Status to change.
+			this.setStatusWindow.status = status;
+			// Config window.
+			switch (status){
+				case 'paid':
+					this.setStatusWindow.message = 'Pedido foi pago?'
+					this.setStatusWindow.showCheckboxUpdateStock = false;
+					this.setStatusWindow.show = true;
+					break;
+				case 'shipped':
+					this.setStatusWindow.message = 'Pedido foi enviado?'
+					this.setStatusWindow.showCheckboxUpdateStock = false;
+					this.setStatusWindow.show = true;
+					break;
+				case 'delivered':
+					this.setStatusWindow.message = 'Pedido foi entregue?'
+					this.setStatusWindow.showCheckboxUpdateStock = false;
+					this.setStatusWindow.show = true;
+					break;
+				case 'canceled':
+					console.debug('canceled hit')
+					this.setStatusWindow.message = 'Cancelar pedido?'
+					this.setStatusWindow.showCheckboxUpdateStock = true;
+					this.setStatusWindow.updateStock = true;
+					this.setStatusWindow.show = true;
+					break;
+				default:
+					return;
+			}
+		},
+		// Set order status from selected order.
+		setStatus(){
+			axios({
+				method: 'post',
+				url: `/admin/api/order/status/${this.order._id}/${this.setStatusWindow.status}`,
+				headers:{'csrf-token' : csrfToken},
+				params: {updateStock: this.setStatusWindow.updateStock}
+			})
+			.then((res)=>{
+				// Update selected order and orders.
+				// console.log(`data: ${JSON.stringify(res.data)}`);
+				this.order = res.data.order;
+				this.setStatusWindow.show = false;
+			})
+			.catch((err)=>{
+				console.error(`Error - setStatus(), err: ${err}`);
+				this.setStatusWindow.show = false;
+			});
+		},
+		verifyPaymentCompleted(order){
+			let button = document.getElementById('verify-payment-completed');
+			button.value = 'processando';
+			axios.get(`/checkout/ppp/payment/complete/${order._id}`, { headers: {'csrf-token' : csrfToken} })
+			.then((response)=>{
+				if (!response.data.success) {
+					button.value = 'Verificar se pagamento foi realizado';
+					return alert('Erro ao tentar atualizar o status do pagamento.');
+				}
+				if (response.data.completed) {
+					order.status = 'paid';
+					button.value = 'Verificar se pagamento foi realizado';
+					return alert('Pagamento liberado.');
+				}
+				button.value = 'Verificar se pagamento foi realizado';
+				return alert('Pagamento não liberado ainda.');
+			})
+			.catch((err)=>{
+				button.value = 'Verificar se pagamento foi realizado';
+				alert('Erro ao tentar atualizar o status do pagamento.\n' + err.message);
+			});
+		},    
     },
 	filters: {
 		// Format number to money format.

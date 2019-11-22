@@ -1,3 +1,6 @@
+# Update list
+    Tooltip for products
+
 # Setup time to load xml alod on script.
 
 # Find out erros from yesterday.
