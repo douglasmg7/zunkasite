@@ -1,0 +1,81 @@
+extends ../layout/layout_vue_n
+
+block title
+    title Zunka - Pedido
+
+block append css
+    link(rel="stylesheet" href="/css/admin/order.css?0001" charset="utf-8")
+
+block content 
+    section.shadow
+        h2.title Pedido - {{status(order)}}
+
+        //- Action.
+        h3 Ação
+        p {{action(order)}}
+
+        //- User.
+        h3 Usuário - {{ order.email }}
+        a(:href='`/admin/user/${order.user_id}`') {{order.name}}
+        //- a(:href='`mailto:${this.order.email}`') {{ order.email }}
+        a(:href='`tel:${this.order.mobileNumber }`') {{ order.mobileNumber }} &nbsp [Telefone]
+        p {{order.cpf}} &nbsp [CPF]
+
+        //- Address.
+        h3 Destinatário
+        p {{order.shipping.address.name}} 
+        a(:href='`tel:${this.order.shipping.address.phone }`') {{ order.shipping.address.phone }} &nbsp [Telefone]
+        p {{order.shipping.address.address}},  {{order.shipping.address.addressNumber}} {{order.shipping.address.addressComplement}}
+        p {{order.shipping.address.district}}
+        p {{order.shipping.address.city}} - {{order.shipping.address.state}} - Brasil
+        p {{order.shipping.address.cep}} 
+
+        //- Delivery.
+        h3 Envio - {{ order.shipping.methodDesc }}
+        p(v-if='order.shipping.carrier === ""') {{ order.shipping.methodDesc }}
+        //- p(v-if='order.shipping.carrier !== ""') {{ order.shipping.methodDesc }} &nbsp&nbsp {{order.shipping.deadline}} dia(s) &nbsp&nbsp {{order.shipping.price | formatMoney}}
+        p(v-if='order.shipping.carrier !== ""') {{order.shipping.deadline}} dia(s) &nbsp&nbsp {{order.shipping.price | formatMoney}} &nbsp&nbsp  
+        //- Deprected:begin - still here because old orders.
+        p(v-if='order.shipping.method === "correios" || order.shipping.method === "standard"') Correios
+        p(v-if='order.shipping.method === "motoboy"') Motoboy
+        //- Deprected:end.
+
+        //- Payment.
+        h3(v-if='order.payment.method === "money"') Pagamento - dinheiro
+        h3(v-if='order.payment.method === "transfer"') Pagamento - transferência
+        h3(v-if='order.payment.method === "paypal" || order.payment.method === undefined') Pagamento - Paypal
+        h3(v-if='order.payment.method === "ppp-credit"' :title='`${order.payment.pppExecutePayment.transactions[0].related_resources[0].sale.id}`') Pagamento - cartão de crédito 
+        p {{ order.totalPrice | formatMoney }}
+
+        //- Items.
+        h3(v-if='order.items.length > 0') Produtos
+        ul(v-if='order.items.length > 0')
+            li(v-for='item in order.items') 
+                p {{item.name}}
+                p {{item.quantity}} unidade{{ item.quantity | addS }}
+                p {{item.price | formatMoney}}
+
+        input#verify-payment-completed.btn-primary(type='button' v-if='status(order) === "Aberto" && order.payment.method === "ppp-credit"' @click='verifyPaymentCompleted(order)' value='Verificar se pagamento foi realizado')
+
+        //- .item.change-status(v-if='status(order) !== "Cancelado"')
+            h3.sub-title Alterar status
+            //- No type (older orders).
+            .buttons(v-if='order.payment.method === undefined || order.payment.method === "paypal" || order.payment.method === "transfer" || order.payment.method === "ppp-credit"')
+                input.btn-primary(type='button' v-if='status(order) === "Aberto"' @click='showSetStatusWindow("paid")' value='Pago')
+                input.btn-primary(type='button' v-if='status(order) === "Pago"' @click='showSetStatusWindow("shipped")' value='Enviado')
+                input.btn-primary(type='button' v-if='status(order) === "Enviado"' @click='showSetStatusWindow("delivered")' value='Entregue')
+                input.btn-danger(type='button' v-if='status(order) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')            
+            //- Money.   
+            .buttons(v-if='order.payment.method === "money"')
+                input.btn-primary(type='button' v-if='status(order) === "Aberto"' @click='showSetStatusWindow("shipped")' value='Enviado')
+                input.btn-primary(type='button' v-if='status(order) === "Enviado"' @click='showSetStatusWindow("paid")' value='Pago')
+                input.btn-primary(type='button' v-if='status(order) === "Pago"' @click='showSetStatusWindow("delivered")' value='Entregue')
+                input.btn-danger(type='button' v-if='status(order) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')
+        input.btn-exit(type='button' onclick='window.location.href="/admin/users"' value='Sair') 
+
+append internal_scripts
+    script.
+        let order = !{JSON.stringify(order)};
+
+append external_scripts
+    script(src='/js/admin/order.js?0001')

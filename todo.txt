@@ -1,3 +1,9 @@
+# Setup time to load xml alod on script.
+
+# Find out erros from yesterday.
+
+# Aldo xml parsing.
+
 # canceledAt not updated when order canceled.
 
 # Log rotation must rotate at midnight.

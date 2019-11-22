@@ -355,44 +355,18 @@ router.get('/orders', checkPermission, function(req, res, next) {
 	});
 });
 
-// // Get orders data.
-// router.get('/api/orders_old', checkPermission, function(req, res, next) {
-//   const user_id = req.params.user_id;
-//   const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
-//   const skip = (page - 1) * ORDER_QTD_BY_PAGE;
-//   // Db search.
-//   let search;
-//   // No search request.
-//   if (req.query.search == '') {
-//     search = { 'timestamps.placedAt': { $exists: true } };
-//   }
-//   // Search by _id.
-//   else if (req.query.search.match(/^[a-f\d]{24}$/i)) {
-//     search = { 'timestamps.placedAt': {$exists: true}, _id: req.query.search };
-//   }
-//   // No search by _id.
-//   else {
-//     search = {
-//       'timestamps.placedAt': {$exists: true},
-//       $or: [
-//         {'name': {$regex: req.query.search, $options: 'i'}},
-//         {totalPrice: {$regex: req.query.search, $options: 'i'}},
-//         {'items.name': {$regex: req.query.search, $options: 'i'}},
-//       ]
-//     }
-//   }
-//   // console.log(`search: ${JSON.stringify(search)}`);
-//   // Find orders.
-//   let orderPromise = Order.find(search).sort({'timestamps.placedAt': -1}).skip(skip).limit(ORDER_QTD_BY_PAGE).exec();
-//   // Order count.
-//   let orderCountPromise = Order.find(search).countDocuments().exec();
-//   Promise.all([orderPromise, orderCountPromise])
-//   .then(([orders, count])=>{
-//     res.json({orders, page, pageCount: Math.ceil(count / ORDER_QTD_BY_PAGE)});
-//   }).catch(err=>{
-//     return next(err);
-//   });
-// });
+// Order info page.
+router.get('/order/:_id', checkPermission, function(req, res, next) {
+    let promises = [
+        Order.findById(req.params._id).exec()
+    ]
+    Promise.all(promises)
+        .then(([order])=>{
+            res.render('admin/order', { nav: {}, order });
+        }).catch(err=>{
+            return next(err);
+        });
+});
 
 // Get orders data.
 router.get('/api/orders', checkPermission, function(req, res, next) {
