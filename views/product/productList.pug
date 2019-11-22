@@ -34,7 +34,7 @@ block content
     section
         h4.section-title Novidades na loja
         .products
-            a.product.shadow(v-for='product in newProducts', :href='"/product/" + product._id')
+            a.product.shadow(v-for='product in newProducts', :href='"/product/" + product._id' :title='product.storeProductDetail')
                 img(:src='srcImg0200(product)', v-if='product.images[0]' alt="Imagem não disponível")
                 p.product-title {{ product.storeProductTitle }}
                 //- p.product-price R$ {{ product.storeProductPrice | currency}}        
@@ -46,7 +46,7 @@ block content
     section
         h5.section-title Produtos mais vendidos
         .products
-            a.product.shadow(v-for='product in bestSellingProducts', :href='"/product/" + product._id')
+            a.product.shadow(v-for='product in bestSellingProducts', :href='"/product/" + product._id' :title='product.storeProductDetail')
                 img(:src='srcImg0200(product)', v-if='product.images[0]' alt="Imagem não disponível")
                 p.product-title {{ product.storeProductTitle }}
                 p.product-price
