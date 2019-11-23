@@ -271,12 +271,16 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                 // Default delivery.
                 else {
                     log.warn(`Correios webservice não retornou resultados para:\n${JSON.stringify(order.shipping.box, null, 2)}`);
-                    deliveryMotoboyAndDefault.default.forEach(item=>{
-                        order.shipping.defaultDeliveryResults.push({
-                            deadline: item.deadline,
-                            price: item.price
-                        });
-                    });
+                    if (deliveryMotoboyAndDefault) {
+                        if (deliveryMotoboyAndDefault.default){
+                            deliveryMotoboyAndDefault.default.forEach(item=>{
+                                order.shipping.defaultDeliveryResults.push({
+                                    deadline: item.deadline,
+                                    price: item.price
+                                });
+                            });
+                        }
+                    }
                     // log.debug(`order._id: ${order._id}`);
                     // log.debug(`order.shipping.defaultDeliveryResults: ${JSON.stringify(order.shipping.defaultDeliveryResults, null, 2)}`);
                 }

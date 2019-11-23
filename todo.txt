@@ -1,7 +1,12 @@
 # Update list
     Tooltip for products
+    Show order canceld on confirmation order
+    User page with order list
+    order item
 
 # Setup time to load xml alod on script.
+
+# Fast search from user page, maybe fuzz search.
 
 # Find out erros from yesterday.
 

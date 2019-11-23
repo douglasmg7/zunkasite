@@ -358,11 +358,18 @@ router.get('/orders', checkPermission, function(req, res, next) {
 // Order info page.
 router.get('/order/:_id', checkPermission, function(req, res, next) {
     let promises = [
-        Order.findById(req.params._id).exec()
+        Order.findById(req.params._id).exec().catch(err=>{log.error(`Finding order by id. ${err}`)})
     ]
     Promise.all(promises)
         .then(([order])=>{
-            res.render('admin/order', { nav: {}, order });
+            // Order exist.
+            if (order) {
+                return res.render('admin/order', { nav: {}, order });
+            }
+            // Order not exist.
+            else {
+                return res.status(410).send(`Pedido não existe.`);
+            }
         }).catch(err=>{
             return next(err);
         });
@@ -484,8 +491,8 @@ router.get('/users', checkPermission, function(req, res, next) {
 // User information page.
 router.get('/user/:_id', checkPermission, function(req, res, next) {
     let promises = [
-        User.findById(req.params._id).exec(),
-        Order.find({ user_id: req.params._id }).sort({ updatedAt: -1 }).limit(30).exec()
+        User.findById(req.params._id).exec().catch(err=>{log.error(`Finding user. ${err}`)}),
+        Order.find({ user_id: req.params._id }).sort({ createdAt: -1 }).limit(30).exec().catch(err=>{log.error(`Finding order. ${err}`)})
     ]
     Promise.all(promises)
         .then(([userInfo, orders])=>{
@@ -542,8 +549,7 @@ router.get('/banner', (req, res, next)=>{
 	redis.get('banners', (err, banners)=>{
 		// Internal error.
 		if (err) {
-			log.error(err.stack);
-			return res.render('/error', { message: 'Can not find banners data.', error: err });
+			return next(err);
 		}
 		// Render page.
 		return res.render('admin/banner', {  banners: JSON.parse(banners) || [] });
@@ -639,8 +645,7 @@ router.get('/motoboy-delivery', (req, res, next)=>{
 	redis.get('motoboy-delivery', (err, motoboyDeliveries)=>{
 		// Internal error.
 		if (err) {
-			log.error(err.stack);
-			return res.render('/error', { message: 'Can not find motoboy delivery data.', error: err });
+			return next(err);
 		}
 		// Render page.
 		return res.render('admin/motoboyDelivery', {  motoboyDeliveries: JSON.parse(motoboyDeliveries) || [] });
