@@ -249,8 +249,8 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
             });
             // When receive all return.
             Promise.all([
-                promiseCorreiosShipping.catch(err=>{log.error(`Estimating Correios shipping. ${err}`)}), 
-                promiseMotoboyAndDefaultDelivery.catch(err=>{log.error(`Estimating motoboy and default deliveries. ${err}`)})
+                promiseCorreiosShipping.catch(err=>{log.error(`Estimating Correios shipping. ${err.stack}`)}), 
+                promiseMotoboyAndDefaultDelivery.catch(err=>{log.error(`Estimating motoboy and default deliveries (shipping-method). ${err.stack}`)})
             ]).then(([deliveryCorreios, deliveryMotoboyAndDefault])=>{
                 // Motoboy delivery.
                 order.shipping.motoboyResult = { price: '', deadline: '' };
@@ -827,33 +827,40 @@ router.get('/ship-estimate', (req, res, next)=>{
             });
             // Correio shipping estimate.
             const promiseDeliveries = new Promise((resolve, reject)=>{
+                log.debug("*** 0 ***");
                 // Get address information.
                 getAddress(box.cepDestiny)
                 .then(address=>{
+                    log.debug("*** 3 ***");
                     Promise.all([
                         defaultDelivery(regionFromUf(address.uf), box.weight).catch(err=>{log.error(`Estimating default shipping. ${err}`)}),  
                         motoboyDelivery(address.uf, address.localidade).catch(err=>{log.error(`Estimating motoboy shipping. ${err}`)})
                     ])
                     .then(([deliveryDefault, deliveryMotoboy])=>{
+                        log.debug("*** 12 ***");
                         let deliveries = {};
                         if (deliveryDefault) {
+                            // log.debug(`deliveryDefault: ${JSON.stringify(deliveryDefault, null, 2)}`);
                             deliveries.default = deliveryDefault;
                         }
                         if (deliveryMotoboy) {
+                            // log.debug(`deliveryMotoboy: ${JSON.stringify(deliveryMotoboy, null, 2)}`);
                             deliveries.motoboy = deliveryMotoboy;
                         }
                         resolve(deliveries);
                     });
                 })
                 .catch(err=>{
+                    log.debug("*** e ***");
+                    log.debug(`catch err: ${err}`);
                     reject(err);
                 });
             });
 
             // When receive all return.
             Promise.all([
-                promiseCorreiosShipping.catch(err=>{log.error(`Estimating Correios shipping. ${err}`)}), 
-                promiseDeliveries.catch(err=>{log.error(`Estimating motoboy and default deliveries. ${err}`)})
+                promiseCorreiosShipping.catch(err=>{log.error(`Estimating Correios shipping. ${err.stack}`)}), 
+                promiseDeliveries.catch(err=>{log.error(`Estimating motoboy and default deliveries (ship-estimate). ${err.stack}`)})
             ])
             .then(([deliveryCorreio, deliveryMotoboyAndDefault])=>{
                 // log.debug("Promisse.all");
@@ -937,7 +944,7 @@ function getAddress(cep){
                     // Some error, no more information from ws.
                     if (res.data.erro) {
                         // log.debug(`getAddress data: ${JSON.stringify(res.data, null, 2)}`);
-                        reject(res.data.erro);
+                        reject('Cep não existe.');
                     }
                     // Found CEP.
                     else {

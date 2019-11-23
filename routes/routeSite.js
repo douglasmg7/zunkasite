@@ -92,6 +92,9 @@ router.get('/all/:categoriesFilter', function(req, res, next) {
 
 // Get product page.
 router.get('/product/:_id', function(req, res, next) {
+    if(!req.params._id.match(/^[a-f\d]{24}$/)){
+        return res.status(400).send(`produto "${req.params._id}" inválido.`);
+    }
 	Product.findById(req.params._id)
 		.then(product=>{
 			if (product._id) {
@@ -128,8 +131,8 @@ router.get('/product/:_id', function(req, res, next) {
                     outletText
 				});
 			} else {
-				log.info(`product ${req.params._id} not found`);
-				res.status(404).send('Produto não encontrado.');
+				log.debug(`product ${req.params._id} not found`);
+				res.status(404).send('Produto não existe.');
 			}
 		}).catch(err=>{
 			return next(err);
