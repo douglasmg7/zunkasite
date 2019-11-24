@@ -442,7 +442,7 @@ router.post('/api/order/status/:_id/:status', checkPermission, function(req, res
 					break;
 				case 'canceled':
 					order.status = 'canceled';
-					order.timestamps.canceleddAt = new Date();
+					order.timestamps.canceledAt = new Date();
 					// Update stock.
 					if (req.query.updateStock) {
 						for (let i = 0; i < order.items.length; i++) {

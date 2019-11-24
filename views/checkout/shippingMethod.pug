@@ -7,7 +7,14 @@ block append css
   link(rel="stylesheet" href="/css/checkout/shippingMethod.css" charset="utf-8")
 
 block content 
-  section.shadow
+  section.shadow(v-if='!order.shipping.correioResults.length && !order.shipping.motoboyResult.price && !order.shipping.defaultDeliveryResults.length')
+    h2.title 
+        | Não foi possível exibir uma forma de envio 
+        br
+        | Verifique se o CEP está correto
+    input.btn-primary(type='button' onclick='window.location="/checkout/shipping-address"' value='Voltar')
+
+  section.shadow(v-if='order.shipping.correioResults.length || order.shipping.motoboyResult.price || order.shipping.defaultDeliveryResults.length')
     h2.title Forma de envio
     .form
       .radio

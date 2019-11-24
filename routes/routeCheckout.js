@@ -249,8 +249,13 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
             });
             // When receive all return.
             Promise.all([
-                promiseCorreiosShipping.catch(err=>{log.error(`Estimating Correios shipping. ${err.stack}`)}), 
-                promiseMotoboyAndDefaultDelivery.catch(err=>{log.error(`Estimating motoboy and default deliveries (shipping-method). ${err.stack}`)})
+                promiseCorreiosShipping.catch(err=>{log.error(`Estimating Correios shipping (shipping-method). ${err}`)}), 
+                promiseMotoboyAndDefaultDelivery.catch(err=>{
+                    // Not log error for inválid cep.
+                    if (err !== 'CEP inválido.') {
+                        log.error(`Estimating motoboy and default deliveries (shipping-method). ${err}`)
+                    }
+                })
             ]).then(([deliveryCorreios, deliveryMotoboyAndDefault])=>{
                 // Motoboy delivery.
                 order.shipping.motoboyResult = { price: '', deadline: '' };
@@ -825,19 +830,16 @@ router.get('/ship-estimate', (req, res, next)=>{
                     resolve(deliveryData);
                 });
             });
-            // Correio shipping estimate.
+            // Motoboy and default shipping estimate.
             const promiseDeliveries = new Promise((resolve, reject)=>{
-                log.debug("*** 0 ***");
                 // Get address information.
                 getAddress(box.cepDestiny)
                 .then(address=>{
-                    log.debug("*** 3 ***");
                     Promise.all([
                         defaultDelivery(regionFromUf(address.uf), box.weight).catch(err=>{log.error(`Estimating default shipping. ${err}`)}),  
                         motoboyDelivery(address.uf, address.localidade).catch(err=>{log.error(`Estimating motoboy shipping. ${err}`)})
                     ])
                     .then(([deliveryDefault, deliveryMotoboy])=>{
-                        log.debug("*** 12 ***");
                         let deliveries = {};
                         if (deliveryDefault) {
                             // log.debug(`deliveryDefault: ${JSON.stringify(deliveryDefault, null, 2)}`);
@@ -851,16 +853,19 @@ router.get('/ship-estimate', (req, res, next)=>{
                     });
                 })
                 .catch(err=>{
-                    log.debug("*** e ***");
-                    log.debug(`catch err: ${err}`);
                     reject(err);
                 });
             });
 
             // When receive all return.
             Promise.all([
-                promiseCorreiosShipping.catch(err=>{log.error(`Estimating Correios shipping. ${err.stack}`)}), 
-                promiseDeliveries.catch(err=>{log.error(`Estimating motoboy and default deliveries (ship-estimate). ${err.stack}`)})
+                promiseCorreiosShipping.catch(err=>{log.error(`Estimating Correios shipping (ship-estimate). ${err.stack}`)}), 
+                promiseDeliveries.catch(err=>{
+                    // Not log error for cep inválido.
+                    if (err !== 'CEP inválido.') {
+                        log.error(`Estimating motoboy and default deliveries (ship-estimate). ${err}`)
+                    }
+                })
             ])
             .then(([deliveryCorreio, deliveryMotoboyAndDefault])=>{
                 // log.debug("Promisse.all");
@@ -878,7 +883,7 @@ router.get('/ship-estimate', (req, res, next)=>{
                         delivery.push(item);
                     });
                 } else {
-                    log.warn(`Correios webservice não retornou resultados para:\n ${JSON.stringify(box, null, 2)}`);
+                    log.debug(`Correios webservice não retornou resultados para:\n ${JSON.stringify(box, null, 2)}`);
                     if (deliveryMotoboyAndDefault && deliveryMotoboyAndDefault.default) {
                         deliveryMotoboyAndDefault.default.forEach(item=>{
                             delivery.push(item);
@@ -938,27 +943,27 @@ function getAddress(cep){
                 method: 'get',
                 url: `https://viacep.com.br/ws/${cep}/json/`,
             })
-                .then((res)=>{
-                    // console.log(`res: ${JSON.stringify(res)}`);
-                    // log.debug(JSON.stringify(res.data));
-                    // Some error, no more information from ws.
-                    if (res.data.erro) {
-                        // log.debug(`getAddress data: ${JSON.stringify(res.data, null, 2)}`);
-                        reject('Cep não existe.');
-                    }
-                    // Found CEP.
-                    else {
-                        // log.debug(`address: ${JSON.stringify(res.data)}`);
-                        resolve(res.data);
-                    }
-                })
-                .catch((err)=>{
-                    reject(err);
-                });        
+            .then((res)=>{
+                // console.log(`res: ${JSON.stringify(res)}`);
+                // log.debug(JSON.stringify(res.data));
+                // Some error, no more information from ws.
+                if (res.data.erro) {
+                    // log.debug(`getAddress data: ${JSON.stringify(res.data, null, 2)}`);
+                    reject('CEP inválido.');
+                }
+                // Found CEP.
+                else {
+                    // log.debug(`address: ${JSON.stringify(res.data)}`);
+                    resolve(res.data);
+                }
+            })
+            .catch((err)=>{
+                reject(err);
+            });        
         } 
         // Inválid cep format.
         else {
-            resolve('Cep inválido.');
+            reject('CEP inválido.');
         }
     })
 };

@@ -44,57 +44,61 @@ var app = new Vue({
 		},
 		// Get order action.
 		action(order){
+             let verifyDeliveryAction = { id: 'verifyDelivery', text: 'Verificar se pedido foi entrege' };
+		     let sendAction = { id: 'send', text: 'Pedido deve ser enviado' };
+			 let verifyPaymentAction = { id: 'verifyPayment', text: 'Verificar se pedido foi pago' };
+			 let voidAction = { id: '', text: '' };
+			 let errorAction = { id: 'err', text: 'Erro - sem ação definida' };
 			switch(order.status) {
 				case 'canceled':
-					return { id: '', text: '' };
 				case 'delivered':
-					return { id: '', text: '' };
+				    return voidAction;
 			}
 			// Money, only by motoboy.
 			if(order.payment.method === 'money'){
 				switch(order.status) {
 					case 'shipped':
-					    return { id: '', text: '' };
+					    return verifyDeliveryAction;
 					case 'paid':
 					    return { id: 'paid', text: 'Pedido foi pago' };
 					case 'placed':
-					    return { id: 'send', text: 'Pedido deve ser enviado' };
+					    return sendAction;
 					default:
-					    return { id: '', text: '' };
+					    return voidAction;
 				}
 			} 
 			else if(order.payment.method === 'transfer'){
 				switch(order.status) {
 					case 'shipped':
-						return '';
+					    return verifyDeliveryAction;
 					case 'paid':
-					    return { id: 'send', text: 'Pedido deve ser enviado' };
+					    return sendAction;
 					case 'placed':
-					    return { id: 'verifyPayment', text: 'Verificar pagamento' };
+					    return verifyPaymentAction;
 					default:
-					    return { id: '', text: '' };
+					    return voidAction;
 				}
 			}
 			else if (order.payment.method === 'paypal' || order.payment.method === undefined) {
 				switch(order.status) {
 					case 'shipped':
-					    return { id: '', text: '' };
+					    return verifyDeliveryAction;
 					case 'paid':
-					    return { id: 'send', text: 'Pedido deve ser enviado' };
+					    return sendAction;
 					case 'placed':
-					    return { id: 'error', text: 'Erro' };
+                        return errorAction
 					default:
-					    return { id: '', text: '' };
+					    return voidAction;
 				}
 			} 
 			else if (order.payment.method === 'ppp-credit') {
 				switch(order.status) {
 					case 'shipped':
-						return '';
+					    return verifyDeliveryAction;
 					case 'paid':
-						return 'Pedido deve ser enviado';
+					    return sendAction;
 					case 'placed':
-						return 'Verificar pagamento';
+					    return verifyPaymentAction;
 					default:
 						return '';
 				}
