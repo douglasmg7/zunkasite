@@ -75,9 +75,13 @@ var app = new Vue({
 		},    
 		// Show order detail on modal window.
 		showOrderDetail(index){
-			this.orderSelecIndex = index;
-			this.orderSelec = this.orders[index];
-			this.showModal = true;
+            if (event.ctrlKey) {
+                this.orderSelecIndex = index;
+                this.orderSelec = this.orders[index];
+                this.showModal = true;
+            } else {
+                window.location.href = `/admin/order/${this.orders[index]._id}`;
+            }
 		},
 		// Hide order detail modal.
 		hideOrderDetail(event){
@@ -156,6 +160,67 @@ var app = new Vue({
 						return 'Enviar';
 					case 'placed':
 						return 'Verificar pagamento';
+					default:
+						return '';
+				}
+			} 
+		},    
+		// Get order action.
+		actionStatus(order){
+            let msgVerifyDelivery = 'Verificar se o pedido foi entregue'
+            let msgVerifyPayment = 'Verificar se o pedido foi pago'
+            let msgSend = 'Enviar o pedido'
+			switch(order.status) {
+				case 'canceled':
+					return 'Cancelado';
+				case 'delivered':
+					return 'Entregue';
+			}
+			// Money, only by motoboy.
+			if(order.payment.method === 'money'){
+				switch(order.status) {
+					case 'shipped':
+						return msgVerifyDelivery;
+					case 'paid':
+                        return msgVerifyDelivery;
+					case 'placed':
+                        return msgSend;
+					default:
+						return '';
+				}
+			} 
+			else if(order.payment.method === 'transfer'){
+				switch(order.status) {
+					case 'shipped':
+						return msgVerifyDelivery;
+					case 'paid':
+                        return msgSend;
+					case 'placed':
+                        return msgVerifyPayment;
+					default:
+						return '';
+				}
+			}
+			else if (order.payment.method === 'paypal' || order.payment.method === undefined) {
+				switch(order.status) {
+					case 'shipped':
+						return msgVerifyDelivery;
+					case 'paid':
+                        return msgSend;
+					case 'placed':
+						return 'Erro';
+					default:
+						return '';
+				}
+			} 
+			else if (order.payment.method === 'ppp-credit') {
+				switch(order.status) {
+					case 'shipped':
+						return msgVerifyDelivery;
+					case 'paid':
+                        return msgSend;
+					case 'placed':
+                        return msgVerifyPayment;
 					default:
 						return '';
 				}
@@ -244,7 +309,10 @@ var app = new Vue({
 		// Format number to money format.
 		formatDate(val){
 			let d = new Date(val);
-			return `${d.getDate()}-${MONTHS[d.getMonth()]}-${d.getFullYear()}`;
+            // Set to brazilian zone.
+            d.setHours(d.getHours() - 3);
+			// return `${('0' + d.getUTCDate()).slice(-2)}-${MONTHS[d.getUTCMonth()]}-${d.getUTCFullYear()} ${('0' + d.getUTCHours()).slice(-2)}:${('0' + d.getUTCMinutes()).slice(-2)}`;
+			return `${d.getUTCDate()}-${MONTHS[d.getUTCMonth()]}-${d.getUTCFullYear()} ${('0' + d.getUTCHours()).slice(-2)}:${('0' + d.getUTCMinutes()).slice(-2)}`;
 		}
 	}
 });

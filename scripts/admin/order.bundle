@@ -37,9 +37,9 @@ var app = new Vue({
 		},
 		// Get order action.
 		action(order){
-             let verifyDeliveryAction = { id: 'verifyDelivery', text: 'Verificar se pedido foi entrege' };
+             let verifyDeliveryAction = { id: 'verifyDelivery', text: 'Verificar se o pedido foi entrege' };
 		     let sendAction = { id: 'send', text: 'Pedido deve ser enviado' };
-			 let verifyPaymentAction = { id: 'verifyPayment', text: 'Verificar se pedido foi pago' };
+			 let verifyPaymentAction = { id: 'verifyPayment', text: 'Verificar se o pedido foi pago' };
 			 let voidAction = { id: '', text: '' };
 			 let errorAction = { id: 'err', text: 'Erro - sem ação definida' };
 			switch(order.status) {

@@ -70,20 +70,45 @@ section {
     flex-flow: column nowrap;
     border-radius: 4px;
     margin-top: 1em;
+    color: var(--black-darker);
 }
-.order a {
-    display: flex;
-    flex-flow: row wrap;
-    // font-size: 1.2em;
+.order.placed,
+.order.paid {
+    background-color: var(--yellow-light)
+    padding-left: .3em;
+}
+.order.shipped {
+    background-color: var(--green-lighter)
+    padding-left: .3em;
+}
+.order.delivered {
     color: var(--green);
+}
+.order.canceled {
+    color: var(--red);
+}
+a.order {
+    color: unset;
     cursor: pointer;
 }
-.order a:hover {
-    color: var(--green);
+a.order:hover {
     text-decoration: underline;
 }
+// .order a {
+    // display: flex;
+    // flex-flow: row wrap;
+    // // font-size: 1.2em;
+    // // color: var(--green);
+    // color: unset;
+    // cursor: pointer;
+// }
+// .order a:hover {
+    // // color: var(--green);
+    // text-decoration: underline;
+// }
 .order p {
     margin: 0;
+    font-weight: 600;
 }
 .modal {
     display: flex;

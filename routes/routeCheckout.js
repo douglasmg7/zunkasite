@@ -275,7 +275,7 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                 }
                 // Default delivery.
                 else {
-                    log.warn(`Correios webservice não retornou resultados para:\n${JSON.stringify(order.shipping.box, null, 2)}`);
+                    log.debug(`Correios webservice não retornou resultados para:\n${JSON.stringify(order.shipping.box, null, 2)}`);
                     if (deliveryMotoboyAndDefault) {
                         if (deliveryMotoboyAndDefault.default){
                             deliveryMotoboyAndDefault.default.forEach(item=>{

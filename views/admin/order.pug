@@ -21,6 +21,9 @@ block content
         p(v-if='order.timestamps.placedAt') {{order.timestamps.placedAt | formatDate}}
         p(v-if='!order.timestamps.placedAt') {{order.updatedAt | formatDate}}
 
+        h3 Número
+        p {{ order._id }}
+
         //- User.
         h3 Usuário - {{ order.email }}
         a(:href='`/admin/user/${order.user_id}`') {{order.name}}
@@ -74,10 +77,10 @@ block content
                 input.btn-primary(type='button' v-if='status(order) === "aberto"' @click='showSetStatusWindow("paid")' value='Pedido pago')
                 input.btn-primary(type='button' v-if='status(order) === "pago"' @click='showSetStatusWindow("shipped")' value='Pedido enviado')
                 input.btn-primary(type='button' v-if='status(order) === "enviado"' @click='showSetStatusWindow("delivered")' value='Pedido entregue')
-            //- Money.   
+            //- Money (only motoboy delivery).   
             .buttons(v-if='order.payment.method === "money"')
                 input.btn-primary(type='button' v-if='status(order) === "aberto"' @click='showSetStatusWindow("shipped")' value='Pedido enviado')
-                //- input.btn-primary(type='button' v-if='status(order) === "enviado"' @click='showSetStatusWindow("paid")' value='Pedido pago')
+                input.btn-primary(type='button' v-if='status(order) === "enviado"' @click='showSetStatusWindow("delivered")' value='Pedido entregue e pago')
                 //- input.btn-primary(type='button' v-if='status(order) === "pago"' @click='showSetStatusWindow("delivered")' value='Pedido entregue')
 
         //- Cancel order.
