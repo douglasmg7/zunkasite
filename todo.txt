@@ -1,9 +1,4 @@
-# Update list
-    Trantando requisição de produto inválido.
-    Tooltip for products
-    Show order canceld on confirmation order
-    User page with order list
-    order item
+# Include created and updated for user page.
 
 # Not permit paypal or credit card for motoboy delivery.
 
