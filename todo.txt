@@ -1,3 +1,7 @@
+# [aldowsc] Update categories list when product quantity change.
+
+# [zunka-site] change font-weight on admin/order.pug
+
 # Include created and updated for user page.
 
 # Not permit paypal or credit card for motoboy delivery.

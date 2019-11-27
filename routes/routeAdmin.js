@@ -266,7 +266,7 @@ router.delete('/product/:_id', checkPermission, function(req, res) {
 					// Delete from zunkasrv.
 					if (result.dealerName = "Aldo") {
 						// Delete reference product on integration server.
-						axios.delete(`${s.zunkaServer.host}/${result.dealerName}/product/mongodb_id/${result.dealerProductId}`, {
+						axios.delete(`${s.zunkaServer.host}/${result.dealerName.toLowerCase()}/product/mongodb_id/${result._id}`, {
 							headers: {
 								"Accept": "text/plain", 
 							},
