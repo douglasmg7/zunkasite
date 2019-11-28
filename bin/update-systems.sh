@@ -52,4 +52,4 @@ if [[ ! -z $RELOAD_NGINX ]]; then
 fi
 
 # Upgrade zunkasrv.
-$GS/zunkasrv/bin/update-all.sh
+# $GS/zunkasrv/bin/update-all.sh
