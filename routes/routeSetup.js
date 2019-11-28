@@ -35,7 +35,7 @@ router.post('/product/add', basicAuth, [
 			// log.debug(JSON.stringify(errors.array(), null, 2));
 			return res.status(422).json({ erros: errors.array() });
 		}
-        log.debug("req.body: " + JSON.stringify(req.body, null, 2));
+        // log.debug("req.body: " + JSON.stringify(req.body, null, 2));
 		// Create product.
 		let product = {};
 		product.dealerName = req.body.dealerName;
@@ -52,7 +52,7 @@ router.post('/product/add', basicAuth, [
 		product.dealerProductPrice = parseFloat(req.body.dealerProductPrice) / 100;
 		product.dealerProductActive = req.body.dealerProductActive;
 		product.dealerProductLastUpdate = req.body.dealerProductLastUpdate;
-		log.debug(`product: ${JSON.stringify(product, null, 2)}`);
+		// log.debug(`product: ${JSON.stringify(product, null, 2)}`);
 		// Verify if product exist.
 		Product.findOne({dealerName: product.dealerName, dealerProductId: product.dealerProductId}, (err, doc)=>{
 			if (err) {

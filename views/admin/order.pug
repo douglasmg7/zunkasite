@@ -87,7 +87,8 @@ block content
         input.btn-danger(type='button' v-if='order.timestamps.placedAt && (status(order) !== "cancelado")' @click='showSetStatusWindow("canceled")' value='Cancelar pedido')            
 
         //- Exit.
-        input.btn-exit(type='button' onclick='window.location.href="/admin/users"' value='Sair') 
+        //- input.btn-exit(type='button' onclick='window.location.href="/admin/users"' value='Sair') 
+        input.btn-exit(type='button' onclick='javascript:history.back()' value='Sair') 
 
         //- Window to return product to stock.
         .set-status(v-if='setStatusWindow.show')
