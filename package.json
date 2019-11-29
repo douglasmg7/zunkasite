@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "update": "./bin/update-and-restart-systems.sh",
+    "update-system": "./bin/update-and-restart-systems.sh",
     "build": "./bin/compile_styl",
     "start": "pm2 start ecosystem.config.js --env production",
     "start-zunka-site": "pm2 start ecosystem.config.js --only zunka_site --env production",
