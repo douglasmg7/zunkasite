@@ -10,6 +10,7 @@ if [[ -f $ZUNKAPATH/restart-zunka-srv ]] && [[ -f $ZUNKAPATH/restart-zunka-site 
     echo :: Restarting zunka site...
     echo :: Restarting zunka srv...
     pm2 restart ecosystem.config.js --env production
+    pm2 save
     rm $ZUNKAPATH/restart-zunka-srv
     rm $ZUNKAPATH/restart-zunka-site
 fi
@@ -17,11 +18,13 @@ fi
 if [[ -f $ZUNKAPATH/restart-zunka-site ]];then
     echo :: Restarting zunka site...
     pm2 restart ecosystem.config.js --only zunka_site --env production
+    pm2 save
     rm $ZUNKAPATH/restart-zunka-site
 fi
 # Restart zunka-srv.
 if [[ -f $ZUNKAPATH/restart-zunka-srv ]];then
     echo :: Restarting zunka srv...
     pm2 restart ecosystem.config.js --only zunka_srv --env production
+    pm2 save
     rm $ZUNKAPATH/restart-zunka-srv
 fi

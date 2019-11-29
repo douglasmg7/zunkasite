@@ -2,6 +2,8 @@
 
 # [zunka-site] change font-weight on admin/order.pug
 
+# [zunka-site] Apenas opção de transportadora para mercadorias com altura + comprimento + largura > 200cm.
+
 # Include created and updated for user page.
 
 # Not permit paypal or credit card for motoboy delivery.
