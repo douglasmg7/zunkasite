@@ -19,6 +19,8 @@ RELOAD_NGINX=`git diff --name-only master...origin/master | egrep '(nginx.conf.s
 if [[ ! -z $FILES_CHANGED ]]; then
     echo :: Merging zunka site...
     git merge
+else
+    echo Already up to date.
 fi
 
 # Npm install.
