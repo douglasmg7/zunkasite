@@ -1,7 +1,5 @@
 # [aldowsc] Update categories list when product quantity change.
 
-# [zunka-site] change font-weight on admin/order.pug
-
 # [zunka-site] Apenas opção de transportadora para mercadorias com altura + comprimento + largura > 200cm.
 
 # Include created and updated for user page.
@@ -10,13 +8,7 @@
 
 # Set timestamps.paid for motoboy orders.
 
-# Setup time to load xml alod on script.
-
 # Fast search from user page, maybe fuzz search.
-
-# Find out erros from yesterday.
-
-# Aldo xml parsing.
 
 # canceledAt not updated when order canceled.
 

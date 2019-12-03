@@ -102,15 +102,14 @@ var app = new Vue({
                 if (response.data.err) {
                     alert('Não foi possível salvar.');
                 // Saved.
-                // } else if (response.data.isNew) {
-                    // window.location.href = `/admin/product/${response.data.product._id}`
-                } else {
-                    if (link) {
-                        window.location.href = link;
-                    } else {
-                        window.location.href = '/admin/';
-                    }
-                }
+                } 
+                // else {
+                    // if (link) {
+                        // window.location.href = link;
+                    // } else {
+                        // window.location.href = '/admin/';
+                    // }
+                // }
             })
             .catch(err => {
                 alert('Não foi possível salvar.');

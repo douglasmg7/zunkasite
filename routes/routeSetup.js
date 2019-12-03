@@ -9,6 +9,7 @@ const Product = require('../model/product');
 // Utils.
 const categories = require('../util/productCategories');
 const makers = require('../util/productMakers.js');
+const turndown = new require('turndown')();
 
 // Add product.
 router.post('/product/add', basicAuth, [
@@ -76,8 +77,10 @@ router.post('/product/add', basicAuth, [
 				// Create dealer and store data.
 				product.storeProductId = "";
 				product.storeProductTitle = product.dealerProductTitle;
-				product.storeProductDescription = product.dealerProductDesc;
+				// product.storeProductDescription = product.dealerProductDesc;
+                product.storeProductDescription = "";
 				product.storeProductDetail = "";
+                product.storeProductInfoMD = turndown.turndown(product.dealerProductDesc);
 				product.storeProductTechnicalInformation = "";
 				product.storeProductAdditionalInformation = "";
 				product.storeProductCategory = product.dealerProductCategory;
