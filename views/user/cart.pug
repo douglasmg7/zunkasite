@@ -15,7 +15,7 @@ block content
             .products
                 .product(v-for='product in cart.products' data-product_id='product._id')
                     a(:href='`/product/${product._id}`')
-                        img(:src='`/img/${product._id}/${product.image}`')
+                        img(v-if='product.image' :src='`/img/${product._id}/${product.image}`')
                     .product-info
                         a.product-title(:href='`/product/${product._id}`') {{ product.title }}
                         p.product-price R$ {{ product.price | currency }}

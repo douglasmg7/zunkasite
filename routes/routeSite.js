@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const log = require('../config/log');
+const aldo = require('../util/aldo');
 const marked = require('marked');
 marked.setOptions({
     headerIds: false
@@ -28,24 +29,6 @@ router.get('/error', function(req, res, next) {
 		},
 	});
 });
-
-// // Get products page by class (news, more sold...).
-// router.get('/full', function(req, res, next) {
-	// redis.get('banners', (err, banners)=>{
-		// // Internal error.
-		// if (err) {
-			// log.error(err.stack);
-			// return res.render('/error', { message: 'Não foi possível encontrar os banners.', error: err });
-		// }
-		// // Render page.
-		// return res.render('product/productListFull', {
-			// nav: {
-			// },
-			// search: req.query.search ? req.query.search : '',
-			// banners: JSON.parse(banners) || [],
-		// });
-	// });
-// });
 
 // Get products page by class (news, more sold...).
 router.get('/', function(req, res, next) {
@@ -279,21 +262,46 @@ router.get('/cart', (req, res, next)=>{
 router.put('/cart/add/:_id', (req, res, next)=>{
 	// Get product from db.
 	Product.findById(req.params._id)
-		.then(product=>{
-			if (product._id) {
-				req.cart.addProduct(product, ()=>{
-					// console.log('user cart', JSON.stringify(user.cart));
-					res.json({success: true});
-				});
-				// Not exist the product.
-			} else {
-				log.error(new Error(`product ${req.params._id} not found to add to cart.`).stack);
-				res.status(404).send('Produto não encontrado na base de dados.');
-			}
-		}).catch(err=>{
-			log.error(err.stack);
-			res.status(404).send('Produto não encontrado na base de dados.');
-		});
+    .then(product=>{
+        if (product._id) {
+            // For Aldo products, test if product in stock.
+            if (product.dealerName == "Aldo") {
+                aldo.checkAldoProductQty(product, 1, (err, productInStock)=>{
+                    // log.debug(`productInStock: ${productInStock}`);
+                    if (err) {
+                        log.error(new Error(`Adding product to cart. Product ${req.params._id}. ${err.stack}`).stack);
+                        return res.json({success: false, outOfStock: false, message: "Não foi possível adicionar o produto ao carrinho.\nAlguma coisa deu errado na solicitação de sua requisição."});
+                    }
+                    // Into stock.
+                    else if (productInStock) {
+                        // Add product to cart.
+                        req.cart.addProduct(product, ()=>{
+                            // console.log('user cart', JSON.stringify(user.cart));
+                            return res.json({success: true});
+                        });
+                    // Out of stock.
+                    } else {
+                        return res.json({success: false, outOfStock: true, message: "Não foi possível adicionar o produto ao carrinho.\nNossa última unidade acabou de ser vendida."});
+                    }
+                });
+            }
+            // No Aldo products.
+            else {
+                // Add product to cart.
+                req.cart.addProduct(product, ()=>{
+                    // console.log('user cart', JSON.stringify(user.cart));
+                    return res.json({success: true});
+                });
+            }
+        // Product not exist.
+        } else {
+            log.error(new Error(`Adding product to cart. Product ${req.params._id} not found on db.`).stack);
+            return res.json({success: false, outOfStock: false, message: "Não foi possível adicionar o produto ao carrinho.\nAlguma coisa deu errado na solicitação de sua requisição."});
+        }
+    }).catch(err=>{
+        log.error(new Error(`Adding product to cart. Product ${req.params._id}. catch err.`).stack);
+        return res.json({success: false, outOfStock: false, message: "Não foi possível adicionar o produto ao carrinho.\nAlguma coisa deu errado na solicitação de sua requisição."});
+    });
 })
 
 // Change product quantity from cart.

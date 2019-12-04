@@ -15,6 +15,7 @@ var app = new Vue({
         estimateShipmentData: [],
         showModal: false,
         productDescriptionWithTitle: false,
+        outOfStockMessage: "Produto fora de estoque",
     },
     methods: {
         // Accaunting.
@@ -76,15 +77,22 @@ var app = new Vue({
                 headers:{'csrf-token' : csrfToken},
                 data: { product: this.product }
             })
-                .then(response => {
-                    // Product added to the cart.
-                    if (response.data.success) {
-                        window.location.href = `/?productAddedToCart=${this.product._id}`;
+            .then(response => {
+                // Product added to the cart.
+                if (response.data.success) {
+                    window.location.href = `/?productAddedToCart=${this.product._id}`;
+                } else {
+                    if (response.data.outOfStock) {
+                        this.outOfStockMessage = "Nossa última unidade acabou de ser vendida";
+                        product.storeProductQtd = 0;
                     }
-                })
-                .catch(err => {
-                    console.error(err);
-                })
+                    alert(response.data.message);
+                }
+            })
+            .catch(err => {
+                alert("Alguma coisa deu errado na solicitação da sua requisição!");
+                console.error(err);
+            })
         },
         // Get image source 300 pixels.
         srcImgZoom(product, index){

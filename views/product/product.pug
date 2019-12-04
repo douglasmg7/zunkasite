@@ -25,7 +25,7 @@ block content
                     //- | R$ {{ product.storeProductPrice | currency}}
                 ul.detail(v-if='productDetail.length > 0')
                     li(v-for='detail in productDetail') {{detail}}
-                h2(v-if='product.storeProductQtd < 1').out-of-stock Produto fora de estoque
+                h2(v-if='product.storeProductQtd < 1').out-of-stock {{ outOfStockMessage }}
                 input.add-to-cart.btn-primary(v-if='product.storeProductQtd > 0' type='button' @click='addToCart' value='Adicionar ao carrinho')
                 .estimate-ship(v-if='product.storeProductQtd > 0')
                     p Estimar frete e prazo (Entre com o CEP)
