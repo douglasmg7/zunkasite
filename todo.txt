@@ -1,4 +1,5 @@
 [zunka-site]
+    Check add new address into checkout process.
     Imported aldo product must use suggested price and calculate porcentage.
     When aldo product get out of stock from sell, check for more products on aldo server.
     Import images.
