@@ -4,12 +4,13 @@
     Import images.
     Cep orgin must be Aldo from Aldo products.
     [page shipping-method-select] show message "processing".
+    [aldo] No email de compra enviado para o gilson, chamar a atenção quando o produto for da aldo.
+    [payment] Entrega por motoboy pode ser feita por cartão pela maquininha.
+    [payment] Juntar as telas de forma de envio e forma de pagamento.
 
 # [aldowsc] Update categories quantity items when product quantity change.
 
 # Include created and updated for user page.
-
-# Not permit paypal or credit card for motoboy delivery.
 
 # Set timestamps.paid for motoboy orders.
 

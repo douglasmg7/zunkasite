@@ -706,16 +706,19 @@ function closeOrder(order, req, res) {
 			// Update stock.
 			for (var i = 0; i < req.cart.products.length; i++) {
 				// Product.updateOne({ _id: req.cart.products[i]._id }, { $inc: { storeProductQtd: -1 * req.cart.products[i].qtd } }, err=>{
-				Product.updateOne(
-					{ _id: req.cart.products[i]._id },
-					{ $inc: {
-						storeProductQtd: -1 * req.cart.products[i].qtd,
-						storeProductQtdSold: 1 * req.cart.products[i].qtd
-					} }, err=>{
-						if (err) {
-							log.error(err.stack);
-						}
-					});
+                // Not update aldo products, because the actual stock is undetermined.
+                if (req.cart.products[i].dealerName !== "Aldo") {
+                    Product.updateOne(
+                        { _id: req.cart.products[i]._id },
+                        { $inc: {
+                            storeProductQtd: -1 * req.cart.products[i].qtd,
+                            storeProductQtdSold: 1 * req.cart.products[i].qtd
+                        } }, err=>{
+                            if (err) {
+                                log.error(err.stack);
+                            }
+                        });
+                }
 			}
 			// Clean cart.
 			req.cart.clean();
