@@ -39,7 +39,7 @@ block content
                 .products-price-changed(v-if='productsPriceChanged')
                     h3 Produto(s) com alteração de preço
                     .product(v-for='product in cart.products' v-if='product.showMsgPriceChanged')
-                        a(:href='`/product/${product._id}`'): img.product(:src='`/img/${product._id}/${product.image}`')
+                        a(:href='`/product/${product._id}`'): img.product(v-if='product.image' :src='`/img/${product._id}/${product.image}`')
                         div
                             p.title {{ product.title }}
                             p
@@ -50,7 +50,7 @@ block content
                 .products-qtd-changed(v-if='productsQtdChanged')
                     h3 Produto(s) com alteração de quantidade devido ao estoque
                     .product(v-for='product in cart.products' v-if='product.showMsgQtdChanged')
-                        a(:href='`/product/${product._id}`'): img.product(:src='`/img/${product._id}/${product.image}`')
+                        a(:href='`/product/${product._id}`'): img.product(v-if='product.image' :src='`/img/${product._id}/${product.image}`')
                         div
                             p.title {{ product.title }}
                             p
@@ -62,7 +62,7 @@ block content
                 .products-removed(v-if='cart.removedProducts.length')
                     h3 Produto(s) removido(s) por falta de estoque
                     .product(v-for='removedProduct in cart.removedProducts')
-                        a(:href='`/product/${removedProduct._id}`'): img.product(:src='`/img/${removedProduct._id}/${removedProduct.image}`')
+                        a(:href='`/product/${removedProduct._id}`'): img.product(v-if='removedProduct.image' :src='`/img/${removedProduct._id}/${removedProduct.image}`')
                         p.title {{ removedProduct.title }}
                 input.btn-primary(type='button' @click='userReceiveMsgCartChanged()' value='Ok')
 

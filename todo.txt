@@ -1,6 +1,11 @@
-# [aldowsc] Update categories list when product quantity change.
+[zunka-site]
+    Imported aldo product must use suggested price and calculate porcentage.
+    When aldo product get out of stock from sell, check for more products on aldo server.
+    Import images.
+    Cep orgin must be Aldo from Aldo products.
+    [page shipping-method-select] show message "processing".
 
-# [zunka-site] Apenas opção de transportadora para mercadorias com altura + comprimento + largura > 200cm.
+# [aldowsc] Update categories quantity items when product quantity change.
 
 # Include created and updated for user page.
 

@@ -98,7 +98,6 @@ router.post('/product/add', basicAuth, [
 				product.storeProductWarrantyDays = 0;
 				product.storeProductWarrantyDetail = "";
 				product.storeProductQtdSold = 0;
-				// Must be verified on aldo ws before close order.
 				product.storeProductQtd = 4;
 				product.storeProductActive = product.dealerProductActive;
 				let newProduct = new Product(product);

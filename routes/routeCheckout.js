@@ -17,6 +17,7 @@ const Order = require('../model/order');
 const Product = require('../model/product');
 const ShippingPrice = require('../model/shippingPrice');
 const ppConfig = require('../config/s').paypal;
+const aldo = require('../util/aldo');
 
 // Redis.
 const redis = require('../db/redis');
@@ -307,61 +308,130 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
 	});
 });
 
+// Check if all products orders in stock.
+async function checkOrderProductsInStock(order, cb) {
+    // Promises.
+    let promises = [];
+    // Check stock for each item on order.
+    order.items.forEach(item=>{
+        promises.push(new Promise((resolve, reject)=>{
+            Product.findById(item._id)
+            .then(product=>{
+                if (product.dealerName == "Aldo") {
+                    aldo.checkAldoProductQty(product, item.quantity, (err, inStock)=>{
+                        if (err) {
+                            reject(err);
+                        }
+                        resolve([inStock, product]);
+                    });
+                } else {
+                    // Not Aldo product, trust on system cadastre.
+                    resolve([true, product]);
+                }
+            })
+            .catch(err=>{
+                reject(err);
+            })
+        }));
+    });
+    // Return promise.
+    return Promise.all(promises)
+        .then((results)=>{
+            let productsOutOfStock = [];
+            results.forEach(result=>{
+                let [inStock, product] = result;
+                // Some product out of stock.
+                if (!inStock) {
+                    productsOutOfStock.push(product);
+                }
+            });
+            // All products in stock.
+            if (productsOutOfStock.length) {
+                return [false, productsOutOfStock];
+            } else {
+                return [true, null];
+            }
+        }).catch(err=>{
+            log.error(`Checking aldo product in stock. ${err.stack}`);
+            return false;
+        });
+}
 
 // Select shipment.
 router.post('/shipping-method/order/:order_id', (req, res, next)=>{
-	// Set shipment method to default.
     // log.debug(`req.body: ${JSON.stringify(req.body)}`);
 	Order.findById(req.params.order_id, (err, order)=>{
-        // log.debug(`req.body: ${JSON.stringify(req.body)}`);
-		if (req.body.shippingMethod == 'motoboy'){
-			order.shipping.carrier = 'Sérgio Delivery';
-			order.shipping.methodCode = '';
-			order.shipping.methodDesc = 'Motoboy';
-			// Motoboy result using ',' as decimal point.
-			order.shipping.price = order.shipping.motoboyResult.price.replace('.', '').replace(',', '.');
-			order.shipping.deadline = order.shipping.motoboyResult.deadline;
-		} 
-        else if (req.body.shippingMethod == 'agreement') {
-            // log.debug('A combinar.');
-			order.shipping.carrier = '';
-			order.shipping.methodCode = '';
-			order.shipping.methodDesc = 'A combinar';
-			order.shipping.price = 0; 
-			order.shipping.deadline = 0;
-        }
-        else if (req.body.shippingMethod.toString().includes('default-carrier-')) {
-            // log.debug('A combinar.');
-            let index = parseInt(req.body.shippingMethod.replace('default-carrier-', ""));
-            // log.debug(`index: ${index}`);
-			order.shipping.carrier = 'defaultCarrier';
-			order.shipping.methodCode = (index + 1).toString();
-			order.shipping.methodDesc = 'Transportadora ' + (index + 1);
-			order.shipping.price = order.shipping.defaultDeliveryResults[index].price; 
-			order.shipping.deadline = order.shipping.defaultDeliveryResults[index].deadline; 
-            // log.debug(`order.shipping: ${JSON.stringify(order.shipping, null, 2)}`);
-        }
-		// Correios delivery type.
-		else {
-			for (let index = 0; index < order.shipping.correioResults.length; index++) {
-				if (order.shipping.correioResults[index].Codigo == req.body.shippingMethod) {
-					order.shipping.carrier = 'Correios';
-					order.shipping.methodCode = order.shipping.correioResults[index].Codigo;
-					order.shipping.methodDesc = order.shipping.correioResults[index].DescServico;
-					// Shipping price. Correio using ',' as decimal point.
-					order.shipping.price = order.shipping.correioResults[index].Valor.replace('.', '').replace(',', '.');
-					// Shipping deadline.
-					order.shipping.deadline = parseInt(order.shipping.correioResults[index].PrazoEntrega);
-				}
-			}
-		}
-		order.totalPrice = (parseFloat(order.subtotalPrice) + parseFloat(order.shipping.price)).toFixed(2);
-		order.timestamps.shippingMethodSelectedAt = new Date();
-		order.status = 'shippingMethodSelected';
-		order.save(err=>{
-			if (err) { return next(err) };
-			res.json({});
-		});
+        // Check if all products in stock.
+         checkOrderProductsInStock(order)
+         .then(result=>{
+            let [inStock, productsOutOfStock] = result; 
+            // Not in stock.
+            if (!inStock) {
+                let message = "Infelizmente os seguinte(s) iten(s) do seu carrinho não têm mais a quantidade selecionada:\n";
+                productsOutOfStock.forEach(product=>{
+                    message += product.storeProductTitle + "\n";
+                });
+                message += "Você será redirecionado ao seu carrinho de compras.";
+                res.json({ success: false, message});
+            }
+            // In stock.
+            else {
+                // log.debug(`req.body: ${JSON.stringify(req.body)}`);
+                if (req.body.shippingMethod == 'motoboy'){
+                    order.shipping.carrier = 'Sérgio Delivery';
+                    order.shipping.methodCode = '';
+                    order.shipping.methodDesc = 'Motoboy';
+                    // Motoboy result using ',' as decimal point.
+                    order.shipping.price = order.shipping.motoboyResult.price.replace('.', '').replace(',', '.');
+                    order.shipping.deadline = order.shipping.motoboyResult.deadline;
+                } 
+                else if (req.body.shippingMethod == 'agreement') {
+                    // log.debug('A combinar.');
+                    order.shipping.carrier = '';
+                    order.shipping.methodCode = '';
+                    order.shipping.methodDesc = 'A combinar';
+                    order.shipping.price = 0; 
+                    order.shipping.deadline = 0;
+                }
+                else if (req.body.shippingMethod.toString().includes('default-carrier-')) {
+                    // log.debug('A combinar.');
+                    let index = parseInt(req.body.shippingMethod.replace('default-carrier-', ""));
+                    // log.debug(`index: ${index}`);
+                    order.shipping.carrier = 'defaultCarrier';
+                    order.shipping.methodCode = (index + 1).toString();
+                    order.shipping.methodDesc = 'Transportadora ' + (index + 1);
+                    order.shipping.price = order.shipping.defaultDeliveryResults[index].price; 
+                    order.shipping.deadline = order.shipping.defaultDeliveryResults[index].deadline; 
+                    // log.debug(`order.shipping: ${JSON.stringify(order.shipping, null, 2)}`);
+                }
+                // Correios delivery type.
+                else {
+                    for (let index = 0; index < order.shipping.correioResults.length; index++) {
+                        if (order.shipping.correioResults[index].Codigo == req.body.shippingMethod) {
+                            order.shipping.carrier = 'Correios';
+                            order.shipping.methodCode = order.shipping.correioResults[index].Codigo;
+                            order.shipping.methodDesc = order.shipping.correioResults[index].DescServico;
+                            // Shipping price. Correio using ',' as decimal point.
+                            order.shipping.price = order.shipping.correioResults[index].Valor.replace('.', '').replace(',', '.');
+                            // Shipping deadline.
+                            order.shipping.deadline = parseInt(order.shipping.correioResults[index].PrazoEntrega);
+                        }
+                    }
+                }
+                order.totalPrice = (parseFloat(order.subtotalPrice) + parseFloat(order.shipping.price)).toFixed(2);
+                order.timestamps.shippingMethodSelectedAt = new Date();
+                order.status = 'shippingMethodSelected';
+                order.save(err=>{
+                    if (err) { return next(err) };
+                    res.json({ success: true });
+                });
+            } 
+        })
+        .catch(err=>{
+            return next(err);
+            // log.error(`POST /shipping-method/order/:order_id. ${err.stack}`);
+            // res.status(500).send();
+        });    
 	});
 });
 

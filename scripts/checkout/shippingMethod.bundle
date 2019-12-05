@@ -23,14 +23,17 @@ var app = new Vue({
             .then(response => {
                 // Validation error.
                 if (response.data.err) {
-                    alert('Não foi possível selecionar a forma de envio.');
-                } else{
+                    window.location.href=`/error?err=${response.data.err}`;
+                }
+                if (response.data.success) {
                     window.location.href=`/checkout/payment/order/${this.order._id}`;
+                } else {
+                    alert(response.data.message);
+                    window.location.href=`/cart`;
                 }
             })
             .catch(err => {
-                alert('Não foi possível selecionar a forma de envio.');
-                console.error(err);
+                window.location.href=`/error?err=${err}`;
             })  
         },
         deliveryDeadline: function(index){
