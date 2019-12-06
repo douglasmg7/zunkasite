@@ -560,6 +560,11 @@ router.post('/payment/order/:order_id', (req, res, next)=>{
 					method: 'money'
 				};
 				break;
+			case 'card-machine':
+				order.payment = {
+					method: 'card-machine'
+				};
+				break;
 			case 'transfer':
 				order.payment = {
 					method: 'transfer'
@@ -588,7 +593,7 @@ router.post('/payment/order/:order_id', (req, res, next)=>{
 		}
 		// Not need save for ppp-credit, createPayment alredy do that. 
 		// Not need save for paypal, closeOrder alredy do that. 
-		if (order.payment.method == 'transfer' || order.payment.method == 'money') {
+		if (order.payment.method == 'transfer' || order.payment.method == 'money' || order.payment.method == 'card-machine') {
 			order.save(err=>{
 				if (err) {
 					res.json({err});
@@ -613,7 +618,7 @@ router.get('/review/order/:order_id', (req, res, next)=>{
 			return next(new Error('No order to confirm.')); 
 		}
 		// Payment process completed.
-		if (order.payment.method == 'money' || order.payment.method == 'transfer' || order.payment.method == 'ppp-credit') {
+		if (order.payment.method == 'money' || order.payment.method == 'transfer' || order.payment.method == 'card-machine' || order.payment.method == 'ppp-credit') {
 			return res.render('checkout/review',
 				{
 					order: order,
@@ -637,6 +642,7 @@ router.post('/close/order/:order_id', (req, res, next)=>{
 		// Payment method.
 		switch(order.payment.method) {
 			case 'money':
+			case 'card-machine':
 			case 'transfer':
 				order.timestamps.placedAt = new Date();
 				order.status = 'placed';
@@ -737,6 +743,7 @@ function closeOrder(order, req, res) {
 			};
 			switch(order.payment.method) {
 				case 'money':
+				case 'card-machine':
 					mailOptions.text = 'Parabéns! Seu pedido foi realizado, agora é só aguardar o envio do produto.\n\n' +
 						'O pagamento será realizado no momento do recebimento do produto.\n\n' +
 						'Número de pedido: ' + order._id + '\n\n' +
@@ -787,6 +794,9 @@ function closeOrder(order, req, res) {
 						break;
 					case "money":
 						strPaymentMethod = "Dinheiro";
+						break;
+					case "card-machine":
+						strPaymentMethod = "Cartão presencial";
 						break;
 					case "paypal":
 						strPaymentMethod = "Paypal";

@@ -47,7 +47,7 @@ block content
             p {{order.email}}
         .address
             h2 Endereço de entrega
-            h3 Nome
+            h3 Destinatário
             p {{order.shipping.address.name}}
             h3 Telefone 
             p {{order.shipping.address.phone}}
@@ -59,7 +59,8 @@ block content
         .payment
             h2 Forma de pagamento
             p(v-if='order.payment.method === "paypal"') Paypal
-            p(v-if='order.payment.method === "money"') Pagamento em dinheiro no memento da entrega
+            p(v-if='order.payment.method === "money"') Dinheiro no memento da entrega
+            p(v-if='order.payment.method === "card-machine"') Cartão (crédito a vista ou débito) no memento da entrega
             p(v-if='order.payment.method === "transfer"') Transferência bancária
             p(v-if='order.payment.method === "ppp-credit"') Cartão de crédito
         .shipment

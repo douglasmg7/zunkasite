@@ -1,10 +1,9 @@
 [zunka-site]
+    [order page] Sair, volta para página anterior e não dá reload.
     Página que mostra histórico de alterações.
     Dimensions from aldo is not the product box.
-    Entrega por motoboy pode ser feita por cartão pela maquininha.
     Import images.
     Loading modal for paypal page and credit card.
-    Show products out of stock for all product list.
     Cep orgin must be Aldo from Aldo products.
     [aldo] No email de compra enviado para o gilson, chamar a atenção quando o produto for da aldo.
     [payment] Juntar as telas de forma de envio e forma de pagamento.

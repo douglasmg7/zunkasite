@@ -10,15 +10,16 @@ block content
     section.shadow
         .payment
             h2.title(@click='showCreditButton') Selecione a forma de pagamento
-            //- Payment by money.
+            //- Money.
             input.btn-primary(type='button' @click='directPayment("money")' v-if='order.shipping.methodDesc === "Motoboy"' value='Dinheiro')
-            //- Payment by transfer.
+            //- Transfer.
             input.btn-info(type='button' @click='directPayment("transfer")' value='Transferência bancária')
-            //- Payment by credit card, using PayPal Plus.
+            //- Card machine (presential).
+            input.btn-info(type='button' @click='directPayment("card-machine")' v-if='order.shipping.methodDesc === "Motoboy"' value='Cartão')
+            p(v-if='order.shipping.methodDesc === "Motoboy"') Crédito a vista ou débito
+            //- Credit card, using PayPal Plus.
             input.btn-primary(type='button' @click='payPalPlusPayment()' value='Cartão' v-if='order.shipping.methodDesc !== "Motoboy"')
-            // To hide credit option.
-            //- input.btn-primary(v-if='creditButtonVisibility === true' type='button' @click='payPalPlusPayment()' value='Cartão')
-            //- Payment by PayPal.
+            //- PayPal.
             #paypal-button(:hidden='order.shipping.methodDesc === "Motoboy"')
 
 append internal_scripts

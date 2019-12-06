@@ -51,6 +51,7 @@ block content
 					h3.sub-title Forma de pagamento
 					p(v-if='order.payment.method === "money"') Pagamento em dinheiro no momento da entrega
 					p(v-if='order.payment.method === "transfer"') Transferência bancária
+					p(v-if='order.payment.method === "card-machine"') Pagamento em cartão no momento da entrega
 					p(v-if='order.payment.method === "paypal"') Paypal
 					p(v-if='order.payment.method === "ppp-credit"') Cartão de crédito
 					//- form(action=`/checkout/close/order/${order._id}`, method='post')

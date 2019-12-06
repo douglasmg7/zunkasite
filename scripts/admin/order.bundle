@@ -47,8 +47,8 @@ var app = new Vue({
 				case 'delivered':
 				    return voidAction;
 			}
-			// Money, only by motoboy.
-			if(order.payment.method === 'money'){
+			// Money and card machine, only by motoboy.
+			if(order.payment.method === 'money' || order.payment.method === 'card-machine'){
 				switch(order.status) {
 					case 'shipped':
 					    return verifyDeliveryAction;

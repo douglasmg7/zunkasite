@@ -24,7 +24,9 @@
 
 ### Pagamento
 
-* Quando a opção motoboy é selecioanada, exibe apenas a opção de pagamento por dinheiro ou transferência bancária.
+* Possível selecionar pagamento em cartão presencial para entrega por motoboy.
+* Não existe mais a possibilidade de pagamento por cartão de crédito online ou paypal para entregas por motoboy.
+* As telas de pedidos, confirmação de pedio e resumo do pedido foram alteradas para exibir pagamento em cartão presencial.
 
 ### Produtos
 
