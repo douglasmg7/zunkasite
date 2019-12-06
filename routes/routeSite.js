@@ -150,12 +150,18 @@ router.get('/api/products', function (req, res) {
 	const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
 	// log.debug(JSON.stringify(req.query.sort));
 	// Not qtd 0.
-    const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
-	// const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$gt: 0}};
+    // const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
+    const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$gt: 0}};
 	// Text search.
 	if (req.query.search) {
 		search.storeProductTitle = {$regex: req.query.search, $options: 'i'};
 	}
+    // Not show product out of stock when sorting.
+	if (req.query.sort !== "stock") {
+        // log.debug(`req.query.sort:  ${req.query.sort}`);
+		search.storeProductQtd = { $gt: 0 };
+	}
+
 	// const search = req.query.search
 	//   ? {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}, 'storeProductTitle': {$regex: req.query.search, $options: 'i'}}
 	//   : {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};

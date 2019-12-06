@@ -1,5 +1,6 @@
 [zunka-site]
-    Imported aldo product must use suggested price and calculate porcentage.
+    Página que mostra histórico de alterações.
+    Dimensions from aldo is not the product box.
     Entrega por motoboy pode ser feita por cartão pela maquininha.
     Import images.
     Loading modal for paypal page and credit card.

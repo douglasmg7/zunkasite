@@ -26,6 +26,7 @@ router.post('/product/add', basicAuth, [
 		check('dealerProductWeight').isNumeric(),
 		check('dealerProductActive').isBoolean(),
 		check('dealerProductPrice').isNumeric(),
+		check('dealerProductFinalPriceSuggestion').isNumeric(),
 		check('dealerProductLastUpdate').isISO8601(),
 ], (req, res, next)=>{
 	try {
@@ -89,9 +90,9 @@ router.post('/product/add', basicAuth, [
 				product.storeProductHeight = product.dealerProductHeight;
 				product.storeProductWidth = product.dealerProductWidth;
 				product.storeProductWeight = product.dealerProductWeight;
-				product.storeProductPrice =  (product.dealerProductPrice * 1.28);
+				product.storeProductPrice = parseFloat(req.body.dealerProductFinalPriceSuggestion) / 100;
 				product.storeProductCommercialize = false;
-				product.storeProductMarkup = 28;
+                product.storeProductMarkup = parseFloat((((product.storeProductPrice / product.dealerProductPrice) -1) * 100).toFixed(2));
 				product.storeProductDiscountEnable = false;
 				product.storeProductDiscountType = "%";
 				product.storeProductDiscountValue = 5;

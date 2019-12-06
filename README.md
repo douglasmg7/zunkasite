@@ -1,6 +1,6 @@
 # Zunka site  
 
-o
+
 > v1.1.0  - 6 Dez 2019
 
 ### Aldo
@@ -16,9 +16,20 @@ o
 **Página "Forma de envio"**
 * Ao clicar em *"Continuar"*, verifica se a Aldo tem diponível a quantidade de produtos requeridas + 1.   
 
+**Criação do produto no site**
+* Descrição técnica sendo importada como markdown no campo Info (markdown).
+* Vaio adicionado a lista de fabricantes.
+* Usando preço sugerido pelo fornecedor como preço de venda e calculando o valor do lucro.
+* Mantendo títlulo original em caixa alta.
 
 ### Pagamento
 
 * Quando a opção motoboy é selecioanada, exibe apenas a opção de pagamento por dinheiro ou transferência bancária.
 
+### Produtos
 
+* Na página inicial (novidades e mais vendidos), não são apresentados produtos fora de estoque.
+* Na página que lista todos os produtos, são apresentados também os produtos fora de estoque, mas estes aparecem apenas após todos os produtos em estoque.
+* Na página que lista todos os produtos, quando é escolhido alguma ordenação os produtos fora de estoque não são apresentados.
+* Quando uma pesquisa é realizada são apresentados também os produtos fora de estoque, mas estes aparecem apenas após todos os produtos em estoque.
+* Uso do filtro não muda a lógica com relação a exibição ou não dos produtos fora de estoque.

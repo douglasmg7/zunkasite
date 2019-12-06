@@ -14,6 +14,7 @@ let regexMakers = [
 	{ name: 'LG', regex: /\blg\b/i},
 	{ name: 'Seagate', regex: /\bseagate\b/i},
 	{ name: 'TP-Link', regex: /\btp-?link\b/i},
+	{ name: 'Vaio', regex: /\bvaio\b/i},
 	{ name: 'Western', regex: /\bwestern\b/i},
 ];
 
