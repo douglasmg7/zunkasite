@@ -16,6 +16,10 @@ var app = new Vue({
         showModal: false,
         productDescriptionWithTitle: false,
         outOfStockMessage: "Produto fora de estoque",
+        loading: {
+            show: false,
+            message: 'Confirmando a disponibilidade do produto ',
+        },
     },
     methods: {
         // Accaunting.
@@ -71,6 +75,10 @@ var app = new Vue({
         },
         // Add product to cart.
         addToCart(){
+            // For aldo product, show loading message.
+            if (this.product.dealerName === 'Aldo') {
+                this.loading.show = true;
+            }
             axios({
                 method: 'put',
                 url:`/cart/add/${this.product._id}`,
@@ -82,17 +90,20 @@ var app = new Vue({
                 if (response.data.success) {
                     window.location.href = `/?productAddedToCart=${this.product._id}`;
                 } else {
-                    if (response.data.outOfStock) {
-                        this.outOfStockMessage = "Nossa última unidade acabou de ser vendida";
-                        product.storeProductQtd = 0;
-                    }
-                    alert(response.data.message);
+                    // Give time to hide modal-loading.
+                    this.loading.show = false;
+                    setTimeout(()=>{
+                        if (response.data.outOfStock) {
+                            this.outOfStockMessage = "Nossa última unidade acabou de ser vendida";
+                            product.storeProductQtd = 0;
+                        }
+                        alert(response.data.message);
+                    }, 200);
                 }
             })
             .catch(err => {
-                alert("Alguma coisa deu errado na solicitação da sua requisição!");
-                console.error(err);
-            })
+                window.location.href=`/error?err=${err}`;
+            });
         },
         // Get image source 300 pixels.
         srcImgZoom(product, index){

@@ -1,13 +1,14 @@
 [zunka-site]
-    Check add new address into checkout process.
     Imported aldo product must use suggested price and calculate porcentage.
-    When aldo product get out of stock from sell, check for more products on aldo server.
+    Entrega por motoboy pode ser feita por cartão pela maquininha.
     Import images.
+    Loading modal for paypal page and credit card.
+    Show products out of stock for all product list.
     Cep orgin must be Aldo from Aldo products.
-    [page shipping-method-select] show message "processing".
     [aldo] No email de compra enviado para o gilson, chamar a atenção quando o produto for da aldo.
-    [payment] Entrega por motoboy pode ser feita por cartão pela maquininha.
     [payment] Juntar as telas de forma de envio e forma de pagamento.
+    [add address] Validation must be in the same way cep validation.
+    [shipping method] Validate phone number.
 
 # [aldowsc] Update categories quantity items when product quantity change.
 

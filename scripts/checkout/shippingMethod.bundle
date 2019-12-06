@@ -6,7 +6,11 @@ var app = new Vue({
     el: '#app',
     data: {
         order: order,
-        shippingMethod: ''
+        shippingMethod: '',
+        loading: {
+            show: false,
+            message: 'Verificando a disponibilidade dos produtos ',
+        },
     },
     methods: { 
         shipmentSelected: function(){
@@ -14,6 +18,7 @@ var app = new Vue({
                 alert('Nenuma opção de envio selecionada');
                 return;
             }
+            this.loading.show = true;
             axios({
                 method: 'post',
                 url: window.location.pathname,
@@ -28,8 +33,12 @@ var app = new Vue({
                 if (response.data.success) {
                     window.location.href=`/checkout/payment/order/${this.order._id}`;
                 } else {
-                    alert(response.data.message);
-                    window.location.href=`/cart`;
+                    this.loading.show = false;
+                    // Give time to hide modal-loading.
+                    setTimeout(()=>{
+                        alert(response.data.message);
+                        window.location.href=`/cart`;
+                    }, 300);
                 }
             })
             .catch(err => {

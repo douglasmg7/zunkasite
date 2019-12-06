@@ -1,16 +1,16 @@
 extends ../layout/layout_vue_n
 
 block title
-    title Zunka - Endereço para entrega
+    title Zunka - Endereço para envio
 
 block append css
-    link(rel="stylesheet" href="/css/checkout/shippingAddress.css" charset="utf-8")
+    link(rel="stylesheet" href="/css/checkout/shippingAddress.css?0002" charset="utf-8")
 
 block content 
     section.shadow
         h2.title Selecione um endereço para envio
         p Ou você pode 
-            a(href='#name') adicionar um novo endereço para envio.
+            a(href='#new-address') adicionar um novo endereço para envio.
         //- Address list.
         .address(v-if='address' v-for='address in addresss' data-address-id='this.address._id')
             h3.title {{address.name}}
@@ -25,15 +25,15 @@ block content
             input.btn-primary(type='button' @click='selectAddress(address._id)' value='Enviar para este endereço') 
         .form
             //- hr
-            h3 Cadastrar novo endereço para envio    
+            h3#new-address Cadastrar novo endereço para envio    
             //- Name.                              
             label(for='name') Destinatário
             input(type='text' name='name' id='name' v-model='newAddress.name')
             p.validation(v-if='validation.name') {{validation.name}}    
             //- Cep.      
-            label(for='cep') CEP
+            label(for='cep' :class='{ error: validation.cep }') {{ validation.cep ? validation.cep : "CEP"}}
             input(@blur='getCepInfo' type='text' name='cep' id='cep' v-model='newAddress.cep')
-            p.validation(v-if='validation.cep') {{validation.cep}}          
+            //- p.validation(v-if='validation.cep') {{validation.cep}}          
             a(href='http://www.buscacep.correios.com.br' target='_blank') Não sei meu CEP
             //- Address.
             label(for='address') Endereço
@@ -71,4 +71,4 @@ append internal_scripts
         let addresss = !{JSON.stringify(addresss)};
 
 append external_scripts
-    script(src='/js/checkout/shippingAddress.js?0003')
+    script(src='/js/checkout/shippingAddress.js?0004')

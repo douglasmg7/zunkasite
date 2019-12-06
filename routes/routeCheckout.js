@@ -367,11 +367,18 @@ router.post('/shipping-method/order/:order_id', (req, res, next)=>{
             let [inStock, productsOutOfStock] = result; 
             // Not in stock.
             if (!inStock) {
-                let message = "Infelizmente os seguinte(s) iten(s) do seu carrinho não têm mais a quantidade selecionada:\n";
+                let message;
+                // More than one item.
+                if (productsOutOfStock.length > 1) {
+                    message = "Os seguintes itens não estãm mais disponíveis na quantidade selecionada:\n\n";
+                // One item.
+                } else {
+                    message = "O seguinte item não esta mais disponível na quantidade selecionada:\n\n";
+                }
                 productsOutOfStock.forEach(product=>{
-                    message += product.storeProductTitle + "\n";
+                    message += "* " + product.storeProductTitle + "\n";
                 });
-                message += "Você será redirecionado ao seu carrinho de compras.";
+                message += "\nVocê será redirecionado ao seu carrinho de compras.";
                 res.json({ success: false, message});
             }
             // In stock.

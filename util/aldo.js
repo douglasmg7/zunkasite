@@ -20,6 +20,9 @@ function checkAldoProductQty(product, qty, cb) {
                 return cb(new Error(`Checking aldo product quantity. Aldo webservice response.data.err: ${response.data.err}`));
             } else {
                 // log.debug(`response.data: ${response.data}`);
+                // Negative test begin.
+                // response.data = "NÃO";
+                // Negative test end.
                 if (response.data === "SIM") {
                     return cb(null, true);
                 } 

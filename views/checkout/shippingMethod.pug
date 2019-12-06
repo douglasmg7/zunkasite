@@ -1,51 +1,52 @@
 extends ../layout/layout_vue_n
 
 block title
-  title Zunka - Modo de envio
+    title Zunka - Forma de envio
 
 block append css
-  link(rel="stylesheet" href="/css/checkout/shippingMethod.css" charset="utf-8")
+    link(rel="stylesheet" href="/css/checkout/shippingMethod.css?0003" charset="utf-8")
 
 block content 
-  section.shadow(v-if='!order.shipping.correioResults.length && !order.shipping.motoboyResult.price && !order.shipping.defaultDeliveryResults.length')
-    h2.title 
-        | Não foi possível exibir uma forma de envio 
-        br
-        | Verifique se o CEP está correto
-    input.btn-primary(type='button' onclick='window.location="/checkout/shipping-address"' value='Voltar')
+    section.shadow(v-if='!order.shipping.correioResults.length && !order.shipping.motoboyResult.price && !order.shipping.defaultDeliveryResults.length')
+        h2.title 
+            | Não foi possível exibir uma forma de envio 
+            br
+            | Verifique se o CEP está correto
+        input.btn-primary(type='button' onclick='window.location="/checkout/shipping-address"' value='Voltar')
 
-  section.shadow(v-if='order.shipping.correioResults.length || order.shipping.motoboyResult.price || order.shipping.defaultDeliveryResults.length')
-    h2.title Forma de envio
-    .form
-      .radio
-        //- Correios.
-        label(v-for="(item, index) in order.shipping.correioResults")
-          input(type='radio' name='shipmentOption' id='correios', :value='item.Codigo'  v-model='shippingMethod')/ 
-          span {{deliveryServiceDesc(index)}}
-          p Prazo de entrega: {{deliveryDeadline(index)}} dia(s) após a confirmação do pagamento
-          p Valor: R${{deliveryPrice(index)}}
-        //- Motoboy.
-        label(v-if='order.shipping.motoboyResult.price')
-          input(type='radio' name='shipmentOption' id='motoboy' value='motoboy' v-model='shippingMethod')/ 
-          span Motoboy
-          p Prazo de entrega: {{order.shipping.motoboyResult.deadline}} dia(s) após a confirmação do pagamento
-          p Valor: R${{order.shipping.motoboyResult.price}}
-        //- Default delivery.
-        label(v-for="(item, index) in order.shipping.defaultDeliveryResults")
-          input(type='radio' name='shipmentOption' id='defaultCarrier', :value='"default-carrier-" + index'  v-model='shippingMethod')/ 
-          span Transportadora {{ index + 1 }}
-          p Prazo de entrega: {{ item.deadline }} dia(s) após a confirmação do pagamento
-          p Valor: R${{ item.price }}
-        //- A combinar.
-        //- label
-          input(type='radio' name='shipmentOption' id='agreement' value='agreement' v-model='shippingMethod')/ 
-          span A combinar
-          p Valor, pagamento e transportadora devem ser combinados pelo e-mail ou WhatsApp.
-      input.btn-primary(type='button' @click='shipmentSelected()' value='Continuar')
+    section.shadow(v-if='order.shipping.correioResults.length || order.shipping.motoboyResult.price || order.shipping.defaultDeliveryResults.length')
+        h2.title Forma de envio
+        .form
+            .radio
+            //- Correios.
+            label(v-for="(item, index) in order.shipping.correioResults")
+                input(type='radio' name='shipmentOption' id='correios', :value='item.Codigo'  v-model='shippingMethod')/ 
+                span {{deliveryServiceDesc(index)}}
+                p Prazo de entrega: {{deliveryDeadline(index)}} dia(s) após a confirmação do pagamento
+                p Valor: R${{deliveryPrice(index)}}
+            //- Motoboy.
+            label(v-if='order.shipping.motoboyResult.price')
+                input(type='radio' name='shipmentOption' id='motoboy' value='motoboy' v-model='shippingMethod')/ 
+                span Motoboy
+                p Prazo de entrega: {{order.shipping.motoboyResult.deadline}} dia(s) após a confirmação do pagamento
+                p Valor: R${{order.shipping.motoboyResult.price}}
+            //- Default delivery.
+            label(v-for="(item, index) in order.shipping.defaultDeliveryResults")
+                input(type='radio' name='shipmentOption' id='defaultCarrier', :value='"default-carrier-" + index'  v-model='shippingMethod')/ 
+                span Transportadora {{ index + 1 }}
+                p Prazo de entrega: {{ item.deadline }} dia(s) após a confirmação do pagamento
+                p Valor: R${{ item.price }}
+            //- A combinar.
+            //- label
+                input(type='radio' name='shipmentOption' id='agreement' value='agreement' v-model='shippingMethod')/ 
+                span A combinar
+                p Valor, pagamento e transportadora devem ser combinados pelo e-mail ou WhatsApp.
+            input.btn-primary(type='button' @click='shipmentSelected()' value='Continuar')
+        include ../misc/loading.pug
 
 append internal_scripts
-  script.
-    let order = !{JSON.stringify(order)};
+    script.
+        let order = !{JSON.stringify(order)};
 
 append external_scripts
-  script(src='/js/checkout/shippingMethod.js?0005')            
+    script(src='/js/checkout/shippingMethod.js?0008')            
