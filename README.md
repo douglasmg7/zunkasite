@@ -1,7 +1,16 @@
 # Zunka site  
 
+> v1.1.1 - 9 dez 2019
 
-> v1.1.0  - 6 Dez 2019
+**Página "Produto - admin"**
+* Botão *"Salvar e voltar"* e *"Salvar e ver produto"* estão de volta.
+
+**Fabricantes inclusos:**
+* Zotac
+* Galax
+* ADATA
+
+> v1.1.0 - 6 dez 2019
 
 ### Aldo
 

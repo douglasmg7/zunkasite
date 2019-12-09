@@ -3,19 +3,22 @@
 // The order of items matter.
 let regexMakers = [
 	{ name: 'Acer', regex: /\bacer\b/i},
+	{ name: 'ADATA', regex: /\badata\b/i},
 	{ name: 'AMD', regex: /\bamd\b/i},
 	{ name: 'AOC', regex: /\baoc\b/i},
 	{ name: 'Asus', regex: /\basus\b/i},
 	{ name: 'D-Link', regex: /\bd-?link\b/i},
 	{ name: 'Dell', regex: /\bdell\b/i},
-	{ name: 'Nvidia', regex: /\bnvidia\b/i},
+	{ name: 'Galax', regex: /\bgalax\b/i},
 	{ name: 'Intel', regex: /\bintel\b/i},
 	{ name: 'Kingston', regex: /\bkingston\b/i},
 	{ name: 'LG', regex: /\blg\b/i},
+	{ name: 'Nvidia', regex: /\bnvidia\b/i},
 	{ name: 'Seagate', regex: /\bseagate\b/i},
 	{ name: 'TP-Link', regex: /\btp-?link\b/i},
 	{ name: 'Vaio', regex: /\bvaio\b/i},
 	{ name: 'Western', regex: /\bwestern\b/i},
+	{ name: 'Zotac', regex: /\bzotac\b/i},
 ];
 
 // Makers list.

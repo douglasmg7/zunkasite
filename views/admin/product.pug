@@ -141,10 +141,10 @@ block content
             input(type='text' id='stock' v-model='product.storeProductQtd')
             p.validation(v-if='validation.storeProductQtd') {{validation.storeProductQtd}}
         .buttons
-            //- input.btn-success(type='button' v-on:click='saveProduct()' value='Salvar e voltar')
-            input.btn-success(type='button' v-on:click='saveProduct()' value='Salvar')
-            a(:href='`/product/${product._id}`') Visualizar o produto no site
-            //- input.btn-success(type='button' v-on:click='saveProduct(`/product/${product._id}`)' value='Salvar e ver produto')
+            input.btn-success(type='button' v-on:click='saveProduct()' value='Salvar e voltar')
+            //- input.btn-success(type='button' v-on:click='saveProduct()' value='Salvar')
+            //- a(:href='`/product/${product._id}`') Visualizar o produto no site
+            input.btn-success(type='button' v-on:click='saveProduct(`/product/${product._id}`)' value='Salvar e ver produto')
             input.btn-exit(type='button' onclick='window.location.href="/admin"' value='Sair') 
             input.btn-danger(type='button' v-on:click='deleteProduct()' value='Apagar') 
 

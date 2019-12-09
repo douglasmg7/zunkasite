@@ -108,13 +108,13 @@ var app = new Vue({
                     alert('Não foi possível salvar.');
                 // Saved.
                 } 
-                // else {
-                    // if (link) {
-                        // window.location.href = link;
-                    // } else {
-                        // window.location.href = '/admin/';
-                    // }
-                // }
+                else {
+                    if (link) {
+                        window.location.href = link;
+                    } else {
+                        window.location.href = '/admin/';
+                    }
+                }
             })
             .catch(err => {
                 alert('Não foi possível salvar.');

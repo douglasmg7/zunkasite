@@ -1,4 +1,9 @@
+[now]
+    Update aldo db.
+
 [zunka-site]
+    Criar prioridade no cadastramento de produtos, para exibição.
+    Colocar no cadastro de produto, os market places que o produto pode ser exportado.
     [order page] Sair, volta para página anterior e não dá reload.
     Página que mostra histórico de alterações.
     Dimensions from aldo is not the product box.
@@ -9,6 +14,11 @@
     [payment] Juntar as telas de forma de envio e forma de pagamento.
     [add address] Validation must be in the same way cep validation.
     [shipping method] Validate phone number.
+
+# [market place]
+    Acréscimo de valor quando for colocar para vender no market place.
+    Tempo a mais de entrega (cadastrar no fornecedor).
+
 
 # [aldowsc] Update categories quantity items when product quantity change.
 

@@ -16,7 +16,8 @@ router.post('/product/add', basicAuth, [
 		check('dealerName').isLength(4, 20),
 		check('dealerProductId').isLength(1, 20),
 		check('dealerProductTitle').isLength(4, 200),
-		check('dealerProductDesc').isLength(4, 6000),
+		check('dealerProductDesc').isLength(4, 60000),
+		// check('dealerProductDesc').isLength(4, 6000),
 		check('dealerProductCategory').isLength(4, 200),
 		check('dealerProductMaker').isLength(2, 200),
 		check('dealerProductWarrantyDays').isNumeric(),
@@ -101,6 +102,10 @@ router.post('/product/add', basicAuth, [
 				product.storeProductQtdSold = 0;
 				product.storeProductQtd = 4;
 				product.storeProductActive = product.dealerProductActive;
+                // Import images.
+                if (product.storeProductImagesLink) {
+                    
+                }
 				let newProduct = new Product(product);
 				newProduct.save((err, doc)=>{
 					if (err) {

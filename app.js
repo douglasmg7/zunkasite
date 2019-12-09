@@ -176,14 +176,14 @@ var sessionOpts = {
 //   sessionOpts.cookie.secure = true; // serve secure cookies
 // }
 
-// Before csurf, so not block by csrf.
-app.use('/setup', routeSetup);
-app.use('/ext', routeExt);
+// // Before csurf, so not block by csrf.
+// app.use('/setup', routeSetup);
+// app.use('/ext', routeExt);
 
 // authentication
 app.use(cookieParser(app.get('secret')));
 app.use(session(sessionOpts));
-app.use(csurf());
+// app.use(csurf());
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
@@ -235,6 +235,13 @@ app.use(function(req, res, next) {
 
     next();
 });
+
+// Before csurf, so not blocked by csrf.
+app.use('/setup', routeSetup);
+app.use('/ext', routeExt);
+
+// CSRF token middleware.
+app.use(csurf());
 
 // Set vars for using in views.
 app.use((req, res, next)=>{
