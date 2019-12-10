@@ -1,6 +1,10 @@
 # Zunka site  
 
-> v1.1.1 - 9 dez 2019
+> v1.1.1 - 10 dez 2019
+
+**Aldo**
+* Aceita até 30000 caracteres na importação da descrição do produto.
+* Image imported and resized images created.
 
 **Página "Produto - admin"**
 * Botão *"Salvar e voltar"* e *"Salvar e ver produto"* estão de volta.
@@ -9,6 +13,14 @@
 * Zotac
 * Galax
 * ADATA
+
+**Fix**
+* Logging request for route ext and setup.
+
+
+
+
+
 
 > v1.1.0 - 6 dez 2019
 

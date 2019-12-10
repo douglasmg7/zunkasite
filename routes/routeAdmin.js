@@ -9,8 +9,8 @@ const { check, validationResult } = require('express-validator/check');
 const { exec } = require('child_process');
 // File upload.
 const formidable = require('formidable');
-// Resize images.
-const sharp = require('sharp');
+// To resize images.
+const imageUtil = require('../util/image');
 // Models.
 const Product = require('../model/product');
 const Order = require('../model/order');
@@ -328,7 +328,7 @@ router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
 	form.on('end', function() {
 		res.json({images: form.images});
 		// log.info(JSON.stringify(uploadedImgPath));
-		createResizedImgs(uploadedImgPath);
+		imageUtil.createResizedImgs(uploadedImgPath);
 	});
 	// Create folder if not exist and start upload.
 	fse.ensureDir(DIR_IMG_PRODUCT, err=>{
@@ -966,47 +966,3 @@ router.delete('/markdown/:_id', checkPermission, (req, res, next)=>{
         return res.status(500).send();
      });
 });
-
-/******************************************************************************
-/   UTIL
- ******************************************************************************/
-// Create resized images.
-function createResizedImgs(images){
-	images.forEach(imgPath=>{
-		var ext = /_[0-9a-z]{1,6}\.[0-9a-z]+$/i;
-		let pathObj = path.parse(imgPath);
-		// File output.
-		let fileOut = {
-			_0080: path.format({dir: pathObj.dir, name: pathObj.name + '_0080px', ext: pathObj.ext }),
-			_0200: path.format({dir: pathObj.dir, name: pathObj.name + '_0200px', ext: pathObj.ext }),
-			_0300: path.format({dir: pathObj.dir, name: pathObj.name + '_0300px', ext: pathObj.ext })
-		}
-		// 0080 pixels.
-		sharp(imgPath)
-			.resize(80)
-			.toFile(fileOut._0080, (err, info)=>{
-				if (err) {
-					log.error(err);
-				}
-				log.info('Creted file: ' + fileOut._0080);
-			});
-		// 0200 pixels.
-		sharp(imgPath)
-			.resize(200)
-			.toFile(fileOut._0200, (err, info)=>{
-				if (err) {
-					log.error(err);
-				}
-				log.info('Creted file: ' + fileOut._0200);
-			});
-		// 0300 pixels.
-		sharp(imgPath)
-			.resize(300)
-			.toFile(fileOut._0300, (err, info)=>{
-				if (err) {
-					log.error(err);
-				}
-				log.info('Creted file: ' + fileOut._0300);
-			});
-	})
-}

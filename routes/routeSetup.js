@@ -10,14 +10,14 @@ const Product = require('../model/product');
 const categories = require('../util/productCategories');
 const makers = require('../util/productMakers.js');
 const turndown = new require('turndown')();
+const imageUtil = require('../util/image');
 
 // Add product.
 router.post('/product/add', basicAuth, [
 		check('dealerName').isLength(4, 20),
 		check('dealerProductId').isLength(1, 20),
 		check('dealerProductTitle').isLength(4, 200),
-		check('dealerProductDesc').isLength(4, 60000),
-		// check('dealerProductDesc').isLength(4, 6000),
+		check('dealerProductDesc').isLength(4, 30000),
 		check('dealerProductCategory').isLength(4, 200),
 		check('dealerProductMaker').isLength(2, 200),
 		check('dealerProductWarrantyDays').isNumeric(),
@@ -102,16 +102,18 @@ router.post('/product/add', basicAuth, [
 				product.storeProductQtdSold = 0;
 				product.storeProductQtd = 4;
 				product.storeProductActive = product.dealerProductActive;
-                // Import images.
-                if (product.storeProductImagesLink) {
-                    
-                }
 				let newProduct = new Product(product);
 				newProduct.save((err, doc)=>{
 					if (err) {
 						log.error(`Creating Aldo product: ${err.message}`);
 						return res.status(500).send(err);
 					}
+                    // Import images.
+                    // log.debug(`req.body.dealerProductImagesLink: ${req.body.dealerProductImagesLink}`);
+                    if (req.body.dealerProductImagesLink) {
+                        let imagesLink = req.body.dealerProductImagesLink.split('__,__');
+                        imageUtil.downloadImagesAndUpdateProduct(imagesLink, doc); 
+                    }
 					log.debug(`Product ${doc._id} was created by zunkasrv.`, doc._id);
 					return res.send(doc._id);
 				});
