@@ -250,6 +250,7 @@ app.use((req, res, next)=>{
     res.locals.user = req.user ? req.user : { name: undefined, group: undefined };
     res.locals.path = req.path;
     res.locals.categoriesInUse = productCategories.inUse();
+    res.locals.version = version;
     next();
 });
 

@@ -109,7 +109,7 @@ router.post('/product/add', basicAuth, [
 						return res.status(500).send(err);
 					}
                     // Import images.
-                    // log.debug(`req.body.dealerProductImagesLink: ${req.body.dealerProductImagesLink}`);
+                    log.debug(`req.body.dealerProductImagesLink: ${req.body.dealerProductImagesLink}`);
                     if (req.body.dealerProductImagesLink) {
                         let imagesLink = req.body.dealerProductImagesLink.split('__,__');
                         imageUtil.downloadImagesAndUpdateProduct(imagesLink, doc); 

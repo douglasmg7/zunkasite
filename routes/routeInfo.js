@@ -4,6 +4,7 @@ const router = express.Router();
 const log = require('../config/log');
 const marked = require('marked');
 const markdownCache = require('../model/markdownCache');
+const fs = require('fs');
 
 // About company.
 router.get('/about-company', (req, res, next)=>{
@@ -98,7 +99,7 @@ router.get('/about-site', (req, res, next)=>{
     });
 })
 
-// Politics
+// Politics.
 router.get('/politics', (req, res, next)=>{
     let text = '';
     let markdownText = markdownCache.getCache().get('info-políticas');
@@ -108,6 +109,17 @@ router.get('/politics', (req, res, next)=>{
     res.render('info/politics', {
         nav: {},
         text
+    });
+})
+
+// Versão do sistema.
+router.get('/changelog', (req, res, next)=>{
+    fs.readFile('changelog.md', 'utf8', (err, data)=>{
+        if (err) { return next(err); }
+        res.render('info/changelog', {
+            nav: {},
+            text: marked(data)
+        });
     });
 })
 

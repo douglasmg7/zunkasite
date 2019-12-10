@@ -12,16 +12,14 @@ const Product = require('../model/product');
 function downloadImagesAndUpdateProduct(imagesLink, product) {
     try {
         const pathOut = path.resolve(process.env.ZUNKA_SITE_PATH, 'dist/img', product._id.toString());
-        // const fileOut = path.resolve(pathOut , path.basename(imageLink))
         if (!fs.existsSync(pathOut)){
             fs.mkdirSync(pathOut);
         }
-        // log.debug(`Product _id ${product._id}`);
-        // log.debug(`Downloading image ${imageLink}`);
-        // log.debug(`Saving image to ${fileOut}`);
-
         let promises = [];
         imagesLink.forEach(imgLink=>{
+            log.debug(`Product _id ${product._id}`);
+            log.debug(`Downloading image ${imgLink}`);
+            log.debug(`Saving image to ${pathOut}`);
             promises.push(new Promise((resolve, reject)=>{
                 axios.get(imgLink, { responseType: 'stream' })
                 .then(response=>{

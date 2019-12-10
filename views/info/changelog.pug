@@ -1,0 +1,13 @@
+extends ../layout/layout_vue_n
+
+block title
+    title Zunka - Changelog
+
+append css
+    link(rel="stylesheet" href="/css/info/changelog.css?0001" charset="utf-8")
+
+block content 
+    section.changelog!= text
+
+append external_scripts
+    script(src='/js/info/info.js?0004') 
