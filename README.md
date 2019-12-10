@@ -1,6 +1,6 @@
 # Zunka site  
 
-> v1.1.1 - 10 dez 2019
+> v1.2.0 - 10 dez 2019
 
 **Aldo**
 * Aceita até 30000 caracteres na importação da descrição do produto.
