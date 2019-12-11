@@ -78,7 +78,7 @@ function updateCategoriesInUse(){
                 };
                 mongoose.connection.db.collection('products').distinct('storeProductCategory', filter, (err, categories)=>{
                     // log.debug(`categories: ${JSON.stringify(categories, null, 2)}`);
-                    categoriesInUse = categories;
+                    categoriesInUse = categories.sort();
                 });
             } 
         }, 300);

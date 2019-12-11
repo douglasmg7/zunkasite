@@ -58,6 +58,11 @@ block content
         textarea(id='extraInfo' rows='8' v-model='product.storeProductAdditionalInformation')     
         br
         //- Include warranty text.
+        .warranty-markdown
+            label(for='warranty') Garantia markdown
+            select(id='warranty' v-model='product.warrantyMarkdownName')
+                option(v-for='warranty in warranties') {{warranty}}   
+        //- Include warranty text.
         input(type='checkbox' id='includeWarratyTextEnable'  v-model:checked='product.includeWarrantyText')
         label(for='includeWarratyTextEnable') Garantia (Incluir informação padrão)
         br
@@ -155,6 +160,7 @@ append internal_scripts
         let product = !{JSON.stringify(product)};
         let productMakers = !{JSON.stringify(productMakers)};
         let productCategories = !{JSON.stringify(productCategories)};
+        let warranties = !{JSON.stringify(warranties)};
         let user = !{JSON.stringify(user)}; 
 
 append external_scripts

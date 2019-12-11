@@ -13,6 +13,7 @@ var app = new Vue({
         product: product,
         productMakers: productMakers,
         productCategories: productCategories,
+        warranties: warranties,
         user: user,
         search: '',
         validation: {

@@ -1,3 +1,17 @@
+
+# 1.2.4 (11 dez 2019)
+
+## Melhorias
+* Menu categorias ordenado por ordem alfabética.
+* Opção de escolher o tipo de garantia.
+
+## Debug
+* Remoção de log quando apaga mongodb_id aldo produto.
+
+
+
+
+
 # 1.2.3 (10 dez 2019)
 
 ## Bug Fix
@@ -5,6 +19,8 @@
 
 ## Debug
 * Remoção de log para depuração de download de imagens.
+
+
 
 
 # 1.2.1 (10 dez 2019)

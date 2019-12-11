@@ -120,13 +120,15 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
 	}
 	Promise.all([productPromise])
 	.then(([product])=>{
+        // log.debug(`warranties: ${JSON.stringify(markdownCache.warranties())}`);
 		res.render('admin/product', {
 			nav: {
 				showAdminLinks: true
 			},
 			product: product,
 			productMakers: productMakers.makers,
-			productCategories: productCategories.categories
+			productCategories: productCategories.categories,
+            warranties: markdownCache.warranties(),
 		});
 	}).catch(err=>{
 		return next(err);
@@ -266,7 +268,7 @@ router.delete('/product/:_id', checkPermission, function(req, res) {
 					// Delete from zunkasrv.
 					if (result.dealerName = "Aldo") {
 						// Delete reference product on integration server.
-						log.debug(`axios delete: ${s.zunkaServer.host}/${result.dealerName.toLowerCase()}/product/mongodb_id/${result.dealerProductId}`);
+						// log.debug(`axios delete: ${s.zunkaServer.host}/${result.dealerName.toLowerCase()}/product/mongodb_id/${result.dealerProductId}`);
 						axios.delete(`${s.zunkaServer.host}/${result.dealerName.toLowerCase()}/product/mongodb_id/${result.dealerProductId}`, {
 							headers: {
 								"Accept": "text/plain", 

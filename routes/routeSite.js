@@ -91,12 +91,20 @@ router.get('/product/:_id', function(req, res, next) {
                 }
                 // Warranty text.
                 let warrantyText = '';
-                if (product.includeWarrantyText) {
+                if (product.warrantyMarkdownName) {
+                    let markdownText = markdownCache.getCache().get(`garantia-${product.warrantyMarkdownName}`);
+                    if (markdownText) {
+                        warrantyText = marked(markdownText);
+                    }
+                }
+                // Deprecatead - begin.
+                else if (product.includeWarrantyText) {
                     let markdownText = markdownCache.getCache().get('garantia');
                     if (markdownText) {
                         warrantyText = marked(markdownText);
                     }
                 }
+                // Deprecatead - end.
                 // Outlet text.
                 let outletText = '';
                 if (product.includeOutletText) {
