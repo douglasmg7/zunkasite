@@ -1,23 +1,28 @@
-[Run after update]
-db.products.updateMany({}, { $set: { displayPriority: 100 } });
-
 [zunka-site]
     Colocar no cadastro de produto, os market places que o produto pode ser exportado.
     [order page] Sair, volta para página anterior e não dá reload.
-    Página que mostra histórico de alterações.
-    Dimensions from aldo is not the product box.
-    Loading modal for paypal page and credit card.
-    Cep orgin must be Aldo from Aldo products.
-    [aldo] No email de compra enviado para o gilson, chamar a atenção quando o produto for da aldo.
-    [payment] Juntar as telas de forma de envio e forma de pagamento.
-    [add address] Validation must be in the same way cep validation.
-    [shipping method] Validate phone number.
-    Enable/disable zoom xml creation.
 
-# [market place]
+Aldo
+    Dimensions from aldo is not the product box.
+    Cep orgin must be Aldo from Aldo products.
+
+Payment
+    Loading modal for paypal page and credit card.
+    Juntar as telas de forma de envio e forma de pagamento.
+
+Address add
+    Validation must be in the same way cep validation.
+
+shipping method
+    Validate phone number.
+
+zoom
+    Enable/disable zoom xml.
+    Zoom api to sell products.
+
+market place
     Acréscimo de valor quando for colocar para vender no market place.
     Tempo a mais de entrega (cadastrar no fornecedor).
-
 
 # botão Verificar pagament complete não aparece na versão de celular.
 
@@ -47,10 +52,6 @@ db.products.updateMany({}, { $set: { displayPriority: 100 } });
 
 # size up images from GET / (not good in mobile)
 
-# mongodb
-db.productCategories.drop()
-db.productMakers.drop()
-
 Image zoom not scrolling.
 
 Textbox is cutting "g" char.
@@ -75,21 +76,10 @@ Create a new page for message Foi enviado um e-mail para... on account creation.
 
 # Show order canceled on confirmation order, when order canceled.
 
-# Delete branch paypal on origin.
-git push origin --delete paypal
-
 include option to cnpj
-
-Redirect paypal client id development and production (payment.bundle linha 120) to s.js payment.bundle. 
-
-Descrição do produto
-    Criar subtitle igual ao detalhe técnico.
 
 Email change
     Need confirm email, sending a e-mail.
-
-Product page
-    Change Detalhe técnico para Especificações técnicas
 
 Admin/product
     Center image on mobile.
@@ -97,10 +87,6 @@ Admin/product
     To small on desktop.
 
 Não permitir cancelar ordem depois de entregue.
-Não mostrar ação quando não houver opção.
-
-Verify if certbot.service is running.
-When certbot renew nginx must reload to.
 
 Create a timer to backup (mongo and redis).
 
