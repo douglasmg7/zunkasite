@@ -1,4 +1,4 @@
-# 1.2.2 (10 dez 2019)
+# 1.2.3 (10 dez 2019)
 
 ## Bug Fix
 * Usando https em vez de http para apagar mongodb_id do produto da aldo.
