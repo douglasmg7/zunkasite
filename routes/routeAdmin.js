@@ -182,6 +182,9 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
     if (req.body.product.ean === undefined) {
         req.body.product.ean = '';
     }
+    // Display priority.
+	validation.displayPriority = parseInt(req.body.product.displayPriority) >= 0 ? undefined: 'deve ser maior ou igual a zero';
+
     req.body.product.ean = req.body.product.ean.trim();
 	validation.ean = req.body.product.ean.match(/^(\d{13}|)$/) ? undefined: 'Deve conter 13 digitos ou vazio';
 	// Send validation erros if some.

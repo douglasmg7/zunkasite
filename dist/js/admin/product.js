@@ -26,6 +26,7 @@ var app = new Vue({
             storeProductLength: '',
             storeProductWeight: '',
             storeProductWidth: '',
+            displayPriority: '',
             ean: ''
         },
         // Only for from use.
@@ -33,6 +34,8 @@ var app = new Vue({
         storeProductMarkupeBr: '',
         storeProductDiscountValue: '',
         dealerProductPrice: '',
+        // Button save animation.
+        buttonSaveValue: 'Salvar',
     },
     created: function() {
         this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice.toFixed(2));
@@ -81,6 +84,7 @@ var app = new Vue({
         },
         // Save product.
         saveProduct(link){
+            // console.log(`link-a: ${link}`);
             // console.debug(product.storeProductCategory);
             axios({
                 method: 'post',
@@ -110,10 +114,16 @@ var app = new Vue({
                 // Saved.
                 } 
                 else {
-                    if (link) {
+                    // console.log(`link: ${link}`);
+                    if (!link) {
+                        window.location.href = '/admin/';
+                    } else if (link != 'stay') {
                         window.location.href = link;
                     } else {
-                        window.location.href = '/admin/';
+                        this.buttonSaveValue = 'Ok';
+                        setTimeout(()=>{
+                            this.buttonSaveValue = 'Salvar';
+                        }, 300);
                     }
                 }
             })

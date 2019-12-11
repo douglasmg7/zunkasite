@@ -3,7 +3,14 @@
 
 ## Melhorias
 * Menu categorias ordenado por ordem alfabética.
-* Opção de escolher o tipo de garantia.
+* Opção de escolher o tipo de garantia através de um listbox.
+* Criação do campo **prioridade de exibição** na página de edição de produtos.
+* Exibe todos os produtos ordenando inicialmente por prioridade de exibição, quando nenhuma opção de ordenação é selecionada.
+
+## Configurações
+* Inclusão da categoria Drones.
+* Inclusão do fabricante Dji.
+* markdown ul (unordered list) formatted.
 
 ## Debug
 * Remoção de log quando apaga mongodb_id aldo produto.

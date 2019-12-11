@@ -100,8 +100,9 @@ router.post('/product/add', basicAuth, [
 				product.storeProductWarrantyDays = 0;
 				product.storeProductWarrantyDetail = "";
 				product.storeProductQtdSold = 0;
-				product.storeProductQtd = 4;
+				product.storeProductQtd = 3;
 				product.storeProductActive = product.dealerProductActive;
+                product.displayPriority = 200;
 				let newProduct = new Product(product);
 				newProduct.save((err, doc)=>{
 					if (err) {

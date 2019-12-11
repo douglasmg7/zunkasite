@@ -1,6 +1,7 @@
+[Run after update]
+db.products.updateMany({}, { $set: { displayPriority: 100 } });
+
 [zunka-site]
-    Listbox garantia em vez de checkbox, mostrando todos os markdowns que comecem com garantia.
-    Criar prioridade no cadastramento de produtos, para exibição.
     Colocar no cadastro de produto, os market places que o produto pode ser exportado.
     [order page] Sair, volta para página anterior e não dá reload.
     Página que mostra histórico de alterações.
@@ -20,8 +21,6 @@
 
 # botão Verificar pagament complete não aparece na versão de celular.
 
-[zunka-site] [admin/product] Show confirmação de produto salvo.
-[zunka-site] [admin/product] Show dealer code.
 [zunka-site] [select address] Not updating product dimensions to make request to correios.
 
 # [aldowsc] Update categories quantity items when product quantity change.
@@ -51,8 +50,6 @@
 # mongodb
 db.productCategories.drop()
 db.productMakers.drop()
-
-Tooltip for email and whatsapp.
 
 Image zoom not scrolling.
 

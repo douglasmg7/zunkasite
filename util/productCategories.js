@@ -33,6 +33,7 @@ let regexCategories = [
 	{ name: 'Energia', regex: /\benergia\b/i},
 	{ name: 'Diversos', regex: /\bdiversos?\b/i},
 	{ name: 'Pen drives', regex: /\bpen\s+drives?\b/i},
+	{ name: 'Drones', regex: /\bdrones?\b/i},
 ];
 
 // Select category.
