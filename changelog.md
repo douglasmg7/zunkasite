@@ -1,3 +1,12 @@
+# 1.2.2 (10 dez 2019)
+
+## Bug Fix
+* Usando https em vez de http para apagar mongodb_id do produto da aldo.
+
+## Debug
+* Remoção de log para depuração de download de imagens.
+
+
 # 1.2.1 (10 dez 2019)
 
 ## Recursos novos
@@ -6,6 +15,8 @@
 
 ## Debug
 * Criação de log para depuração de download de imagens.
+
+
 
 
 # 1.2.0 (10 dez 2019)
