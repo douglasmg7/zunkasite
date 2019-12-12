@@ -1,3 +1,9 @@
+# 1.2.5 (12 dez 2019)
+
+## Melhorias
+* Markdown ul format.
+
+
 
 # 1.2.4 (11 dez 2019)
 
