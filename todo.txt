@@ -5,6 +5,9 @@
 Aldo
     Dimensions from aldo is not the product box.
     Cep orgin must be Aldo from Aldo products.
+    logística reversa
+        Sedex: 4170
+        Pac: 4677 
 
 Payment
     Loading modal for paypal page and credit card.

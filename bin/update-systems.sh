@@ -47,7 +47,7 @@ if [[ ! -z $RESTART_ZUNKA_SITE ]]; then
     echo true > $ZUNKAPATH/restart-zunka-site
 fi
 
-# Set zunka site to be restarted.
+# Reload nginx.
 if [[ ! -z $RELOAD_NGINX ]]; then
     echo :: Reolading nginx...
     sudo systemctl reload nginx

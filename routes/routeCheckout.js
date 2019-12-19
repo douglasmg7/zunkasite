@@ -407,7 +407,7 @@ router.post('/shipping-method/order/:order_id', (req, res, next)=>{
                     order.shipping.carrier = 'defaultCarrier';
                     order.shipping.methodCode = (index + 1).toString();
                     order.shipping.methodDesc = 'Transportadora ' + (index + 1);
-                    order.shipping.price = order.shipping.defaultDeliveryResults[index].price; 
+                    order.shipping.price = order.shipping.defaultDeliveryResults[index].price.replace('.', '').replace(',', '.'); 
                     order.shipping.deadline = order.shipping.defaultDeliveryResults[index].deadline; 
                     // log.debug(`order.shipping: ${JSON.stringify(order.shipping, null, 2)}`);
                 }
@@ -1377,7 +1377,8 @@ function createPayment(order, cb){
 			brand_name: "Zunka",
 			shipping_preference: "SET_PROVIDED_ADDRESS"
 		}, 
-		// log.silly(`payReqData: ${JSON.stringify(payReqData, null, 2)}`);
+        // log.silly(`payReqData: ${JSON.stringify(payReqData, null, 2)}`);
+        log.debug(`payReqData: ${JSON.stringify(payReqData, null, 2)}`);
 		// Create a payment request.
 		axios({
 			method: 'post',

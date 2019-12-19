@@ -1,3 +1,11 @@
+# 1.2.6 (19 dez 2019)
+
+## Bug fix
+* Separado decimal para entrega padrão corrigido para "." (paypal estava retornando erro para entrega padrão).
+* Esconde a mensagem "Pesquisando o frete ..." quando existe algum campo inválido ao clicar no botão "Enviar para este endereço".
+
+
+
 # 1.2.5 (12 dez 2019)
 
 ## Melhorias

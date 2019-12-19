@@ -77,6 +77,8 @@ var app = new Vue({
             .then(response => {
                 // Validation erros.
                 if (response.data.validation) {
+                    this.loading.show = false;
+                    console.log('*** 1 ***');
                     let validationErros = response.data.validation;
                     // Clean validation erros.
                     for (let key in this.validation){
