@@ -1,8 +1,13 @@
 [zunka-site]
+    Quando a ordem for finalizada, se usuário tentar voltar nos link da ordem fechada redirecionar para confirmação da ordem.
+    Upload image for markdown use.
+    Markdown css show image in original size.
+    Hide informações adicionais
     Colocar no cadastro de produto, os market places que o produto pode ser exportado.
     [order page] Sair, volta para página anterior e não dá reload.
 
 Aldo
+    Send email when there is a new product from selected categories
     Dimensions from aldo is not the product box.
     Cep orgin must be Aldo from Aldo products.
     logística reversa
