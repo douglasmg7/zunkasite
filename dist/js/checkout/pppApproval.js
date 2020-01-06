@@ -5,6 +5,11 @@ function _search(text){
   window.location.href = `/all?page=1&search=${text}`;
 }
 
+// Reload when browser history back.
+if(performance.navigation.type == 2){
+    location.reload(true);
+}
+
 // Vue.
 let app = new Vue({
 	el: '#app',

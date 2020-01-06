@@ -55,7 +55,12 @@ var app = new Vue({
                 if (response.data.err) {
                     this.loading.show = false;
                     alert('Não foi possível selecionar o endereço.');
-                } else{
+                }
+                // Empty cart.
+                else if (response.data.emptyCart) {
+                    window.location.href=`/cart`;
+                } 
+                else {
                     window.location.href=`/checkout/shipping-method/order/${response.data.order_id}`;
                 }
             })
@@ -78,7 +83,6 @@ var app = new Vue({
                 // Validation erros.
                 if (response.data.validation) {
                     this.loading.show = false;
-                    console.log('*** 1 ***');
                     let validationErros = response.data.validation;
                     // Clean validation erros.
                     for (let key in this.validation){
@@ -97,6 +101,10 @@ var app = new Vue({
                     alert('Não foi possível selecionar o endereço.');
                     console.error(`response.data.err: ${response.data.err}`);        
                 }
+                // Empty cart.
+                else if (response.data.emptyCart) {
+                    window.location.href=`/cart`;
+                } 
                 // Address selected with success.
                 else {
                     window.location.href=`/checkout/shipping-method/order/${response.data.order_id}`;

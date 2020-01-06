@@ -5,6 +5,12 @@ function _search(text){
   window.location.href = `/all?page=1&search=${text}`;
 }
 
+// console.log("init");
+if(performance.navigation.type == 2){
+    location.reload(true);
+    // console.log(`reload: ${Date.now()}`);
+}
+
 // Vue.
 let app = new Vue({
 	el: '#app',
@@ -31,8 +37,9 @@ let app = new Vue({
 				if (response.data.success) {
 					window.location.href = `/checkout/confirmation/order/${order._id}`;
 				} else {
-					window.location.href = `/error`;
-					// console.log(response.data.err);
+					console.log(JSON.stringify(response.data, null, 2));
+					alert(response.data.message);
+					// window.location.href = `/error`
 				}
 			})
 			.catch(err => {
@@ -53,7 +60,9 @@ let app = new Vue({
 					window.location.href = `/checkout/review/order/${order._id}`;
 				}
 				else {
-					window.location.href = `/error`;
+					console.log(JSON.stringify(response.data, null, 2));
+					alert(response.data.message);
+					// window.location.href = `/error`
 				}
 			})
 			.catch(err => {
@@ -71,14 +80,21 @@ let app = new Vue({
 				headers:{'csrf-token' : csrfToken},
 				params: { method: 'ppp-credit'}
 			}).then(response => {
-				console.log(response.data);
-				if (response.data.err) {
-					window.location.href = `/error`;
-					// console.log(response.data.err);
-				} else {
-					// console.log(JSON.stringify(response.data, null, 2));
+				if (response.data.success) {
 					window.location.href = `/checkout/ppp/payment/approval/${order._id}`;
 				}
+				else {
+					console.log(JSON.stringify(response.data, null, 2));
+					alert(response.data.message);
+					// window.location.href = `/error`
+				}
+				// if (response.data.err) {
+					// window.location.href = `/error`
+					// // console.log(response.data.err);
+				// } else {
+					// // console.log(JSON.stringify(response.data, null, 2));
+					// window.location.href = `/checkout/ppp/payment/approval/${order._id}`
+				// }
 			}).catch(err => {
 				// console.error(err);
 				window.location.href = `/error`;

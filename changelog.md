@@ -1,3 +1,11 @@
+# 1.3.0 (06 jan 2020)
+## Melhorias
+* Produto não é removido do banco de dados quando o mesmo é apagado do cadastramento.
+* Adição do campo deletedAt no documento "product", para que produtos apagados possam ser identificados por outras rotinas. 
+* Evita que o pedido seja finalizado mais de uma vez, quando o usuário usa o botão de voltar do browser.
+
+
+
 # 1.2.6 (19 dez 2019)
 
 ## Bug fix

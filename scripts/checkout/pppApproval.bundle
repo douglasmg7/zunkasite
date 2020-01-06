@@ -1,5 +1,10 @@
 import _search from '../lib/_search';
 
+// Reload when browser history back.
+if(performance.navigation.type == 2){
+    location.reload(true);
+}
+
 // Vue.
 let app = new Vue({
 	el: '#app',

@@ -60,6 +60,9 @@ function checkNotLogged (req, res, next) {
 // Shipping address page.
 router.get('/shipping-address', (req, res, next)=>{
 	if (req.user) {
+        if (!req.cart.products.length) {
+            return res.redirect('/cart');
+        }
 		Address.find({ user_id: req.user._id }, (err, addresss)=>{
 			if (err) return next(err);
 			let newAddress = new Address();
@@ -78,6 +81,9 @@ router.get('/shipping-address', (req, res, next)=>{
 
 // Ship address selected.
 router.post('/shipping-address', (req, res, next)=>{
+	if (!req.cart.products.length) {
+    	return res.json({emptyCart: true});
+    }
 	// Existing address selected.
 	if (req.body.address_id) {
 		// Create order.
@@ -186,8 +192,9 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
 	// Find order not placed yet.
 	Order.findById(req.params.order_id, (err, order)=>{
 		if (err) { return next(err); }
-		if (!order) {
-			return next(new Error('No order to continue with shipping method selection.')); }
+		if (!order) { return next(new Error('No order to continue with shipping method selection.')); }
+        // Order already placed.
+        if (order.timestamps.placedAt) { return res.redirect('/user/orders'); }
 		else {
 			// Calculate box size shipment approximately.
 			let shippingBox = { cepOrigin: CEP_ORIGIN, cepDestiny: order.shipping.address.cep, length: 0, height: 0, width: 0, weight: 0 };
@@ -361,6 +368,13 @@ async function checkOrderProductsInStock(order, cb) {
 router.post('/shipping-method/order/:order_id', (req, res, next)=>{
     // log.debug(`req.body: ${JSON.stringify(req.body)}`);
 	Order.findById(req.params.order_id, (err, order)=>{
+        if (!order) {
+            return res.json({ success: false, message: "Pedido não existe\nVocê será redirecionado ao seu carrinho de compras."});
+        }
+        // Order already placed.
+        else if (order.timestamps.placedAt) {
+            return res.json({ success: false, message: "Pedido já foi confirmado.\nVocê será redirecionado ao seu carrinho de compras."});
+        }
         // Check if all products in stock.
          checkOrderProductsInStock(order)
          .then(result=>{
@@ -448,6 +462,10 @@ router.get('/payment/order/:order_id', (req, res, next)=>{
 		if (err) { return next(err); }
 		if (!order) {
 			return next(new Error('No order to continue with payment.')); }
+        // Order already placed.
+        if (order.timestamps.placedAt) {
+	        return res.redirect('/user/orders');
+        }
 		// Must have cpf and mobile number.
 		if (!order.cpf || !order.mobileNumber ) {
 			res.render('checkout/needCpfAndMobileNumber',
@@ -543,7 +561,15 @@ router.post('/needCpfAndMobileNumber', checkPermission, (req, res, next)=>{
 router.post('/payment/order/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
 		if (err) { return next(err); }
-		if (!order) { return next(new Error('No order to continue with payment.')); }
+		if (!order) { 
+            return res.json({ success: false, message: "Pedido não existe." });
+            // return next(new Error('No order to continue with payment.')); 
+        }
+        // Order already placed.
+        if (order.timestamps.placedAt) { 
+            return res.json({ success: false, message: "Pedido já foi finalizado anteriormente." });
+            // return next(new Error(`Order ${order._id} already closed.`)); 
+        }
 		switch(req.query.method) {
 			case 'paypal':
 				order.status = 'paid';
@@ -614,9 +640,9 @@ router.get('/review/order/:order_id', (req, res, next)=>{
 		// Mongo error.
 		if (err) { return next(err); }
 		// No order.
-		if (!order) {
-			return next(new Error('No order to confirm.')); 
-		}
+		if (!order) { return next(new Error('No order to confirm.')); }
+        // Order already placed.
+        if (order.timestamps.placedAt) { return res.redirect('/user/orders'); }
 		// Payment process completed.
 		if (order.payment.method == 'money' || order.payment.method == 'transfer' || order.payment.method == 'card-machine' || order.payment.method == 'ppp-credit') {
 			return res.render('checkout/review',
@@ -636,9 +662,11 @@ router.post('/close/order/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
 		if (err) { return next(err); }
 		if (!order) {
-			log.error("Closing order. No order to continue with payment.");
-			return res.json({ success: false, msg: "", err: "No order to continue with payment."});
+			log.error(`Closing order. Order ${req.params.order_id} do not exist to continue with payment.`);
+			return res.json({ success: false, message: "Pedido não existe."});
 		}
+        // Order already placed.
+        if (order.timestamps.placedAt) { return res.json({ success: false, message: "Pedido já foi finalizado anteriormente."}); }
 		// Payment method.
 		switch(order.payment.method) {
 			case 'money':
@@ -1410,8 +1438,9 @@ function createPayment(order, cb){
 router.get('/ppp/payment/approval/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
 		if (err) { return next(err); }
-		if (!order) {
-			return next(new Error('No order to continue with approval payment.')); }
+		if (!order) { return next(new Error('No order to continue with approval payment.')); }
+        // Order already placed.
+        else if (order.timestamps.placedAt) { return res.redirect('/user/orders'); }
 		else {
 			res.render('checkout/pppApproval',
 				{
@@ -1430,8 +1459,9 @@ router.get('/ppp/payment/approval/:order_id', (req, res, next)=>{
 router.post('/ppp/payment/approval/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
 		if (err) { return next(err); }
-		if (!order) {
-			return next(new Error('No order to continue with approval payment.')); }
+		if (!order) { return next(new Error('No order to continue with approval payment.')); }
+        // Order already placed.
+        if (order.timestamps.placedAt) { return next(new Error('Order already closed.')); }
 		else {
 			// log.debug(`Paypal approval return: ${JSON.stringify(req.body.pppApprovalPayment, null, 2)}`);
 			order.payment.pppApprovalPayment = req.body.pppApprovalPayment;

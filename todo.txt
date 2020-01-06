@@ -1,3 +1,10 @@
+http://localhost/checkout/shipping-method/order/5e136b8669230722cd7186e5
+http://localhost/checkout/payment/order/5e136b8669230722cd7186e5
+
+http://localhost/checkout/review/order/5e136b8669230722cd7186e5
+
+http://localhost/checkout/ppp/payment/approval/5e136b8669230722cd7186e5
+
 [zunka-site]
     Quando a ordem for finalizada, se usuário tentar voltar nos link da ordem fechada redirecionar para confirmação da ordem.
     Upload image for markdown use.
@@ -5,6 +12,7 @@
     Hide informações adicionais
     Colocar no cadastro de produto, os market places que o produto pode ser exportado.
     [order page] Sair, volta para página anterior e não dá reload.
+    Criar script para remover produtos apagados e suas imagens, porque quando o produto é apagado o mesmo não é mais removido.
 
 Aldo
     Send email when there is a new product from selected categories
@@ -27,6 +35,9 @@ shipping method
 zoom
     Enable/disable zoom xml.
     Zoom api to sell products.
+
+zoom-xml
+    Not get deleted products "deletedAt".
 
 market place
     Acréscimo de valor quando for colocar para vender no market place.

@@ -80,7 +80,7 @@ router.get('/product/:_id', function(req, res, next) {
     }
 	Product.findById(req.params._id)
 		.then(product=>{
-			if (product._id) {
+			if (product._id && product.storeProductCommercialize) {
 				// console.log(JSON.stringify(result));
                 // console.log(`md: ${product.storeProductInfoMD}`);
                 // console.log(`html: ${marked(product.storeProductInfoMD)}`);
@@ -244,7 +244,7 @@ router.get('/api/best-selling-products', function (req, res) {
 router.get('/api/product/:_id', function(req, res, next) {
 	Product.findById(req.params._id)
 		.then(product=>{
-			if (product._id) {
+			if (product._id && product.storeProductCommercialize) {
 				res.json({product});
 			} else {
 				log.info(`product ${req.params._id} not found`);
@@ -277,7 +277,7 @@ router.put('/cart/add/:_id', (req, res, next)=>{
 	// Get product from db.
 	Product.findById(req.params._id)
     .then(product=>{
-        if (product._id) {
+        if (product._id && product.storeProductCommercialize) {
             // For Aldo products, test if product in stock.
             if (product.dealerName == "Aldo") {
                 aldo.checkAldoProductQty(product, 1, (err, productInStock)=>{

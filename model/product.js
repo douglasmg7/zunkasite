@@ -63,6 +63,7 @@ let product = new mongoose.Schema({
     displayPriority: { type: Number, default: 100 },
     // The International Article Number (also known as European Article Number or EAN) is a standard describing a barcode symbology and numbering system used in global trade to identify a specific retail product type, in a specific packaging configuration, from a specific manufacturer.
     ean: { type: String, match: /^\d{13}$/ },
+	deletedAt: { type: Date }, // When the product was deleted.
 },
 {
 	timestamps: true
@@ -95,7 +96,8 @@ product.pre('save', function(next){
 // findOneAndUpdate - when a product was saved.
 // findOneAndRemove - when a product was removed (fired by findByIdAndRemove too).
 // updateOne - when a product quantity was changed.
-product.post(['save', 'findOneAndUpdate', 'findOneAndRemove','updateOne'], function () {
+// product.post(['save', 'findOneAndUpdate', 'findOneAndRemove','updateOne'], function () {
+product.post(['save', 'findOneAndUpdate', 'updateOne'], function () {
     productListChanged();
 });
 
@@ -103,14 +105,17 @@ product.post(['save', 'findOneAndUpdate', 'findOneAndRemove','updateOne'], funct
 function productListChanged(){
     // Update categories in use.
     productCategories.updateInUse();
-    // Update zoom products list after some time, stop current time.
-    if (zoomwscTimeout) {
-        clearTimeout(zoomwscTimeout);
-    }
-    // Call zoomwsc (10 min)
-    // zoomwscTimeout = setTimeout(callZoomwsc, 10 * 60 * 1000);
-    // Call zoomwsc (1 second) - for test.
-    zoomwscTimeout = setTimeout(callZoomwsc, 1000);
+
+    // Uncomment to enable zoom xml creation - start.
+    // // Update zoom products list after some time, stop current time.
+    // if (zoomwscTimeout) {
+        // clearTimeout(zoomwscTimeout);
+    // }
+    // // Call zoomwsc (10 min)
+    // // zoomwscTimeout = setTimeout(callZoomwsc, 10 * 60 * 1000);
+    // // Call zoomwsc (1 second) - for test.
+    // zoomwscTimeout = setTimeout(callZoomwsc, 1000);
+    // Uncomment to enable zoom xml creation - end.
 }
 
 // Call zoomwsc to upate zoom xml product list.

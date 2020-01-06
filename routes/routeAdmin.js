@@ -65,10 +65,12 @@ router.get('/products', checkPermission, function(req, res, next) {
 	const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
 	const search = req.query.search
 		? { $or: [
-			{'storeProductTitle': {$regex: req.query.search, $options: 'i'}},
-			{'storeProductId': {$regex: req.query.search, $options: 'i'}}
-		]}
-		: {};
+                {'storeProductTitle': {$regex: req.query.search, $options: 'i'}},
+                {'storeProductId': {$regex: req.query.search, $options: 'i'}}
+		    ],
+            'deletedAt': {$exists: false}
+        }
+		: {'deletedAt': {$exists: false}};
 	// Promisse.
 	// Find products.
 	let productPromise = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
@@ -120,16 +122,20 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
 	}
 	Promise.all([productPromise])
 	.then(([product])=>{
-        // log.debug(`warranties: ${JSON.stringify(markdownCache.warranties())}`);
-		res.render('admin/product', {
-			nav: {
-				showAdminLinks: true
-			},
-			product: product,
-			productMakers: productMakers.makers,
-			productCategories: productCategories.categories,
-            warranties: markdownCache.warranties(),
-		});
+        if (product.deletedAt) {
+            res.status(404).send('Produto removido.');
+        } else {
+            // log.debug(`warranties: ${JSON.stringify(markdownCache.warranties())}`);
+            res.render('admin/product', {
+                nav: {
+                    showAdminLinks: true
+                },
+                product: product,
+                productMakers: productMakers.makers,
+                productCategories: productCategories.categories,
+                warranties: markdownCache.warranties(),
+            });
+        }
 	}).catch(err=>{
 		return next(err);
 	});
@@ -260,46 +266,84 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 
 // Delete a product.
 router.delete('/product/:_id', checkPermission, function(req, res) {
-	try{	
-		Product.findByIdAndRemove(req.params._id)
-			.then(result=>{
-				// Delete images dir.
-				fse.remove(path.join(__dirname, '..', 'dist/img/', req.params._id), err=>{
-					if (err) { log.error(err.stack); }
-					res.json({});
-					log.info(`Product ${req.params._id} deleted.`);
-					// Delete from zunkasrv.
-					if (result.dealerName = "Aldo") {
-						// Delete reference product on integration server.
-						// log.debug(`axios delete: ${s.zunkaServer.host}/${result.dealerName.toLowerCase()}/product/mongodb_id/${result.dealerProductId}`);
-						axios.delete(`${s.zunkaServer.host}/${result.dealerName.toLowerCase()}/product/mongodb_id/${result.dealerProductId}`, {
-							headers: {
-								"Accept": "text/plain", 
-							},
-							auth: {
-								username: s.zunkaServer.user,
-								password: s.zunkaServer.password
-							},
-						})
-						.then(response => {
-							if (response.data.err) {
-								log.err(`Deleting mongodbId from zunkasrv, code: ${result.dealerProductId}. ${response.data.err}`);
-							} 
-						})
-						.catch(err => {
-							log.error(`Deleting mongodbId from zunkasrv, code: ${result.dealerProductId}. ${err}`);
-						}); 
-					}
-				});
-			})
-			.catch(err=>{
-				log.error(err.stack);
-				res.json(err);
-			});
-	} catch(err) {
-		log.error(`Deleting product, product _id: ${req.params._id}. ${err}`);
-	}
+    Product.findById(req.params._id)
+        .then(product=>{
+            product.storeProductCommercialize = false;  // To not show into the site.
+            product.deletedAt = Date.now();
+            return product.save();
+        }).then(product=>{
+            res.json({});
+            log.info(`Deleted product ${product._id}.`);
+            // Delete from zunkasrv.
+            if (product.dealerName = "Aldo") {
+                // Delete reference product on integration server.
+                // log.debug(`axios delete: ${s.zunkaServer.host}/${product.dealerName.toLowerCase()}/product/mongodb_id/${product.dealerProductId}`);
+                axios.delete(`${s.zunkaServer.host}/${product.dealerName.toLowerCase()}/product/mongodb_id/${product.dealerProductId}`, {
+                    headers: {
+                        "Accept": "text/plain", 
+                    },
+                    auth: {
+                        username: s.zunkaServer.user,
+                        password: s.zunkaServer.password
+                    },
+                })
+                .then(response => {
+                    if (response.data.err) {
+                        log.err(`Deleting mongodbId from zunkasrv, id: ${product._id}, code: ${product.dealerProductId}. ${response.data.err}`);
+                    } 
+                })
+                .catch(err => {
+                    log.error(`Deleting mongodbId from zunkasrv, id: ${product._id}, code: ${product.dealerProductId}. ${err}`);
+                }); 
+            }
+        }).catch(err=>{
+            log.error(`Deleting product, product _id: ${req.params._id}. ${err.stack}`);
+            res.json(err);
+        });
 });
+
+// // Delete a product.
+// router.delete('/product/:_id', checkPermission, function(req, res) {
+	// try{	
+		// Product.findByIdAndRemove(req.params._id)
+			// .then(result=>{
+				// // Delete images dir.
+				// fse.remove(path.join(__dirname, '..', 'dist/img/', req.params._id), err=>{
+					// if (err) { log.error(err.stack); }
+					// res.json({});
+					// log.info(`Product ${req.params._id} deleted.`);
+					// // Delete from zunkasrv.
+					// if (result.dealerName = "Aldo") {
+						// // Delete reference product on integration server.
+						// // log.debug(`axios delete: ${s.zunkaServer.host}/${result.dealerName.toLowerCase()}/product/mongodb_id/${result.dealerProductId}`);
+						// axios.delete(`${s.zunkaServer.host}/${result.dealerName.toLowerCase()}/product/mongodb_id/${result.dealerProductId}`, {
+							// headers: {
+								// "Accept": "text/plain", 
+							// },
+							// auth: {
+								// username: s.zunkaServer.user,
+								// password: s.zunkaServer.password
+							// },
+						// })
+						// .then(response => {
+							// if (response.data.err) {
+								// log.err(`Deleting mongodbId from zunkasrv, code: ${result.dealerProductId}. ${response.data.err}`);
+							// } 
+						// })
+						// .catch(err => {
+							// log.error(`Deleting mongodbId from zunkasrv, code: ${result.dealerProductId}. ${err}`);
+						// }); 
+					// }
+				// });
+			// })
+			// .catch(err=>{
+				// log.error(err.stack);
+				// res.json(err);
+			// });
+	// } catch(err) {
+		// log.error(`Deleting product, product _id: ${req.params._id}. ${err}`);
+	// }
+// });
 
 // Upload product pictures.
 router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
