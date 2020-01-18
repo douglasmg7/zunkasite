@@ -1,3 +1,8 @@
+# 1.3.1 (18 jan 2020)
+## Melhorias
+* Inclusão do fabricante Corsair.
+
+
 # 1.3.0 (06 jan 2020)
 ## Melhorias
 * Produto não é removido do banco de dados quando o mesmo é apagado do cadastramento.

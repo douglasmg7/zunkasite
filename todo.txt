@@ -1,11 +1,5 @@
-http://localhost/checkout/shipping-method/order/5e136b8669230722cd7186e5
-http://localhost/checkout/payment/order/5e136b8669230722cd7186e5
-
-http://localhost/checkout/review/order/5e136b8669230722cd7186e5
-
-http://localhost/checkout/ppp/payment/approval/5e136b8669230722cd7186e5
-
 [zunka-site]
+    Quando voltar pelo back do browser de detalhe do pedido para pedido, forçar reload.
     Quando a ordem for finalizada, se usuário tentar voltar nos link da ordem fechada redirecionar para confirmação da ordem.
     Upload image for markdown use.
     Markdown css show image in original size.

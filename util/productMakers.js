@@ -7,6 +7,7 @@ let regexMakers = [
 	{ name: 'AMD', regex: /\bamd\b/i},
 	{ name: 'AOC', regex: /\baoc\b/i},
 	{ name: 'Asus', regex: /\basus\b/i},
+	{ name: 'Corsair', regex: /\bcorsair\b/i},
 	{ name: 'D-Link', regex: /\bd-?link\b/i},
 	{ name: 'Dell', regex: /\bdell\b/i},
 	{ name: 'Dji', regex: /\bdji\b/i},
