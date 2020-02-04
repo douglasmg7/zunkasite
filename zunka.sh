@@ -13,3 +13,4 @@ export ZUNKAPATH=~/.local/share/zunka
 export ZUNKA_SITE_PATH=/home/douglasmg7/zunka
 export ZUNKA_SRV_DB=zunkasrv.db
 export ZUNKA_ALDOWSC_DB=aldowsc.db
+export ZUNKA_FREIGHT_DB=freight.db
