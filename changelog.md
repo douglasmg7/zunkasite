@@ -1,3 +1,9 @@
+# 1.3.2 (10 fev 2020)
+## Melhorias
+* Inclusão do fabricante HP e PNY.
+* Inclusão da categoria impressoras.
+
+
 # 1.3.1 (18 jan 2020)
 ## Melhorias
 * Inclusão do fabricante Corsair.
