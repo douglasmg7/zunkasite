@@ -692,12 +692,40 @@ router.put('/upload-banner-images', checkPermission, (req, res)=>{
 
 // Get motoboy delivery page.
 router.get('/motoboy-delivery', (req, res, next)=>{
+
+    // log.debug(`url: ${ppUrl}payments/payment/${paymentId}`);
+    axios.get(`${s.freightServer.host}/payments/payment/${paymentId}`, {
+        headers: {
+            "Accept": "application/json", 
+            // "Content-Type": "application/json",
+            // "Authorization": ppAccessTokenData.token_type + " " + ppAccessTokenData.access_token
+        },
+        auth: { 
+            username: s.freightServer.user, 
+            password: s.freightServer.password
+        },
+    })
+    .then(response => {
+        if (response.data.err) {
+            log.error(new Error(`Getting motoboy delivery from freight server. ${response.data.err}`));
+        } else {
+            // log.silly(`Payment info: ${JSON.stringify(response.data, null, 2)}`);
+            log.debug(`motoboy-delivery from freight server: ${JSON.stringify(response.data, null, "")}`);
+        }
+    })
+    .catch(err => {
+        log.error(err.stack);
+        // log.error(new Error(`Getting motoboy delivery from freight server. ${response.data.err}`));
+    }); 
+
+
 	redis.get('motoboy-delivery', (err, motoboyDeliveries)=>{
 		// Internal error.
 		if (err) {
 			return next(err);
 		}
 		// Render page.
+        log.debug(`motoboyDeliveries: ${JSON.stringify(motoboyDeliveries, null, "  ")}`);
 		return res.render('admin/motoboyDelivery', {  motoboyDeliveries: JSON.parse(motoboyDeliveries) || [] });
 	});
 });
