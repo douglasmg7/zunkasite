@@ -689,16 +689,17 @@ router.put('/upload-banner-images', checkPermission, (req, res)=>{
 /******************************************************************************
 /   MOTOBY DELIVERY
  ******************************************************************************/
+// Convert 3456 to R$ 34,56.
+function brCurrencyFrom100XInt(val) {
+    val = (val / 100).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return  val;
+}
 
-// Get motoboy delivery page.
-router.get('/motoboy-delivery', (req, res, next)=>{
-
-    // log.debug(`url: ${ppUrl}payments/payment/${paymentId}`);
-    axios.get(`${s.freightServer.host}/payments/payment/${paymentId}`, {
+// Get motoboy freight.
+router.get('/motoboy-freights', (req, res, next)=>{
+    axios.get(`${s.freightServer.host}/motoboy-freights`, {
         headers: {
             "Accept": "application/json", 
-            // "Content-Type": "application/json",
-            // "Authorization": ppAccessTokenData.token_type + " " + ppAccessTokenData.access_token
         },
         auth: { 
             username: s.freightServer.user, 
@@ -707,25 +708,72 @@ router.get('/motoboy-delivery', (req, res, next)=>{
     })
     .then(response => {
         if (response.data.err) {
-            log.error(new Error(`Getting motoboy delivery from freight server. ${response.data.err}`));
+            log.error(new Error(`Getting motoboy freight from freight server. ${response.data.err}`));
         } else {
-            // log.silly(`Payment info: ${JSON.stringify(response.data, null, 2)}`);
-            log.debug(`motoboy-delivery from freight server: ${JSON.stringify(response.data, null, "")}`);
+            // log.debug(`res.data: ${JSON.stringify(response.data, null, "")}`);
+            return res.render('admin/motoboyFreights', {  freights: response.data || [], brCurrency: brCurrencyFrom100XInt });
         }
     })
     .catch(err => {
         log.error(err.stack);
-        // log.error(new Error(`Getting motoboy delivery from freight server. ${response.data.err}`));
     }); 
+});
 
 
+// Shipping price.
+router.get('/motoboy-freight/:id', checkPermission, (req, res, next)=>{
+    try {
+        // New.
+        if (req.params.id === 'new') {
+            let freight = {
+                id: 'new',
+                city: '',
+                deadline: 2,
+                price: 10000
+            }
+            // log.debug(`new shippingPrice: ${JSON.stringify(shippingPrice, null, 2)}`);
+            res.render('admin/editMotoboyFreight', { nav: {}, freight: freight });
+        } 
+        // Existing item.
+        else {
+            axios.get(`${s.freightServer.host}/motoboy-freight/${req.params.id}`, {
+                headers: {
+                    "Accept": "application/json", 
+                },
+                auth: { 
+                    username: s.freightServer.user, 
+                    password: s.freightServer.password
+                },
+            })
+            .then(response => {
+                if (response.data.err) {
+                    return next(new Error(`Getting motoboy freight ${req.params.id} from freight server. ${response.data.err}`));
+                } else {
+                    log.debug(`res.data: ${JSON.stringify(response.data, null, "")}`);
+                    return res.render('admin/editMotoboyFreight', { freight: response.data || [], brCurrency: brCurrencyFrom100XInt });
+                // res.render('admin/editShippingPrice', { nav: {}, isNewShippingPrice: false, shippingPrice: shippingPrice } );
+                }
+            })
+            .catch(err => {
+                return next(new Error(`Getting motoboy freight ${req.params.id} from freight server. ${err.stack}`));
+            }); 
+        }
+    } 
+    catch(err) {
+        return next(err);
+    }
+});
+
+// Get motoboy delivery page.
+router.get('/motoboy-delivery', (req, res, next)=>{
+    // log.debug(`url: ${ppUrl}payments/payment/${paymentId}`)
 	redis.get('motoboy-delivery', (err, motoboyDeliveries)=>{
 		// Internal error.
 		if (err) {
 			return next(err);
 		}
 		// Render page.
-        log.debug(`motoboyDeliveries: ${JSON.stringify(motoboyDeliveries, null, "  ")}`);
+        // log.debug(`motoboyDeliveries: ${JSON.stringify(motoboyDeliveries, null, "  ")}`);
 		return res.render('admin/motoboyDelivery', {  motoboyDeliveries: JSON.parse(motoboyDeliveries) || [] });
 	});
 });

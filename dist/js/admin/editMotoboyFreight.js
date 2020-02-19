@@ -12,14 +12,14 @@ var app = new Vue({
     el: '#app',
     data: {
         warnMessage: '',
-        shippingPrice: shippingPrice,
+        freight: freight,
         price: 0,
         maxWeight: 0,
     },
     created() {
-        // console.log(`shippingPrice: ${JSON.stringify(shippingPrice, null, 2)}`);
-        this.price = this.toReal(shippingPrice.price);
-        this.maxWeight = this.toKg(shippingPrice.maxWeight);
+        console.log(`freight: ${JSON.stringify(freight, null, 2)}`);
+        // this.price = this.toReal(shippingPrice.price);
+        // this.maxWeight = this.toKg(shippingPrice.maxWeight);
     },
     methods: {
         toReal(val) {

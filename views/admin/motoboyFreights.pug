@@ -1,0 +1,28 @@
+extends ../layout/layout_vue_n
+
+block title
+    title Zunka - Motoboy
+
+block append css
+    link(rel="stylesheet" href="/css/admin/motoboyFreights.css" charset="utf-8")
+
+block content 
+    section.shadow
+        //- title.
+        h2.title Motoboy fretes
+
+        //- Regions.
+        each fr in freights
+            a(href=`/admin/motoboy-freight/${fr.id}`) 
+                span.city !{fr.city} &nbsp - &nbsp 
+                span.deadline !{fr.deadline} dia(s) &nbsp - &nbsp
+                span.price R$ !{brCurrency(fr.price)}
+        input.btn-info(type='button' onclick='window.location.href="/admin/motoboy-freights/city/new"' value='Adicionar cidade') 
+
+append internal_scripts
+    script.
+        let freights = !{JSON.stringify(freights)};
+        let user = !{JSON.stringify(user)};
+
+append external_scripts
+    script(src='/js/admin/motoboyFreights.js?0002')
