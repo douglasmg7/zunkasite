@@ -695,7 +695,14 @@ function brCurrencyFrom100XInt(val) {
     return  val;
 }
 
-// Get motoboy freight.
+// Convert 34,56 to 3456.
+function brCurrencyTo100XInt(val) {
+    val = val.replace('.', '').replace(',', '.');
+    val = parseFloat(val, 10)
+    return Math.ceil(val * 100)
+}
+
+// Get all motoboy freight.
 router.get('/motoboy-freights', (req, res, next)=>{
     axios.get(`${s.freightServer.host}/motoboy-freights`, {
         headers: {
@@ -720,7 +727,7 @@ router.get('/motoboy-freights', (req, res, next)=>{
 });
 
 
-// Shipping price.
+// Get motoboy freight.
 router.get('/motoboy-freight/:id', checkPermission, (req, res, next)=>{
     try {
         // New.
@@ -750,8 +757,8 @@ router.get('/motoboy-freight/:id', checkPermission, (req, res, next)=>{
                     return next(new Error(`Getting motoboy freight ${req.params.id} from freight server. ${response.data.err}`));
                 } else {
                     log.debug(`res.data: ${JSON.stringify(response.data, null, "")}`);
-                    return res.render('admin/editMotoboyFreight', { freight: response.data || [], brCurrency: brCurrencyFrom100XInt });
-                // res.render('admin/editShippingPrice', { nav: {}, isNewShippingPrice: false, shippingPrice: shippingPrice } );
+                    response.data.invalid = {}
+                    return res.render('admin/editMotoboyFreight', { freight: response.data, brCurrency: brCurrencyFrom100XInt });
                 }
             })
             .catch(err => {
@@ -762,6 +769,66 @@ router.get('/motoboy-freight/:id', checkPermission, (req, res, next)=>{
     catch(err) {
         return next(err);
     }
+});
+
+// Update motoboy freight.
+router.post('/motoboy-freight/:id', checkPermission, (req, res, next)=>{
+    // log.debug(`req.body: ${JSON.stringify(req.body, null, '  ')}`)
+
+	// Validation for price and deadline.
+    // Check fields.
+    let invalid = {};
+    // City.
+    if (!req.body.city.match(/.{1,40}/)) {
+        invalid.city = 'cValor inválido'; 
+    }
+    // Pice.
+    if (!req.body.price.match(/^(\d+)(\.\d{3})*(\,\d{0,2})?$/)) {
+        invalid.price = 'pValor inválido'; 
+    }
+    // Deadline.
+    if (!req.body.deadline.match(/^\d{1,2}$/)) {
+        invalid.deadline = 'dValor inválido'; 
+    }
+    // Invalid fields.
+    if (Object.keys(invalid).length) {
+        let freight = {
+            id: req.body.id,
+            city: req.body.city,
+            deadline: req.body.deadline,
+            price: req.body.price,
+            invalid: invalid
+        };
+        return res.render('admin/editMotoboyFreight', { freight: freight, brCurrency: function doNothing(val){return val} });
+    }
+
+    let freight = {};
+    freight.id = parseInt(req.body.id, 10);
+    freight.city = req.body.city;
+    freight.deadline = parseInt(req.body.deadline, 10);
+    freight.price = brCurrencyTo100XInt(req.body.price);
+
+    // Update.
+    // axios.post(`${s.freightServer.host}/motoboy-freight/${req.params.id}`, {
+    axios.post(`${s.freightServer.host}/motoboy-freight`, freight, {
+        headers: {
+            "Accept": "application/json", 
+        },
+        auth: { 
+            username: s.freightServer.user, 
+            password: s.freightServer.password
+        }
+    })
+    .then(response => {
+        if (response.data.err) {
+            return next(new Error(`Updating motoboy freight id: ${req.params.id} on freight server. ${response.data.err}`));
+        } else {
+            return res.redirect('/admin/motoboy-freights');
+        }
+    })
+    .catch(err => {
+        return next(new Error(`Updating motoboy freight ${req.params.id} on freight server. ${err}`));
+    }); 
 });
 
 // Get motoboy delivery page.
