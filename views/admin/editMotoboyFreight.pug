@@ -1,49 +1,53 @@
-extends ../layout/layout_vue_n
+extends ../layout/layout
 
 block title
-  title Zunka - Motoboy frete
+    title Zunka - Motoboy frete
 
 block append css
-  link(rel="stylesheet" href="/css/admin/editMotoboyFreight.css" charset="utf-8")
+    link(rel="stylesheet" href="/css/admin/editMotoboyFreight.css" charset="utf-8")
 
 block content 
-  section.shadow
-    //- title.
-    h2.title {{ freight.id === 'new' ? "Novo frete": "Alterar frete" }}
-    form(method='post')
-        //- Csrf.
-        input(type='hidden' name='_csrf' value=csrfToken)
+    section.shadow
+        if freight.id == 'new'
+            h2.title Criar frete
+        else
+            h2.title Salvar frete
+        form(method='post')
+            //- Csrf.
+            input(type='hidden' name='_csrf' value=csrfToken)
 
-        //- Id.
-        input(type='hidden' name='id' value=freight.id)
+            //- Id.
+            input(type='hidden' name='id' value=freight.id)
 
-        //- City.
-        label(for='city') Cidade 
-        input(type='text' name= 'city' id='city' value=freight.city)
-        if freight.invalid.city
-            label.error(for='city') !{freight.invalid.city}
+            //- City.
+            label(for='city') Cidade 
+            input(type='text' name= 'city' id='city' value=freight.city)
+            if freight.invalid.city
+                label.error(for='city') !{freight.invalid.city}
 
-        //- Dead line.
-        label(for='deadline') Prazo (dias)
-        input(type='text' name='deadline' id='deadline' value=freight.deadline)
-        if freight.invalid.deadline
-            label.error(for='deadline') !{freight.invalid.deadline}
+            //- Dead line.
+            label(for='deadline') Prazo (dias)
+            input(type='text' name='deadline' id='deadline' value=freight.deadline)
+            if freight.invalid.deadline
+                label.error(for='deadline') !{freight.invalid.deadline}
 
-        //- Price.
-        label(for='price') Preço (R$)
-        input(type='text' name='price' id='price' value=brCurrency(freight.price))
-        if freight.invalid.price
-            label.error(for='price') !{freight.invalid.price}
+            //- Price.
+            label(for='price') Preço (R$)
+            input(type='text' name='price' id='price' value=brCurrency(freight.price))
+            if freight.invalid.price
+                label.error(for='price') !{freight.invalid.price}
 
-        //- Buttons.
-        //- input.btn-primary(type='button', :value='freight.id === "new" ? "Criar frete": "Salvar"' @click='save()')
-        input.btn-primary(type='submit', :value='freight.id === "new" ? "Criar frete": "Salvar"')
-        input.btn-danger(v-if='!(freight.id === "new")' type='button' value='Apagar' @click='remove()')
-        input.btn-exit(type='button' onclick='window.location.href="/admin/motoboy-freights"' value='Sair') 
+            //- Buttons.
+            if freight.id == 'new'
+                input.btn-primary(type='submit', value='Criar frete')
+            else
+                input.btn-primary(type='submit', value='Salvar')
+                input.btn-danger(type='button' value='Apagar' onclick='del()')
+            input.btn-exit(type='button' onclick='window.location.href="/admin/motoboy-freights"' value='Sair') 
+
 
 append internal_scripts
-  script.
-    let freight = !{JSON.stringify(freight)};
-
-append external_scripts
-  script(src='/js/admin/editMotoboyFreight.js?0001')
+    script.
+        function del() {
+            console.log("Delete");
+        }

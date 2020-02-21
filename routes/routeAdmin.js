@@ -736,10 +736,11 @@ router.get('/motoboy-freight/:id', checkPermission, (req, res, next)=>{
                 id: 'new',
                 city: '',
                 deadline: 2,
-                price: 10000
+                price: 10000,
+                invalid: {}
             }
             // log.debug(`new shippingPrice: ${JSON.stringify(shippingPrice, null, 2)}`);
-            res.render('admin/editMotoboyFreight', { nav: {}, freight: freight });
+            res.render('admin/editMotoboyFreight', { freight: freight, brCurrency: brCurrencyFrom100XInt });
         } 
         // Existing item.
         else {
@@ -756,7 +757,7 @@ router.get('/motoboy-freight/:id', checkPermission, (req, res, next)=>{
                 if (response.data.err) {
                     return next(new Error(`Getting motoboy freight ${req.params.id} from freight server. ${response.data.err}`));
                 } else {
-                    log.debug(`res.data: ${JSON.stringify(response.data, null, "")}`);
+                    // log.debug(`res.data: ${JSON.stringify(response.data, null, "")}`);
                     response.data.invalid = {}
                     return res.render('admin/editMotoboyFreight', { freight: response.data, brCurrency: brCurrencyFrom100XInt });
                 }
@@ -771,7 +772,7 @@ router.get('/motoboy-freight/:id', checkPermission, (req, res, next)=>{
     }
 });
 
-// Update motoboy freight.
+// Save/update motoboy freight.
 router.post('/motoboy-freight/:id', checkPermission, (req, res, next)=>{
     // log.debug(`req.body: ${JSON.stringify(req.body, null, '  ')}`)
 
@@ -803,34 +804,61 @@ router.post('/motoboy-freight/:id', checkPermission, (req, res, next)=>{
     }
 
     let freight = {};
-    freight.id = parseInt(req.body.id, 10);
     freight.city = req.body.city;
     freight.deadline = parseInt(req.body.deadline, 10);
     freight.price = brCurrencyTo100XInt(req.body.price);
-
-    // Update.
-    // axios.post(`${s.freightServer.host}/motoboy-freight/${req.params.id}`, {
-    axios.post(`${s.freightServer.host}/motoboy-freight`, freight, {
-        headers: {
-            "Accept": "application/json", 
-        },
-        auth: { 
-            username: s.freightServer.user, 
-            password: s.freightServer.password
-        }
-    })
-    .then(response => {
-        if (response.data.err) {
-            return next(new Error(`Updating motoboy freight id: ${req.params.id} on freight server. ${response.data.err}`));
-        } else {
-            return res.redirect('/admin/motoboy-freights');
-        }
-    })
-    .catch(err => {
-        return next(new Error(`Updating motoboy freight ${req.params.id} on freight server. ${err}`));
-    }); 
+    // New freight.
+    if (req.body.id == "new") {
+        freight.id = 0;
+        axios.post(`${s.freightServer.host}/motoboy-freight`, freight, {
+            headers: {
+                "Accept": "application/json", 
+            },
+            auth: { 
+                username: s.freightServer.user, 
+                password: s.freightServer.password
+            }
+        })
+        .then(response => {
+            if (response.data.err) {
+                return next(new Error(`Creating motoboy freight id: ${req.params.id} on freight server. ${response.data.err}`));
+            } else {
+                return res.redirect('/admin/motoboy-freights');
+            }
+        })
+        .catch(err => {
+            return next(new Error(`Creating motoboy freight ${req.params.id} on freight server. ${err}`));
+        }); 
+    } 
+    // Update freight.
+    else {
+        freight.id = parseInt(req.body.id, 10);
+        axios.put(`${s.freightServer.host}/motoboy-freight`, freight, {
+            headers: {
+                "Accept": "application/json", 
+            },
+            auth: { 
+                username: s.freightServer.user, 
+                password: s.freightServer.password
+            }
+        })
+        .then(response => {
+            if (response.data.err) {
+                return next(new Error(`Updating motoboy freight id: ${req.params.id} on freight server. ${response.data.err}`));
+            } else {
+                return res.redirect('/admin/motoboy-freights');
+            }
+        })
+        .catch(err => {
+            return next(new Error(`Updating motoboy freight ${req.params.id} on freight server. ${err}`));
+        }); 
+    }
 });
 
+
+/******************************************************************************
+* Motboy old
+******************************************************************************/
 // Get motoboy delivery page.
 router.get('/motoboy-delivery', (req, res, next)=>{
     // log.debug(`url: ${ppUrl}payments/payment/${paymentId}`)
