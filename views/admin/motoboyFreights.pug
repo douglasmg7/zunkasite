@@ -1,4 +1,4 @@
-extends ../layout/layout_vue_n
+extends ../layout/layout
 
 block title
     title Zunka - Motoboy
@@ -22,7 +22,3 @@ block content
 append internal_scripts
     script.
         let freights = !{JSON.stringify(freights)};
-        let user = !{JSON.stringify(user)};
-
-append external_scripts
-    script(src='/js/admin/motoboyFreights.js?0002')

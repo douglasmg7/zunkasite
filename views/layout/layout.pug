@@ -31,9 +31,8 @@ html(lang="en")
             function _search(text){
                 window.location.href = `/all?page=1&search=${text}`;
             }
-            // Make available for vue.
+            // Csrf token.
             let csrfToken = !{JSON.stringify(csrfToken)};
 
     block external_scripts
         script(src='/js/product/layout.js?004')
-        include ../components/axios.js.pug

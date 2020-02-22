@@ -714,7 +714,9 @@ router.get('/motoboy-freights', (req, res, next)=>{
         },
     })
     .then(response => {
-        if (response.data.err) {
+        // log.debug(`response.data: ${JSON.stringify(response.data, null, 2)}`);
+        // log.debug(`response.err: ${JSON.stringify(response.err, null, 2)}`);
+        if (response.data && response.data.err) {
             log.error(new Error(`Getting motoboy freight from freight server. ${response.data.err}`));
         } else {
             // log.debug(`res.data: ${JSON.stringify(response.data, null, "")}`);
@@ -855,53 +857,77 @@ router.post('/motoboy-freight/:id', checkPermission, (req, res, next)=>{
     }
 });
 
+// Delete motoboy freight.
+router.delete('/motoboy-freight/:id', checkPermission, (req, res, next)=>{
+    axios.delete(`${s.freightServer.host}/motoboy-freight/${req.params.id}`, {
+        headers: {
+            "Accept": "application/json", 
+        },
+        auth: { 
+            username: s.freightServer.user, 
+            password: s.freightServer.password
+        }
+    })
+    .then(response => {
+        if (response.data.err) {
+            log.error(`Deleting motoboy freight ${req.params.id} on freight server. ${err}`);
+            return res.sendStatus(500);
+        } else {
+            return res.send();
+        }
+    })
+    .catch(err => {
+        log.error(`Deleting motoboy freight ${req.params.id} on freight server. ${err}`);
+        return res.sendStatus(500);
+    }); 
+});
 
 /******************************************************************************
 * Motboy old
 ******************************************************************************/
-// Get motoboy delivery page.
-router.get('/motoboy-delivery', (req, res, next)=>{
-    // log.debug(`url: ${ppUrl}payments/payment/${paymentId}`)
-	redis.get('motoboy-delivery', (err, motoboyDeliveries)=>{
-		// Internal error.
-		if (err) {
-			return next(err);
-		}
-		// Render page.
-        // log.debug(`motoboyDeliveries: ${JSON.stringify(motoboyDeliveries, null, "  ")}`);
-		return res.render('admin/motoboyDelivery', {  motoboyDeliveries: JSON.parse(motoboyDeliveries) || [] });
-	});
-});
+// // Get motoboy delivery page.
+// router.get('/motoboy-delivery', (req, res, next)=>{
+    // // log.debug(`url: ${ppUrl}payments/payment/${paymentId}`)
+	// redis.get('motoboy-delivery', (err, motoboyDeliveries)=>{
+		// // Internal error.
+		// if (err) {
+			// return next(err);
+		// }
+		// // Render page.
+        // // log.debug(`motoboyDeliveries: ${JSON.stringify(motoboyDeliveries, null, "  ")}`);
+		// return res.render('admin/motoboyDelivery', {  motoboyDeliveries: JSON.parse(motoboyDeliveries) || [] });
+	// });
+// });
 
-// Save motoboy delivery.
-router.post('/motoboy-delivery', checkPermission, (req, res, next)=>{
-	// Validation for price and deadline.
-	for(let i=0; i < req.body.motoboyDeliveries.length; i++ ) {
-		if (!req.body.motoboyDeliveries[i].price.match(/^(\d+)(\.\d{3})*(\,\d{0,2})?$/) || !req.body.motoboyDeliveries[i].deadline.match(/^\d+$/)) {
-			res.json({ success: false });
-			return;
-		}
-		else {
-			req.body.motoboyDeliveries[i].cityNormalized = req.body.motoboyDeliveries[i].city.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '');
-		}
-	}
-	// Stringify.
-	let motoboyDeliveries = JSON.stringify(req.body.motoboyDeliveries);
-	if (!motoboyDeliveries) {
-		motoboyDeliveries = [];
-	}
-	// Save.
-	redis.set('motoboy-delivery', motoboyDeliveries, (err)=>{
-		if (err) {
-			log.error(new Error(err).stack);
-			return;
-		}
-		else {
-			log.info(`Motoboy delivery updated.`);
-			res.json({ success: true });
-		}
-	});
-});
+// // Save motoboy delivery.
+// router.post('/motoboy-delivery', checkPermission, (req, res, next)=>{
+	// // Validation for price and deadline.
+	// for(let i=0; i < req.body.motoboyDeliveries.length; i++ ) {
+		// if (!req.body.motoboyDeliveries[i].price.match(/^(\d+)(\.\d{3})*(\,\d{0,2})?$/) || !req.body.motoboyDeliveries[i].deadline.match(/^\d+$/)) {
+			// res.json({ success: false });
+			// return;
+		// }
+		// else {
+			// req.body.motoboyDeliveries[i].cityNormalized = req.body.motoboyDeliveries[i].city.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '');
+		// }
+	// }
+	// // Stringify.
+	// let motoboyDeliveries = JSON.stringify(req.body.motoboyDeliveries);
+	// if (!motoboyDeliveries) {
+		// motoboyDeliveries = [];
+	// }
+	// // Save.
+	// redis.set('motoboy-delivery', motoboyDeliveries, (err)=>{
+		// if (err) {
+			// log.error(new Error(err).stack);
+			// return;
+		// }
+		// else {
+			// log.info(`Motoboy delivery updated.`);
+			// res.json({ success: true });
+		// }
+	// });
+// });
 
 /******************************************************************************
 /   SHIPPING PRICE LIST
