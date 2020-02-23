@@ -1,0 +1,72 @@
+extends ../layout/layout
+
+block title
+    title Zunka - Motoboy frete
+
+block append css
+    link(rel="stylesheet" href="/css/admin/editRegionFreight.css" charset="utf-8")
+
+block content 
+    section.shadow
+        if freight.id == 'new'
+            h2.title Criar frete
+        else
+            h2.title Salvar frete
+        form(method='post')
+            input(type='hidden' name='_csrf' value=csrfToken)
+            input(type='hidden' name='id' value=freight.id)
+
+            //- Region.
+            label(for='region') Região
+            select(name='region' id='region')
+                option(value='north' selected=freight.region=="north") Norte
+                option(value='northeast' selected=freight.region=="northeast") Nordeste
+                option(value='midwest' selected=freight.region=="midwest") Centro-oeste
+                option(value='southeast' selected=freight.region=="southeast") Sudeste
+                option(value='south' selected=freight.region=="south") Sul
+
+            //- Deadline.
+            label(for='deadline') Prazo (dias)
+            input(type='text' name='deadline' id='deadline' value=freight.deadline)
+            if freight.invalid.deadline
+                label.error(for='deadline') !{freight.invalid.deadline}
+
+            //- Weight.
+            label(for='weight') Peso (kg)
+            input(type='text' name='weight' id='weight' value=grToKg(freight.weight))
+            if freight.invalid.weight
+                label.error(for='weight') !{freight.invalid.weight}
+
+            //- Price.
+            label(for='price') Preço (R$)
+            input(type='text' name='price' id='price' value=brCurrency(freight.price))
+            if freight.invalid.price
+                label.error(for='price') !{freight.invalid.price}
+
+            //- Buttons.
+            if freight.id == 'new'
+                input.btn-primary(type='submit', value='Criar frete')
+            else
+                input.btn-primary(type='submit', value='Salvar')
+                input.btn-danger(type='button' value='Apagar' onclick='deleteFreight()')
+            input.btn-exit(type='button' onclick='window.location.href="/admin/region-freights"' value='Sair') 
+
+append internal_scripts
+    script.
+        //- let headers = { 'csrf-token': csrfToken };
+        let freight = !{JSON.stringify(freight)};
+        function deleteFreight() {
+            if (confirm('Confirma a remoção?')) {
+                axios.delete(`/admin/region-freight/${freight.id}`, { headers: { 'csrf-token': csrfToken } })
+                .then(()=>{
+                    window.location.href = '/admin/region-freights';
+                })
+                .catch((err)=>{
+                    console.error(`${err.response.status} - ${err.response.statusText}`);
+                    alert(`Alguma coisa deu errada!`);
+                });
+            }
+        }
+
+append external_scripts
+    include ../components/axios.js.pug

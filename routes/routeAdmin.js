@@ -882,52 +882,91 @@ router.delete('/motoboy-freight/:id', checkPermission, (req, res, next)=>{
     }); 
 });
 
-/******************************************************************************
-* Motboy old
-******************************************************************************/
-// // Get motoboy delivery page.
-// router.get('/motoboy-delivery', (req, res, next)=>{
-    // // log.debug(`url: ${ppUrl}payments/payment/${paymentId}`)
-	// redis.get('motoboy-delivery', (err, motoboyDeliveries)=>{
-		// // Internal error.
-		// if (err) {
-			// return next(err);
-		// }
-		// // Render page.
-        // // log.debug(`motoboyDeliveries: ${JSON.stringify(motoboyDeliveries, null, "  ")}`);
-		// return res.render('admin/motoboyDelivery', {  motoboyDeliveries: JSON.parse(motoboyDeliveries) || [] });
-	// });
-// });
 
-// // Save motoboy delivery.
-// router.post('/motoboy-delivery', checkPermission, (req, res, next)=>{
-	// // Validation for price and deadline.
-	// for(let i=0; i < req.body.motoboyDeliveries.length; i++ ) {
-		// if (!req.body.motoboyDeliveries[i].price.match(/^(\d+)(\.\d{3})*(\,\d{0,2})?$/) || !req.body.motoboyDeliveries[i].deadline.match(/^\d+$/)) {
-			// res.json({ success: false });
-			// return;
-		// }
-		// else {
-			// req.body.motoboyDeliveries[i].cityNormalized = req.body.motoboyDeliveries[i].city.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '');
-		// }
-	// }
-	// // Stringify.
-	// let motoboyDeliveries = JSON.stringify(req.body.motoboyDeliveries);
-	// if (!motoboyDeliveries) {
-		// motoboyDeliveries = [];
-	// }
-	// // Save.
-	// redis.set('motoboy-delivery', motoboyDeliveries, (err)=>{
-		// if (err) {
-			// log.error(new Error(err).stack);
-			// return;
-		// }
-		// else {
-			// log.info(`Motoboy delivery updated.`);
-			// res.json({ success: true });
-		// }
-	// });
-// });
+/******************************************************************************
+*   Region freight
+******************************************************************************/
+// Convert grams to kg, ex: 1600 to 1.
+function grToKg(val) {
+    val = val / 1000;
+    return Math.floor(val);
+}
+// kg to gr.
+function kgToGr(val) {
+    return val * 1000;
+}
+
+// Get all region freight.
+router.get('/region-freights', (req, res, next)=>{
+    axios.get(`${s.freightServer.host}/region-freights`, {
+        headers: {
+            "Accept": "application/json", 
+        },
+        auth: { 
+            username: s.freightServer.user, 
+            password: s.freightServer.password
+        },
+    })
+    .then(response => {
+        // log.debug(`response.data: ${JSON.stringify(response.data, null, 2)}`);
+        // log.debug(`response.err: ${JSON.stringify(response.err, null, 2)}`);
+        if (response.data && response.data.err) {
+            log.error(new Error(`Getting region freight from freight server. ${response.data.err}`));
+        } else {
+            // log.debug(`res.data: ${JSON.stringify(response.data, null, "")}`);
+            return res.render('admin/regionFreights', {  freights: response.data || [], brCurrency: brCurrencyFrom100XInt, grToKg: grToKg });
+        }
+    })
+    .catch(err => {
+        log.error(err.stack);
+    }); 
+});
+
+// Get one region freight.
+router.get('/region-freight/:id', checkPermission, (req, res, next)=>{
+    try {
+        // New.
+        if (req.params.id === 'new') {
+            let freight = {
+                id: 'new',
+                region: 'north',
+                deadline: 2,
+                weight: 4000,
+                price: 10000,
+                invalid: {}
+            }
+            // log.debug(`new shippingPrice: ${JSON.stringify(shippingPrice, null, 2)}`);
+            res.render('admin/editRegionFreight', { freight: freight, brCurrency: brCurrencyFrom100XInt, grToKg: grToKg});
+        } 
+        // Existing item.
+        else {
+            axios.get(`${s.freightServer.host}/region-freight/${req.params.id}`, {
+                headers: {
+                    "Accept": "application/json", 
+                },
+                auth: { 
+                    username: s.freightServer.user, 
+                    password: s.freightServer.password
+                },
+            })
+            .then(response => {
+                if (response.data.err) {
+                    return next(new Error(`Getting region freight ${req.params.id} from freight server. ${response.data.err}`));
+                } else {
+                    // log.debug(`res.data: ${JSON.stringify(response.data, null, "")}`);
+                    response.data.invalid = {}
+                    return res.render('admin/editRegionFreight', { freight: response.data, brCurrency: brCurrencyFrom100XInt, grToKg: grToKg });
+                }
+            })
+            .catch(err => {
+                return next(new Error(`Getting region freight ${req.params.id} from freight server. ${err.stack}`));
+            }); 
+        }
+    } 
+    catch(err) {
+        return next(err);
+    }
+});
 
 /******************************************************************************
 /   SHIPPING PRICE LIST

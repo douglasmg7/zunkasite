@@ -1,3 +1,7 @@
+# 1.4.0 (?)
+## Melhorias
+* Usando motoboy fretes do servidor de endereços.
+
 # 1.3.2 (10 fev 2020)
 ## Melhorias
 * Inclusão do fabricante HP e PNY.
