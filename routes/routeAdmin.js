@@ -783,15 +783,15 @@ router.post('/motoboy-freight/:id', checkPermission, (req, res, next)=>{
     let invalid = {};
     // City.
     if (!req.body.city.match(/.{1,40}/)) {
-        invalid.city = 'cValor inválido'; 
+        invalid.city = 'Valor inválido'; 
     }
     // Pice.
     if (!req.body.price.match(/^(\d+)(\.\d{3})*(\,\d{0,2})?$/)) {
-        invalid.price = 'pValor inválido'; 
+        invalid.price = 'Valor inválido'; 
     }
     // Deadline.
     if (!req.body.deadline.match(/^\d{1,2}$/)) {
-        invalid.deadline = 'dValor inválido'; 
+        invalid.deadline = 'Valor inválido'; 
     }
     // Invalid fields.
     if (Object.keys(invalid).length) {
@@ -968,161 +968,116 @@ router.get('/region-freight/:id', checkPermission, (req, res, next)=>{
     }
 });
 
-/******************************************************************************
-/   SHIPPING PRICE LIST
- ******************************************************************************/
-// Shipping price list.
-router.get('/shipping/prices', checkPermission, (req, res, next)=>{
-    try {
-        ShippingPrice.find().sort({ region: 1, deadline: 1, maxWeight: 1, price: 1 })
-            .then(docs=>{
-                if (!docs.length){
-                    return next(new Error('No shipping price doc on db.'));
-                }
-                let regions = {
-                    north: { name: 'Norte', items: [] },
-                    northeast: { name: 'Nordeste', items: [] },
-                    midwest: { name: 'Centro-oeste', items: [] },
-                    southeast: { name: 'Sudeste', items: [] },
-                    south: { name: 'Sul', items: [] }
-                };
-                docs.forEach(item=>{
-                    regions[item.region].items.push({
-                        _id: item._id,
-                        deadline: `${item.deadline} dia(s)`,
-                        maxWeight:  `${toKg(item.maxWeight)} kg`,
-                        price: `${toReal(item.price)}`
-                    });
-                });
-                return res.render('admin/shippingPrice', { nav: {}, regions: regions });
-            }) 
-            .catch(err=>{
-                return next(err);
-            })
-    } 
-    catch(err) {
-        return next(err);
-    }
-});
+// Save/update region freight.
+router.post('/region-freight/:id', checkPermission, (req, res, next)=>{
+    log.debug(`req.body: ${JSON.stringify(req.body, null, '  ')}`)
 
-// Convert decimal * 100 to real (1.000.000,00).
-function toReal(val) {
-    return 'R$ ' + (val / 100).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-};
-// Convert grams to kg, despise decimal part. 
-function toKg(val) {
-    return (val / 1000).toFixed(0);
-};
-// Padding with &nbsp;.
-function padNbspStart(val, padSize) {
-    val = val.toString();
-    return '&nbsp; '.repeat(padSize - val.length) + val;
-};
-
-// Shipping price.
-router.get('/shipping/price/:_id', checkPermission, (req, res, next)=>{
-    try {
-        // New.
-        if (req.params._id === 'new') {
-            let shippingPrice = {
-                _id: 'new',
-                region: 'north',
-                deadline: 10,
-                maxWeight: 100000,
-                price: 10000
-            }
-            // log.debug(`new shippingPrice: ${JSON.stringify(shippingPrice, null, 2)}`);
-            res.render('admin/editShippingPrice', { nav: {}, shippingPrice: shippingPrice });
-        } 
-        // Existing item.
-        else {
-            ShippingPrice.findById(req.params._id, (err, shippingPrice)=>{
-                if (err) return next(err);
-                if (!shippingPrice) return next(new Error('Not found shipping price id ${req.params._id}'));
-                res.render('admin/editShippingPrice', { nav: {}, isNewShippingPrice: false, shippingPrice: shippingPrice } );
-            });
-        }
-    } 
-    catch(err) {
-        return next(err);
+	// Validation for price and deadline.
+    // Check fields.
+    let invalid = {};
+    // Pice.
+    if (!req.body.price.match(/^(\d+)(\.\d{3})*(\,\d{0,2})?$/)) {
+        invalid.price = 'Valor inválido'; 
     }
-});
-
-// Save shipping price.
-router.post('/shipping/price/:_id', checkPermission, [
-    // check('dealerName').isLength(4, 20),
-    check('region').isIn(['north', 'northeast', 'midwest', 'southeast', 'south']).withMessage('Valor inválido para região'),
-    check('deadline').isInt({ min: 1, max: 90 }).withMessage('Valor inválido para prazo'),
-    // Max 100kg
-    check('maxWeight').isInt({ min: 1, max: 100000 }).withMessage('Valor inválido para peso máximo'),
-    // Max R$1.000.000,00
-    check('price').isInt({ min: 1, max: 100000000 }).withMessage('Valor inválido para preço'),
-],(req, res, next)=>{
-    // log.debug(`req.body: ${JSON.stringify(req.body, null, 2)}`);
-    // Check erros.
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        // log.debug(JSON.stringify(errors.array(), null, 2));
-        return res.status(422).json({ erros: errors.array() });
+    // Weight.
+    if (!req.body.weight.match(/^\d{1,3}$/)) {
+        invalid.weight = 'Valor inválido'; 
     }
-    // Save new shipping price.
-    else if (req.params._id === 'new'){
-        ShippingPrice.findOne({ region: req.body.region, deadline: req.body.deadline, maxWeight: req.body.maxWeight })
-        .then(existingShippingPrice=>{
-            if (existingShippingPrice) {
-                throw new Error('1');
+    // Deadline.
+    if (!req.body.deadline.match(/^\d{1,2}$/)) {
+        invalid.deadline = 'Valor inválido'; 
+    }
+    // Invalid fields.
+    if (Object.keys(invalid).length) {
+        let freight = {
+            id: req.body.id,
+            region: req.body.region,
+            weight: req.body.weight,
+            deadline: req.body.deadline,
+            price: req.body.price,
+            invalid: invalid
+        };
+        return res.render('admin/editRegionFreight', { freight: freight, brCurrency: function doNothing(val){return val}, grToKg: function doNothing(val){return val} });
+    }
+
+    let freight = {};
+    freight.region = req.body.region;
+    freight.weight = parseInt(req.body.weight, 10) * 1000;
+    freight.deadline = parseInt(req.body.deadline, 10);
+    freight.price = brCurrencyTo100XInt(req.body.price);
+    // New freight.
+    if (req.body.id == "new") {
+        freight.id = 0;
+        axios.post(`${s.freightServer.host}/region-freight`, freight, {
+            headers: {
+                "Accept": "application/json", 
+            },
+            auth: { 
+                username: s.freightServer.user, 
+                password: s.freightServer.password
             }
         })
-        .then(()=>{
-            ShippingPrice.create({ region: req.body.region, deadline: req.body.deadline, maxWeight: req.body.maxWeight, price: req.body.price })
-                .then((newShippingPrice)=>{
-                    return res.send();
-                })
-        })
-        .catch(err=>{
-            switch (err.message) {
-                case '1':
-                    res.status(422).json({ erros: [{ msg: 'Frete já existe'}] });
-                    break;
-                default:
-                    log.error(`Saving new shipping price. ${err}`);
-                    return res.status(500).send();
+        .then(response => {
+            if (response.data.err) {
+                return next(new Error(`Creating region freight id: ${req.params.id} on freight server. ${response.data.err}`));
+            } else {
+                return res.redirect('/admin/region-freights');
             }
-         });
-    }
-    // Update shipping price.
+        })
+        .catch(err => {
+            return next(new Error(`Creating region freight ${req.params.id} on freight server. ${err}`));
+        }); 
+    } 
+    // Update freight.
     else {
-        // log.debug(`Updating shipping price, id: ${JSON.stringify(req.params, null, 2)}`);
-        ShippingPrice.findByIdAndUpdate(req.params._id, { 
-            $set: { 
-                region: req.body.region,
-                deadline: req.body.deadline,
-                price: req.body.price,
-                maxWeight: req.body.maxWeight,
+        freight.id = parseInt(req.body.id, 10);
+        axios.put(`${s.freightServer.host}/region-freight`, freight, {
+            headers: {
+                "Accept": "application/json", 
+            },
+            auth: { 
+                username: s.freightServer.user, 
+                password: s.freightServer.password
             }
         })
-        .then(()=>{
-            return res.send();
+        .then(response => {
+            if (response.data.err) {
+                return next(new Error(`Updating region freight id: ${req.params.id} on freight server. ${response.data.err}`));
+            } else {
+                return res.redirect('/admin/region-freights');
+            }
         })
-        .catch(err=>{
-            log.error(`Updating shipping price, _id: ${req.params._id}`);
-            return res.status(500).send();
-        });
-     }
+        .catch(err => {
+            return next(new Error(`Updating region freight ${req.params.id} on freight server. ${err}`));
+        }); 
+    }
 });
 
-// delete shipping price.
-router.delete('/shipping/price/:_id', checkPermission, (req, res, next)=>{
-    // Check erros.
-    ShippingPrice.findByIdAndDelete(req.params._id)
-    .then(()=>{
-        return res.send();
+// Delete region freight.
+router.delete('/region-freight/:id', checkPermission, (req, res, next)=>{
+    axios.delete(`${s.freightServer.host}/region-freight/${req.params.id}`, {
+        headers: {
+            "Accept": "application/json", 
+        },
+        auth: { 
+            username: s.freightServer.user, 
+            password: s.freightServer.password
+        }
     })
-    .catch(err=>{
-        log.error(`Deleting shipping price. {$err}`);
-        return res.status(500).send();
-     });
+    .then(response => {
+        if (response.data.err) {
+            log.error(`Deleting region freight ${req.params.id} on freight server. ${err}`);
+            return res.sendStatus(500);
+        } else {
+            return res.send();
+        }
+    })
+    .catch(err => {
+        log.error(`Deleting region freight ${req.params.id} on freight server. ${err}`);
+        return res.sendStatus(500);
+    }); 
 });
+
 
 /******************************************************************************
 /   MARKDOWN LIST

@@ -15,48 +15,47 @@ block content
         each fr in freights
             if fr.region == "north"
                 a(href=`/admin/region-freight/${fr.id}`) 
-                    span.region Norte &nbsp - &nbsp 
-                    span.deadline !{fr.deadline} dia(s) &nbsp - &nbsp
-                    span.weight !{grToKg(fr.weight)} kg &nbsp - &nbsp
+                    span.region Norte &nbsp  &nbsp 
+                    span.weight !{grToKg(fr.weight)} kg &nbsp  &nbsp
+                    span.deadline !{fr.deadline} dia(s) &nbsp  &nbsp
                     span.price R$ !{brCurrency(fr.price)}
         br
         //- Northeast.
         each fr in freights
             if fr.region == "northeast"
                 a(href=`/admin/region-freight/${fr.id}`) 
-                    span.region Nordeste &nbsp - &nbsp 
-                    span.deadline !{fr.deadline} dia(s) &nbsp - &nbsp
-                    span.weight !{grToKg(fr.weight)} kg &nbsp - &nbsp
+                    span.region Nordeste &nbsp  &nbsp 
+                    span.weight !{grToKg(fr.weight)} kg &nbsp  &nbsp
+                    span.deadline !{fr.deadline} dia(s) &nbsp  &nbsp
                     span.price R$ !{brCurrency(fr.price)}
         br
         //- Midwest.
         each fr in freights
             if fr.region == "midwest"
                 a(href=`/admin/region-freight/${fr.id}`) 
-                    span.region Centro-oeste &nbsp - &nbsp 
-                    span.deadline !{fr.deadline} dia(s) &nbsp - &nbsp
-                    span.weight !{grToKg(fr.weight)} kg &nbsp - &nbsp
+                    span.region Centro-oeste &nbsp  &nbsp 
+                    span.weight !{grToKg(fr.weight)} kg &nbsp  &nbsp
+                    span.deadline !{fr.deadline} dia(s) &nbsp  &nbsp
                     span.price R$ !{brCurrency(fr.price)}
         br
         //- Southeast.
         each fr in freights
             if fr.region == "southeast"
                 a(href=`/admin/region-freight/${fr.id}`) 
-                    span.region Sudeste &nbsp - &nbsp 
-                    span.deadline !{fr.deadline} dia(s) &nbsp - &nbsp
-                    span.weight !{grToKg(fr.weight)} kg &nbsp - &nbsp
+                    span.region Sudeste &nbsp  &nbsp 
+                    span.weight !{grToKg(fr.weight)} kg &nbsp  &nbsp
+                    span.deadline !{fr.deadline} dia(s) &nbsp  &nbsp
                     span.price R$ !{brCurrency(fr.price)}
         br
         //- South.
         each fr in freights
-            //- South.
             if fr.region == "south"
                 a(href=`/admin/region-freight/${fr.id}`) 
-                    span.region Sul &nbsp - &nbsp 
-                    span.deadline !{fr.deadline} dia(s) &nbsp - &nbsp
-                    span.weight !{grToKg(fr.weight)} kg &nbsp - &nbsp
+                    span.region Sul &nbsp  &nbsp 
+                    span.weight !{grToKg(fr.weight)} kg &nbsp  &nbsp
+                    span.deadline !{fr.deadline} dia(s) &nbsp  &nbsp
                     span.price R$ !{brCurrency(fr.price)}
-        input.btn-info(type='button' onclick='window.location.href="/admin/region-freight/new"' value='Adicionar cidade') 
+        input.btn-info(type='button' onclick='window.location.href="/admin/region-freight/new"' value='Adicionar frete') 
 
 append internal_scripts
     script.

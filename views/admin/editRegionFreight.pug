@@ -25,17 +25,17 @@ block content
                 option(value='southeast' selected=freight.region=="southeast") Sudeste
                 option(value='south' selected=freight.region=="south") Sul
 
+            //- Weight.
+            label(for='weight') Peso máximo (kg)
+            input(type='text' name='weight' id='weight' value=grToKg(freight.weight))
+            if freight.invalid.weight
+                label.error(for='weight') !{freight.invalid.weight}
+
             //- Deadline.
             label(for='deadline') Prazo (dias)
             input(type='text' name='deadline' id='deadline' value=freight.deadline)
             if freight.invalid.deadline
                 label.error(for='deadline') !{freight.invalid.deadline}
-
-            //- Weight.
-            label(for='weight') Peso (kg)
-            input(type='text' name='weight' id='weight' value=grToKg(freight.weight))
-            if freight.invalid.weight
-                label.error(for='weight') !{freight.invalid.weight}
 
             //- Price.
             label(for='price') Preço (R$)
