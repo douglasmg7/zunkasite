@@ -17,13 +17,23 @@ let address = new mongoose.Schema({
 // Schema - Item.
 let item = new mongoose.Schema({
 	_id: { type: String, required: true },
-	name: { type: String, required: true },       // Used by carrier for contact.
+	name: { type: String, required: true },
+	dealerName: { type: String, required: true },
 	quantity: { type: Number, required: true },
 	price: { type: String, required: true },
 	length: { type: Number, required: true },
 	height: { type: Number, required: true },
 	width: { type: Number, required: true },
 	weight: { type: Number, required: true },
+});
+
+
+// Motboy freight.
+let freight = new mongoose.Schema({
+	id: { type: Number },
+    carrier:  { type: String },
+	price: { type: Number },
+	deadline: { type: Number },
 });
 
 // Schema - Correio result.
@@ -81,6 +91,7 @@ let shipping = new mongoose.Schema({
 	correioResults: [correioResult], // Result from correio search ws for shipment price and deadline.
 	motoboyResult: motoboyResult, // Result from motoboy search for shipment price and deadline.
     defaultDeliveryResults: [defaultDeliveryResult], // Result from default delivery.
+    freights: [freight],
 });
 
 // Schema - Payment.

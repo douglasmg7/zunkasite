@@ -38,13 +38,13 @@ block content
                         thead
                             tr
                                 th Entrega
-                                th Valor
                                 th Prazo
+                                th Valor
                         tbody
                             tr(v-for='estShip in estimateShipmentData')
-                                td {{estShip.service}}
-                                td R$ {{estShip.price}}
-                                td {{estShip.time}}
+                                td {{ estShip.service }}
+                                td {{ estShip.time | toDays }}
+                                td R$ {{ estShip.price | currency }}
             //- Markdown.
             if productInfo.trim() !== ""
                 .product-info.markdown!= productInfo

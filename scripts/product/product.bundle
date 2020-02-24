@@ -33,45 +33,47 @@ var app = new Vue({
             this.loadingEstimateShipment = true;
             axios({
                 method: 'get',
-                url:`/checkout/ship-estimate?productId=${this.product._id}&cepDestiny=${this.cepDestiny}`,
+                // url:`/checkout/ship-estimate?productId=${this.product._id}&cepDestiny=${this.cepDestiny}`,
+                url:`/checkout/estimate-freight?productId=${this.product._id}&cepDestiny=${this.cepDestiny}`,
                 headers:{'csrf-token' : csrfToken},
                 data: { productId: this.product._id, cepDestiny: this.cepDestiny }
             })
-                .then(response => {
-                    // Server error.
-                    if (response.data.err) {
-                        console.log(response.data.err);
-                        this.showEstimatedShipment = false;
-                        // this.cepErrMsg = response.data.err;
-                        this.cepErrMsg = 'Serviço indisponível';
-                    } 
-                    // No result.
-                    else if (response.data.delivery.length == 0){
-                        this.showEstimatedShipment = false;
-                        this.cepErrMsg = 'Sem resultados para o CEP informado';
-                    } 
-                    // Some result.
-                    else {
-                        this.cepErrMsg = '';
-                        // console.log(`response.data.correio: ${JSON.stringify(response.data.correio)}`);
-                        this.estimateShipmentData = [];
-                        for (let index = 0; index < response.data.delivery.length; index++) {
-                            let deliveryData = {
-                                service: response.data.delivery[index].method,
-                                price: response.data.delivery[index].price,
-                                time:  `${response.data.delivery[index].deadline} dia(s)`
-                            }
-                            this.estimateShipmentData.push(deliveryData);
-                        }
-                        this.showEstimatedShipment = true;
-                    }
-                    this.loadingEstimateShipment = false;
-                })
-                .catch(err => {
-                    // console.error(err);
-                    this.loadingEstimateShipment = false;
+            .then(response => {
+                // Server error.
+                console.log(`response.data.freights: ${JSON.stringify(response.data.freights, null, 2)}`);
+                if (response.data.err) {
+                    console.error(response.data.err);
                     this.showEstimatedShipment = false;
-                })
+                    this.cepErrMsg = 'Serviço indisponível';
+                } 
+                // No result.
+                else if (response.data.freights.length == 0){
+                    this.showEstimatedShipment = false;
+                    this.cepErrMsg = 'Sem resultados para o CEP informado';
+                } 
+                // Some result.
+                else {
+                    this.cepErrMsg = '';
+                    // console.log(`response.data.correio: ${JSON.stringify(response.data.correio)}`);
+                    this.estimateShipmentData = [];
+                    for (let index = 0; index < response.data.freights.length; index++) {
+                        let deliveryData = {
+                            service: response.data.freights[index].carrier,
+                            price: response.data.freights[index].price,
+                            time:  response.data.freights[index].deadline
+                            // time:  `${response.data.freights[index].deadline} dia(s)`
+                        }
+                        this.estimateShipmentData.push(deliveryData);
+                    }
+                    this.showEstimatedShipment = true;
+                }
+                this.loadingEstimateShipment = false;
+            })
+            .catch(err => {
+                console.error(err.stack);
+                this.loadingEstimateShipment = false;
+                this.showEstimatedShipment = false;
+            })
         },
         // Add product to cart.
         addToCart(){
@@ -176,6 +178,12 @@ var app = new Vue({
         },
         currencyCents(val){
             return val.split(',')[1];
+        },
+        toDays(val){
+            if (val == 1) {
+                return val + ' dia';
+            }
+            return val + ' dias'
         }
     },
 });

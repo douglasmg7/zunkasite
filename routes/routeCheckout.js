@@ -11,6 +11,7 @@ const qs = require('querystring');
 
 // Personal modules.
 const log = require('../config/log');
+const s = require('../config/s');
 const User = require('../model/user');
 const Address = require('../model/address');
 const Order = require('../model/order');
@@ -145,6 +146,7 @@ router.post('/shipping-address', (req, res, next)=>{
 					let item = {
 						_id: req.cart.products[i]._id,
 						name: req.cart.products[i].title,
+                        dealerName: req.cart.products[i].dealerName,
 						quantity: req.cart.products[i].qtd,
 						price: req.cart.products[i].price.toFixed(2),
 						length: req.cart.products[i].length,
@@ -189,6 +191,103 @@ router.post('/shipping-address', (req, res, next)=>{
 
 // Select shipment - page.
 router.get('/shipping-method/order/:order_id', (req, res, next)=>{
+	// Find order not placed yet.
+	Order.findById(req.params.order_id, (err, order)=>{
+		if (err) { return next(err); }
+		if (!order) { return next(new Error('No order to continue with shipping method selection.')); }
+        // Order already placed.
+        if (order.timestamps.placedAt) { return res.redirect('/user/orders'); }
+		else {
+			// Calculate box size shipment approximately.
+			let shippingBox = { dealer: "", cepOrigin: CEP_ORIGIN, cepDestiny: order.shipping.address.cep, length: 0, height: 0, width: 0, weight: 0 };
+			// For each item.
+			for (let i = 0; i < order.items.length; i++) {
+                if (order.items[i].dealerName != "") {
+                    shippingBox.dealer = order.items[i].dealerName;
+                }
+				// Get dimensions.
+				let dimemsions = [order.items[i].length, order.items[i].height, order.items[i].width];
+				// Sort dimensions.
+				dimemsions = dimemsions.sort(function (a,b){
+					if (a < b) { return -1 }
+					if (a > b) { return 1 }
+					return 0;
+				});
+				// Get the big dimension for the box.
+				if (dimemsions[2] > shippingBox.length) { shippingBox.length = dimemsions[2]; }
+				if (dimemsions[1] > shippingBox.height) { shippingBox.height = dimemsions[1]; }
+				shippingBox.width += dimemsions[0];
+				shippingBox.weight += order.items[i].weight;
+				// Box shipping dimensions.
+				order.shipping.box = shippingBox;
+			}
+
+            // Get freights values.
+            axios.get(`${s.freightServer.host}/freights/zunka`, {
+                headers: {
+                    "Accept": "application/json", 
+                },
+                auth: { 
+                    username: s.freightServer.user, 
+                    password: s.freightServer.password
+                },
+                data: shippingBox
+            })
+            .then(response => {
+                if (response.data.err) {
+		            return next(new Error(`Getting shipping method. Estimating freight for pack ${JSON.stringify(shippingBox, null, 2)}. ${response.data.err}`));
+                } else {
+                    log.debug(`response.data: ${JSON.stringify(response.data, null, 2)}`);
+
+                    // todo - remove.
+                    // Motoboy.
+                    order.shipping.motoboyResult = { price: '', deadline: '' };
+                    // Default.
+                    order.shipping.defaultDeliveryResults = [];
+                    // Correios.
+                    order.shipping.correioResult = {};
+                    order.shipping.correioResults = [];
+                    // end - remove.
+
+                    // All freights.
+                    order.shipping.freights = [];
+                    let freights = response.data;
+                    log.debug(`freights: ${JSON.stringify(freights, null, 2)}`);
+
+                    for (let i=0; i < freights.length; i++) {
+                        order.shipping.freights.push({
+                            id: i + 1,
+                            carrier: freights[i].carrier,
+                            deadline: freights[i].deadline,
+                            price: freights[i].price,
+                        });
+                    }
+                    log.debug(`order.shipping.freights: ${JSON.stringify(order.shipping.freights, null, 2)}`);
+
+                    // Save order.
+                    order.save(err=>{
+                        if (err) {
+                            res.json({err});
+                            return next(err);
+                        } else {
+                            res.render('checkout/shippingMethod', {
+                                nav: {
+                                },
+                                order
+                            });
+                        }
+                    });
+                }
+            })
+            .catch(err => {
+                return next(new Error(`Getting shipping method. Estimating freight for pack ${JSON.stringify(shippingBox, null, 2)}. ${err.stack}`));
+            }); 
+		}
+	});
+});
+
+// Select shipment - page.
+router.get('/shipping-method/order-old/:order_id', (req, res, next)=>{
 	// Find order not placed yet.
 	Order.findById(req.params.order_id, (err, order)=>{
 		if (err) { return next(err); }
@@ -909,110 +1008,47 @@ router.get('/confirmation/order/:order_id', (req, res, next)=>{
 	});
 });
 
-// Estimate shipment.
-router.get('/ship-estimate', (req, res, next)=>{
-    // Test.
-    // return res.json({ err: 'Simulated error' });
-    // return res.json({ delivery: [] });
-    // Spend time.
-    // let initTime = Date.now();
-	// console.log('req.query', req.query);
+// Estimate freight.
+router.get('/estimate-freight', (req, res, next)=>{
 	// Get product information.
 	Product.findById(req.query.productId)
         .then(product=>{
             if (!product) {  return next(new Error('Product not found.')); }
-            let box = {
-                cepOrigin: CEP_ORIGIN,
+            let pack = {
                 cepDestiny: req.query.cepDestiny.replace(/\D/g, ''),
+                dealer: product.dealer,
                 length: product.storeProductLength,
                 height: product.storeProductHeight,
                 width: product.storeProductWidth,
                 weight: product.storeProductWeight
             }
-            // Correio shipping estimate.
-            const promiseCorreiosShipping = new Promise((resolve, reject)=>{
-                // console.log(`box: ${JSON.stringify(box)}`);
-                estimateAllCorreiosShipping(box, (err, result)=>{
-                    if (err) { 
-                        return reject(err); 
-                    }
-                    var deliveryData = []
-                    for (let index = 0; index < result.length; index++) {
-                        deliveryData.push({
-                            method: result[index].DescServico,
-                            price: result[index].Valor,
-                            deadline: result[index].PrazoEntrega
-                        });
-                    }
-                    // log.debug(`promiseCorreiosShipping result: ${JSON.stringify(deliveryData)}`);
-                    resolve(deliveryData);
-                });
-            });
-            // Motoboy and default shipping estimate.
-            const promiseDeliveries = new Promise((resolve, reject)=>{
-                // Get address information.
-                getAddress(box.cepDestiny)
-                .then(address=>{
-                    Promise.all([
-                        defaultDelivery(regionFromUf(address.uf), box.weight).catch(err=>{log.error(`Estimating default shipping. ${err}`)}),  
-                        motoboyDelivery(address.uf, address.localidade).catch(err=>{log.error(`Estimating motoboy shipping. ${err}`)})
-                    ])
-                    .then(([deliveryDefault, deliveryMotoboy])=>{
-                        let deliveries = {};
-                        if (deliveryDefault) {
-                            // log.debug(`deliveryDefault: ${JSON.stringify(deliveryDefault, null, 2)}`);
-                            deliveries.default = deliveryDefault;
-                        }
-                        if (deliveryMotoboy) {
-                            // log.debug(`deliveryMotoboy: ${JSON.stringify(deliveryMotoboy, null, 2)}`);
-                            deliveries.motoboy = deliveryMotoboy;
-                        }
-                        resolve(deliveries);
-                    });
-                })
-                .catch(err=>{
-                    reject(err);
-                });
-            });
-
-            // When receive all return.
-            Promise.all([
-                promiseCorreiosShipping.catch(err=>{log.error(`Estimating Correios shipping (ship-estimate). ${err.stack}`)}), 
-                promiseDeliveries.catch(err=>{
-                    // Not log error for cep inválido.
-                    if (err !== 'CEP inválido.') {
-                        log.error(`Estimating motoboy and default deliveries (ship-estimate). ${err}`)
-                    }
-                })
-            ])
-            .then(([deliveryCorreio, deliveryMotoboyAndDefault])=>{
-                // log.debug("Promisse.all");
-                // log.debug(`deliveryCorreio: ${JSON.stringify(deliveryCorreio)}`);
-                let delivery = [];
-                if (deliveryMotoboyAndDefault && deliveryMotoboyAndDefault.motoboy) {
-                    // log.debug(`deliveryMotoboy: ${JSON.stringify(deliveryMotoboy)}`);
-                    delivery.push(deliveryMotoboyAndDefault.motoboy);
-                }
-                // log.debug(`delivery: ${JSON.stringify(deliveryCorreio)}`);
-                // No erros and some result from correios.
-                if (deliveryCorreio && deliveryCorreio.length) {
-                    // Some result.
-                    deliveryCorreio.forEach(item=>{
-                        delivery.push(item);
-                    });
+            // Get shipping values.
+            axios.get(`${s.freightServer.host}/freights/zunka`, {
+                headers: {
+                    "Accept": "application/json", 
+                },
+                auth: { 
+                    username: s.freightServer.user, 
+                    password: s.freightServer.password
+                },
+                data: pack
+            })
+            .then(response => {
+                if (response.data.err) {
+                    log.error(`Estimating freight for pack ${JSON.stringify(pack, null, 2)}. ${response.data.err}`);
+                    return res.json({ err: response.data.err });
                 } else {
-                    log.debug(`Correios webservice não retornou resultados para:\n ${JSON.stringify(box, null, 2)}`);
-                    if (deliveryMotoboyAndDefault && deliveryMotoboyAndDefault.default) {
-                        deliveryMotoboyAndDefault.default.forEach(item=>{
-                            delivery.push(item);
-                        });
-                    }
+                    log.debug(`response.data: ${JSON.stringify(response.data, null, 2)}`);
+                    res.json({ freights: response.data });
                 }
-                // log.debug(`Time to process estimate time: ${Date.now() - initTime}ms`);
-                res.json({ delivery: delivery });
-            });
-        }).catch(err=>{
-            log.err(`Shipping estimate. ${err}`);
+            })
+            .catch(err => {
+                log.error(`Estimating freight for pack ${JSON.stringify(pack, null, 2)}}. ${err.stack}`);
+                return res.json({ err: err });
+            }); 
+        })
+        .catch(err=>{
+            log.error(`Estimating freight. ${err.stack}`);
             return res.json({ err: err });
         });
 });
