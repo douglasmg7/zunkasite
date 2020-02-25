@@ -84,7 +84,13 @@ let app = new Vue({
 	filters: {
 		formatMoney: function(val){
 			return 'R$ ' + val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-		}
+		},
+        toDays: function(val){
+            if (val == 1) {
+                return '1 dia'
+            }
+            return val + ' dias';
+        }
 	}  
 });
 // app.test();

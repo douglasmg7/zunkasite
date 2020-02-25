@@ -55,7 +55,8 @@ block content
                 p(v-if='orderSelec.payment.method === "ppp-credit"') Cartão de crédito
             .item
                 h3.sub-title Envio
-                p {{ orderSelec.shipping.methodDesc }}
+                //- p {{ orderSelec.shipping.methodDesc }}
+                p {{ orderSelec.shipping.carrier }}
                 //- Deprected:begin - still here, because old orders.
                 p(v-if='orderSelec.shipping.method === "correios" || orderSelec.shipping.method === "standard"') Correios
                 p(v-if='orderSelec.shipping.method === "motoboy"') Motoboy

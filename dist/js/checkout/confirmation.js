@@ -7,18 +7,24 @@ function _search(text){
 
 // Vue.
 var app = new Vue({
-  el: '#app',
-  data: {
-    order: order
-  },
-  methods: {
-    correioServiceName(code){
-      return CORREIOS_SERVICE_NAME[code];
-    }
-  },
-  filters: {
-    formatMoney: function(val){
-      return 'R$ ' + val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
-  }  
+    el: '#app',
+    data: {
+        order: order
+    },
+    methods: {
+        correioServiceName(code){
+            return CORREIOS_SERVICE_NAME[code];
+        }
+    },
+    filters: {
+        formatMoney: function(val){
+            return 'R$ ' + val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        },
+        toDays: function(val){
+            if (val == 1) {
+                return '1 dia'
+            }
+            return val + ' dias';
+        }
+    }  
 });

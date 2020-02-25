@@ -41,8 +41,10 @@ block content
         p {{order.shipping.address.cep}} 
 
         //- Delivery.
-        div(v-if='order.shipping.methodDesc')
-            h3 Envio - {{ order.shipping.methodDesc }}
+        //- div(v-if='order.shipping.methodDesc')
+        div(v-if='order.shipping.carrier')
+            //- h3 Envio - {{ order.shipping.methodDesc }}
+            h3 Envio - {{ order.shipping.carrier }}
             p(v-if='order.shipping.carrier === ""') {{ order.shipping.methodDesc }}
             p(v-if='order.shipping.carrier !== ""') {{order.shipping.deadline}} dia(s) &nbsp&nbsp {{order.shipping.price | formatMoney}} &nbsp&nbsp  
             //- Deprected:begin - still here because old orders.

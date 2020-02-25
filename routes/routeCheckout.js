@@ -40,6 +40,19 @@ function converToBRCurrencyString(val) {
 	return val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
+// Convert to brazilian currency from number.
+function toBrCurrency(val) {
+	return val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+// Convert to days string.
+function toDays(val) {
+    if (val > 1) {
+        return val + ' dias';
+    }
+    return "1 dia";
+}
+
 // Check permission.
 function checkPermission (req, res, next) {
 	// Should be admin.
@@ -237,7 +250,7 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                 if (response.data.err) {
 		            return next(new Error(`Getting shipping method. Estimating freight for pack ${JSON.stringify(shippingBox, null, 2)}. ${response.data.err}`));
                 } else {
-                    log.debug(`response.data: ${JSON.stringify(response.data, null, 2)}`);
+                    // log.debug(`response.data: ${JSON.stringify(response.data, null, 2)}`);
 
                     // todo - remove.
                     // Motoboy.
@@ -252,7 +265,6 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                     // All freights.
                     order.shipping.freights = [];
                     let freights = response.data;
-                    log.debug(`freights: ${JSON.stringify(freights, null, 2)}`);
 
                     for (let i=0; i < freights.length; i++) {
                         order.shipping.freights.push({
@@ -262,7 +274,7 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                             price: freights[i].price,
                         });
                     }
-                    log.debug(`order.shipping.freights: ${JSON.stringify(order.shipping.freights, null, 2)}`);
+                    // log.debug(`order.shipping.freights: ${JSON.stringify(order.shipping.freights, null, 2)}`);
 
                     // Save order.
                     order.save(err=>{
@@ -270,11 +282,12 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                             res.json({err});
                             return next(err);
                         } else {
-                            res.render('checkout/shippingMethod', {
-                                nav: {
-                                },
-                                order
-                            });
+                            res.render('checkout/shippingMethod', 
+                                { 
+                                    order, 
+                                    toBrCurrency: toBrCurrency, 
+                                    toDays: toDays
+                                });
                         }
                     });
                 }
@@ -282,134 +295,6 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
             .catch(err => {
                 return next(new Error(`Getting shipping method. Estimating freight for pack ${JSON.stringify(shippingBox, null, 2)}. ${err.stack}`));
             }); 
-		}
-	});
-});
-
-// Select shipment - page.
-router.get('/shipping-method/order-old/:order_id', (req, res, next)=>{
-	// Find order not placed yet.
-	Order.findById(req.params.order_id, (err, order)=>{
-		if (err) { return next(err); }
-		if (!order) { return next(new Error('No order to continue with shipping method selection.')); }
-        // Order already placed.
-        if (order.timestamps.placedAt) { return res.redirect('/user/orders'); }
-		else {
-			// Calculate box size shipment approximately.
-			let shippingBox = { cepOrigin: CEP_ORIGIN, cepDestiny: order.shipping.address.cep, length: 0, height: 0, width: 0, weight: 0 };
-			// For each item.
-			for (let i = 0; i < order.items.length; i++) {
-				// Get dimensions.
-				let dimemsions = [order.items[i].length, order.items[i].height, order.items[i].width];
-				// Sort dimensions.
-				dimemsions = dimemsions.sort(function (a,b){
-					if (a < b) { return -1 }
-					if (a > b) { return 1 }
-					return 0;
-				});
-				// Get the big dimension for the box.
-				if (dimemsions[2] > shippingBox.length) { shippingBox.length = dimemsions[2]; }
-				if (dimemsions[1] > shippingBox.height) { shippingBox.height = dimemsions[1]; }
-				shippingBox.width += dimemsions[0];
-				shippingBox.weight += order.items[i].weight;
-				// Box shipping dimensions.
-				order.shipping.box = shippingBox;
-			}
-            // Correio shipping estimate.
-            const promiseCorreiosShipping = new Promise((resolve, reject)=>{
-                // console.log(`box: ${JSON.stringify(box)}`);
-                estimateAllCorreiosShipping(order.shipping.box, (err, result)=>{
-                    if (err) { 
-                        return reject(err); 
-                    }
-                    resolve(result);
-                });
-            });
-            // Promise for motoboy and default delivery.
-            const promiseMotoboyAndDefaultDelivery = new Promise((resolve, reject)=>{
-                // Get address information.
-                getAddress(order.shipping.box.cepDestiny)
-                // Get motoboy and default delivery prices.
-                .then(address=>{
-                    Promise.all([
-                        defaultDelivery(regionFromUf(address.uf), order.shipping.box.weight).catch(err=>{log.error(`Estimating default delivery. ${err}`)}), 
-                        motoboyDelivery(address.uf, address.localidade).catch(err=>{log.error(`Estimating motoboy delivery. ${err}`)})
-                    ]).then(([defaultDeliveries, motoboyDelivery])=>{
-                        // log.debug("Promisse.all");
-                        // log.debug(`deliveryCorreio: ${JSON.stringify(deliveryCorreio)}`);
-                        let deliveries = {
-                        };
-                        // log.debug(`motoboyDelivery: ${JSON.stringify(motoboyDelivery)}`);
-                        if(motoboyDelivery) {
-                            // log.debug(`deliveryMotoboy: ${JSON.stringify(deliveryMotoboy)}`);
-                            deliveries.motoboy = motoboyDelivery;
-                        }
-                        if (defaultDeliveries) {
-                            deliveries.default = defaultDeliveries;
-                        }
-                        resolve(deliveries);
-                    });
-                })
-                .catch(err=>{
-                    reject(err);
-                });
-            });
-            // When receive all return.
-            Promise.all([
-                promiseCorreiosShipping.catch(err=>{log.error(`Estimating Correios shipping (shipping-method). ${err}`)}), 
-                promiseMotoboyAndDefaultDelivery.catch(err=>{
-                    // Not log error for inválid cep.
-                    if (err !== 'CEP inválido.') {
-                        log.error(`Estimating motoboy and default deliveries (shipping-method). ${err}`)
-                    }
-                })
-            ]).then(([deliveryCorreios, deliveryMotoboyAndDefault])=>{
-                // Motoboy delivery.
-                order.shipping.motoboyResult = { price: '', deadline: '' };
-                order.shipping.defaultDeliveryResults = [];
-                if (deliveryMotoboyAndDefault) {
-                    if (deliveryMotoboyAndDefault.motoboy) {
-                        order.shipping.motoboyResult.price = deliveryMotoboyAndDefault.motoboy.price;
-                        order.shipping.motoboyResult.deadline = deliveryMotoboyAndDefault.motoboy.deadline;
-                    }
-                }
-                // Correios delivery.
-                order.shipping.correioResult = {};
-                order.shipping.correioResults = [];
-                // Correios returned at least one result.
-                if (deliveryCorreios && deliveryCorreios.length) {
-				    order.shipping.correioResults = deliveryCorreios;
-                }
-                // Default delivery.
-                else {
-                    log.debug(`Correios webservice não retornou resultados para:\n${JSON.stringify(order.shipping.box, null, 2)}`);
-                    if (deliveryMotoboyAndDefault) {
-                        if (deliveryMotoboyAndDefault.default){
-                            deliveryMotoboyAndDefault.default.forEach(item=>{
-                                order.shipping.defaultDeliveryResults.push({
-                                    deadline: item.deadline,
-                                    price: item.price
-                                });
-                            });
-                        }
-                    }
-                    // log.debug(`order._id: ${order._id}`);
-                    // log.debug(`order.shipping.defaultDeliveryResults: ${JSON.stringify(order.shipping.defaultDeliveryResults, null, 2)}`);
-                }
-                // Save order.
-                order.save(err=>{
-                    if (err) {
-                        res.json({err});
-                        return next(err);
-                    } else {
-                        res.render('checkout/shippingMethod', {
-                            nav: {
-                            },
-                            order
-                        });
-                    }
-                });
-            })
 		}
 	});
 });
@@ -497,50 +382,34 @@ router.post('/shipping-method/order/:order_id', (req, res, next)=>{
             // In stock.
             else {
                 // log.debug(`req.body: ${JSON.stringify(req.body)}`);
-                if (req.body.shippingMethod == 'motoboy'){
-                    order.shipping.carrier = 'Sérgio Delivery';
-                    order.shipping.methodCode = '';
-                    order.shipping.methodDesc = 'Motoboy';
-                    // Motoboy result using ',' as decimal point.
-                    order.shipping.price = order.shipping.motoboyResult.price.replace('.', '').replace(',', '.');
-                    order.shipping.deadline = order.shipping.motoboyResult.deadline;
+                let selFreightIndex = parseInt(req.body.selFreightIndex);
+                let selCarrier = order.shipping.freights[selFreightIndex].carrier;
+                // log.debug(`selCarrier: ${selCarrier}`);
+                order.shipping.deadline = order.shipping.freights[selFreightIndex].deadline;
+                order.shipping.price = order.shipping.freights[selFreightIndex].price.toFixed(2);
+                order.shipping.methodCode = '';
+                order.shipping.methodDesc = '';
+
+                if (selCarrier == 'Motoboy'){
+                    order.shipping.carrier = 'Motoboy';
+                    // order.shipping.methodDesc = 'Motoboy';
                 } 
-                else if (req.body.shippingMethod == 'agreement') {
-                    // log.debug('A combinar.');
-                    order.shipping.carrier = '';
-                    order.shipping.methodCode = '';
-                    order.shipping.methodDesc = 'A combinar';
-                    order.shipping.price = 0; 
-                    order.shipping.deadline = 0;
-                }
-                else if (req.body.shippingMethod.toString().includes('default-carrier-')) {
-                    // log.debug('A combinar.');
-                    let index = parseInt(req.body.shippingMethod.replace('default-carrier-', ""));
-                    // log.debug(`index: ${index}`);
-                    order.shipping.carrier = 'defaultCarrier';
-                    order.shipping.methodCode = (index + 1).toString();
-                    order.shipping.methodDesc = 'Transportadora ' + (index + 1);
-                    order.shipping.price = order.shipping.defaultDeliveryResults[index].price.replace('.', '').replace(',', '.'); 
-                    order.shipping.deadline = order.shipping.defaultDeliveryResults[index].deadline; 
-                    // log.debug(`order.shipping: ${JSON.stringify(order.shipping, null, 2)}`);
+                else if (selCarrier.startsWith('Transportadora')) {
+                    order.shipping.carrier = 'Transportadora';
+                    // order.shipping.methodCode = parseInt(selCarrier.replace('Transportadora ', ""));
+                    // order.shipping.methodDesc = selCarrier;
                 }
                 // Correios delivery type.
-                else {
-                    for (let index = 0; index < order.shipping.correioResults.length; index++) {
-                        if (order.shipping.correioResults[index].Codigo == req.body.shippingMethod) {
-                            order.shipping.carrier = 'Correios';
-                            order.shipping.methodCode = order.shipping.correioResults[index].Codigo;
-                            order.shipping.methodDesc = order.shipping.correioResults[index].DescServico;
-                            // Shipping price. Correio using ',' as decimal point.
-                            order.shipping.price = order.shipping.correioResults[index].Valor.replace('.', '').replace(',', '.');
-                            // Shipping deadline.
-                            order.shipping.deadline = parseInt(order.shipping.correioResults[index].PrazoEntrega);
-                        }
-                    }
+                else if (selCarrier = 'Correios') {
+                    order.shipping.carrier = 'Correios';
+                    // order.shipping.methodDesc = '';
+                    // order.shipping.methodCode = order.shipping.correioResults[index].Codigo;
+                    // order.shipping.methodDesc = order.shipping.correioResults[index].DescServico;
                 }
                 order.totalPrice = (parseFloat(order.subtotalPrice) + parseFloat(order.shipping.price)).toFixed(2);
                 order.timestamps.shippingMethodSelectedAt = new Date();
                 order.status = 'shippingMethodSelected';
+                // log.debug(`order.shipping: ${JSON.stringify(order.shipping, null, 2)}`);
                 order.save(err=>{
                     if (err) { return next(err) };
                     res.json({ success: true });
@@ -548,8 +417,8 @@ router.post('/shipping-method/order/:order_id', (req, res, next)=>{
             } 
         })
         .catch(err=>{
+            log.error(`POST /shipping-method/order/:order_id. ${err.stack}`);
             return next(err);
-            // log.error(`POST /shipping-method/order/:order_id. ${err.stack}`);
             // res.status(500).send();
         });    
 	});

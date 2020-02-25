@@ -1,3 +1,9 @@
+Testar se vai adicionar 4 dias para envio de produtos da aldo.
+Testar pagamento via Pyapal e Crédito.
+Adicionar peso no cache dos correios.
+
+
+
 [zunka-site]
     Quando voltar pelo back do browser de detalhe do pedido para pedido, forçar reload.
     Quando a ordem for finalizada, se usuário tentar voltar nos link da ordem fechada redirecionar para confirmação da ordem.

@@ -56,6 +56,7 @@ var app = new Vue({
                 window.location.href=`/error?err=${err}`;
             });  
         },
+    },
         deliveryDeadline: function(index){
             if (order.shipping.correioResults.length) {
                 // console.log("Index: " + index);
@@ -67,26 +68,4 @@ var app = new Vue({
                 return order.shipping.deadline;
             }
         },
-        deliveryPrice: function(index){
-            if (order.shipping.correioResults.length) {
-                return order.shipping.correioResults[index].Valor;
-            } 
-            else {
-                return order.shipping.price;
-            }
-        },
-        deliveryServiceDesc: function(index){
-            if (order.shipping.correioResults.length) {
-                return order.shipping.correioResults[index].DescServico;
-            } 
-            else {
-                return "Padrão (Correios)";
-            }
-        }
-    },
-    filters: {
-        formatMoney: function(val){
-            return 'R$ ' + val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
-    }
 });

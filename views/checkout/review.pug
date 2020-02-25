@@ -33,8 +33,9 @@ block content
 					p Brasil
 				.shipment
 					h3.sub-title Forma de envio
-					p {{order.shipping.methodDesc}}
-					p(v-if='order.shipping.carrier !== ""') Entrega em {{order.shipping.deadline}} dia(s)
+					//- p {{order.shipping.methodDesc}}
+					p {{order.shipping.carrier}}
+					p(v-if='order.shipping.carrier !== ""') Entrega em {{order.shipping.deadline | toDays}}
 					P(v-if='order.shipping.carrier !== ""') Valor do frete: {{order.shipping.price | formatMoney}}
 			.col-2
 				.items(v-if='order.items.length > 0')
