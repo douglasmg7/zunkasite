@@ -1,7 +1,5 @@
 Testar se vai adicionar 4 dias para envio de produtos da aldo.
 Testar pagamento via Pyapal e Crédito.
-Adicionar peso no cache dos correios.
-
 
 
 [zunka-site]

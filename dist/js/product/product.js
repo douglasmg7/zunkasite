@@ -45,7 +45,7 @@ var app = new Vue({
             })
             .then(response => {
                 // Server error.
-                console.log(`response.data.freights: ${JSON.stringify(response.data.freights, null, 2)}`);
+                // console.log(`response.data.freights: ${JSON.stringify(response.data.freights, null, 2)}`);
                 if (response.data.err) {
                     console.error(response.data.err);
                     this.showEstimatedShipment = false;

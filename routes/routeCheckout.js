@@ -270,6 +270,8 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                         order.shipping.freights.push({
                             id: i + 1,
                             carrier: freights[i].carrier,
+                            serviceCode: freights[i].serviceCode,
+                            serviceDesc: freights[i].serviceDesc,
                             deadline: freights[i].deadline,
                             price: freights[i].price,
                         });
@@ -387,24 +389,23 @@ router.post('/shipping-method/order/:order_id', (req, res, next)=>{
                 // log.debug(`selCarrier: ${selCarrier}`);
                 order.shipping.deadline = order.shipping.freights[selFreightIndex].deadline;
                 order.shipping.price = order.shipping.freights[selFreightIndex].price.toFixed(2);
-                order.shipping.methodCode = '';
-                order.shipping.methodDesc = '';
-
+                // Motoboy.
                 if (selCarrier == 'Motoboy'){
                     order.shipping.carrier = 'Motoboy';
                     // order.shipping.methodDesc = 'Motoboy';
                 } 
+                // Transportadora.
                 else if (selCarrier.startsWith('Transportadora')) {
                     order.shipping.carrier = 'Transportadora';
                     // order.shipping.methodCode = parseInt(selCarrier.replace('Transportadora ', ""));
                     // order.shipping.methodDesc = selCarrier;
                 }
-                // Correios delivery type.
+                // Correios.
                 else if (selCarrier = 'Correios') {
+                    log.debug(`freight: ${JSON.stringify(order.shipping.freights[selFreightIndex], null, 2)}`);
                     order.shipping.carrier = 'Correios';
-                    // order.shipping.methodDesc = '';
-                    // order.shipping.methodCode = order.shipping.correioResults[index].Codigo;
-                    // order.shipping.methodDesc = order.shipping.correioResults[index].DescServico;
+                    order.shipping.methodCode = order.shipping.freights[selFreightIndex].serviceCode;
+                    order.shipping.methodDesc = order.shipping.freights[selFreightIndex].serviceDesc;
                 }
                 order.totalPrice = (parseFloat(order.subtotalPrice) + parseFloat(order.shipping.price)).toFixed(2);
                 order.timestamps.shippingMethodSelectedAt = new Date();
@@ -907,7 +908,7 @@ router.get('/estimate-freight', (req, res, next)=>{
                     log.error(`Estimating freight for pack ${JSON.stringify(pack, null, 2)}. ${response.data.err}`);
                     return res.json({ err: response.data.err });
                 } else {
-                    log.debug(`response.data: ${JSON.stringify(response.data, null, 2)}`);
+                    // log.debug(`response.data: ${JSON.stringify(response.data, null, 2)}`);
                     res.json({ freights: response.data });
                 }
             })

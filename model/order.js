@@ -32,6 +32,8 @@ let item = new mongoose.Schema({
 let freight = new mongoose.Schema({
 	id: { type: Number },
     carrier:  { type: String },
+    serviceCode:  { type: String },
+    serviceDesc:  { type: String },
 	price: { type: Number },
 	deadline: { type: Number },
 });

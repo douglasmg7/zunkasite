@@ -44,9 +44,10 @@ block content
         //- div(v-if='order.shipping.methodDesc')
         div(v-if='order.shipping.carrier')
             //- h3 Envio - {{ order.shipping.methodDesc }}
-            h3 Envio - {{ order.shipping.carrier }}
+            h3 Envio - {{ order.shipping.carrier }} ({{ order.shipping.methodDesc }} - {{ order.shipping.methodCode }})
             p(v-if='order.shipping.carrier === ""') {{ order.shipping.methodDesc }}
             p(v-if='order.shipping.carrier !== ""') {{order.shipping.deadline}} dia(s) &nbsp&nbsp {{order.shipping.price | formatMoney}} &nbsp&nbsp  
+            p P={{ order.shipping.box.weight | gramsToKg }}kg &nbsp&nbsp C={{ order.shipping.box.length }}cm &nbsp&nbsp A={{ order.shipping.box.height }}cm &nbsp&nbsp L={{ order.shipping.box.width }}cm
             //- Deprected:begin - still here because old orders.
             p(v-if='order.shipping.method === "correios" || order.shipping.method === "standard"') Correios
             p(v-if='order.shipping.method === "motoboy"') Motoboy

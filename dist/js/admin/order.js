@@ -204,6 +204,9 @@ var app = new Vue({
                 return 's';
             }
             return '';
-        }
+        },
+        gramsToKg(val) {
+            return (val / 1000).toFixed(3).replace(".", ",");
+        },
 	}
 });
