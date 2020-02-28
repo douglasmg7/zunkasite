@@ -50,25 +50,25 @@ var app = new Vue({
                 headers:{'csrf-token' : csrfToken},
                 data: { address_id: address_id }
             })
-            .then(response => {
-                // Validation error.
-                if (response.data.err) {
+                .then(response => {
+                    // Validation error.
+                    if (response.data.err) {
+                        this.loading.show = false;
+                        alert('Não foi possível selecionar o endereço.');
+                    }
+                    // Empty cart.
+                    else if (response.data.emptyCart) {
+                        window.location.href=`/cart`;
+                    } 
+                    else {
+                        window.location.href=`/checkout/shipping-method/order/${response.data.order_id}`;
+                    }
+                })
+                .catch(err => {
                     this.loading.show = false;
-                    alert('Não foi possível selecionar o endereço.');
-                }
-                // Empty cart.
-                else if (response.data.emptyCart) {
-                    window.location.href=`/cart`;
-                } 
-                else {
-                    window.location.href=`/checkout/shipping-method/order/${response.data.order_id}`;
-                }
-            })
-            .catch(err => {
-                this.loading.show = false;
-                alert('Não foi possível selecionar o endereço');
-                console.error(err);
-            });       
+                    alert('Não foi possível selecionar o endereço');
+                    console.error(err);
+                });       
         },
         // Create new address selected.
         newAddressSelected(){
@@ -79,45 +79,46 @@ var app = new Vue({
                 headers:{'csrf-token' : csrfToken},
                 data: { newAddress: this.newAddress }
             })
-            .then(response => {
-                // Validation erros.
-                if (response.data.validation) {
-                    this.loading.show = false;
-                    let validationErros = response.data.validation;
-                    // Clean validation erros.
-                    for (let key in this.validation){
-                        // Vue.set(this.validation, key, ''); 
-                        this.validation[key] = '';
+                .then(response => {
+                    // Validation erros.
+                    if (response.data.validation) {
+                        this.loading.show = false;
+                        let validationErros = response.data.validation;
+                        // Clean validation erros.
+                        for (let key in this.validation){
+                            // Vue.set(this.validation, key, ''); 
+                            this.validation[key] = '';
+                        }
+                        // Set new validation erros.
+                        for (var i = 0; i < validationErros.length; i++) {
+                            this.validation[validationErros[i].param.split('.')[1]] = validationErros[i].msg;
+                            // Vue.set(this.validation, validationErros[i].param.split('.')[1], validationErros[i].msg);
+                        }          
                     }
-                    // Set new validation erros.
-                    for (var i = 0; i < validationErros.length; i++) {
-                        this.validation[validationErros[i].param.split('.')[1]] = validationErros[i].msg;
-                        // Vue.set(this.validation, validationErros[i].param.split('.')[1], validationErros[i].msg);
-                    }          
-                }
-                // Other errors.
-                else if (response.data.err) {
+                    // Other errors.
+                    else if (response.data.err) {
+                        this.loading.show = false;
+                        alert('Não foi possível selecionar o endereço.');
+                        console.error(`response.data.err: ${response.data.err}`);        
+                    }
+                    // Empty cart.
+                    else if (response.data.emptyCart) {
+                        window.location.href=`/cart`;
+                    } 
+                    // Address selected with success.
+                    else {
+                        window.location.href=`/checkout/shipping-method/order/${response.data.order_id}`;
+                    }
+                })
+                .catch(err => {
                     this.loading.show = false;
-                    alert('Não foi possível selecionar o endereço.');
-                    console.error(`response.data.err: ${response.data.err}`);        
-                }
-                // Empty cart.
-                else if (response.data.emptyCart) {
-                    window.location.href=`/cart`;
-                } 
-                // Address selected with success.
-                else {
-                    window.location.href=`/checkout/shipping-method/order/${response.data.order_id}`;
-                }
-            })
-            .catch(err => {
-                this.loading.show = false;
-                alert('Não foi possível selecionar o endereço');
-                console.error(err);
-            });       
+                    alert('Não foi possível selecionar o endereço');
+                    console.error(err);
+                });       
         },
         // Get CEP information.
         getCepInfo() {
+            console.log('Searching');
             // Only digits.
             this.newAddress.cep = this.newAddress.cep.replace(/\D/g, '');
             // Correct size.
@@ -152,5 +153,53 @@ var app = new Vue({
                 this.validation.cep = 'CEP inválido.';
             }
         }    
-    }
+    },
+    watch: {
+        'newAddress.cep': function(val) {
+            // Cep is valid if 00000-000 or 00000000.
+            if (val.match(/^\d{5}-?\d{3}$/)) {
+                this.loadingCepInfo = true;
+                axios.get(`/address-by-cep/${val}`, {
+                    headers: {
+                        "Accept": "application/json", 
+                    },
+                    data: val
+                })
+                .then((response)=>{
+                    this.loadingCepInfo = false;
+                    // console.log(`response.data: ${JSON.stringify(response.data)}`);
+                    // console.log(`response.error: ${JSON.stringify(response.error)}`);
+                    // Not found CEP.
+                    if (response.data.error) {
+                        this.validation.cep = 'CEP inválido';
+                        this.cepNotFound = true;
+
+                        this.newAddress.address = '';            
+                        this.newAddress.district = '';
+                        this.newAddress.city = '';
+                        this.newAddress.state = '';
+                    }
+                    // Found CEP.
+                    else {
+                        this.cepNotFound = false;
+                        this.validation.cep = '';
+
+                        this.newAddress.address = response.data.address.logradouro;
+                        this.newAddress.district = response.data.address.bairro;
+                        this.newAddress.city = response.data.address.localidade;
+                        this.newAddress.state = response.data.address.uf;
+                    }
+                })
+                .catch((err)=>{
+                    this.loadingCepInfo = false;
+                        this.validation.cep = 'CEP inválido';
+                        this.cepNotFound = true;
+                        this.newAddress.address = '';            
+                        this.newAddress.district = '';
+                        this.newAddress.city = '';
+                        this.newAddress.state = '';
+                });        
+            }
+        }
+    } 
 });

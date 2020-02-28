@@ -79,15 +79,18 @@ var app = new Vue({
       // Cep is valid if 00000-000 or 00000000.
       if (val.match(/^\d{5}-?\d{3}$/)) {
         this.loadingCepInfo = true;
-        axios({
-          method: 'get',
-          url: `https://viacep.com.br/ws/${val}/json/`,
+        axios.get(`/address-by-cep/${val}`, {
+            headers: {
+                "Accept": "application/json", 
+            },
+            data: val
         })
-        .then((res)=>{
+        .then((response)=>{
           this.loadingCepInfo = false;
-          console.log(`res.data: ${JSON.stringify(res.data)}`);
+          // console.log(`response.data: ${JSON.stringify(response.data)}`);
+          // console.log(`response.error: ${JSON.stringify(response.error)}`);
           // Not found CEP.
-          if (res.data.erro) {
+          if (response.data.error) {
             this.cepNotFound = true;
             this.address.address = '';            
             this.address.district = '';
@@ -97,19 +100,19 @@ var app = new Vue({
           // Found CEP.
           else {
             this.cepNotFound = false;
-            this.address.address = res.data.logradouro;   
-            this.address.district = res.data.bairro;
-            this.address.city = res.data.localidade;
-            this.address.state = res.data.uf;
+            this.address.address = response.data.address.logradouro;   
+            this.address.district = response.data.address.bairro;
+            this.address.city = response.data.address.localidade;
+            this.address.state = response.data.address.uf;
           }
         })
         .catch((err)=>{
+          this.loadingCepInfo = false;
           this.cepNotFound = true;
           this.address.address = '';            
           this.address.district = '';
           this.address.city = '';
           this.address.state = '';
-          console.error(`Error - watch - cep, err: ${err}`);
         });        
       }
     }

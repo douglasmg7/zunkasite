@@ -32,9 +32,10 @@ block content
             p.validation(v-if='validation.name') {{validation.name}}    
             //- Cep.      
             label(for='cep' :class='{ error: validation.cep }') {{ validation.cep ? validation.cep : "CEP"}}
-            input(@blur='getCepInfo' type='text' name='cep' id='cep' v-model='newAddress.cep')
-            //- p.validation(v-if='validation.cep') {{validation.cep}}          
-            a(href='http://www.buscacep.correios.com.br' target='_blank') Não sei meu CEP
+            input(type='text' name='cep' id='cep' v-model='newAddress.cep')
+            a(href='http://www.buscacep.correios.com.br/sistemas/buscacep/' target='_blank') Não sei meu CEP
+            p.loading-cep(v-if='loadingCepInfo') Buscando dados do CEP...
+            p.cep-not-found(v-if='cepNotFound') Não foi possível encontrar o CEP informado. Por favor confira os dados e tente novamente.
             //- Address.
             label(for='address') Endereço
             input(type='text' name='address' id='address' v-model='newAddress.address')
@@ -71,4 +72,4 @@ append internal_scripts
         let addresss = !{JSON.stringify(addresss)};
 
 append external_scripts
-    script(src='/js/checkout/shippingAddress.js?0006')
+    script(src='/js/checkout/shippingAddress.js?0007')

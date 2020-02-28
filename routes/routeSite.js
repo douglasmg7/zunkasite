@@ -2,6 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const log = require('../config/log');
+const axios = require('axios');
+const s = require('../config/s');
 const aldo = require('../util/aldo');
 const marked = require('marked');
 marked.setOptions({
@@ -342,6 +344,34 @@ router.post('/cart/clean-alert-msg', (req, res, next)=>{
 		res.json({success: true, cart: req.cart});
 	});
 })
+
+// Address by CEP.
+router.get('/address-by-cep/:cep', (req, res, next)=>{
+    // console.log(`req.params: ${JSON.stringify(req.params, null, 2)}`);
+    let cep = req.params.cep;
+    if (cep.match(/^\d{5}-?\d{3}$/)) {
+        axios.get(`${s.freightServer.host}/address`, {
+            headers: {
+                "Accept": "application/json", 
+            },
+            auth: { 
+                username: s.freightServer.user, 
+                password: s.freightServer.password
+            },
+            data: cep
+        })
+        .then(response => {
+            // log.debug(`response.data: ${JSON.stringify(response.data, null, 2)}`);
+            res.json({ address: response.data });
+        })
+        .catch(err => {
+            log.error(`Getting address for CEP ${cep}. ${err.stack}`);
+            return res.status(500).send()
+        }); 
+    } else {
+        return res.json({ error: `CEP ${cep} inválido` });
+    }
+});
 
 // Get product list.
 module.exports = router;
