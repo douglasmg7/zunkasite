@@ -28,7 +28,7 @@ var app = new Vue({
             phone: ''      
         },
         loadingCep: false,
-        cepFound: false,
+        cepNotFound: false,
         cepErr: false,
         loading: {
             show: false,
@@ -117,6 +117,7 @@ var app = new Vue({
             // Cep is valid if 00000-000 or 00000000.
             if (val.match(/^\d{5}-?\d{3}$/)) {
                 this.loadingCepInfo = true;
+                this.validation.cep = '';
                 axios.get(`/address-by-cep/${val}`, {
                     headers: {
                         "Accept": "application/json", 
@@ -129,7 +130,7 @@ var app = new Vue({
                     // console.log(`response.error: ${JSON.stringify(response.error)}`);
                     // Not found CEP.
                     if (response.data.error) {
-                        this.validation.cep = 'CEP inválido';
+                        this.validation.cep = 'Serviço indisponível';
                         this.cepNotFound = true;
 
                         this.newAddress.address = '';            
@@ -150,12 +151,12 @@ var app = new Vue({
                 })
                 .catch((err)=>{
                     this.loadingCepInfo = false;
-                        this.validation.cep = 'CEP inválido';
-                        this.cepNotFound = true;
-                        this.newAddress.address = '';            
-                        this.newAddress.district = '';
-                        this.newAddress.city = '';
-                        this.newAddress.state = '';
+                    this.validation.cep = 'Serviço indisponível';
+                    this.cepNotFound = true;
+                    this.newAddress.address = '';            
+                    this.newAddress.district = '';
+                    this.newAddress.city = '';
+                    this.newAddress.state = '';
                 });        
             }
         }
