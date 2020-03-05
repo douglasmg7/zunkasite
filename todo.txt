@@ -1,4 +1,9 @@
-Testar se vai adicionar 4 dias para envio de produtos da aldo.
+Install
+    Verificar onde é chamado zunka.sh
+
+Verificar adição e remoção produto aldo.
+Checar inconsistência de produtos sem mongo_id no zunkasrv.
+
 Testar pagamento via Pyapal e Crédito.
 
 

@@ -2,6 +2,9 @@
 ## Melhorias
 * Usando motoboy fretes do servidor de endereços.
 
+## Bug fix
+* Quando produto Aldo é criado novamente, não atualiza o antigo apagado em vez de cria-lo novamente. 
+
 # 1.3.2 (10 fev 2020)
 ## Melhorias
 * Inclusão do fabricante HP e PNY.

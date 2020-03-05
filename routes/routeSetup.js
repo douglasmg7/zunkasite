@@ -62,8 +62,8 @@ router.post('/product/add', basicAuth, [
 				log.error(`Finding Aldo product: ${err.message}`);
 				return res.status(500).send(err);
 			}
-			// Product alredy exist.
-			if (doc) {
+			// Product exist and not marked as deleted.
+			if (doc && !doc.deletedAt) {
 				// Update only dealer data.
 				Product.updateOne({dealerName: product.dealerName, dealerProductId: product.dealerProductId}, product, err=>{
 					if (err) {

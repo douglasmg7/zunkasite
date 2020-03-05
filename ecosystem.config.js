@@ -1,6 +1,6 @@
 module.exports = {
     apps : [{
-        name: 'zunka_site',
+        name: 'zunkasite',
         script: './bin/www',
         watch: false,
         env: {
@@ -17,7 +17,7 @@ module.exports = {
         // log: './log/pm2_combined.out_err.log',
     },
     {
-        name: 'zunka_srv',
+        name: 'zunkasrv',
         script: 'zunkasrv',
         cwd: process.env.GS + '/zunkasrv',
         watch: false,
@@ -25,6 +25,28 @@ module.exports = {
         env_production: {},
         output: '/dev/null',
         error: process.env.ZUNKAPATH + '/log/pm2_zunkasrv.log',
+        log: '/dev/null',
+    },
+    {
+        name: 'freightsrv',
+        script: 'freightsrv',
+        cwd: process.env.GS + '/freightsrv',
+        watch: false,
+        env: {},
+        env_production: {},
+        output: '/dev/null',
+        error: process.env.ZUNKAPATH + '/log/pm2_freightsrv.log',
+        log: '/dev/null',
+    },
+    {
+        name: 'zoomproducts',
+        script: 'zoomproducts',
+        cwd: process.env.GS + '/zoomproducts',
+        watch: false,
+        env: {},
+        env_production: {},
+        output: '/dev/null',
+        error: process.env.ZUNKAPATH + '/log/pm2_zoomproducts.log',
         log: '/dev/null',
     }]
 };
