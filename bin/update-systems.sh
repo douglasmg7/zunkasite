@@ -44,7 +44,7 @@ fi
 # Set zunka site to be restarted.
 if [[ ! -z $RESTART_ZUNKA_SITE ]]; then
     echo :: Signaling to restart zunka_site...
-    echo true > $ZUNKAPATH/restart-zunka-site
+    echo true > $ZUNKAPATH/restart-zunkasite
 fi
 
 # Reload nginx.

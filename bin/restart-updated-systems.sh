@@ -6,25 +6,44 @@
 cd $ZUNKA_SITE_PATH
 
 # Restart all.
-if [[ -f $ZUNKAPATH/restart-zunka-srv ]] && [[ -f $ZUNKAPATH/restart-zunka-site ]]; then
-    echo :: Restarting zunka site...
-    echo :: Restarting zunka srv...
+if [[ -f $ZUNKAPATH/restart-zunkasite ]] && [[ -f $ZUNKAPATH/restart-zunkasrv ]] && [[ -f $ZUNKAPATH/restart-freightsrv ]] && [[ -f $ZUNKAPATH/restart-zoomproducts ]]; then
+    echo :: Restarting zunkasite, zunkasrv, freightsrv and zoomproducts...
     pm2 restart ecosystem.config.js --env production
     pm2 save
-    rm $ZUNKAPATH/restart-zunka-srv
-    rm $ZUNKAPATH/restart-zunka-site
+    rm $ZUNKAPATH/restart-zunkasite
+    rm $ZUNKAPATH/restart-zunkasrv
+    rm $ZUNKAPATH/restart-freightsrv
+    rm $ZUNKAPATH/restart-zoomproducts
 fi
-# Restart zunka-site.
-if [[ -f $ZUNKAPATH/restart-zunka-site ]];then
-    echo :: Restarting zunka site...
-    pm2 restart ecosystem.config.js --only zunka_site --env production
+
+# Restart zunkasite.
+if [[ -f $ZUNKAPATH/restart-zunkasite ]];then
+    echo :: Restarting zunkasite...
+    pm2 restart ecosystem.config.js --only zunkasite --env production
     pm2 save
-    rm $ZUNKAPATH/restart-zunka-site
+    rm $ZUNKAPATH/restart-zunkasite
 fi
-# Restart zunka-srv.
-if [[ -f $ZUNKAPATH/restart-zunka-srv ]];then
-    echo :: Restarting zunka srv...
-    pm2 restart ecosystem.config.js --only zunka_srv --env production
+
+# Restart zunkasrv.
+if [[ -f $ZUNKAPATH/restart-zunkasrv ]];then
+    echo :: Restarting zunkasrv...
+    pm2 restart ecosystem.config.js --only zunkasrv --env production
     pm2 save
-    rm $ZUNKAPATH/restart-zunka-srv
+    rm $ZUNKAPATH/restart-zunkasrv
+fi
+
+# Restart freightsrv.
+if [[ -f $ZUNKAPATH/restart-freightsrv ]];then
+    echo :: Restarting freightsrv...
+    pm2 restart ecosystem.config.js --only freightsrv --env production
+    pm2 save
+    rm $ZUNKAPATH/restart-freightsrv
+fi
+
+# Restart zoomproducts.
+if [[ -f $ZUNKAPATH/restart-zoomproducts ]];then
+    echo :: Restarting zoomproducts...
+    pm2 restart ecosystem.config.js --only zoomproducts --env production
+    pm2 save
+    rm $ZUNKAPATH/restart-zoomproducts
 fi
