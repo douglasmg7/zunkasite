@@ -22,7 +22,9 @@ module.exports = {
         cwd: process.env.GS + '/zunkasrv',
         watch: false,
         env: {},
-        env_production: {},
+        env_production: {
+            RUN_MODE: 'production'
+        },
         output: '/dev/null',
         error: process.env.ZUNKAPATH + '/log/pm2_zunkasrv.log',
         log: '/dev/null',
@@ -33,7 +35,9 @@ module.exports = {
         cwd: process.env.GS + '/freightsrv',
         watch: false,
         env: {},
-        env_production: {},
+        env_production: {
+            RUN_MODE: 'production'
+        },
         output: '/dev/null',
         error: process.env.ZUNKAPATH + '/log/pm2_freightsrv.log',
         log: '/dev/null',
@@ -44,7 +48,9 @@ module.exports = {
         cwd: process.env.GS + '/zoomproducts',
         watch: false,
         env: {},
-        env_production: {},
+        env_production: {
+            RUN_MODE: 'development'
+        },
         output: '/dev/null',
         error: process.env.ZUNKAPATH + '/log/pm2_zoomproducts.log',
         log: '/dev/null',
