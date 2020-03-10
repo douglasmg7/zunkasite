@@ -27,7 +27,7 @@ var app = new Vue({
             state: '',
             phone: ''      
         },
-        loadingCep: false,
+        loadingCepInfo: false,
         cepNotFound: false,
         cepErr: false,
         loading: {
