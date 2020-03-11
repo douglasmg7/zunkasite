@@ -50,7 +50,7 @@ fi
 
 # Set zunka site to be restarted.
 if [[ ! -z $RESTART_ZUNKA_SITE ]]; then
-    echo :: Signaling to restart zunka_site...
+    echo :: Signaling to restart zunkasite...
     echo true > $ZUNKAPATH/restart-zunkasite
 fi
 

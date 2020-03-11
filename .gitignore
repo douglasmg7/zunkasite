@@ -7,9 +7,10 @@ public/js/bundle*
 bin/xml/
 
 # Backups.
-dump/
 
 # Include directories but not the files.
+dump/*
+!dump/.gitkeep 
 dist/img/*
 !dist/img/.gitkeep 
 dist/js/*
