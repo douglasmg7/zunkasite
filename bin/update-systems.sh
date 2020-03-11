@@ -9,6 +9,7 @@ echo :: Fetching zunka site...
 git fetch
 
 FILES_CHANGED=`git diff --name-only master...origin/master`
+BUNDLE_FILES_CHANGED=`git diff --name-only master...origin/master | grep "\.bundle$"`
 STYLE_FILES_CHANGED=`git diff --name-only master...origin/master | grep "\.styl$"`
 PACKAGE_JSON_FILE_CHANGED=`git diff --name-only master...origin/master | grep "package\.json$"`
 SECRET_FILES_CHANGED=`git diff --name-only master...origin/master | grep "\.secret$"`
@@ -29,9 +30,15 @@ if [[ ! -z $PACKAGE_JSON_FILE_CHANGED ]]; then
     npm install
 fi
 
+# Compile bundle files.
+if [[ ! -z $BUNDLE_FILES_CHANGED ]]; then
+    echo :: Compiling bundle files...
+    ./bin/compile_bundle.sh
+fi
+
 # Compile style files.
 if [[ ! -z $STYLE_FILES_CHANGED ]]; then
-    echo :: Compile style files...
+    echo :: Compiling style files...
     ./bin/compile_styl
 fi
 

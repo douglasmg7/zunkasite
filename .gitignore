@@ -12,6 +12,8 @@ dump/
 # Include directories but not the files.
 dist/img/*
 !dist/img/.gitkeep 
+dist/js/*
+!dist/js/.gitkeep 
 dist/css/*
 !dist/css/.gitkeep 
 dist/banner/*
