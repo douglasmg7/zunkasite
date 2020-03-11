@@ -1,14 +1,25 @@
-# 1.4.0 (?)
+# 1.4.1 (11 fev 2020)
+## Melhorias
+* Script para compilação dos arquivos bundles.
+* Arquivos js fora do controle de versão, usando apenas bundle files.
+* Usando zunkasite folder for logs.
+
+
+
+# 1.4.0 (10 fev 2020)
 ## Melhorias
 * Usando motoboy fretes do servidor de endereços.
 
 ## Bug fix
 * Quando produto Aldo é criado novamente, não atualiza o antigo apagado em vez de cria-lo novamente. 
 
+
+
 # 1.3.2 (10 fev 2020)
 ## Melhorias
 * Inclusão do fabricante HP e PNY.
 * Inclusão da categoria impressoras.
+
 
 
 # 1.3.1 (18 jan 2020)

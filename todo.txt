@@ -12,7 +12,7 @@ Checar inconsistência de produtos sem mongo_id no zunkasrv.
 Testar pagamento via Pyapal e Crédito.
 
 
-[zunka-site]
+[zunkasite]
     Quando voltar pelo back do browser de detalhe do pedido para pedido, forçar reload.
     Quando a ordem for finalizada, se usuário tentar voltar nos link da ordem fechada redirecionar para confirmação da ordem.
     Upload image for markdown use.
@@ -53,7 +53,7 @@ market place
 
 # botão Verificar pagament complete não aparece na versão de celular.
 
-[zunka-site] [select address] Not updating product dimensions to make request to correios.
+[zunkasite] [select address] Not updating product dimensions to make request to correios.
 
 # [aldowsc] Update categories quantity items when product quantity change.
 
