@@ -39,7 +39,7 @@ fi
 # Compile style files.
 if [[ ! -z $STYLE_FILES_CHANGED ]]; then
     echo :: Compiling style files...
-    ./bin/compile_styl
+    ./bin/compile_styl.sh
 fi
 
 # Reveal secret files.
