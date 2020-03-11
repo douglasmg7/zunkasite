@@ -737,8 +737,8 @@ router.get('/motoboy-freight/:id', checkPermission, (req, res, next)=>{
             let freight = {
                 id: 'new',
                 city: '',
-                deadline: 2,
-                price: 10000,
+                deadline: 1,
+                price: 4000,
                 invalid: {}
             }
             // log.debug(`new shippingPrice: ${JSON.stringify(shippingPrice, null, 2)}`);
