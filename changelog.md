@@ -1,3 +1,8 @@
+# 1.4.2 (12 fev 2020)
+## Melhorias
+* API to get product informations.
+
+
 # 1.4.1 (11 fev 2020)
 ## Melhorias
 * Script para compilação dos arquivos bundles.

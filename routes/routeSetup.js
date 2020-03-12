@@ -12,8 +12,30 @@ const makers = require('../util/productMakers.js');
 const turndown = new require('turndown')();
 const imageUtil = require('../util/image');
 
+// Get a specific product or create a new one.
+router.get('/product-info/:product_id', s.basicAuth, function(req, res, next) {
+	let productPromise = Product.findById(req.params.product_id);
+	Promise.all([productPromise])
+	.then(([product])=>{
+        if (product.deletedAt) {
+            res.status(404).send('Produto não existe.');
+        } else {
+            return res.json({
+                dealer: product.dealerName,
+                length: product.storeProductLength,
+                height: product.storeProductHeight,
+                width: product.storeProductWidth,
+                weight: product.storeProductWeight
+            });
+        }
+	}).catch(err=>{
+		log.error(err.stack);
+        return res.status(500).send(err);
+	});
+});
+
 // Add product.
-router.post('/product/add', basicAuth, [
+router.post('/product/add', s.basicAuth, [
 		check('dealerName').isLength(4, 20),
 		check('dealerProductId').isLength(1, 20),
 		check('dealerProductTitle').isLength(4, 200),
@@ -145,21 +167,5 @@ function checkPermission (req, res, next) {
 	res.redirect('/');
 }
 
-// Basic authentification for api access.
-function basicAuth(req, res, next) {
-    // Check for basic auth header.
-    if (!req.headers.authorization || req.headers.authorization.indexOf('Basic ') === -1) {
-        return res.status(401).send('Missing Authorization Header');
-    }
-    // Verify auth credentials.
-    const base64Credentials =  req.headers.authorization.split(' ')[1];
-    const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
-    const [user, pass] = credentials.split(':');
-	if (user === s.zunkaSite.user && pass === s.zunkaSite.password) {
-		next();
-	} else { 
-        return res.status(401).send('Unauthorised.\n');
-	}
-}
 
 module.exports = router;
