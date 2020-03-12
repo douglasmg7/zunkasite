@@ -144,6 +144,9 @@ block content
             input(type='checkbox' id='commercialize' v-model:checked='product.storeProductCommercialize')
             label(for='commercialize') Comercializar produto
             br
+            input(type='checkbox' id='marketZoom' v-model:checked='product.marketZoom' :disabled='!product.storeProductCommercialize')
+            label(for='marketZoom') Incluir na ZOOM 
+            br
             //- Stock.
             label(for='stock') Estoque (Unidade)
             input(type='text' id='stock' v-model='product.storeProductQtd')
