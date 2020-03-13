@@ -135,7 +135,7 @@ var app = new Vue({
 		},
 		// Set order status from selected order.
 		setStatus(){
-            console.log("v2");
+            console.log("v3");
             console.log(`order._id: ${order._id}`);
             console.log(`app.setStatusWindow.status: ${app.setStatusWindow.status}`);
             console.log(`this.order._id: ${this.order._id}`);
@@ -150,6 +150,12 @@ var app = new Vue({
 				params: {updateStock: this.setStatusWindow.updateStock}
 			})
 			.then((res)=>{
+                console.log(`res.data.err: ${res.data.err}`);
+                if (res.data.err) {
+                    console.log(`res.data.err: ${res.data.err}`);
+                    alert("Alguma coisa deu errada");
+                    return
+                }
 				// Update selected order and orders.
 				// console.log(`data: ${JSON.stringify(res.data)}`);
                 console.log("*** 1 ***");
