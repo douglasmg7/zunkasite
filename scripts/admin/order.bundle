@@ -128,9 +128,15 @@ var app = new Vue({
 				default:
 					return;
 			}
+            console.log(`this.setStatusWindow.status: ${this.setStatusWindow.status}`);
 		},
 		// Set order status from selected order.
 		setStatus(){
+            console.log("v1");
+            console.log(`order._id: ${order._id}`);
+            console.log(`app.setStatusWindow.status: ${app.setStatusWindow.status}`);
+            console.log(`this.order._id: ${this.order._id}`);
+            console.log(`this.setStatusWindow.status: ${this.setStatusWindow.status}`);
 			axios({
 				method: 'post',
 				url: `/admin/api/order/status/${this.order._id}/${this.setStatusWindow.status}`,
