@@ -20,6 +20,7 @@ var app = new Vue({
     methods: {
 		// Get status order.
 		status(order){
+            console.log("Inside function status()");
 			switch(order.status) {
 				case 'canceled':
 					return 'cancelado';
@@ -37,6 +38,7 @@ var app = new Vue({
 		},
 		// Get order action.
 		action(order){
+             console.log("Inside function action()");
              let verifyDeliveryAction = { id: 'verifyDelivery', text: 'Verificar se o pedido foi entrege' };
 		     let sendAction = { id: 'send', text: 'Pedido deve ser enviado' };
 			 let verifyPaymentAction = { id: 'verifyPayment', text: 'Verificar se o pedido foi pago' };
@@ -99,6 +101,7 @@ var app = new Vue({
 		},    
 		// Set order status from selected order.
 		showSetStatusWindow(status){
+             console.log("Inside function showSetStatusWindow()");
 			// Status to change.
 			this.setStatusWindow.status = status;
 			// Config window.
@@ -132,11 +135,14 @@ var app = new Vue({
 		},
 		// Set order status from selected order.
 		setStatus(){
-            console.log("v1");
+            console.log("v2");
             console.log(`order._id: ${order._id}`);
             console.log(`app.setStatusWindow.status: ${app.setStatusWindow.status}`);
             console.log(`this.order._id: ${this.order._id}`);
             console.log(`this.setStatusWindow.status: ${this.setStatusWindow.status}`);
+            console.log("url begin");
+		    console.log(`/admin/api/order/status/${this.order._id}/${this.setStatusWindow.status}`);
+            console.log("url end");
 			axios({
 				method: 'post',
 				url: `/admin/api/order/status/${this.order._id}/${this.setStatusWindow.status}`,
@@ -146,15 +152,22 @@ var app = new Vue({
 			.then((res)=>{
 				// Update selected order and orders.
 				// console.log(`data: ${JSON.stringify(res.data)}`);
+                console.log("*** 1 ***");
 				this.order = res.data.order;
+                console.log("*** 2 ***");
 				this.setStatusWindow.show = false;
+                console.log("*** 3 ***");
 			})
 			.catch((err)=>{
+                console.log("*** 4 ***");
 				console.error(`Error - setStatus(), err: ${err}`);
+                console.log("*** 5 ***");
 				this.setStatusWindow.show = false;
+                console.log("*** 6 ***");
 			});
 		},
 		verifyPaymentCompleted(order){
+            console.log("Inside function verifyPaymentCompleted()");
 			let button = document.getElementById('verify-payment-completed');
 			button.value = 'processando';
 			axios.get(`/checkout/ppp/payment/complete/${order._id}`, { headers: {'csrf-token' : csrfToken} })
