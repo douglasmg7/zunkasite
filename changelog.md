@@ -1,3 +1,11 @@
+# 1.4.3 (12 fev 2020)
+## Melhorias
+* Using "vue": "2.6.11"
+* Using "axios": "0.19.2"
+
+
+
+
 # 1.4.2 (12 fev 2020)
 ## Melhorias
 * API to get product informations.
