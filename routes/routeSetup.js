@@ -5,6 +5,7 @@ const log = require('../config/log');
 const s = require('../config/s');
 const { check, validationResult } = require('express-validator/check');
 // Models.
+const mongoose = require('mongoose');
 const Product = require('../model/product');
 // Utils.
 const categories = require('../util/productCategories');
@@ -36,10 +37,7 @@ const imageUtil = require('../util/image');
 
 // Get a specific product or create a new one.
 router.get('/product-info', s.basicAuth, function(req, res, next) {
-    let productsId = req.body.productsId;
     log.debug(`body: ${JSON.stringify(req.body.productsId)}`);
-    return res.status(500).send("");
-
 
     let productsId = [];
     // Get all products on cart.
@@ -51,49 +49,20 @@ router.get('/product-info', s.basicAuth, function(req, res, next) {
         if (err) {
             return res.status(500).send(err);
         }
+        let products = [];
         for (let i = 0; i < dbProducts.length; i++) {
-            productsDbMap.set(dbProducts[i]._id.toString(), dbProducts[i]);
-        }
-    });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	let productPromise = Product.findById(req.params.product_id);
-	Promise.all([productPromise])
-	.then(([product])=>{
-        if (product.deletedAt) {
-            res.status(404).send('Produto não existe.');
-        } else {
-            return res.json({
-                dealer: product.dealerName,
-                length: product.storeProductLength,
-                height: product.storeProductHeight,
-                width: product.storeProductWidth,
-                weight: product.storeProductWeight
+            // console.log(`dbProduct: ${dbProducts[i]}`);
+            products.push({
+                id: dbProducts[i]._Id,
+                dealer: dbProducts[i].dealerName,
+                length: dbProducts[i].storeProductLength,
+                width: dbProducts[i].storeProductWidth,
+                height: dbProducts[i].storeProductHeight,
+                weight: dbProducts[i].storeProductWeight,
             });
         }
-	}).catch(err=>{
-		log.error(err.stack);
-        return res.status(500).send(err);
-	});
+        return res.json(products);
+    });
 });
 
 // Add product.
