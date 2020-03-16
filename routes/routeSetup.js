@@ -13,31 +13,9 @@ const makers = require('../util/productMakers.js');
 const turndown = new require('turndown')();
 const imageUtil = require('../util/image');
 
-// // Get a specific product or create a new one.
-// router.get('/product-info/:product_id', s.basicAuth, function(req, res, next) {
-	// let productPromise = Product.findById(req.params.product_id);
-	// Promise.all([productPromise])
-	// .then(([product])=>{
-        // if (product.deletedAt) {
-            // res.status(404).send('Produto não existe.');
-        // } else {
-            // return res.json({
-                // dealer: product.dealerName,
-                // length: product.storeProductLength,
-                // height: product.storeProductHeight,
-                // width: product.storeProductWidth,
-                // weight: product.storeProductWeight
-            // });
-        // }
-	// }).catch(err=>{
-		// log.error(err.stack);
-        // return res.status(500).send(err);
-	// });
-// });
-
 // Get a specific product or create a new one.
 router.get('/product-info', s.basicAuth, function(req, res, next) {
-    log.debug(`body: ${JSON.stringify(req.body.productsId)}`);
+    // log.debug(`body: ${JSON.stringify(req.body.productsId)}`);
 
     let productsId = [];
     // Get all products on cart.
