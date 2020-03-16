@@ -12,8 +12,70 @@ const makers = require('../util/productMakers.js');
 const turndown = new require('turndown')();
 const imageUtil = require('../util/image');
 
+// // Get a specific product or create a new one.
+// router.get('/product-info/:product_id', s.basicAuth, function(req, res, next) {
+	// let productPromise = Product.findById(req.params.product_id);
+	// Promise.all([productPromise])
+	// .then(([product])=>{
+        // if (product.deletedAt) {
+            // res.status(404).send('Produto não existe.');
+        // } else {
+            // return res.json({
+                // dealer: product.dealerName,
+                // length: product.storeProductLength,
+                // height: product.storeProductHeight,
+                // width: product.storeProductWidth,
+                // weight: product.storeProductWeight
+            // });
+        // }
+	// }).catch(err=>{
+		// log.error(err.stack);
+        // return res.status(500).send(err);
+	// });
+// });
+
 // Get a specific product or create a new one.
-router.get('/product-info/:product_id', s.basicAuth, function(req, res, next) {
+router.get('/product-info', s.basicAuth, function(req, res, next) {
+    let productsId = req.body.productsId;
+    log.debug(`body: ${JSON.stringify(req.body.productsId)}`);
+    return res.status(500).send("");
+
+
+    let productsId = [];
+    // Get all products on cart.
+    for (let i = 0; i < req.body.productsId.length; i++) {
+        productsId.push(mongoose.Types.ObjectId(req.body.productsId[i]));
+    }
+    // Get all products into cart from db.
+    Product.find({'_id': { $in: productsId }}, (err, dbProducts)=>{
+        if (err) {
+            return res.status(500).send(err);
+        }
+        for (let i = 0; i < dbProducts.length; i++) {
+            productsDbMap.set(dbProducts[i]._id.toString(), dbProducts[i]);
+        }
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	let productPromise = Product.findById(req.params.product_id);
 	Promise.all([productPromise])
 	.then(([product])=>{
