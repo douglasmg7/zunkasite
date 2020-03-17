@@ -29,7 +29,8 @@
     "export-db-old": "mongodump --db zunka -u admin --authenticationDatabase admin --out ./dump/$(date +\"%Y-%h-%d@%T\")",
     "install-certbot-service": "sudo ./bin/install-certbot-service",
     "start-mlab": "NODE_ENV=production DB=mlab nodemon ./bin/www",
-    "test": "mocha test -u bdd -R spec -t 2000",
+    "test": "NODE_ENV=development mocha -R spec test/spec.js -t 2000",
+    "test-old": "mocha test -u bdd -R spec -t 2000",
     "testCompile": "mocha test -u bdd --compilers js:babel-core/register",
     "createResizedImgs": "./bin/createResizedImgs.js",
     "removeResizedImgs": "./bin/removeResizedImgs.js"
@@ -79,6 +80,8 @@
     "yargs": "^15.0.2"
   },
   "devDependencies": {
-    "stylus": "^0.54.7"
+    "mocha": "^7.1.0",
+    "stylus": "^0.54.7",
+    "supertest": "^4.0.2"
   }
 }

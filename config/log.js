@@ -91,7 +91,8 @@ const log = createLogger({
 });
 
 // Console (dev).
-if(process.env.NODE_ENV === 'development'){
+// if(process.env.NODE_ENV === 'development'){
+if(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test'){
     log.add(new transports.Console({
         level: 'debug',
         format: format.combine(

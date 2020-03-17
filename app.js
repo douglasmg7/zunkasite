@@ -12,6 +12,8 @@ const HOSTNAME = 'www.zunka.com.br';
 let mode = 'undefined';
 if (process.env.NODE_ENV == 'development') {
     mode = 'development';
+} else if (process.env.NODE_ENV == 'test'){
+    mode = 'test';
 } else if (process.env.NODE_ENV == 'production'){
     mode = 'production';
 }
