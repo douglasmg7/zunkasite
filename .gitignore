@@ -40,3 +40,6 @@ bin/.last_req
 bin/paypal/*.json
 bin/paypal/secret
 bin/paypal/client_id
+
+# Code coverage.
+.nyc_output

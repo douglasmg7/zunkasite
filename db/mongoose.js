@@ -28,7 +28,7 @@ mongoose.connection.on('error', function(err){
 });
 // Success.
 mongoose.connection.once('open', function() {
-	log.info('Connected to Mongoose.');
+	log.info('Connected to Mongoose');
     // log.info(`mongoose db: ${mongoose.connection.db}`);
     // mongoose.connection.db.collection('products').find({}).toArray((err, docs)=>{
         // log.debug(`docs: ${JSON.stringify(docs.length, null, 2)}`);
@@ -36,11 +36,11 @@ mongoose.connection.once('open', function() {
 });
 // Disconnected.
 mongoose.connection.on('disconnected', function(){
-	log.info("Mongoose disconnected.");
+	log.info("Mongoose disconnected");
 });
 // Close.
 mongoose.connection.once('close', function() {
-	log.info('Mongoose closed.');
+	log.info('Mongoose closed');
 });
 // Connect.
 mongoose.connect(uri, options, function(err){

@@ -1,20 +1,41 @@
 let request = require('supertest');
-describe('Some test', function () {
+let assert = require('chai').assert;
+
+describe('Testing API', function () {
     let server;
-    beforeEach(function () {
-        console.log("BEGIN");
+    before(function (done) {
+        this.timeout(4000);
         server = require('../bin/www');
+        setTimeout(function(){ done(); }, 1000);
     });
-    afterEach(function () {
-        server.close();
-        console.log("FIM");
+    after(function () {
+        server.close(function(err) {
+            if (err) {
+                log.error(err.stack);
+                process.exit(1)
+            }
+        });
+
     });
-    it('responds to /', function testSlash(done) {
+    it('/', function testRoot(done) {
         request(server)
             .get('/')
             .expect(200, done);
     });
-    it('404 everything else', function testPath(done) {
+    it('/admin/banner', function testBanner(done) {
+        request(server)
+            .get('/admin/banner')
+            .end((err, res)=>{
+                assert.equal(res.statusCode, 200);
+                done();
+            });
+    });
+    // it('/admin', function testBanner(done) {
+        // request(server)
+            // .get('/admin/banner')
+            // .expect(200, done);
+    // });
+    it('404', function test404(done) {
         request(server)
             .get('/foo/bar')
             .expect(404, done);
