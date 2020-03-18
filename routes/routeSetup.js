@@ -13,7 +13,7 @@ const makers = require('../util/productMakers.js');
 const turndown = new require('turndown')();
 const imageUtil = require('../util/image');
 
-// Get a specific product or create a new one.
+// Get a zunka product information.
 router.get('/product-info', s.basicAuth, function(req, res, next) {
     // log.debug(`body: ${JSON.stringify(req.body.productsId)}`);
 

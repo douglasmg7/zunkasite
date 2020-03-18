@@ -4,6 +4,7 @@ const router = express.Router();
 const axios = require('axios');
 const qs = require('qs');
 const util = require('util');
+const s = require('../config/s');
 const emailSender = require('../config/email');
 
 // Models.
@@ -22,6 +23,39 @@ module.exports = router;
 function converToBRCurrencyString(val) {
 	return val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
+
+
+/******************************************************************************
+/ Zoom
+ ******************************************************************************/
+
+// Zoom order status notification.
+router.post('/zoom/order-status', s.basicAuth, function(req, res, next) {
+    log.debug(`body: ${JSON.stringify(req.body)}`);
+
+    switch (req.body.status.toLowerCase()) {
+        case "new":
+            log.debug("new");
+            // Send email.
+            // Get order information.
+            break;
+
+        case "approvedpayment":
+            log.debug("approvedpayment");
+            // Send email.
+            // Get order information.
+            break;
+        case "canceled":
+            log.debug("canceled");
+            // Send email.
+            break;
+        default:
+            log.error(`Received zoom product information with status: ${req.body.status}`);
+            return res.status(400).send(`Unknown status: ${req.body.status}`);
+    }
+    return res.status(200).send();
+});
+
 
 /******************************************************************************
 / TEST
