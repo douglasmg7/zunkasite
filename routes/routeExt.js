@@ -31,31 +31,62 @@ function converToBRCurrencyString(val) {
 
 // Zoom order status notification.
 router.post('/zoom/order-status', s.basicAuth, function(req, res, next) {
-    log.debug(`body: ${JSON.stringify(req.body)}`);
-
+    // log.debug(`body: ${JSON.stringify(req.body)}`);
     switch (req.body.status.toLowerCase()) {
         case "new":
             log.debug("new");
+            // getAllZoomOrders((err, orders)=>{
+                // if (err) {
+                    // log.error(err);
+                    // return res.status(500).send();
+                // }
+                // log.debug(`Orders: ${JSON.stringify(orders, null, 2)}`);
+                // return res.status(200).send();
+            // });
             // Send email.
             // Get order information.
+            return res.status(200).send();
             break;
 
         case "approvedpayment":
             log.debug("approvedpayment");
             // Send email.
             // Get order information.
+            return res.status(200).send();
             break;
         case "canceled":
             log.debug("canceled");
             // Send email.
+            return res.status(200).send();
             break;
         default:
             log.error(`Received zoom product information with status: ${req.body.status}`);
             return res.status(400).send(`Unknown status: ${req.body.status}`);
     }
-    return res.status(200).send();
 });
 
+// Print all zoom orders.
+function getAllZoomOrders(cb){
+    axios.get(`${s.zoom.host}/orders`, {
+        headers: {
+            "Accept": "application/json", 
+        },
+        auth: {
+            username: s.zoom.user,
+            password: s.zoom.password
+        },
+    })
+    .then(response => {
+        if (response.data.err) {
+            return cb(new Error(`Get all zoom orders. ${response.data.err}`), null)
+        } 
+        // console.log(`zoom orders: ${JSON.stringify(response.data, null, 2)}`);
+        return cb(null, response.data); 
+    })
+    .catch(err => {
+        log.error(`Get all zoom orders (catch). ${err}`);
+    }); 
+}
 
 /******************************************************************************
 / TEST

@@ -2,7 +2,9 @@ const request = require('supertest');
 const assert = require('chai').assert;
 const s = require('../config/s');
 
-describe('Testing API', function () {
+describe('Zunka', function () {
+
+    // Start and stop server.
     let server;
     before(function (done) {
         this.timeout(8000);
@@ -18,51 +20,54 @@ describe('Testing API', function () {
         });
 
     });
-    it('/', function testRoot(done) {
-        request(server)
-            .get('/')
-            .expect(200, done);
-    });
-    it('/admin/banner', function testBanner(done) {
-        request(server)
-            .get('/admin/banner')
-            .end((err, res)=>{
-                assert.equal(res.statusCode, 200);
-                done();
-            });
-    });
-    // it('/admin', function testBanner(done) {
-        // request(server)
-            // .get('/admin/banner')
-            // .expect(200, done);
-    // });
-    it('404', function test404(done) {
-        request(server)
-            .get('/foo/bar')
-            .expect(404, done);
+
+    // Site.
+    describe("Site", ()=>{
+        // Root page.
+        it('/', function testRoot(done) {
+            request(server)
+                .get('/')
+                .expect(200, done);
+        });
+        // Banner admin page.
+        it('Banner configuration', function testBanner(done) {
+            request(server)
+                .get('/admin/banner')
+                .end((err, res)=>{
+                    assert.equal(res.statusCode, 200);
+                    done();
+                });
+        });
+        // Not found.
+        it('404', function test404(done) {
+            request(server)
+                .get('/foo/bar')
+                .expect(404, "Página não encontrada.", done);
+                // .end((err, res)=>{
+                    // console.log(res.text);
+                    // done();
+                // });
+        });
     });
 
     // Zoom API.
     describe("Zoom API", ()=>{
         // Invalid auth.
-        // it('/ext/zoom/order-status - inválid auth', function testBanner(done) {
-            // request(server)
-                // .post('/ext/zoom/order-status')
-                // .auth(s.zunkaSite.user, "111")
-                // .send({ "orderNumber": "5015679200", "status": "New" })
-                // .end((err, res)=>{
-                    // assert.equal(res.body, "");
-                    // assert.equal(res.statusCode, 200);
-                    // done();
-                // });
-        // });
+        it('Inválid authorization', function testBanner(done) {
+            request(server)
+                .post('/ext/zoom/order-status')
+                .auth(s.zunkaSite.user, "111")
+                .send({ "orderNumber": "5015679200", "status": "New" })
+                .expect(401, /Unauthorised/, done);
+        });
         // Invalid status.
-        it('/ext/zoom/order-status - inválid status', function testBanner(done) {
+        it('Inválid status', function testBanner(done) {
             request(server)
                 .post('/ext/zoom/order-status')
                 .auth(s.zunkaSite.user, s.zunkaSite.password)
                 .send({ "orderNumber": "5015679200", "status": "Deleted" })
-                .expect(400, "Unknown status: ", done);
+                .expect(400, /Unknown status: /, done);
+                // .expect(400, "Unknown status: ", done);
                 // .end((err, res)=>{
                     // console.log(`res: ${JSON.stringify(res, null, 2)}`);
                     // console.log(`res.text: ${res.text}`);
@@ -73,11 +78,34 @@ describe('Testing API', function () {
                 // });
         });
         // New order.
-        it('/ext/zoom/order-status', function testBanner(done) {
+        it('New', function testBanner(done) {
+            this.timeout(10000);
             request(server)
                 .post('/ext/zoom/order-status')
                 .auth(s.zunkaSite.user, s.zunkaSite.password)
                 .send({ "orderNumber": "5015679200", "status": "New" })
+                .end((err, res)=>{
+                    assert.equal(res.statusCode, 200);
+                    done();
+                });
+        });
+        // New order.
+        it('Approved Payment', function testBanner(done) {
+            request(server)
+                .post('/ext/zoom/order-status')
+                .auth(s.zunkaSite.user, s.zunkaSite.password)
+                .send({ "orderNumber": "5015679200", "status": "ApprovedPayment" })
+                .end((err, res)=>{
+                    assert.equal(res.statusCode, 200);
+                    done();
+                });
+        });
+        // New order.
+        it('Canceled', function testBanner(done) {
+            request(server)
+                .post('/ext/zoom/order-status')
+                .auth(s.zunkaSite.user, s.zunkaSite.password)
+                .send({ "orderNumber": "5015679200", "status": "Canceled" })
                 .end((err, res)=>{
                     assert.equal(res.statusCode, 200);
                     done();
