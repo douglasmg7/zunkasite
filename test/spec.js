@@ -1,6 +1,7 @@
 const request = require('supertest');
 const assert = require('chai').assert;
 const s = require('../config/s');
+const nock = require('nock');
 
 describe('Zunka', function () {
 
@@ -9,6 +10,8 @@ describe('Zunka', function () {
     before(function (done) {
         this.timeout(8000);
         server = require('../bin/www');
+
+
         setTimeout(function(){ done(); }, 1000);
     });
     after(function () {
@@ -52,6 +55,9 @@ describe('Zunka', function () {
 
     // Zoom API.
     describe("Zoom API", ()=>{
+        const zoomOrderId = '31559839856'; 
+        const zoomOrderJSON = require(`./zoom/order-${zoomOrderId}.json`);
+
         // Invalid auth.
         it('Inválid authorization', function testBanner(done) {
             request(server)
@@ -61,7 +67,7 @@ describe('Zunka', function () {
                 .expect(401, /Unauthorised/, done);
         });
         // Invalid status.
-        it('Inválid status', function testBanner(done) {
+        it('Order status invalid', function testBanner(done) {
             request(server)
                 .post('/ext/zoom/order-status')
                 .auth(s.zunkaSite.user, s.zunkaSite.password)
@@ -78,31 +84,36 @@ describe('Zunka', function () {
                 // });
         });
         // New order.
-        it('New', function testBanner(done) {
+        it('Order status new ', function testBanner(done) {
             this.timeout(10000);
             request(server)
                 .post('/ext/zoom/order-status')
                 .auth(s.zunkaSite.user, s.zunkaSite.password)
-                .send({ "orderNumber": "31559839856", "status": "New" })
+                .send({ "orderNumber": zoomOrderId, "status": "New" })
                 .end((err, res)=>{
                     assert.equal(res.statusCode, 200);
                     done();
                 });
         });
         // Approved payment order.
-        it('Approved Payment', function testBanner(done) {
+        it('Order status approved Payment (produto não existe)', function testBanner(done) {
             this.timeout(6000);
+            // Mock request.
+            nock(s.zoom.host)
+                .get(`/order/${zoomOrderId}`)
+                .reply(200, zoomOrderJSON);
+            // Url request.
             request(server)
                 .post('/ext/zoom/order-status')
                 .auth(s.zunkaSite.user, s.zunkaSite.password)
-                .send({ "orderNumber": "31559839856", "status": "ApprovedPayment" })
+                .send({ "orderNumber": zoomOrderId, "status": "ApprovedPayment" })
                 .end((err, res)=>{
                     assert.equal(res.statusCode, 200);
                     done();
                 });
         });
         // Canceled order.
-        it('Canceled', function testBanner(done) {
+        it('Order status canceled', function testBanner(done) {
             request(server)
                 .post('/ext/zoom/order-status')
                 .auth(s.zunkaSite.user, s.zunkaSite.password)

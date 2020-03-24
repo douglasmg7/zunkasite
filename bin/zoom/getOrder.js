@@ -16,7 +16,7 @@ axios.get(`${s.zoom.host}/order/31559839856`, {
     if (response.data.err) {
         log.error(response.data.err);
     } 
-    console.log(`order: ${JSON.stringify(response.data, null, 2)}`);
+    console.log(`${JSON.stringify(response.data, null, 2)}`);
 })
 .catch(err => {
     log.error(`catch(). ${err}`);
