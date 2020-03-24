@@ -83,29 +83,30 @@ describe('Zunka', function () {
             request(server)
                 .post('/ext/zoom/order-status')
                 .auth(s.zunkaSite.user, s.zunkaSite.password)
-                .send({ "orderNumber": "5015679200", "status": "New" })
+                .send({ "orderNumber": "31559839856", "status": "New" })
                 .end((err, res)=>{
                     assert.equal(res.statusCode, 200);
                     done();
                 });
         });
-        // New order.
+        // Approved payment order.
         it('Approved Payment', function testBanner(done) {
+            this.timeout(6000);
             request(server)
                 .post('/ext/zoom/order-status')
                 .auth(s.zunkaSite.user, s.zunkaSite.password)
-                .send({ "orderNumber": "5015679200", "status": "ApprovedPayment" })
+                .send({ "orderNumber": "31559839856", "status": "ApprovedPayment" })
                 .end((err, res)=>{
                     assert.equal(res.statusCode, 200);
                     done();
                 });
         });
-        // New order.
+        // Canceled order.
         it('Canceled', function testBanner(done) {
             request(server)
                 .post('/ext/zoom/order-status')
                 .auth(s.zunkaSite.user, s.zunkaSite.password)
-                .send({ "orderNumber": "5015679200", "status": "Canceled" })
+                .send({ "orderNumber": "31559839856", "status": "Canceled" })
                 .end((err, res)=>{
                     assert.equal(res.statusCode, 200);
                     done();
