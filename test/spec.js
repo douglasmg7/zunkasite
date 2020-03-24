@@ -1,7 +1,12 @@
 const request = require('supertest');
 const assert = require('chai').assert;
+const expect = require('chai').expect;
 const s = require('../config/s');
 const nock = require('nock');
+const Product = require('../model/product');
+
+// Array with newest products.
+let newestProducts;
 
 describe('Zunka', function () {
 
@@ -31,6 +36,18 @@ describe('Zunka', function () {
             request(server)
                 .get('/')
                 .expect(200, done);
+        });
+        // New products API.
+        it('/api/new-products', function testRoot(done) {
+            request(server)
+                .get('/api/new-products')
+                .expect(200)
+                .end((err, res)=>{
+                    newestProducts = JSON.parse(res.text).products;
+                    // console.log(`newestProducts.length: ${newestProducts.length}`);
+                    expect(newestProducts).to.have.length.above(2);
+                    done();
+                });
         });
         // Banner admin page.
         it('Banner configuration', function testBanner(done) {
@@ -95,7 +112,7 @@ describe('Zunka', function () {
                     done();
                 });
         });
-        // Approved payment order.
+        // Approved payment order - product not exist.
         it('Order status approved Payment (produto não existe)', function testBanner(done) {
             this.timeout(6000);
             // Mock request.
@@ -111,6 +128,48 @@ describe('Zunka', function () {
                     assert.equal(res.statusCode, 200);
                     done();
                 });
+        });
+        // Order status approved Payment.
+        it('Order status approved Payment', function testBanner(done) {
+            this.timeout(6000);
+            // Request products in stock.
+            zoomOrderJSON.items = [
+                {
+                    "amount": 2,
+                    "total": newestProducts[0].storeProductPrice * 2,
+                    "product_id": newestProducts[0]._id,
+                    "product_name": newestProducts[0].storeProductTitle,
+                    "product_price": newestProducts[0].storeProductPrice
+                },
+                {
+                    "amount": 2,
+                    "total": newestProducts[1].storeProductPrice * 2,
+                    "product_id": newestProducts[1]._id,
+                    "product_name": newestProducts[1].storeProductTitle,
+                    "product_price": newestProducts[1].storeProductPrice
+                }
+            ];
+            // console.log(`zoomOrderJSON: ${JSON.stringify(zoomOrderJSON, null, 2)}`);
+            // Mock request.
+            nock(s.zoom.host)
+                .get(`/order/${zoomOrderId}`)
+                .reply(200, zoomOrderJSON);
+            console.log(`stock product 1: ${newestProducts[0].storeProductQtd}`);
+            console.log(`stock product 2: ${newestProducts[1].storeProductQtd}`);
+            // Add stock product to test sell.
+            Product.updateMany({ _id: { $in:  [newestProducts[0]._id, newestProducts[1]._id] }}, { $inc: { storeProductQtd: 2 }}, err=>{
+                expect(err).to.be.null
+                // Url request.
+                request(server)
+                    .post('/ext/zoom/order-status')
+                    .auth(s.zunkaSite.user, s.zunkaSite.password)
+                    .send({ "orderNumber": zoomOrderId, "status": "ApprovedPayment" })
+                    .end((err, res)=>{
+                        assert.equal(res.statusCode, 200);
+                        done();
+                    });
+            });
+
         });
         // Canceled order.
         it('Order status canceled', function testBanner(done) {

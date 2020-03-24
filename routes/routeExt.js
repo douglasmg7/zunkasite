@@ -190,8 +190,8 @@ function createOrderPaid(zoomOrder, cb) {
                         Product.updateOne(
                             { _id: order.items[i]._id },
                             { $inc: {
-                                storeProductQtd: -1 * order.items[i].qtd,
-                                storeProductQtdSold: 1 * order.items[i].qtd
+                                storeProductQtd: -1 * order.items[i].quantity,
+                                storeProductQtdSold: 1 * order.items[i].quantity
                             } }, err=>{
                                 if (err) {
                                     log.error(err.stack);

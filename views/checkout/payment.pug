@@ -11,16 +11,16 @@ block content
         .payment
             h2.title(@click='showCreditButton') Selecione a forma de pagamento
             //- Money.
-            input.btn-primary(type='button' @click='directPayment("money")' v-if='order.shipping.methodDesc === "Motoboy"' value='Dinheiro')
+            input.btn-primary(type='button' @click='directPayment("money")' v-if='order.shipping.carrier === "Motoboy"' value='Dinheiro')
             //- Transfer.
             input.btn-info(type='button' @click='directPayment("transfer")' value='Transferência bancária')
             //- Card machine (presential).
-            input.btn-info(type='button' @click='directPayment("card-machine")' v-if='order.shipping.methodDesc === "Motoboy"' value='Cartão')
+            input.btn-info(type='button' @click='directPayment("card-machine")' v-if='order.shipping.carrier === "Motoboy"' value='Cartão')
             p(v-if='order.shipping.methodDesc === "Motoboy"') Crédito a vista ou débito
             //- Credit card, using PayPal Plus.
-            input.btn-primary(type='button' @click='payPalPlusPayment()' value='Cartão' v-if='order.shipping.methodDesc !== "Motoboy"')
+            input.btn-primary(type='button' @click='payPalPlusPayment()' value='Cartão' v-if='order.shipping.carrier !== "Motoboy"')
             //- PayPal.
-            #paypal-button(:hidden='order.shipping.methodDesc === "Motoboy"')
+            #paypal-button(:hidden='order.shipping.carrier === "Motoboy"')
 
 append internal_scripts
     script.

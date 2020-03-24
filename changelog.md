@@ -1,9 +1,14 @@
+
+# 1.4.4 (24 mar 2020)
+## Bug fix
+* Exibindo as formas de pagamento corretamente.
+* Formatado a descrição da forma de envio na página de ordens.
+
+
 # 1.4.3 (12 fev 2020)
 ## Melhorias
 * Using "vue": "2.6.11"
 * Using "axios": "0.19.2"
-
-
 
 
 # 1.4.2 (12 fev 2020)
@@ -18,21 +23,17 @@
 * Usando zunkasite folder for logs.
 
 
-
 # 1.4.0 (10 fev 2020)
 ## Melhorias
 * Usando motoboy fretes do servidor de endereços.
-
 ## Bug fix
 * Quando produto Aldo é criado novamente, não atualiza o antigo apagado em vez de cria-lo novamente. 
-
 
 
 # 1.3.2 (10 fev 2020)
 ## Melhorias
 * Inclusão do fabricante HP e PNY.
 * Inclusão da categoria impressoras.
-
 
 
 # 1.3.1 (18 jan 2020)

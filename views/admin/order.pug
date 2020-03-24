@@ -41,10 +41,10 @@ block content
         p {{order.shipping.address.cep}} 
 
         //- Delivery.
-        //- div(v-if='order.shipping.methodDesc')
         div(v-if='order.shipping.carrier')
-            //- h3 Envio - {{ order.shipping.methodDesc }}
-            h3 Envio - {{ order.shipping.carrier }} ({{ order.shipping.methodDesc }} - {{ order.shipping.methodCode }})
+            //- h3(v-if='order.shipping.carrier === "Correios"') Envio - {{ order.shipping.carrier }} ({{ order.shipping.methodDesc }} - {{ order.shipping.methodCode }})
+            h3(v-if='order.shipping.carrier === "Correios"') Envio - {{ order.shipping.methodDesc }} - {{ order.shipping.methodCode }}
+            h3(v-if='order.shipping.carrier !== "Correios"') Envio - {{ order.shipping.carrier }}
             p(v-if='order.shipping.carrier === ""') {{ order.shipping.methodDesc }}
             p(v-if='order.shipping.carrier !== ""') {{order.shipping.deadline}} dia(s) &nbsp&nbsp {{order.shipping.price | formatMoney}} &nbsp&nbsp  
             p P={{ order.shipping.box.weight | gramsToKg }}kg &nbsp&nbsp C={{ order.shipping.box.length }}cm &nbsp&nbsp A={{ order.shipping.box.height }}cm &nbsp&nbsp L={{ order.shipping.box.width }}cm
