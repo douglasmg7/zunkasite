@@ -139,6 +139,10 @@ function createOrderPaid(zoomOrder, cb) {
             name: zoomOrder.items[i].product_name,
             quantity: zoomOrder.items[i].amount,
             price: zoomOrder.items[i].total.toFixed(2),
+            length: 0,
+            width: 0,
+            height: 0,
+            weight: 0
             // price: zoomOrder.product_price.toFixed(2),
         }
         totalPrice += zoomOrder.items[i].total;
@@ -148,8 +152,9 @@ function createOrderPaid(zoomOrder, cb) {
     let order = new Order();
     order.items = items;
     order.subtotalPrice = totalPrice.toFixed(2);
-    // order.user_id = req.user._id;
+    order.user_id = '123456789012345678901234';
     order.name = zoomOrder.customer.first_name;
+    order.email = 'zoom@zoom.com.br';
     // order.name = zoomOrder.customer.first_name + zoomOrder.customer.second_name;
     order.cpf = zoomOrder.customer.cpf;
     order.mobileNumber = zoomOrder.customer.user_phone;
@@ -160,18 +165,8 @@ function createOrderPaid(zoomOrder, cb) {
         paidAt: new Date(), 
         shippingAddressSelectedAt: new Date() 
     };
-    // order.status = 'shippingAddressSelected';
-    // None, zoom use several shippings.
-    order.shipping = { address: {} };
-    order.shipping.address.name = "";
-    order.shipping.address.cep = ""
-    order.shipping.address.phone = "";
-    order.shipping.address.address = "";
-    order.shipping.address.addressNumber = "";
-    order.shipping.address.addressComplement = "";
-    order.shipping.address.district = "";
-    order.shipping.address.city = "";
-    order.shipping.address.state = "";
+    order.payment = {};
+    order.status = 'paid';
 
     // Check if all products in stock.
     checkOrderProductsInStock(order)
@@ -204,7 +199,7 @@ function createOrderPaid(zoomOrder, cb) {
                     if (err) { 
                         return cb(new Error(`Saving created paid order. ${err}`, true, ""));
                     }
-                    sendMail.sendMailToAdmin(`Novo pedido Zoom ${savedOrder._id}`, 'https://www.zunka.com.br/admin/order/' + savedOrder._id + '\n\n');
+                    emailSender.sendMailToAdmin(`Novo pedido Zoom ${savedOrder._id}`, 'https://www.zunka.com.br/admin/order/' + savedOrder._id + '\n\n');
                     return cb(null, true, "");
                 });
             } 

@@ -9,7 +9,7 @@ block append css
 
 block content
     section.shadow
-        h2.title Pedidos
+        h2.title Pedidos2
         .search-order
             input(type='text' v-model='searchOrder' @keyup.enter='getOrders()' placeholder='Pesquise por ordens')
             i.fas.fa-search.fa-lg(@click='getOrders()')
@@ -35,102 +35,11 @@ block content
                 input(type='checkbox' id='showCanceled' v-model:checked='filter.canceled')
                 label(for='showCanceled') Cancelados
         .orders
-            //- a.order(v-for='order, index in orders' v-bind:class='[ order.status ]' @click.shift='showOrderDetail(index)' @click='this.window.location.href="/"')
             a.order(v-for='order, index in orders' v-bind:class='[ order.status ]' @click='showOrderDetail(index, $event)')
                 p {{order.timestamps.shippingAddressSelectedAt | formatDate}} &nbsp&nbsp&nbsp {{order.name}} &nbsp&nbsp&nbsp {{order.totalPrice | formatMoney}} &nbsp&nbsp&nbsp
-                //- p {{order._id}}
                 p {{actionStatus(order)}}
-                //- p {{status(order)}} &nbsp -> &nbsp {{action(order)}}
-        //- .orders
-            //- .order(v-for='order, index in orders' v-bind:class='[ order.status ]')
-                //- a(@click='showOrderDetail(index)')
-                    //- p {{order.timestamps.shippingAddressSelectedAt | formatDate}} &nbsp&nbsp&nbsp
-                    //- p {{order.name}} &nbsp&nbsp&nbsp
-                    //- p {{order.totalPrice | formatMoney}} &nbsp&nbsp&nbsp
-                //- p {{order._id}}
-                //- p {{actionStatus(order)}}
-                //- //- p {{status(order)}} &nbsp -> &nbsp {{action(order)}}
         nav.pagination
             a(v-for='p in pageCount', @click='getOrders(p)', :page='page==p', :p='p', :active='page==p') {{p}}
-    //- .modal(v-if='showModal')
-    .modal(v-if='showModal' @click='hideOrderDetail')
-        .panel
-            .item
-                h3.sub-title Número do pedido
-                P {{orderSelec._id}}
-            .item
-                h3.sub-title Cliente
-                    p Nome: {{orderSelec.name}}
-                    p Email: {{orderSelec.email}}
-                    p CPF: {{orderSelec.cpf}}
-                    p Celular: {{orderSelec.mobileNumber}}
-            .item
-                h3.sub-title Endereço de entrega
-                    p Destinatário: {{orderSelec.shipping.address.name}}
-                    p Telefone: {{orderSelec.shipping.address.phone}}
-                    p {{orderSelec.shipping.address.address}},  {{orderSelec.shipping.address.addressNumber}} {{orderSelec.shipping.address.addressComplement}}
-                    p {{orderSelec.shipping.address.district}}
-                    p {{orderSelec.shipping.address.city}} - {{orderSelec.shipping.address.state}} - Brasil
-                    p {{orderSelec.shipping.address.cep}} 
-            .item
-                h3.sub-title Pagamento
-                p(v-if='orderSelec.payment.method === "money"') Pagamento em dinheiro no memento da entrega
-                p(v-if='orderSelec.payment.method === "transfer"') Transferência bancária
-                p(v-if='orderSelec.payment.method === "paypal" || orderSelec.payment.method === undefined') Paypal
-                p(v-if='orderSelec.payment.method === "ppp-credit"') Cartão de crédito
-                p(v-if='orderSelec.payment.method === "ppp-credit"') Sale id: {{orderSelec.payment.pppExecutePayment.transactions[0].related_resources[0].sale.id}}
-            .item
-                h3.sub-title Envio
-                p {{ orderSelec.shipping.methodDesc }}
-                //- Deprected:begin - still here because old orders.
-                p(v-if='orderSelec.shipping.method === "correios" || orderSelec.shipping.method === "standard"') Correios
-                p(v-if='orderSelec.shipping.method === "motoboy"') Motoboy
-                //- Deprected:end.
-                p(v-if='orderSelec.shipping.carrier !== ""') Prazo: {{orderSelec.shipping.deadline}} dia(s)
-                p(v-if='orderSelec.shipping.carrier !== ""') Valor: {{orderSelec.shipping.price | formatMoney}}          
-            .item(v-if='orderSelec.items.length > 0')
-                h3.sub-title Itens
-                ul
-                    li(v-for='item in orderSelec.items') {{item.name}} &nbsp&nbsp {{item.price | formatMoney}} &nbsp&nbsp {{item.quantity}} unidade(s)
-            .item
-                h3.sub-title Valor total com frete
-                p.price {{ orderSelec.totalPrice | formatMoney }}                        
-            .item
-                h3.sub-title Status
-                p {{status(orderSelec)}}
-                input#verify-payment-completed.btn-primary(type='button' v-if='status(orderSelec) === "Aberto" && orderSelec.payment.method === "ppp-credit"' @click='verifyPaymentCompleted(orderSelec)' value='Verificar se pagamento foi realizado')
-            .item
-                h3.sub-title Ação
-                p {{action(orderSelec)}}
-            //- .change-status(v-if='status(orderSelec) !== "Cancelado"')
-            .item.change-status(v-if='status(orderSelec) !== "Cancelado"')
-                h3.sub-title Alterar status
-                //- No type (older orders).
-                .buttons(v-if='orderSelec.payment.method === undefined || orderSelec.payment.method === "paypal" || orderSelec.payment.method === "transfer" || orderSelec.payment.method === "ppp-credit"')
-                    input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("paid")' value='Pago')
-                    input.btn-primary(type='button' v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("shipped")' value='Enviado')
-                    input.btn-primary(type='button' v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("delivered")' value='Entregue')
-                    input.btn-danger(type='button' v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')            
-                //- //- Paypal.
-                //- .buttons(v-if='orderSelec.payment.method === "paypal"')
-                //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("paid")' value='Pago')
-                //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("shipped")' value='Enviado')
-                //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("delivered")' value='Entregue')
-                //-   input.btn-danger(type='button' v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')
-                //- Money.   
-                .buttons(v-if='orderSelec.payment.method === "money"')
-                    input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("shipped")' value='Enviado')
-                    input.btn-primary(type='button' v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("paid")' value='Pago')
-                    input.btn-primary(type='button' v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("delivered")' value='Entregue')
-                    input.btn-danger(type='button' v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')
-                //- //- transfer.   
-                //- .buttons(v-if='orderSelec.payment.method === "transfer"')
-                //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Aberto"' @click='showSetStatusWindow("paid")' value='Pago')
-                //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Pago"' @click='showSetStatusWindow("shipped")' value='Enviado')
-                //-   input.btn-primary(type='button' v-if='status(orderSelec) === "Enviado"' @click='showSetStatusWindow("delivered")' value='Entregue')
-                //-   input.btn-danger(type='button' v-if='status(orderSelec) !== "Cancelado"' @click='showSetStatusWindow("canceled")' value='Cancelado')              
-            .close-modal
-                input.btn-exit(type='button' @click='hideOrderDetail()' value='Sair')
     .set-status(v-if='setStatusWindow.show')
         .panel
             .item
