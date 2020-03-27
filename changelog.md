@@ -1,3 +1,8 @@
+# 1.4.5 (27 mar 2020)
+## Melhorias
+* Não exibe a opção de pagamento em dinheiro e cartão presencial para pedidos que contêm produtos da Aldo.
+* Exibe opções de pagamento na página de seleção da forma de envio.
+
 
 # 1.4.4 (24 mar 2020)
 ## Bug fix

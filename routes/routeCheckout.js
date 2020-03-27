@@ -214,7 +214,13 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
 			// Calculate box size shipment approximately.
 			let shippingBox = { dealer: "", cepOrigin: CEP_ORIGIN, cepDestiny: order.shipping.address.cep, length: 0, height: 0, width: 0, weight: 0 };
 			// For each item.
+            order.shipping.allProductFromZunka = true;
 			for (let i = 0; i < order.items.length; i++) {
+                // If some product is from outside zunka wherehouse.
+                if (order.items[i].dealerName.toLowerCase() === 'aldo'){
+                    order.shipping.allProductFromZunka = false;
+                }
+                // Dealer name.
                 if (order.items[i].dealerName != "") {
                     shippingBox.dealer = order.items[i].dealerName;
                 }
@@ -265,8 +271,23 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                     // All freights.
                     order.shipping.freights = [];
                     let freights = response.data;
-
+                    let paymentOptionsTexts = [];
                     for (let i=0; i < freights.length; i++) {
+                        let paymentOptions = ['transfer'];
+                        let text = 'Opção de pagamento por transferência bancária';
+                        // Motoboy.
+                        if (freights[i].carrier.toLowerCase() === 'motoboy' ) {
+                            if (order.shipping.allProductFromZunka){
+                                paymentOptions.push('money', 'card-pres');
+                                text += ', dinheiro, cartão de débito ou crédito no momento da entrega';
+                            }
+                        } 
+                        // Correios or shipping company.
+                        else {
+                            paymentOptions.push('credit', 'paypal');
+                            text += ', cartão de crédito ou PayPal';
+                        }
+                        paymentOptionsTexts.push(text);
                         order.shipping.freights.push({
                             id: i + 1,
                             carrier: freights[i].carrier,
@@ -274,10 +295,10 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                             serviceDesc: freights[i].serviceDesc,
                             deadline: freights[i].deadline,
                             price: freights[i].price,
+                            paymentOptions: paymentOptions,
                         });
                     }
-                    // log.debug(`order.shipping.freights: ${JSON.stringify(order.shipping.freights, null, 2)}`);
-
+                    // log.debug(`freights: ${JSON.stringify(paymentOptionsTexts, null, 2)}`);
                     // Save order.
                     order.save(err=>{
                         if (err) {
@@ -288,7 +309,8 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                                 { 
                                     order, 
                                     toBrCurrency: toBrCurrency, 
-                                    toDays: toDays
+                                    toDays: toDays,
+                                    paymentOptionsTexts: paymentOptionsTexts
                                 });
                         }
                     });
@@ -389,6 +411,7 @@ router.post('/shipping-method/order/:order_id', (req, res, next)=>{
                 // log.debug(`selCarrier: ${selCarrier}`);
                 order.shipping.deadline = order.shipping.freights[selFreightIndex].deadline;
                 order.shipping.price = order.shipping.freights[selFreightIndex].price.toFixed(2);
+                order.shipping.paymentOptions = order.shipping.freights[selFreightIndex].paymentOptions;
                 // Motoboy.
                 if (selCarrier == 'Motoboy'){
                     order.shipping.carrier = 'Motoboy';

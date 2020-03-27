@@ -4,10 +4,9 @@ block title
     title Zunka - Forma de envio
 
 block append css
-    link(rel="stylesheet" href="/css/checkout/shippingMethod.css?0003" charset="utf-8")
+    link(rel="stylesheet" href="/css/checkout/shippingMethod.css?0004" charset="utf-8")
 
 block content 
-    //- section.shadow(v-if='!order.shipping.correioResults.length && !order.shipping.motoboyResult.price && !order.shipping.defaultDeliveryResults.length')
     section.shadow
         if order.shipping.freights.length > 0
             h2.title Forma de envio
@@ -18,8 +17,10 @@ block content
                         label
                             input(type='radio' name='freights' id='freightsRadios', value=index onclick='enableBtn()')/ 
                             span !{freight.carrier}
-                            p Entrega em !{toDays(freight.deadline)} após a confirmação do pagamento
-                            p Valor: R$ !{toBrCurrency(freight.price)}
+                            ul
+                                li= paymentOptionsTexts[index] 
+                                li Entrega em !{toDays(freight.deadline)} após a confirmação do pagamento
+                                li Valor: R$ !{toBrCurrency(freight.price)}
                     input.btn-primary(type='button' onclick='selectFreight()' id='continue' value='Continuar' disabled)
             #loading.modal-loading
                 .panel
@@ -83,4 +84,3 @@ append internal_scripts
 
 append external_scripts
     include ../components/axios.js.pug
-    //- script(src='/js/checkout/shippingMethod.js?0008')            

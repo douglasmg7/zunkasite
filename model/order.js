@@ -27,7 +27,6 @@ let item = new mongoose.Schema({
 	weight: { type: Number, required: true },
 });
 
-
 // Motboy freight.
 let freight = new mongoose.Schema({
 	id: { type: Number },
@@ -36,6 +35,7 @@ let freight = new mongoose.Schema({
     serviceDesc:  { type: String },
 	price: { type: Number },
 	deadline: { type: Number },
+	paymentOptions: [{ type: String, enum: ['money', 'transfer', 'card-pres', 'credit', 'paypal'], default: '' }],  // card-pres(Presencial debit or credit card).
 });
 
 // Schema - Correio result.
@@ -94,6 +94,8 @@ let shipping = new mongoose.Schema({
 	motoboyResult: motoboyResult, // Result from motoboy search for shipment price and deadline.
     defaultDeliveryResults: [defaultDeliveryResult], // Result from default delivery.
     freights: [freight],
+    allProductFromZunka: { type: Boolean, default: true },  // No need to by the product if come from zunka - used to define payment options.
+	paymentOptions: [{ type: String, enum: ['money', 'transfer', 'card-pres', 'credit', 'paypal'], default: '' }],  // card-pres(Presencial debit or credit card).
 });
 
 // Schema - Payment.

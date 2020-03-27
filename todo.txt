@@ -1,15 +1,11 @@
+pesquisar pelo comando "vmstat 1 30"
+    atop
+
 Install
     npm install --global rollup
-Atualizar script de backup para a nova localização do zunkasite.
-Script para compilação de arquivos .bundle.
-
-Script de atualização do sistema.
-    Golang apps not reinstall when scripts change.
 
 Verificar adição e remoção produto aldo.
 Checar inconsistência de produtos sem mongo_id no zunkasrv.
-
-Testar pagamento via Pyapal e Crédito.
 
 
 [zunkasite]

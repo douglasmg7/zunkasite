@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "update-system": "./bin/update-and-restart-systems.sh | tee -a $ZUNKAPATH/log/update.log",
-    "build": "./bin/compile_styl.sh",
+    "build": "./bin/compile_styl.sh && ./bin/compile_bundle.sh",
     "start": "pm2 start ecosystem.config.js --env production",
     "start-zunkasite": "pm2 start ecosystem.config.js --only zunkasite --env production",
     "start-zunkasrv": "pm2 start ecosystem.config.js --only zunkasrv --env production",
