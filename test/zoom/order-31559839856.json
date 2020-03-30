@@ -40,7 +40,7 @@
     }
   ],
   "shipping": {
-    "freight_price": 0.01,
+    "freight_price": 12.14,
     "estimate_shipping": 7856,
     "quote_type": "EXTERNAL",
     "shipping_quote_log_id": 0,

@@ -16,6 +16,7 @@ const log = require('../config/log');
 const ppConfig = require('../config/s').paypal;
 
 // Other routes.
+const aldo = require('../util/aldo');
 const routeCheckout = require('./routeCheckout');
 
 module.exports = router;
@@ -51,18 +52,19 @@ router.post('/zoom/order-status', s.basicAuth, function(req, res, next) {
                     if (err) {
                         log.error(err.stack);
                         emailSender.sendMailToDev('Error creating zoom paid order.', err.stack);
+                        return res.status(500).send('Internal error.');
                     }
                     // Processing order.
                     if (inStock) {
-                        // todo - send message to zoom.
+                        return res.status(200).send();
                     } 
                     // Out of stock.
                     else {
                         log.debug(`[zoom] Order not created. ${msg}`);
                         emailSender.sendMailToDev('Zoom order not created.', msg);
+                        return res.status(500).send('Product(s) out of stock.');
                     }
                 });
-                return res.status(200).send();
             });
             break;
         case "canceled":
@@ -145,13 +147,14 @@ function createOrderPaid(zoomOrder, cb) {
             weight: 0
             // price: zoomOrder.product_price.toFixed(2),
         }
-        totalPrice += zoomOrder.items[i].total;
+        totalPrice += zoomOrder.items[i].total * zoomOrder.items[i].amount;
         items.push(item);
     }
     // Create a new order.
     let order = new Order();
     order.items = items;
     order.subtotalPrice = totalPrice.toFixed(2);
+    order.totalPrice = (totalPrice + zoomOrder.shipping.freight_price).toFixed(2);
     order.user_id = '123456789012345678901234';
     order.name = zoomOrder.customer.first_name;
     order.email = 'zoom@zoom.com.br';
