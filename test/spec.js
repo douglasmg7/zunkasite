@@ -1,3 +1,4 @@
+'use strict';
 const request = require('supertest');
 const assert = require('chai').assert;
 const expect = require('chai').expect;
@@ -98,7 +99,7 @@ describe('Zunka', function () {
                 .expect(200, done);
         });
         // Approved payment order - product not exist.
-        it.skip('Order status approved Payment (produto não existe)', function testBanner(done) {
+        it('Order status approved Payment (produto não existe)', function testBanner(done) {
             this.timeout(6000);
             // Mock request.
             nock(s.zoom.host)
@@ -151,13 +152,15 @@ describe('Zunka', function () {
                         // Check if order was created.
                         Order.find({}, {}).sort({"timestamps.placedAt": -1}).limit(1)
                             .then(docs=>{
-                                orderDb = docs[0];
+                                let orderDb = docs[0];
                                 expect(orderDb).to.not.be.null;
+                                expect(orderDb.externalOrderNumber).to.not.be.empty;
+                                expect(orderDb.externalOrderNumber).to.be.equal(zoomOrderTest.order_number);
                                 expect(orderDb.timestamps).to.not.be.null;
                                 expect(orderDb.timestamps.paidAt).to.not.be.null;
                                 // console.log(`orderDb.timestamps.placedAt: ${JSON.stringify(orderDb.timestamps.placedAt, null, 2)}`);
                                 // Now less 5 min.
-                                someMunutesEarly = new Date();
+                                let someMunutesEarly = new Date();
                                 someMunutesEarly.setMinutes(someMunutesEarly.getMinutes - 2);
                                 // console.log(`type of orderDb.timestamps.paidAt: ${typeof orderDb.timestamps.paidAt}`);
                                 expect(orderDb.timestamps.paidAt).to.not.be.above(someMunutesEarly);
@@ -165,18 +168,17 @@ describe('Zunka', function () {
                                 // Total price
                                 let totalPrice = 0;
                                 zoomOrderTest.items.forEach(item=>{
-                                    totalPrice += item.total * item.amount;
+                                    totalPrice += item.total;
                                 });
+                                if (zoomOrderTest.total_discount_value) { totalPrice -= zoomOrderTest.total_discount_value };
                                 expect(parseFloat(orderDb.subtotalPrice)).to.be.above(0);
                                 // console.log(`orderDb.subtotalPrice: ${orderDb.subtotalPrice}`);
                                 // console.log(`totalPrice: ${totalPrice}`);
                                 expect(parseFloat(orderDb.subtotalPrice)).to.be.equal(totalPrice);
                                 expect(parseFloat(orderDb.totalPrice)).to.be.equal(totalPrice + zoomOrderTest.shipping.freight_price);
-                                console.log("*** 6 ***");
-                                expect(orderDb.user_id).to.be.equal('123456789012345678901234');
-                                console.log("*** 7 ***");
+                                expect(orderDb.user_id.toString()).to.be.equal('123456789012345678901234');
                                 expect(orderDb.name).to.be.equal(zoomOrderTest.customer.first_name);
-                                expect(orderDb.email).to.be.equal(zoomOrderTest.customer.email);
+                                expect(orderDb.email).to.be.equal('zoom@zoom.com.br');
                                 expect(orderDb.cpf).to.be.equal(zoomOrderTest.customer.cpf);
                                 expect(orderDb.mobileNumber).to.be.equal(zoomOrderTest.customer.user_phone);
                                 done();
