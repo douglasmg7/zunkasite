@@ -16,6 +16,8 @@ const log = require('../config/log');
 const ppConfig = require('../config/s').paypal;
 
 // Other routes.
+const aldo = require('../util/aldo');
+const zoom = require('../util/zoom');
 const routeCheckout = require('./routeCheckout');
 
 module.exports = router;
@@ -42,27 +44,28 @@ router.post('/zoom/order-status', s.basicAuth, function(req, res, next) {
         case "approvedpayment":
             log.debug(`[Zoom] Payment approved, order number ${req.body.orderNumber}`);
             // Get zoom order.
-            getZoomOrder(req.body.orderNumber, (err, zoomOrder)=>{
+            zoom.getZoomOrder(req.body.orderNumber, (err, zoomOrder)=>{
                 if (err) {
                     log.error(err.stack);
                     return res.status(500).send();
                 }
-                createOrderPaid(zoomOrder, (err, inStock, msg)=>{
+                createPiadOrder(zoomOrder, (err, inStock, msg)=>{
                     if (err) {
                         log.error(err.stack);
                         emailSender.sendMailToDev('Error creating zoom paid order.', err.stack);
+                        return res.status(500).send('Internal error.');
                     }
                     // Processing order.
                     if (inStock) {
-                        // todo - send message to zoom.
+                        return res.status(200).send();
                     } 
                     // Out of stock.
                     else {
                         log.debug(`[zoom] Order not created. ${msg}`);
                         emailSender.sendMailToDev('Zoom order not created.', msg);
+                        return res.status(500).send('Product(s) out of stock.');
                     }
                 });
-                return res.status(200).send();
             });
             break;
         case "canceled":
@@ -76,55 +79,8 @@ router.post('/zoom/order-status', s.basicAuth, function(req, res, next) {
     }
 });
 
-// Print all zoom orders.
-function getZoomOrder(orderId, cb){
-    axios.get(`${s.zoom.host}/order/${orderId}`, {
-        headers: {
-            "Accept": "application/json", 
-        },
-        auth: {
-            username: s.zoom.user,
-            password: s.zoom.password
-        },
-    })
-        .then(response => {
-            // console.log(`zoom orders: ${JSON.stringify(response.data, null, 2)}`);
-            if (response.data.err) {
-                return cb(new Error(`Get zoom order ${orderId}. ${response.data.err}`), null)
-            } 
-            return cb(null, response.data); 
-        })
-        .catch(err => {
-            log.error(`catch - Get zoom order ${orderId}. ${err.stack}`);
-        }); 
-}
-
-// Print all zoom orders.
-function getAllZoomOrders(cb){
-    axios.get(`${s.zoom.host}/orders`, {
-        headers: {
-            "Accept": "application/json", 
-        },
-        auth: {
-            username: s.zoom.user,
-            password: s.zoom.password
-        },
-    })
-        .then(response => {
-            if (response.data.err) {
-                return cb(new Error(`Get all zoom orders. ${response.data.err}`), null)
-            } 
-            // console.log(`zoom orders: ${JSON.stringify(response.data, null, 2)}`);
-            return cb(null, response.data); 
-        })
-        .catch(err => {
-            log.error(`Get all zoom orders (catch). ${err}`);
-        }); 
-}
-
-
 // Create paid order.
-function createOrderPaid(zoomOrder, cb) {
+function createPiadOrder(zoomOrder, cb) {
     // log.debug(`zoomOrder: ${JSON.stringify(zoomOrder, null, 2)}`);
     // Get products itens.
     let items = []
@@ -146,12 +102,18 @@ function createOrderPaid(zoomOrder, cb) {
             // price: zoomOrder.product_price.toFixed(2),
         }
         totalPrice += zoomOrder.items[i].total;
+        // console.log(`item preço: ${zoomOrder.items[i].total}`);
         items.push(item);
     }
     // Create a new order.
     let order = new Order();
+    order.externalOrderNumber = zoomOrder.order_number;
     order.items = items;
+    if (zoomOrder.total_discount_value) { totalPrice -= zoomOrder.total_discount_value };
+    // console.log(`zoomOrder.total_discount_value: ${zoomOrder.total_discount_value}`);
+    // console.log(`zoomOrder.shipping.freight_price: ${zoomOrder.shipping.freight_price}`);
     order.subtotalPrice = totalPrice.toFixed(2);
+    order.totalPrice = (totalPrice + zoomOrder.shipping.freight_price).toFixed(2);
     order.user_id = '123456789012345678901234';
     order.name = zoomOrder.customer.first_name;
     order.email = 'zoom@zoom.com.br';
@@ -466,49 +428,3 @@ router.post('/ppp/webhook-listener', (req, res, next)=>{
         log.error(`Checking payment complete (webhook event). ${err.message}`);
     }
 });
-
-// // PayPal Plus IPN listener post.
-// router.post('/ppp/ipn', (req, res, next)=>{
-// log.debug("IPN Notification Event Received");
-// log.debug(`headers: ${JSON.stringify(req.headers, null, 2)}`);
-// log.debug(`body: ${util.inspect(req.body)}`);
-
-// // Return empty 200 response to acknowledge IPN post success, so it stop to send the same message.
-// res.header("Cache-Control", "no-cache, no-store, must-revalidate");
-// res.header("Pragma", "no-cache");
-// res.header("Expires", 0);
-// res.status(200).end();
-
-// // // Certify if message is válid.
-// // // Convert JSON ipn data to a query string.
-// // let ipnTransactionMessage = req.body;
-// // let formUrlEncodedBody = qs.stringify(ipnTransactionMessage);
-
-// // // Build the body of the verification post message by prefixing 'cmd=_notify-validate'.
-// // let verificationBody = `cmd=_notify-validate&${formUrlEncodedBody}`;
-// // // let verificationBody = `cmd=_notify-validate&${req.body}`;
-
-// // log.debug(`verificationBody: ${verificationBody}`);
-
-// // log.debug('**** 0 ****');
-// // axios.post(ppIpnUrl, verificationBody)
-// // .then(response => {
-// // log.debug('**** 1 ****');
-// // log.debug(`response: ${response}`);
-// // // log.debug(`response: ${util.inspect(response)}`);
-// // if (response.data == "VERIFIED") {
-// // // log.debug(`Verified IPN: IPN message for Transaction ID: ${ipnTransactionMessage.txn_id} is verified.`);
-// // log.debug(`Verified IPN.`);
-// // }
-// // else if (response.data === "INVALID"){
-// // // log.debug(`Invalid IPN: IPN message for Transaction ID: ${ipnTransactionMessage.txn_id} is invalid.`);
-// // log.debug(`Invalid IPN.`);
-// // }
-// // else {
-// // log.debug('Unexpected reponse body.');
-// // }
-// // })
-// // .catch(err => {
-// // log.error(`Sending IPN message to Paypal server. ${err}`);
-// // }); 
-// });

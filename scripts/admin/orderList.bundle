@@ -74,15 +74,16 @@ var app = new Vue({
 			});
 		},    
 		// Show order detail on modal window.
-		showOrderDetail(index){
-            if (event.ctrlKey) {
-                this.orderSelecIndex = index;
-                this.orderSelec = this.orders[index];
-                this.showModal = true;
-            } else {
+        showOrderDetail(index){
+            // Zoom order.
+            if (this.orders[index].externalOrderNumber) {
+                window.location.href = `/admin/zoom-order/${this.orders[index]._id}`;
+            }
+            // Zunka order.
+            else {
                 window.location.href = `/admin/order/${this.orders[index]._id}`;
             }
-		},
+        },
 		// Hide order detail modal.
 		hideOrderDetail(event){
 			// if (event && (event.srcElement.id != 'verify-payment-completed')) {

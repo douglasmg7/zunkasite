@@ -1,68 +1,76 @@
 {
-  "status": "Canceled",
-  "customer": {
-    "cpf": "14714840762",
-    "first_name": "Andressa Franco Soares",
-    "second_name": "Franco",
-    "user_phone": "08008925021"
-  },
-  "items": [
-    {
-      "amount": 1,
-      "total": 90.23,
-      "product_id": "111111111111111111111111",
-      "product_name": "Produto super 1",
-      "product_price": 90.23
+    "status": "Canceled",
+    "customer": {
+        "cpf": "14714840762",
+        "first_name": "Andressa Franco Soares",
+        "second_name": "Franco",
+        "user_phone": "08008925021"
     },
-    {
-      "amount": 3,
-      "total": 90,
-      "product_id": "222222222222222222222222",
-      "product_name": "Produto super 2",
-      "product_price": 30
-    }
-  ],
-  "shipments": [
-    {
-      "invoice": {
-        "cnpj": "",
-        "number": "132456",
-        "issue_date": "25/06/2019 10:00:00"
-      },
-      "sent_date": "25/06/2019 10:00:01",
-      "tracking_number": "OG13246589BR",
-      "sent_items": [
+    "items": [
         {
-          "quantity": 1,
-          "product_id": "123459789"
+            "amount": 1,
+            "total": 90.23,
+            "promotions": [
+                {
+                    "name": "10%",
+                    "value": 9.02,
+                    "promotion_id": "91920561935"
+                }
+            ],
+            "product_id": "111111111111111111111111",
+            "product_name": "Produto super 1",
+            "product_price": 90.23
+        },
+        {
+            "amount": 3,
+            "total": 90,
+            "product_id": "222222222222222222222222",
+            "product_name": "Produto super 2",
+            "product_price": 30
         }
-      ]
-    }
-  ],
-  "shipping": {
-    "freight_price": 0.01,
-    "estimate_shipping": 7856,
-    "quote_type": "EXTERNAL",
-    "shipping_quote_log_id": 0,
-    "shipping_method_id": "POST_OFFICES",
-    "shipping_method_name": "Correios",
-    "external_quote_id": "c84806dd-1e19-475b-9c37-b038853127d7"
-  },
-  "order_number": "31559839856",
-  "creation_date": "24/06/2019 15:49:36",
-  "approved_date": "24/06/2019 00:00:00",
-  "last_modification_date": "28/06/2019 10:00:15",
-  "estimated_delivery_day": "05/04/2050 23:59:59",
-  "delivery_address": {
-    "reference": "",
-    "zipcode": "22271022",
-    "state": "RJ",
-    "city": "Rio de Janeiro",
-    "neighborhood": "Botafogo",
-    "address_number": "14",
-    "additional_info": "5 andar",
-    "address_place": "Rua Visconde de Caravelas",
-    "address_receiver": "Andressa Franco"
-  },
-  "billing_address": {}
+    ],
+    "shipments": [
+        {
+            "invoice": {
+                "cnpj": "",
+                "number": "132456",
+                "issue_date": "25/06/2019 10:00:00"
+            },
+            "sent_date": "25/06/2019 10:00:01",
+            "tracking_number": "OG13246589BR",
+            "sent_items": [
+                {
+                    "quantity": 1,
+                    "product_id": "123459789"
+                }
+            ]
+        }
+    ],
+    "shipping": {
+        "freight_price": 12.14,
+        "estimate_shipping": 7856,
+        "quote_type": "EXTERNAL",
+        "shipping_quote_log_id": 0,
+        "shipping_method_id": "POST_OFFICES",
+        "shipping_method_name": "Correios",
+        "external_quote_id": "c84806dd-1e19-475b-9c37-b038853127d7"
+    },
+    "order_number": "31559839856",
+    "creation_date": "24/06/2019 15:49:36",
+    "approved_date": "24/06/2019 00:00:00",
+    "last_modification_date": "28/06/2019 10:00:15",
+    "estimated_delivery_day": "05/04/2050 23:59:59",
+    "delivery_address": {
+        "reference": "",
+        "zipcode": "22271022",
+        "state": "RJ",
+        "city": "Rio de Janeiro",
+        "neighborhood": "Botafogo",
+        "address_number": "14",
+        "additional_info": "5 andar",
+        "address_place": "Rua Visconde de Caravelas",
+        "address_receiver": "Andressa Franco"
+    },
+    "billing_address": {},
+    "total_discount_value": 100.00
 }

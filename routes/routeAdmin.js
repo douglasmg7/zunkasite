@@ -7,6 +7,8 @@ const fse = require('fs-extra');
 const axios = require('axios');
 const { check, validationResult } = require('express-validator/check');
 const { exec } = require('child_process');
+const moment = require('moment');
+moment.locale('pt-br');
 // File upload.
 const formidable = require('formidable');
 // To resize images.
@@ -25,6 +27,8 @@ const productMakers = require('../util/productMakers.js');
 const redis = require('../db/redis');
 // Internal.
 const s = require('../config/s');
+const zoom = require('../util/zoom');
+const MONTHS = require('../scripts/lib/month-names');
 // Max product quantity by Page.
 const PRODUCT_QTD_BY_PAGE = 20;
 // Max order quantity by Page.
@@ -40,6 +44,11 @@ function checkPermission (req, res, next) {
 	// res.json('status: permission denied');
 	res.redirect('/user/signin');
 };
+
+// Format date.
+function formatDate(val){
+    return moment(val, 'DD/MM/YYYY hh:mm:ss').format('DD-MMM-YYYY kk:mm');
+}
 
 module.exports = router;
 
@@ -419,6 +428,41 @@ router.get('/order/:_id', checkPermission, function(req, res, next) {
             // Order not exist.
             else {
                 return res.status(410).send(`Pedido não existe.`);
+            }
+        }).catch(err=>{
+            return next(err);
+        });
+});
+
+// Zoom order info page.
+router.get('/zoom-order/:_id', checkPermission, function(req, res, next) {
+    let promises = [
+        Order.findById(req.params._id).exec().catch(err=>{log.error(`Finding order by id. ${err}`)})
+    ]
+    Promise.all(promises)
+        .then(([order])=>{
+            // Order exist.
+            if (order) {
+                if (order.externalOrderNumber) {
+                    // Get zoom order.
+                    zoom.getZoomOrder(order.externalOrderNumber, (err, zoomOrder)=>{
+                        if (err) {
+                            log.error(err.stack);
+                            return res.status(500).send();
+                        }
+                        if (!zoomOrder) {
+                            return res.status(500).send('Could not retrive zoom order');
+                        }
+                        return res.render('admin/zoomOrder', { order, zoomOrder, formatDate });
+                    });
+                }
+                else {
+                    return res.status(410).send(`Order not have external order number.`);
+                }
+            }
+            // Order not exist.
+            else {
+                return res.status(410).send(`Order not exist.`);
             }
         }).catch(err=>{
             return next(err);

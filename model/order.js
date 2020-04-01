@@ -135,6 +135,7 @@ let schema = new mongoose.Schema({
 	totalPrice: { type: String }, // Items price plus shipping price.
 	status: { type: String, enum: ['shippingAddressSelected', 'shippingMethodSelected', 'placed', 'paid', 'shipped', 'delivered', 'canceled'], default: 'initiated' },  // Order status.
 	timestamps: timestamps,
+    externalOrderNumber: { type: String},    // Reference to external order.
 },
 	{
 		timestamps: true

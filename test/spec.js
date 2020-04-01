@@ -1,9 +1,11 @@
+'use strict';
 const request = require('supertest');
 const assert = require('chai').assert;
 const expect = require('chai').expect;
 const s = require('../config/s');
 const nock = require('nock');
 const Product = require('../model/product');
+const Order = require('../model/order');
 
 // Array with newest products.
 let newestProducts;
@@ -63,17 +65,13 @@ describe('Zunka', function () {
             request(server)
                 .get('/foo/bar')
                 .expect(404, "Página não encontrada.", done);
-                // .end((err, res)=>{
-                    // console.log(res.text);
-                    // done();
-                // });
         });
     });
 
     // Zoom API.
     describe("Zoom API", ()=>{
         const zoomOrderId = '31559839856'; 
-        const zoomOrderJSON = require(`./zoom/order-${zoomOrderId}.json`);
+        const zoomOrderTest = require(`./zoom/order-${zoomOrderId}.json`);
 
         // Invalid auth.
         it('Inválid authorization', function testBanner(done) {
@@ -90,15 +88,6 @@ describe('Zunka', function () {
                 .auth(s.zunkaSite.user, s.zunkaSite.password)
                 .send({ "orderNumber": "5015679200", "status": "Deleted" })
                 .expect(400, /Unknown status: /, done);
-                // .expect(400, "Unknown status: ", done);
-                // .end((err, res)=>{
-                    // console.log(`res: ${JSON.stringify(res, null, 2)}`);
-                    // console.log(`res.text: ${res.text}`);
-                    // assert.equal(res.text, "");
-                    // assert.equal(res.body, "");
-                    // assert.equal(res.statusCode, 200);
-                    // done();
-                // });
         });
         // New order.
         it('Order status new ', function testBanner(done) {
@@ -107,10 +96,7 @@ describe('Zunka', function () {
                 .post('/ext/zoom/order-status')
                 .auth(s.zunkaSite.user, s.zunkaSite.password)
                 .send({ "orderNumber": zoomOrderId, "status": "New" })
-                .end((err, res)=>{
-                    assert.equal(res.statusCode, 200);
-                    done();
-                });
+                .expect(200, done);
         });
         // Approved payment order - product not exist.
         it('Order status approved Payment (produto não existe)', function testBanner(done) {
@@ -118,22 +104,19 @@ describe('Zunka', function () {
             // Mock request.
             nock(s.zoom.host)
                 .get(`/order/${zoomOrderId}`)
-                .reply(200, zoomOrderJSON);
+                .reply(200, zoomOrderTest);
             // Url request.
             request(server)
                 .post('/ext/zoom/order-status')
                 .auth(s.zunkaSite.user, s.zunkaSite.password)
                 .send({ "orderNumber": zoomOrderId, "status": "ApprovedPayment" })
-                .end((err, res)=>{
-                    assert.equal(res.statusCode, 200);
-                    done();
-                });
+                .expect(500, 'Product(s) out of stock.', done);
         });
         // Order status approved Payment.
         it('Order status approved Payment', function testBanner(done) {
             this.timeout(6000);
             // Request products in stock.
-            zoomOrderJSON.items = [
+            zoomOrderTest.items = [
                 {
                     "amount": 2,
                     "total": newestProducts[0].storeProductPrice * 2,
@@ -149,25 +132,65 @@ describe('Zunka', function () {
                     "product_price": newestProducts[1].storeProductPrice
                 }
             ];
-            // console.log(`zoomOrderJSON: ${JSON.stringify(zoomOrderJSON, null, 2)}`);
+            // console.log(`zoomOrderTest: ${JSON.stringify(zoomOrderTest, null, 2)}`);
             // Mock request.
             nock(s.zoom.host)
                 .get(`/order/${zoomOrderId}`)
-                .reply(200, zoomOrderJSON);
-            console.log(`stock product 1: ${newestProducts[0].storeProductQtd}`);
-            console.log(`stock product 2: ${newestProducts[1].storeProductQtd}`);
+                .reply(200, zoomOrderTest);
+            // console.log(`stock product 1: ${newestProducts[0].storeProductQtd}`);
+            // console.log(`stock product 2: ${newestProducts[1].storeProductQtd}`);
             // Add stock product to test sell.
             Product.updateMany({ _id: { $in:  [newestProducts[0]._id, newestProducts[1]._id] }}, { $inc: { storeProductQtd: 2 }}, err=>{
                 expect(err).to.be.null
-                // Url request.
+                // Approved payment.
                 request(server)
                     .post('/ext/zoom/order-status')
                     .auth(s.zunkaSite.user, s.zunkaSite.password)
                     .send({ "orderNumber": zoomOrderId, "status": "ApprovedPayment" })
                     .end((err, res)=>{
-                        assert.equal(res.statusCode, 200);
-                        done();
-                    });
+                        expect(res.statusCode).to.be.equal(200);
+                        // Check if order was created.
+                        Order.find({}, {}).sort({"timestamps.placedAt": -1}).limit(1)
+                            .then(docs=>{
+                                let orderDb = docs[0];
+                                expect(orderDb).to.not.be.null;
+                                expect(orderDb.externalOrderNumber).to.not.be.empty;
+                                expect(orderDb.externalOrderNumber).to.be.equal(zoomOrderTest.order_number);
+                                expect(orderDb.timestamps).to.not.be.null;
+                                expect(orderDb.timestamps.paidAt).to.not.be.null;
+                                // console.log(`orderDb.timestamps.placedAt: ${JSON.stringify(orderDb.timestamps.placedAt, null, 2)}`);
+                                // Now less 5 min.
+                                let someMunutesEarly = new Date();
+                                someMunutesEarly.setMinutes(someMunutesEarly.getMinutes - 2);
+                                // console.log(`type of orderDb.timestamps.paidAt: ${typeof orderDb.timestamps.paidAt}`);
+                                expect(orderDb.timestamps.paidAt).to.not.be.above(someMunutesEarly);
+                                expect(orderDb.items, "No one order item").to.not.be.empty;
+                                // Total price
+                                let totalPrice = 0;
+                                zoomOrderTest.items.forEach(item=>{
+                                    totalPrice += item.total;
+                                });
+                                if (zoomOrderTest.total_discount_value) { totalPrice -= zoomOrderTest.total_discount_value };
+                                expect(parseFloat(orderDb.subtotalPrice)).to.be.above(0);
+                                // console.log(`orderDb.subtotalPrice: ${orderDb.subtotalPrice}`);
+                                // console.log(`totalPrice: ${totalPrice}`);
+                                expect(parseFloat(orderDb.subtotalPrice)).to.be.equal(totalPrice);
+                                expect(parseFloat(orderDb.totalPrice)).to.be.equal(totalPrice + zoomOrderTest.shipping.freight_price);
+                                expect(orderDb.user_id.toString()).to.be.equal('123456789012345678901234');
+                                expect(orderDb.name).to.be.equal(zoomOrderTest.customer.first_name);
+                                expect(orderDb.email).to.be.equal('zoom@zoom.com.br');
+                                expect(orderDb.cpf).to.be.equal(zoomOrderTest.customer.cpf);
+                                expect(orderDb.mobileNumber).to.be.equal(zoomOrderTest.customer.user_phone);
+                                done();
+                                // // Delete created test order.
+                                // order.remove(err=>{
+                                    // expect(err).to.be.null;
+                                    // done();
+                                // });
+                            }).catch(err=>{
+                                console.log(err.stack);
+                            });
+                        });
             });
 
         });
