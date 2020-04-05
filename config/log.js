@@ -48,9 +48,13 @@ let datePattern = 'YYYY-MM-DD';
 let maxSize = '2m';
 let maxFiles = '15d';
 let _format = format.combine(
-    format.timestamp({'format': () => { return moment().tz('America/Sao_Paulo').format() } }),
-    format.printf(info=>`${info.timestamp}  ${info.level.padEnd(6)}  ${info.message}`)
+    format.timestamp({'format': () => { return moment().tz('America/Sao_Paulo').format('YYYY/MM/DD kk:mm:ss.SSSSSS') } }),
+    format.printf(info=>`${info.timestamp} [zunkasite] [${info.level}] ${info.message}`)
 );
+// let _format = format.combine(
+    // format.timestamp({'format': () => { return moment().tz('America/Sao_Paulo').format() } }),
+    // format.printf(info=>`${info.timestamp}  ${info.level.padEnd(6)}  ${info.message}`)
+// );
 
 // Error log.
 let fileTransportError = new transports.DailyRotateFile({
@@ -93,14 +97,15 @@ const log = createLogger({
 // Console (dev).
 // if(process.env.NODE_ENV === 'development'){
 // if(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test'){
-if(process.env.NODE_ENV === 'development'){
+if(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production'){
     log.add(new transports.Console({
         level: 'debug',
-        format: format.combine(
-            format.timestamp({'format': () => { return moment().tz('America/Sao_Paulo').format() } }),
-            format.label({ label: '[zunka]' }),
-            format.printf(info=>colors[levelColors[info.level]](`${info.label}  ${info.message}`)),
-        )
+        format: _format
+        // format: format.combine(
+            // format.timestamp({'format': () => { return moment().tz('America/Sao_Paulo').format() } }),
+            // format.label({ label: '[zunka]' }),
+            // format.printf(info=>colors[levelColors[info.level]](`${info.label}  ${info.message}`)),
+        // )
     }));
 }
 

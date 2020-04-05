@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 
-pkill -f www
-pkill freightsrv
+# Stop zunkasrv.
 pkill zunkasrv
-# exit 0
+
+# Stop zunkasite.
+pkill -f www
+
+# Stop freight server.
+pkill freightsrv
+
+# Stop zoomproducts.
+pkill zoomproducts

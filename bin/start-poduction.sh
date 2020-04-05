@@ -13,19 +13,20 @@
 sleep .1
 
 # Start freight server.
-freightsrv &
+RUN_MODE=production freightsrv &
 sleep .1
 
 # Start zunkasrv server.
 cd $GS/zunkasrv
-zunkasrv &
+RUN_MODE=production zunkasrv &
 sleep .1
 
 # Start zunka site.
-NODE_ENV=development $GS/zunkasite/bin/www &
+NODE_ENV=production $GS/zunkasite/bin/www &
 sleep .1
 
 # Start zoomproducts.
-zoomproducts &
-sleep .1
+# zoomproducts &
+# sleep .1
+
 cd - > /dev/null
