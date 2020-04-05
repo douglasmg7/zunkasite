@@ -28,7 +28,6 @@ const redis = require('../db/redis');
 // Internal.
 const s = require('../config/s');
 const zoom = require('../util/zoom');
-const MONTHS = require('../scripts/lib/month-names');
 // Max product quantity by Page.
 const PRODUCT_QTD_BY_PAGE = 20;
 // Max order quantity by Page.
