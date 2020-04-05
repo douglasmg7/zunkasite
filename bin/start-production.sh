@@ -22,7 +22,7 @@ RUN_MODE=production zunkasrv &
 sleep .1
 
 # Start zunka site.
-NODE_ENV=production $GS/zunkasite/bin/www &
+NODE_ENV=production DB=production $GS/zunkasite/bin/www &
 sleep .1
 
 # Start zoomproducts.
