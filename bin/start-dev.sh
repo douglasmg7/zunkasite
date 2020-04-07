@@ -26,6 +26,7 @@ NODE_ENV=development $GS/zunkasite/bin/www &
 sleep .1
 
 # Start zoomproducts.
-zoomproducts &
-sleep .1
+# zoomproducts &
+# sleep .1
+
 cd - > /dev/null

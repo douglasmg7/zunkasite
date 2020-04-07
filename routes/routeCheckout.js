@@ -827,6 +827,10 @@ function closeOrder(order, req, res) {
 					default:
 						break;
 				}
+                let shippingDesc = `${order.shipping.carrier}`
+                if (order.shipping.carrier === 'Correios') {
+                    shippingDesc += ` (${order.shipping.methodDesc} - ${order.shipping.methodCode})`
+                }
                 // Not show deadline and price shipping if carrier not defined (agreement shipment)..
                 let shippingDeadlineAndPrice = "";
                 if (order.shipping.carrier !== "") {
@@ -858,10 +862,10 @@ function closeOrder(order, req, res) {
 					'CEP: ' + order.shipping.address.cep + '\n\n' +  
 
 					'Pagamento\n' + 
-					'Método: ' + strPaymentMethod + '\n\n' +  
+					strPaymentMethod + '\n\n' +  
 
 					'Envio\n' + 
-					'Método: ' + order.shipping.methodDesc + shippingDeadlineAndPrice + '\n\n' +
+                    shippingDesc + '\n\n' +
 
 					'Ítens\n' +
 					strItens + '\n' +
@@ -913,7 +917,8 @@ router.get('/estimate-freight', (req, res, next)=>{
                 length: product.storeProductLength,
                 height: product.storeProductHeight,
                 width: product.storeProductWidth,
-                weight: product.storeProductWeight
+                weight: product.storeProductWeight,
+                price: product.storeProductPrice,
             }
             // Get shipping values.
             axios.get(`${s.freightServer.host}/freights/zunka`, {

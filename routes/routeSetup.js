@@ -18,7 +18,7 @@ router.get('/product-info', s.basicAuth, function(req, res, next) {
     // log.debug(`body: ${JSON.stringify(req.body.productsId)}`);
 
     let productsId = [];
-    // Get all products on cart.
+    // Get all products ids.
     for (let i = 0; i < req.body.productsId.length; i++) {
         productsId.push(mongoose.Types.ObjectId(req.body.productsId[i]));
     }
@@ -37,6 +37,7 @@ router.get('/product-info', s.basicAuth, function(req, res, next) {
                 width: dbProducts[i].storeProductWidth,
                 height: dbProducts[i].storeProductHeight,
                 weight: dbProducts[i].storeProductWeight,
+                price: dbProducts[i].storeProductPrice,
             });
         }
         return res.json(products);
