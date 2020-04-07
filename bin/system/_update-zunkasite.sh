@@ -33,13 +33,13 @@ fi
 # Compile bundle files.
 if [[ ! -z $BUNDLE_FILES_CHANGED ]]; then
     echo :: Compiling bundle files...
-    ./bin/compile_bundle.sh
+    ./bin/compile-bundle.sh
 fi
 
 # Compile style files.
 if [[ ! -z $STYLE_FILES_CHANGED ]]; then
     echo :: Compiling style files...
-    ./bin/compile_styl.sh
+    ./bin/compile-styl.sh
 fi
 
 # Reveal secret files.
@@ -56,9 +56,6 @@ fi
 
 # Reload nginx.
 if [[ ! -z $RELOAD_NGINX ]]; then
-    echo :: Reolading nginx...
-    sudo systemctl reload nginx
+    echo :: Signaling to reload nginx...
+    echo true > $ZUNKAPATH/reload-nginx
 fi
-
-# Upgrade zunkasrv.
-$GS/zunkasrv/bin/update-all.sh

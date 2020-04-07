@@ -19,14 +19,15 @@ sleep .1
 # Start zunkasrv server.
 cd $GS/zunkasrv
 zunkasrv &
+cd - > /dev/null
 sleep .1
 
 # Start zunka site.
+cd $GS/zunkasite
 NODE_ENV=development $GS/zunkasite/bin/www &
+cd - > /dev/null
 sleep .1
 
 # Start zoomproducts.
 # zoomproducts &
 # sleep .1
-
-cd - > /dev/null

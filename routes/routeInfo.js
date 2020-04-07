@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const log = require('../config/log');
+const path = require('path');
 const marked = require('marked');
 const markdownCache = require('../model/markdownCache');
 const fs = require('fs');
@@ -114,7 +115,8 @@ router.get('/politics', (req, res, next)=>{
 
 // Versão do sistema.
 router.get('/changelog', (req, res, next)=>{
-    fs.readFile('changelog.md', 'utf8', (err, data)=>{
+    fs.readFile(path.join(__dirname, '..', 'changelog.md'), 'utf8', (err, data)=>{
+        // log.debug(data);
         if (err) { return next(err); }
         res.render('info/changelog', {
             nav: {},

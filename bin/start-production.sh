@@ -19,14 +19,15 @@ sleep .1
 # Start zunkasrv server.
 cd $GS/zunkasrv
 RUN_MODE=production zunkasrv &
+cd - > /dev/null
 sleep .1
 
 # Start zunka site.
+cd $GS/zunkasite
 NODE_ENV=production DB=production $GS/zunkasite/bin/www &
+cd - > /dev/null
 sleep .1
 
 # Start zoomproducts.
 # zoomproducts &
 # sleep .1
-
-cd - > /dev/null

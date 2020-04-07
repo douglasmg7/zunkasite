@@ -6,7 +6,7 @@ const favicon = require('serve-favicon');
 // General log.
 const log = require('./config/log');
 // const util = require('util');
-const version = require('./version');
+const version = require('./package.json').version;
 const HOSTNAME = 'www.zunka.com.br';
 // Run mode.
 let mode = 'undefined';

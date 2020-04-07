@@ -1,3 +1,8 @@
+# 1.5.0 (07 abr 2020)
+## Melhorias
+* Uando valor do produto para estimar valor do frete.
+
+
 # 1.4.5 (27 mar 2020)
 ## Melhorias
 * Não exibe a opção de pagamento em dinheiro e cartão presencial para pedidos que contêm produtos da Aldo.

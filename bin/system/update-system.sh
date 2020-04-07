@@ -2,5 +2,6 @@
 
 cd $(dirname "$0")
 printf "\n\n\n\n*** starting update - %s ***\n" "$(date)"
-./update-systems.sh
-./restart-updated-systems.sh
+./_update-zunkasite.sh
+./_update-golang-services.sh
+./_restart-updated-systems.sh
