@@ -35,7 +35,7 @@ block content
         h3 Destinatário
         p {{order.shipping.address.name}} 
         a(:href='`tel:${this.order.shipping.address.phone }`') {{ order.shipping.address.phone }} &nbsp [Telefone]
-        p {{order.shipping.address.address}},  {{order.shipping.address.addressNumber}} {{order.shipping.address.addressComplement}}
+        p {{order.shipping.address.address}},  {{order.shipping.address.addressNumber}} - {{order.shipping.address.addressComplement}}
         p {{order.shipping.address.district}}
         p {{order.shipping.address.city}} - {{order.shipping.address.state}} - Brasil
         p {{order.shipping.address.cep}} 
@@ -46,7 +46,7 @@ block content
             h3(v-if='order.shipping.carrier === "Correios"') Envio - {{ order.shipping.carrier }} ({{ order.shipping.methodDesc }} - {{ order.shipping.methodCode }})
             h3(v-if='order.shipping.carrier !== "Correios"') Envio - {{ order.shipping.carrier }}
             p(v-if='order.shipping.carrier === ""') {{ order.shipping.methodDesc }}
-            p(v-if='order.shipping.carrier !== ""') {{order.shipping.deadline}} dia(s) &nbsp&nbsp {{order.shipping.price | formatMoney}} &nbsp&nbsp  
+            p(v-if='order.shipping.carrier !== ""') {{order.shipping.deadline}} dia(s) &nbsp - &nbsp {{order.shipping.price | formatMoney}} &nbsp&nbsp  
             p P={{ order.shipping.box.weight | gramsToKg }}kg &nbsp&nbsp C={{ order.shipping.box.length }}cm &nbsp&nbsp A={{ order.shipping.box.height }}cm &nbsp&nbsp L={{ order.shipping.box.width }}cm
             //- Deprected:begin - still here because old orders.
             p(v-if='order.shipping.method === "correios" || order.shipping.method === "standard"') Correios
@@ -70,9 +70,10 @@ block content
         h3(v-if='order.items.length > 0') Produtos
         ul(v-if='order.items.length > 0')
             li(v-for='item in order.items') 
-                p {{item.name}}
-                p {{item.quantity}} unidade{{ item.quantity | addS }}
+                a(:href='"/admin/product/" + item._id') {{item.name}}
                 p {{item.price | formatMoney}}
+                //- p {{item.name}}
+                p {{item.quantity}} unidade{{ item.quantity | addS }}
 
         //- Change order status.
         .change-status(v-if='order.payment && (status(order) !== "cancelado")')

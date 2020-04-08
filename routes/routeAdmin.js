@@ -49,6 +49,14 @@ function formatDate(val){
     return moment(val, 'DD/MM/YYYY hh:mm:ss').format('DD-MMM-YYYY kk:mm');
 }
 
+// Format money.
+function formatMoney(val){
+    if (!val) {
+        return ""
+    }
+    return 'R$ ' + val.toString().replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
 module.exports = router;
 
 /******************************************************************************
@@ -452,7 +460,8 @@ router.get('/zoom-order/:_id', checkPermission, function(req, res, next) {
                         if (!zoomOrder) {
                             return res.status(500).send('Could not retrive zoom order');
                         }
-                        return res.render('admin/zoomOrder', { order, zoomOrder, formatDate });
+                        // log.debug(`zoomOrder: ${JSON.stringify(zoomOrder, null, 2)}`);
+                        return res.render('admin/zoomOrder', { order, zoomOrder, formatDate, formatMoney });
                     });
                 }
                 else {

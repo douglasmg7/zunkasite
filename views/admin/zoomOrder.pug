@@ -8,7 +8,33 @@ block append css
 
 block content 
     section.shadow
-        h2.title(class=order.status) 
+        h2.title(class=zoomOrder.status.toLowerCase())
+            span [Zoom] Pedido&nbsp
+            case zoomOrder.status.toLowerCase()
+                when 'new'
+                    span novo
+                when 'approvedpayment'
+                    span pago
+                when 'processed'
+                    span Processando
+                when 'shipped'
+                    span enviado
+                when 'delivered'
+                    span entregue
+                when 'canceled'
+                    span cancelado
+                default
+                    span [Erro] #{zoomOrder.status}
+        case zoomOrder.status.toLowerCase()
+            when 'shipped'
+                h3(class='verifyDelivery') Verificar se o pedido foi entrege
+            when 'paid'
+                h3(class='send') Pedido deve ser enviado
+            when 'canceled'
+                h3
+            default
+                h3(class='') #{zoomOrder.status}
+        //- h2.title(class=order.status) 
             span Pedido&nbsp
             case order.status
                 when 'canceled'
@@ -20,7 +46,7 @@ block content
                 when 'paid'
                     span pago
         //- Action.
-        case order.status
+        //- case order.status
             when 'shipped'
                 h3(class='verifyDelivery') Verificar se o pedido foi entrege
             when 'paid'
@@ -29,10 +55,10 @@ block content
         h3 Data do pedido 
         p= formatDate(zoomOrder.creation_date)
 
-        h3 Número (Zunka)
+        h3 Número [Zunka]
         p= order._id
 
-        h3 Número (Zoom)
+        h3 Número [Zoom]
         p= zoomOrder.order_number
 
         //- User.
@@ -42,48 +68,39 @@ block content
         a(href=`tel:${zoomOrder.customer.user_phone}`) #{zoomOrder.customer.user_phone} &nbsp [Telefone]
         p #{zoomOrder.customer.cpf} &nbsp [CPF]
 
-        //- //- Address.
-        //- h3 Destinatário
-        //- p {{order.shipping.address.name}} 
-        //- a(:href='`tel:${this.order.shipping.address.phone }`') {{ order.shipping.address.phone }} &nbsp [Telefone]
-        //- p {{order.shipping.address.address}},  {{order.shipping.address.addressNumber}} {{order.shipping.address.addressComplement}}
-        //- p {{order.shipping.address.district}}
-        //- p {{order.shipping.address.city}} - {{order.shipping.address.state}} - Brasil
-        //- p {{order.shipping.address.cep}} 
+        //- Address.
+        h3 Destinatário
+        p= zoomOrder.delivery_address.address_receiver 
+        p #{zoomOrder.delivery_address.address_place},  #{zoomOrder.delivery_address.address_number} - #{zoomOrder.delivery_address.additional_info}
+        p= zoomOrder.delivery_address.neighborhood
+        p #{zoomOrder.delivery_address.city} - #{zoomOrder.delivery_address.state} - Brasil
+        p= zoomOrder.delivery_address.zipcode 
 
-        //- //- Delivery.
-        //- div(v-if='order.shipping.carrier')
-            //- //- h3(v-if='order.shipping.carrier === "Correios"') Envio - {{ order.shipping.carrier }} ({{ order.shipping.methodDesc }} - {{ order.shipping.methodCode }})
-            //- h3(v-if='order.shipping.carrier === "Correios"') Envio - {{ order.shipping.methodDesc }} - {{ order.shipping.methodCode }}
-            //- h3(v-if='order.shipping.carrier !== "Correios"') Envio - {{ order.shipping.carrier }}
-            //- p(v-if='order.shipping.carrier === ""') {{ order.shipping.methodDesc }}
-            //- p(v-if='order.shipping.carrier !== ""') {{order.shipping.deadline}} dia(s) &nbsp&nbsp {{order.shipping.price | formatMoney}} &nbsp&nbsp  
-            //- p P={{ order.shipping.box.weight | gramsToKg }}kg &nbsp&nbsp C={{ order.shipping.box.length }}cm &nbsp&nbsp A={{ order.shipping.box.height }}cm &nbsp&nbsp L={{ order.shipping.box.width }}cm
-            //- //- Deprected:begin - still here because old orders.
-            //- p(v-if='order.shipping.method === "correios" || order.shipping.method === "standard"') Correios
-            //- p(v-if='order.shipping.method === "motoboy"') Motoboy
-            //- //- Deprected:end.
+        //- Delivery.
+        h3 Envio - #{zoomOrder.shipping.shipping_method_name} - #{zoomOrder.shipping.shipping_method_id}
+        p #{zoomOrder.shipping.estimate_shipping} dia(s) &nbsp - &nbsp #{formatMoney(zoomOrder.shipping.freight_price)} &nbsp&nbsp  
 
-        //- //- Payment.
-        //- div(v-if='order.payment')
-            //- h3(v-if='order.payment.method === "money"') Pagamento - dinheiro
-            //- h3(v-if='order.payment.method === "card-machine"') Pagamento - cartão presencial
-            //- h3(v-if='order.payment.method === "transfer"') Pagamento - transferência
-            //- h3(v-if='order.payment.method === "paypal" || order.payment.method === undefined') Pagamento - Paypal
-            //- h3(v-if='!order.payment.pppExecutePayment && (order.payment.method === "ppp-credit")') Pagamento - cartão de crédito 
-            //- h3(v-if='order.payment.pppExecutePayment && (order.payment.method === "ppp-credit")' :title='`${order.payment.pppExecutePayment.transactions[0].related_resources[0].sale.id}`') Pagamento - cartão de crédito 
-            //- p {{ order.totalPrice | formatMoney }}
+        // Payment.
+        if zoomOrder.items
+            - var totalPrice = 0
+            each item in zoomOrder.items
+                - totalPrice += item.total    
+        - totalPrice += zoomOrder.shipping.freight_price
+        if zoomOrder.total_discount_value
+            - totalPrice -= zoomOrder.total_discount_value
+        h3 Pagamento
+        p #{formatMoney(totalPrice)}
 
-        //- //- Verify payment complete for credit card.
-        //- input#verify-payment-completed.btn-primary(type='button' v-if='status(order) === "aberto" && order.payment.method === "ppp-credit"' @click='verifyPaymentCompleted(order)' value='Verificar se pagamento foi realizado')
-
-        //- //- Items.
-        //- h3(v-if='order.items.length > 0') Produtos
-        //- ul(v-if='order.items.length > 0')
-            //- li(v-for='item in order.items') 
-                //- p {{item.name}}
-                //- p {{item.quantity}} unidade{{ item.quantity | addS }}
-                //- p {{item.price | formatMoney}}
+        //- Items.
+        if zoomOrder.items
+            h3 Produtos
+            ul
+                each item in zoomOrder.items
+                    li
+                        - var addS = item.amount > 1 ? "s" : ""
+                        a(href=`/admin/product/${item.product_id}`) #{item.product_name}
+                        p #{formatMoney(item.product_price)}
+                        p #{item.amount} unidade#{addS}
 
         //- //- Change order status.
         //- .change-status(v-if='order.payment && (status(order) !== "cancelado")')
