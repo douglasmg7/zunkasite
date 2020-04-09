@@ -13,7 +13,8 @@ section h2 {
     margin: .5em 0 .3em 0;
 }
 section h2.shippingAddressSelected,
-section h2.shippingMethodSelected {
+section h2.shippingMethodSelected,
+section h2.new {
     margin-top: 0;
     color: var(--black-dark);
 }
@@ -63,7 +64,7 @@ section p {
 section ul {
     margin-left: 1em;
 }
-.set-status {
+#set-status {
     position: fixed; /* Stay in place */
     z-index: 2;
     left: 0;
@@ -77,36 +78,36 @@ section ul {
     flex-flow: column nowrap;
     align-items: center;
 }
-.set-status .panel {
+#set-status .panel {
     margin: 30% auto;
     min-width: 100px;
     border-radius: 4px;
     background-color: var(--white-lighter);
     padding: 1em;
 }
-.set-status .item {
+#set-status .item {
     border-radius: 4px;
     // padding: 1em;
     margin-bottom: 1em;
 }
-.set-status  .item:first-child {
+#set-status  .item:first-child {
     margin-top: 0;
 }
-.set-status .item:last-child {
+#set-status .item:last-child {
     margin-bottom: 0;
 }
-.set-status .item .options {
+#set-status .item .options {
     display: flex;
     align-items: center;
 }
-.set-status .item .options label {
+#set-status .item .options label {
     margin: 0 1em 0 0;
 }
-.set-status .buttons {
+#set-status .buttons {
     display: flex;
     justify-content: space-between;
 }
-.set-status .buttons input {
+#set-status .buttons input {
     flex: 0 1 48%;
     margin-top: 0;
 }

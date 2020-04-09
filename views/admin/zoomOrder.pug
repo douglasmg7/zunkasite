@@ -26,10 +26,15 @@ block content
                 default
                     span [Erro] #{zoomOrder.status}
         case zoomOrder.status.toLowerCase()
+            when 'new'
+                h3(class='verifyPayment') Aguarde o pagamento
+            when 'approvedpayment'
+                h3(class='send') Pedido deve ser processado
+            when 'processed'
+                h3(class='send') Pedido deve ser enviado
             when 'shipped'
                 h3(class='verifyDelivery') Verificar se o pedido foi entrege
-            when 'paid'
-                h3(class='send') Pedido deve ser enviado
+            when 'delivered'
             when 'canceled'
                 h3
             default
@@ -102,40 +107,65 @@ block content
                         p #{formatMoney(item.product_price)}
                         p #{item.amount} unidade#{addS}
 
-        //- //- Change order status.
-        //- .change-status(v-if='order.payment && (status(order) !== "cancelado")')
-            //- //- No type (older orders).
-            //- .buttons(v-if='order.payment.method === undefined || order.payment.method === "paypal" || order.payment.method === "transfer" || order.payment.method === "ppp-credit"')
-                //- input.btn-primary(type='button' v-if='status(order) === "aberto"' @click='showSetStatusWindow("paid")' value='Pedido pago')
-                //- input.btn-primary(type='button' v-if='status(order) === "pago"' @click='showSetStatusWindow("shipped")' value='Pedido enviado')
-                //- input.btn-primary(type='button' v-if='status(order) === "enviado"' @click='showSetStatusWindow("delivered")' value='Pedido entregue')
-            //- //- Money (only motoboy delivery).   
-            //- .buttons(v-if='order.payment.method === "money" || order.payment.method === "card-machine"')
-                //- input.btn-primary(type='button' v-if='status(order) === "aberto"' @click='showSetStatusWindow("shipped")' value='Pedido enviado')
-                //- input.btn-primary(type='button' v-if='status(order) === "enviado"' @click='showSetStatusWindow("delivered")' value='Pedido entregue e pago')
-                //- //- input.btn-primary(type='button' v-if='status(order) === "pago"' @click='showSetStatusWindow("delivered")' value='Pedido entregue')
+        //- Change order status.
+        .change-status
+            .buttons
+                if zoomOrder.status.toLowerCase() == 'approvedpayment'
+                    input#show-set-status-window-button.btn-primary(type='button' onclick='showSetStatusWindow("processed")' value='Pedido processado')
+                if zoomOrder.status.toLowerCase() == 'processed'
+                    input.btn-primary(type='button' onclick='showSetStatusWindow("shipped")' value='Pedido enviado')
+                if zoomOrder.status.toLowerCase() == 'shipped'
+                    input.btn-primary(type='button' onclick='showSetStatusWindow("deliverd")' value='Pedido entregue')
 
-        //- //- Cancel order.
-        //- input.btn-danger(type='button' v-if='order.timestamps.placedAt && (status(order) !== "cancelado")' @click='showSetStatusWindow("canceled")' value='Cancelar pedido')            
+        //- Exit.
+        input.btn-exit(type='button' onclick='javascript:history.back()' value='Sair') 
 
-        //- //- Exit.
-        //- //- input.btn-exit(type='button' onclick='window.location.href="/admin/users"' value='Sair') 
-        //- input.btn-exit(type='button' onclick='javascript:history.back()' value='Sair') 
-        //- //- input.btn-exit(type='button' onclick='window.location.reload(document.referrer);' value='Sair') 
-
-        //- //- Window to return product to stock.
-        //- .set-status(v-if='setStatusWindow.show')
-            //- .panel
-                //- .item
-                    //- h3.title {{ setStatusWindow.message }}
-                    //- .options(v-if='setStatusWindow.showCheckboxUpdateStock')
-                        //- input(type='checkbox' id='updateStock' v-model:checked='setStatusWindow.updateStock')
-                        //- label(for='updateStock') Voltar com o produto para o estoque
-                //- .buttons
-                    //- input.btn-primary(type='button' @click='setStatus()' value='Sim')
-                    //- input.btn-exit(type='button' @click='setStatusWindow.show=false' value='Não')
+        //- Window to set status.
+        #set-status
+            .panel
+                .item
+                    h3#set-status-title message
+                .buttons
+                    //- input#set-status-button.btn-primary(type='button' value='Sim')
+                    input#set-status-button.btn-primary(type='button' onclick='setStatus(action)' value='Sim')
+                    input.btn-exit(type='button' onclick='closeSetStatusWindow()' value='Não')
 
 append internal_scripts
     script.
         let order = !{JSON.stringify(order)};
         let zoomOrder = !{JSON.stringify(zoomOrder)};
+        // Elements.
+        let setStatusWindow = document.getElementById('set-status');
+        let setStatusTitle = document.getElementById('set-status-title');
+        let setStatusButton = document.getElementById('set-status-button');
+        setStatusWindow.style.display = 'none';
+        // Action
+        let action = '';
+        switch(zoomOrder.status.toLowerCase()) {
+            case 'approvedpayment':
+                action = 'process'
+                setStatusTitle.innerHTML = 'Pedido processado?';
+                break;
+            case 'processed':
+                action = 'ship'
+                setStatusTitle.innerHTML = 'Pedido enviado?';
+                break;
+            case 'shipped':
+                action = 'delivery'
+                setStatusTitle.innerHTML = 'Pedido entregue?';
+                break;
+            default:
+                return;
+        }
+        // Show set status window.
+        function showSetStatusWindow(action){
+            setStatusWindow.style.display = 'flex';
+        };
+        // Close set status window.
+        function closeSetStatusWindow(){
+            setStatusWindow.style.display = 'none';
+        }
+        // Set status.
+        function setStatus() {
+            console.log(`action: ${action}`);
+        }

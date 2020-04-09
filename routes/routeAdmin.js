@@ -461,6 +461,9 @@ router.get('/zoom-order/:_id', checkPermission, function(req, res, next) {
                             return res.status(500).send('Could not retrive zoom order');
                         }
                         // log.debug(`zoomOrder: ${JSON.stringify(zoomOrder, null, 2)}`);
+                        // todo - test to remove.
+                        // zoomOrder.status = 'new';
+                        zoomOrder.status = 'approvedpayment';
                         return res.render('admin/zoomOrder', { order, zoomOrder, formatDate, formatMoney });
                     });
                 }
