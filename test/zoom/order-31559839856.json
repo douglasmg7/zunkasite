@@ -23,10 +23,10 @@
         },
         {
             "amount": 3,
-            "total": 90,
+            "total": 120,
             "product_id": "222222222222222222222222",
             "product_name": "Produto super 2",
-            "product_price": 30
+            "product_price": 40
         }
     ],
     "shipments": [
@@ -72,5 +72,5 @@
         "address_receiver": "Andressa Franco"
     },
     "billing_address": {},
-    "total_discount_value": 100.00
+    "total_discount_value": 5.00
 }

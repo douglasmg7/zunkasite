@@ -85,14 +85,23 @@ block content
         h3 Envio - #{zoomOrder.shipping.shipping_method_name} - #{zoomOrder.shipping.shipping_method_id}
         p #{zoomOrder.shipping.estimate_shipping} dia(s) &nbsp - &nbsp #{formatMoney(zoomOrder.shipping.freight_price)} &nbsp&nbsp  
 
-        // Payment.
+        // Products price.
         if zoomOrder.items
             - var totalPrice = 0
             each item in zoomOrder.items
                 - totalPrice += item.total    
+        // Shipping price.
         - totalPrice += zoomOrder.shipping.freight_price
+        // Discount.
         if zoomOrder.total_discount_value
             - totalPrice -= zoomOrder.total_discount_value
+
+        h3 Desconto
+        if zoomOrder.total_discount_value
+            p #{formatMoney(zoomOrder.total_discount_value)}
+        else
+            p #{formatMoney(0)}
+
         h3 Pagamento
         p #{formatMoney(totalPrice)}
 
@@ -110,12 +119,7 @@ block content
         //- Change order status.
         .change-status
             .buttons
-                if zoomOrder.status.toLowerCase() == 'approvedpayment'
-                    input#show-set-status-window-button.btn-primary(type='button' onclick='showSetStatusWindow("processed")' value='Pedido processado')
-                if zoomOrder.status.toLowerCase() == 'processed'
-                    input.btn-primary(type='button' onclick='showSetStatusWindow("shipped")' value='Pedido enviado')
-                if zoomOrder.status.toLowerCase() == 'shipped'
-                    input.btn-primary(type='button' onclick='showSetStatusWindow("deliverd")' value='Pedido entregue')
+                input#btn-show-set-status.btn-primary(type='button' onclick='divSetStatus.style.display = "flex"' value='value')
 
         //- Exit.
         input.btn-exit(type='button' onclick='javascript:history.back()' value='Sair') 
@@ -124,48 +128,45 @@ block content
         #set-status
             .panel
                 .item
-                    h3#set-status-title message
+                    h3#title-set-status message
                 .buttons
-                    //- input#set-status-button.btn-primary(type='button' value='Sim')
-                    input#set-status-button.btn-primary(type='button' onclick='setStatus(action)' value='Sim')
-                    input.btn-exit(type='button' onclick='closeSetStatusWindow()' value='Não')
+                    input.btn-primary(type='button' onclick='setStatus()' value='Sim')
+                    input.btn-exit(type='button' onclick='divSetStatus.style.display = "none"' value='Não')
 
 append internal_scripts
     script.
         let order = !{JSON.stringify(order)};
         let zoomOrder = !{JSON.stringify(zoomOrder)};
         // Elements.
-        let setStatusWindow = document.getElementById('set-status');
-        let setStatusTitle = document.getElementById('set-status-title');
-        let setStatusButton = document.getElementById('set-status-button');
-        setStatusWindow.style.display = 'none';
+        let divSetStatus = document.getElementById('set-status');
+        let titleSetStatus = document.getElementById('title-set-status');
+        let btnShowSetStatus = document.getElementById('btn-show-set-status');
+        divSetStatus.style.display = 'none';
         // Action
         let action = '';
         switch(zoomOrder.status.toLowerCase()) {
             case 'approvedpayment':
                 action = 'process'
-                setStatusTitle.innerHTML = 'Pedido processado?';
+                titleSetStatus.innerHTML = 'Pedido processado?';
+                btnShowSetStatus.value = 'Peido processado'
                 break;
             case 'processed':
                 action = 'ship'
-                setStatusTitle.innerHTML = 'Pedido enviado?';
+                titleSetStatus.innerHTML = 'Pedido enviado?';
+                btnShowSetStatus.value = 'Pedido enviado'
                 break;
             case 'shipped':
                 action = 'delivery'
-                setStatusTitle.innerHTML = 'Pedido entregue?';
+                titleSetStatus.innerHTML = 'Pedido entregue?';
+                btnShowSetStatus.value = 'Pedido entregue'
                 break;
             default:
-                return;
-        }
-        // Show set status window.
-        function showSetStatusWindow(action){
-            setStatusWindow.style.display = 'flex';
-        };
-        // Close set status window.
-        function closeSetStatusWindow(){
-            setStatusWindow.style.display = 'none';
         }
         // Set status.
         function setStatus() {
             console.log(`action: ${action}`);
+            if (action === 'process') {
+                axios.post();
+            }
+            divSetStatus.style.display = 'none';
         }

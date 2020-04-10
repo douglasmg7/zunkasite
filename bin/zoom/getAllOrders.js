@@ -4,6 +4,8 @@
 const axios = require('axios');
 const s = require('../../config/s');
 
+console.log(`${s.zoom.host}/orders`);
+
 axios.get(`${s.zoom.host}/orders`, {
     headers: {
         "Accept": "application/json", 
@@ -15,7 +17,7 @@ axios.get(`${s.zoom.host}/orders`, {
 })
 .then(response => {
     if (response.data.err) {
-        log.error(`Get all zoom orders. ${response.data.err}`);
+        console.error(`Get all zoom orders. ${response.data.err}`);
     } 
     console.log(`orders: ${JSON.stringify(response.data, null, 2)}`);
     // response.data.forEach(order=>{
@@ -24,5 +26,5 @@ axios.get(`${s.zoom.host}/orders`, {
     // });
 })
 .catch(err => {
-    log.error(`catch(). ${err}`);
+    console.error(`catch(). ${err.stack}`);
 }); 

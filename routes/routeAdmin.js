@@ -54,7 +54,7 @@ function formatMoney(val){
     if (!val) {
         return ""
     }
-    return 'R$ ' + val.toString().replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
 module.exports = router;
@@ -138,7 +138,10 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
 	}
 	Promise.all([productPromise])
 	.then(([product])=>{
-        if (product.deletedAt) {
+        if (!product) {
+            res.status(404).send('Produto não existe.');
+        }
+        else if (product.deletedAt) {
             res.status(404).send('Produto removido.');
         } else {
             // log.debug(`warranties: ${JSON.stringify(markdownCache.warranties())}`);
@@ -461,9 +464,6 @@ router.get('/zoom-order/:_id', checkPermission, function(req, res, next) {
                             return res.status(500).send('Could not retrive zoom order');
                         }
                         // log.debug(`zoomOrder: ${JSON.stringify(zoomOrder, null, 2)}`);
-                        // todo - test to remove.
-                        // zoomOrder.status = 'new';
-                        zoomOrder.status = 'approvedpayment';
                         return res.render('admin/zoomOrder', { order, zoomOrder, formatDate, formatMoney });
                     });
                 }
@@ -478,6 +478,28 @@ router.get('/zoom-order/:_id', checkPermission, function(req, res, next) {
         }).catch(err=>{
             return next(err);
         });
+});
+
+// Set zoom order processed.
+router.post('/zoom-order/:_id/processed', checkPermission, function(req, res, next) {
+    axios.post(`${s.zoom.host}/order/${orderId}/processed`, {
+        auth: {
+            username: s.zoom.user,
+            password: s.zoom.password
+        },
+    })
+        .then(response => {
+            console.log(`zoom orders: ${JSON.stringify(response.data, null, 2)}`);
+            if (response.data.err) {
+                return next(err);
+            } else {
+                return res.send('Order set as processed.');
+            }
+        })
+        .catch(err => {
+            log.error(`catch - Set zoom order processed, id: ${orderId}. ${err.stack}`);
+            return next(err);
+        }); 
 });
 
 // Get orders data.
