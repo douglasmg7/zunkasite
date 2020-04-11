@@ -212,9 +212,9 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
         if (order.timestamps.placedAt) { return res.redirect('/user/orders'); }
 		else {
 			// Calculate box size shipment approximately.
-			let shippingBox = { dealer: "", cepOrigin: CEP_ORIGIN, cepDestiny: order.shipping.address.cep, length: 0, height: 0, width: 0, weight: 0 };
-			// For each item.
+			let shippingBox = { dealer: "", cepOrigin: CEP_ORIGIN, cepDestiny: order.shipping.address.cep, length: 0, height: 0, width: 0, weight: 0, price: 0 };
             order.shipping.allProductFromZunka = true;
+			// For each item.
 			for (let i = 0; i < order.items.length; i++) {
                 // If some product is from outside zunka wherehouse.
                 if (order.items[i].dealerName.toLowerCase() === 'aldo'){
@@ -237,9 +237,11 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
 				if (dimemsions[1] > shippingBox.height) { shippingBox.height = dimemsions[1]; }
 				shippingBox.width += dimemsions[0];
 				shippingBox.weight += order.items[i].weight;
-				// Box shipping dimensions.
-				order.shipping.box = shippingBox;
+                // Price.
+                shippingBox.price += parseFloat(order.items[i].price);
 			}
+            // Box shipping dimensions.
+            order.shipping.box = shippingBox;
 
             // Get freights values.
             axios.get(`${s.freightServer.host}/freights/zunka`, {

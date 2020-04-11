@@ -1,6 +1,20 @@
+# 1.5.1 (11 abr 2020)
+## Bug fix
+* Correios não era exibido na hora do fechamento da compra.
+* Peso usado para estimar o frete do correio não estava considerando as gramas.
+
+## Melhorias
+* Negrito para opções de entrega, na página de seleção do método de envio.
+* Texto do item "Forma de pagamento" na página de resumo da ordem.
+* Texto do item "Forma de pagamento" na página de pedidos do usuário.
+
+## Erro ortográfico
+* Página resumo da ordem, correção da palavra "itens".
+
+
 # 1.5.0 (07 abr 2020)
 ## Melhorias
-* Uando valor do produto para estimar valor do frete.
+* Usando valor do produto para estimar valor do frete.
 
 
 # 1.4.5 (27 mar 2020)
@@ -17,13 +31,13 @@
 
 # 1.4.3 (12 fev 2020)
 ## Melhorias
-* Using "vue": "2.6.11"
-* Using "axios": "0.19.2"
+* Usando "vue": "2.6.11"
+* Usando "axios": "0.19.2"
 
 
 # 1.4.2 (12 fev 2020)
 ## Melhorias
-* API to get product informations.
+* API para obter informações do produto.
 
 
 # 1.4.1 (11 fev 2020)
