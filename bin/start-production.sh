@@ -4,7 +4,7 @@
 [[ $0 != -bash ]] && echo Usage: . $BASH_SOURCE && exit 1
 
 # Check environment variable.
-[[ -z "$GS" ]] && printf "[script-start-production] [error]: GS enviorment not defined.\n" >&2 && exit 1 
+[[ -z "$GS" ]] && printf "[start-production-script] [error] GS enviorment not defined.\n" >&2 && exit 1 
 
 # Start services.
 [[ `systemctl status mongodb | awk '/Active/{print $2}'` == inactive ]] && sudo systemctl start mongodb
