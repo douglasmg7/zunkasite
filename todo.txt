@@ -1,5 +1,10 @@
+[zoom]
+Pode fazer mais de um post de ordem enviada, quando itens são enviados separadamente?
+
 pesquisar pelo comando "vmstat 1 30"
     atop
+
+Sleep some time when unauthorized access.
 
 Install
     npm install --global rollup

@@ -9,7 +9,8 @@ function getZoomOrder(orderId, cb){
     // todo - remove test.
     if (process.env.NODE_ENV == 'development') {
         // zoomOrder31559839856.status = 'new';
-        zoomOrder31559839856.status = 'approvedpayment';
+        // zoomOrder31559839856.status = 'approvedpayment';
+        zoomOrder31559839856.status = 'processed';
         return cb(null, zoomOrder31559839856);
     } else {
         axios.get(`${s.zoom.host}/order/${orderId}`, {

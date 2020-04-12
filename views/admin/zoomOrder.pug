@@ -16,7 +16,7 @@ block content
                 when 'approvedpayment'
                     span pago
                 when 'processed'
-                    span Processando
+                    span processado
                 when 'shipped'
                     span enviado
                 when 'delivered'
@@ -129,9 +129,31 @@ block content
             .panel
                 .item
                     h3#title-set-status message
+                    if zoomOrder.status == 'processed'
+                        h3 Nota fiscal
+                        label(for='invoiceNumber') Número
+                        input(type='text' id='invoiceNumber')
+                        label(for='invoiceAccessKey') Chave de acesso
+                        input(type='text' id='invoiceAccessKey')
+                        label(for='invoiceCNPJ') CNPJ
+                        input(type='text' id='invoiceCNPJ')
+                        label(for='invoiceIssueDate') Data da emissão
+                        input(type='text' id='invoiceIssueDate')
+                        label(for='invoiceSeries') Série
+                        input(type='text' id='invoiceSeries')
+                        label(for='invoiceURL') URL
+                        input(type='text' id='invoiceURL')
+                        h3 Informações do envio
+                        label(for='sentDate') Data de envio
+                        input(type='text' id='sentDate')
+                        label(for='carrierName') Transportadora
+                        input(type='text' id='carrierName' value='Correios')
                 .buttons
                     input.btn-primary(type='button' onclick='setStatus()' value='Sim')
                     input.btn-exit(type='button' onclick='divSetStatus.style.display = "none"' value='Não')
+
+append external_scripts
+    include ../components/axios.js.pug
 
 append internal_scripts
     script.
@@ -146,17 +168,17 @@ append internal_scripts
         let action = '';
         switch(zoomOrder.status.toLowerCase()) {
             case 'approvedpayment':
-                action = 'process'
+                action = 'processed'
                 titleSetStatus.innerHTML = 'Pedido processado?';
                 btnShowSetStatus.value = 'Peido processado'
                 break;
             case 'processed':
-                action = 'ship'
+                action = 'shipment'
                 titleSetStatus.innerHTML = 'Pedido enviado?';
                 btnShowSetStatus.value = 'Pedido enviado'
                 break;
             case 'shipped':
-                action = 'delivery'
+                action = 'delivered'
                 titleSetStatus.innerHTML = 'Pedido entregue?';
                 btnShowSetStatus.value = 'Pedido entregue'
                 break;
@@ -165,8 +187,25 @@ append internal_scripts
         // Set status.
         function setStatus() {
             console.log(`action: ${action}`);
-            if (action === 'process') {
-                axios.post();
-            }
-            divSetStatus.style.display = 'none';
+            // Process selected freight.
+            axios.post(window.location.pathname, { action: action, zoomOrderNumber: zoomOrder.order_number }, { headers: {'csrf-token' : csrfToken} })
+            .then(response => {
+                // Validation error.
+                if (response.data.err) {
+                    window.location.href=`/error?err=${response.data.err}`;
+                }
+                if (response.data.success) {
+                    window.location.href=window.location.pathname;
+                } else {
+                    console.error(response.data.errMessage);
+                    divSetStatus.style.display = 'none';
+                    // Give time to hide modal.
+                    setTimeout(()=>{
+                        alert('Alguma coisa não deu certo.');
+                    }, 300);
+                }
+            })
+            .catch(err => {
+                window.location.href=`/error?err=${err}`;
+            })  
         }
