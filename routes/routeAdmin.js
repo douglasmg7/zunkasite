@@ -9,13 +9,16 @@ const { check, validationResult } = require('express-validator/check');
 const { exec } = require('child_process');
 const moment = require('moment');
 moment.locale('pt-br');
+const cnpj = require("@fnando/cnpj/commonjs");
 // File upload.
 const formidable = require('formidable');
 // To resize images.
 const imageUtil = require('../util/image');
 // Models.
+const ObjectId = require('mongoose').Types.ObjectId;
 const Product = require('../model/product');
 const Order = require('../model/order');
+const Invoice = require('../model/invoice');
 const User = require('../model/user');
 const ShippingPrice = require('../model/shippingPrice');
 const Markdown = require('../model/markdown');
@@ -433,7 +436,23 @@ router.get('/order/:_id', checkPermission, function(req, res, next) {
         .then(([order])=>{
             // Order exist.
             if (order) {
-                return res.render('admin/order', { nav: {}, order });
+                if (order.externalOrderNumber) {
+                    // Get zoom order.
+                    zoom.getZoomOrder(order.externalOrderNumber, (err, zoomOrder)=>{
+                        if (err) {
+                            log.error(err.stack);
+                            return res.status(500).send();
+                        }
+                        if (!zoomOrder) {
+                            return res.status(500).send('Could not retrive zoom order');
+                        }
+                        // log.debug(`zoomOrder: ${JSON.stringify(zoomOrder, null, 2)}`);
+                        return res.render('admin/zoomOrder', { order, zoomOrder, formatDate, formatMoney });
+                    });
+                }
+                else {
+                    return res.render('admin/order', { nav: {}, order });
+                }
             }
             // Order not exist.
             else {
@@ -642,6 +661,135 @@ router.post('/api/order/status/:_id/:status', checkPermission, function(req, res
 			});
 		}
 	});
+});
+
+
+/******************************************************************************
+/   INVOICE
+ ******************************************************************************/
+// Get one invoice.
+router.get('/invoice-by-order/:orderId', checkPermission, (req, res, next)=>{
+    try {
+        // log.debug(`req.params.orderId: ${req.params.orderId}`);
+        // let test = new ObjectId(req.params.orderId);
+        // Invoice.findOne({ 'orderId': test })
+        // Invoice.findOne({ 'orderId': req.params.orderId })
+        Invoice.findOne({ 'orderId': new ObjectId(req.params.orderId) })
+            .then(invoice=>{
+                // New invoice.
+                if (!invoice) {
+                    let invoice = {
+                        _id: 'new',
+                        orderId: req.params.orderId,
+                        number: '',
+                        accessKey: '',
+                        cnpj: '',
+                        issueDate: '',
+                        serie: '',
+                        url: '',
+                        invalid: {}
+                    }
+                    invoice.invalid = {};
+                    return res.render('admin/editInvoice', { invoice: invoice });
+                } 
+                // Edit invoice.
+                else {
+                    invoice.invalid = {};
+                    return res.render('admin/editInvoice', { invoice: invoice });
+                }
+            }) 
+            .catch(err=>{
+                return next(err);
+            })
+    } 
+    catch(err) {
+        return next(err);
+    }
+});
+
+// Save invoice.
+router.post('/invoice/:id', checkPermission, (req, res, next)=>{
+    log.debug(`req.body: ${JSON.stringify(req.body, null, 2)}`)
+    let invoice = {
+        _id: req.body._id,
+        orderId: req.body.orderId,
+        number: req.body.number,
+        accessKey: req.body.accessKey,
+        cnpj: req.body.cnpj,
+        issueDate: req.body.issueDate,
+        serie: req.body.serie,
+        url: req.body.url,
+        invalid: {}
+    }
+    // Check fields.
+    // Number.
+    if (!req.body.number.match(/^.{1,24}$/)) {
+        invoice.invalid.number = 'Valor inválido'; 
+    }
+    // Access key.
+    if (!req.body.accessKey.match(/^.{1,24}$/)) {
+        invoice.invalid.accessKey = 'Valor inválido'; 
+    }
+    // CNPJ.
+    if (cnpj.isValid(req.body.cnpj)) {
+        req.body.cnpj = cnpj.format(req.body.cnpj);
+    }
+    else {
+        invoice.invalid.cnpj = 'Valor inválido'; 
+    }
+    // Issue date.
+    if (!req.body.issueDate.match(/^.{1,24}$/)) {
+        invoice.invalid.issueDate = 'Valor inválido'; 
+    }
+    // Serie.
+    if (!req.body.serie.match(/^.{1,24}$/)) {
+        invoice.invalid.serie = 'Valor inválido'; 
+    }
+    // URL.
+    if (!req.body.url.match(/^.{1,100}$/)) {
+        invoice.invalid.url = 'Valor inválido'; 
+    }
+    // Invalid fields.
+    if (Object.keys(invoice.invalid).length) {
+        return res.render('admin/editInvoice', { invoice: invoice });
+    } 
+    // Valid.
+    else {
+        if (invoice._id == "new") { 
+            delete invoice._id; 
+            let invoiceBd = new Invoice(invoice);
+            // log.debug(`invoice._id: ${invoice._id}`);
+            invoiceBd.save()
+                .then(invoice=>{
+                    return res.redirect(`/admin/order/${invoice.orderId}`);
+                })
+                .catch(err=>{
+                    return next(new Error(`Saving invoice ${invoice._id} from order ${invoice.orderId}. ${err}`));
+                });
+        } 
+        else {
+            // log.debug(`invoice._id: ${invoice._id}`);
+            Invoice.findByIdAndUpdate(invoice._id, invoice)
+                .then(()=>{
+                    return res.redirect(`/admin/order/${invoice.orderId}`);
+                })
+                .catch(err=>{
+                    return next(new Error(`Updating invoice ${invoice._id} from order ${invoice.orderId}. ${err}`));
+                })
+        }
+    }
+});
+
+// Delete invoice.
+router.delete('/invoice/:_id', checkPermission, (req, res, next)=>{
+    Invoice.findByIdAndDelete(req.params._id)
+        .then(invoice=>{
+            return res.json({ success: true });
+        })
+        .catch(err=>{
+            log.error(next(new Error(`Deleting invoice ${req.params._id}. ${err.stack}`)));
+            return res.json({ success: false, errMessage: err });
+        })
 });
 
 

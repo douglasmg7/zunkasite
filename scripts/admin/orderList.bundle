@@ -75,14 +75,7 @@ var app = new Vue({
 		},    
 		// Show order detail on modal window.
         showOrderDetail(index){
-            // Zoom order.
-            if (this.orders[index].externalOrderNumber) {
-                window.location.href = `/admin/zoom-order/${this.orders[index]._id}`;
-            }
-            // Zunka order.
-            else {
-                window.location.href = `/admin/order/${this.orders[index]._id}`;
-            }
+            window.location.href = `/admin/order/${this.orders[index]._id}`;
         },
 		// Hide order detail modal.
 		hideOrderDetail(event){

@@ -1,0 +1,92 @@
+extends ../layout/layout
+
+block title
+    title Zunka - Nota fiscal
+
+block append css
+    link(rel="stylesheet" href="/css/admin/editInvoice.css" charset="utf-8")
+
+block content 
+    section.shadow
+        if invoice._id == 'new'
+            h2.title Criar nota fiscal
+        else
+            h2.title Nota fiscal
+
+        form(method='post' action=`/admin/invoice/${invoice._id}`)
+            input(type='hidden' name='_csrf' value=csrfToken)
+            input(type='hidden' name='_id' value=invoice._id)
+            input(type='hidden' name='orderId' value=invoice.orderId)
+
+            //- Number.
+            label(for='number') Número
+            input(type='text' name='number' id='number' value=invoice.number)
+            if invoice.invalid.number
+                label.error(for='number') !{invoice.invalid.number}
+
+            //- Access key.
+            label(for='accessKey') Chave de acesso
+            input(type='text' name='accessKey' id='accessKey' value=invoice.accessKey)
+            if invoice.invalid.accessKey
+                label.error(for='accessKey') !{invoice.invalid.accessKey}
+
+            //- CNPJ.
+            label(for='CNPJ') CNPJ
+            input(type='text' name='cnpj' id='cnpj' value=invoice.cnpj)
+            if invoice.invalid.cnpj
+                label.error(for='cnpj') !{invoice.invalid.cnpj}
+
+            //- Issue date.
+            label(for='issueDate') Data da emissão
+            input(type='text' name='issueDate' id='issueDate' value=invoice.issueDate)
+            if invoice.invalid.issueDate
+                label.error(for='issueDate') !{invoice.invalid.issueDate}
+
+            //- Series.
+            label(for='series') Série
+            input(type='text' name='serie' id='serie' value=invoice.serie)
+            if invoice.invalid.serie
+                label.error(for='serie') !{invoice.invalid.serie}
+
+            //- URL.
+            label(for='URL') URL
+            input(type='text' name='url' id='URL' value=invoice.url)
+            if invoice.invalid.url
+                label.error(for='url') !{invoice.invalid.url}
+
+            //- Buttons.
+            if invoice._id == 'new'
+                input.btn-primary(type='submit', value='Criar')
+            else
+                input.btn-primary(type='submit', value='Salvar')
+                input.btn-danger(type='button' value='Apagar' onclick='deleteInvoice()')
+            input.btn-exit(type='button' onclick=`window.location.href="/admin/order/${invoice.orderId}"` value='Sair') 
+
+append internal_scripts
+    script.
+        //- let orderId = !{JSON.stringify(invoice.orderId)};
+        function deleteInvoice() {
+            if (confirm('Confirma a remoção?')) {
+                axios.delete('/admin/invoice/#{invoice._id}', { headers: { 'csrf-token': '#{csrfToken}' } })
+                .then(response=>{
+                    if (response.data.err) {
+                        console.error(response.data.err);
+                        alert('Alguma coisa deu errada!');
+                    } 
+                    else if (response.data.success) {
+                        window.location.href = '/admin/order/#{invoice.orderId}';
+                    }
+                    else {
+                        console.error(response.data.errMessage);
+                        alert('Alguma coisa deu errada!');
+                    }
+                })
+                .catch((err)=>{
+                    console.error(`${err.response.status} - ${err.response.statusText}`);
+                    alert(`Alguma coisa deu errada!`);
+                });
+            }
+        }
+
+append external_scripts
+    include ../components/axios.js.pug

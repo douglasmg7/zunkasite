@@ -119,6 +119,8 @@ block content
         //- Change order status.
         .change-status
             .buttons
+                if zoomOrder.status == 'processed'
+                    input.btn-primary(type='button' onclick='window.location.href=`/admin/invoice-by-order/${order._id}`;' value='Nota fiscal')
                 input#btn-show-set-status.btn-primary(type='button' onclick='divSetStatus.style.display = "flex"' value='value')
 
         //- Exit.
