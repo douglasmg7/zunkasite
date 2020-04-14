@@ -38,7 +38,7 @@ block content
 
             //- Issue date.
             label(for='issueDate') Data da emissão
-            input(type='text' name='issueDate' id='issueDate' value=invoice.issueDate)
+            input(type='date' name='issueDate' id='issueDate' value=invoice.issueDate)
             if invoice.invalid.issueDate
                 label.error(for='issueDate') !{invoice.invalid.issueDate}
 

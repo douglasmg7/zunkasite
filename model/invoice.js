@@ -6,7 +6,7 @@ let schema = new mongoose.Schema({
   number: { type: String, required: true },
   accessKey: { type: String, required: true },
   cnpj: { type: String, required: true },
-  issueDate: { type: Date, required: true },
+  issueDate: { type: String, required: true },
   serie: { type: String, required: true },
   url: { type: String, required: true },
 },

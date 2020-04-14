@@ -670,10 +670,6 @@ router.post('/api/order/status/:_id/:status', checkPermission, function(req, res
 // Get one invoice.
 router.get('/invoice-by-order/:orderId', checkPermission, (req, res, next)=>{
     try {
-        // log.debug(`req.params.orderId: ${req.params.orderId}`);
-        // let test = new ObjectId(req.params.orderId);
-        // Invoice.findOne({ 'orderId': test })
-        // Invoice.findOne({ 'orderId': req.params.orderId })
         Invoice.findOne({ 'orderId': new ObjectId(req.params.orderId) })
             .then(invoice=>{
                 // New invoice.
@@ -689,7 +685,6 @@ router.get('/invoice-by-order/:orderId', checkPermission, (req, res, next)=>{
                         url: '',
                         invalid: {}
                     }
-                    invoice.invalid = {};
                     return res.render('admin/editInvoice', { invoice: invoice });
                 } 
                 // Edit invoice.
@@ -709,7 +704,7 @@ router.get('/invoice-by-order/:orderId', checkPermission, (req, res, next)=>{
 
 // Save invoice.
 router.post('/invoice/:id', checkPermission, (req, res, next)=>{
-    log.debug(`req.body: ${JSON.stringify(req.body, null, 2)}`)
+    // log.debug(`req.body: ${JSON.stringify(req.body, null, 2)}`)
     let invoice = {
         _id: req.body._id,
         orderId: req.body.orderId,
@@ -738,7 +733,7 @@ router.post('/invoice/:id', checkPermission, (req, res, next)=>{
         invoice.invalid.cnpj = 'Valor inválido'; 
     }
     // Issue date.
-    if (!req.body.issueDate.match(/^.{1,24}$/)) {
+    if (!req.body.issueDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
         invoice.invalid.issueDate = 'Valor inválido'; 
     }
     // Serie.
