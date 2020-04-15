@@ -119,9 +119,9 @@ block content
         //- Change order status.
         .change-status
             .buttons
-                if zoomOrder.status == 'processed'
-                    input.btn-primary(type='button' onclick='window.location.href=`/admin/invoice-by-order/${order._id}`;' value='Nota fiscal')
-                input#btn-show-set-status.btn-primary(type='button' onclick='divSetStatus.style.display = "flex"' value='value')
+                input#btn-show-set-status.btn-primary(type='button' onclick='showSetStatus()' value='value')
+            if zoomOrder.status == 'processed' || zoomOrder.status == 'shipped' || zoomOrder.status == 'delivered'
+                input.btn-primary(type='button' onclick='window.location.href=`/admin/invoice-by-order/${order._id}`;' value='Nota fiscal')
 
         //- Exit.
         input.btn-exit(type='button' onclick='javascript:history.back()' value='Sair') 
@@ -130,26 +130,16 @@ block content
         #set-status
             .panel
                 .item
-                    h3#title-set-status message
+                    h3#title-set-status.title message
                     if zoomOrder.status == 'processed'
-                        h3 Nota fiscal
-                        label(for='invoiceNumber') Número
-                        input(type='text' id='invoiceNumber')
-                        label(for='invoiceAccessKey') Chave de acesso
-                        input(type='text' id='invoiceAccessKey')
-                        label(for='invoiceCNPJ') CNPJ
-                        input(type='text' id='invoiceCNPJ')
-                        label(for='invoiceIssueDate') Data da emissão
-                        input(type='text' id='invoiceIssueDate')
-                        label(for='invoiceSeries') Série
-                        input(type='text' id='invoiceSeries')
-                        label(for='invoiceURL') URL
-                        input(type='text' id='invoiceURL')
-                        h3 Informações do envio
                         label(for='sentDate') Data de envio
-                        input(type='text' id='sentDate')
+                        input(type='date' id='sentDate' value=today)
                         label(for='carrierName') Transportadora
                         input(type='text' id='carrierName' value='Correios')
+                        label(for='trackingNumber') Número de rastreamento
+                        input(type='text' id='trackingNumber' value='')
+                        label(for='carrierUrl') URL de rastreamento
+                        input(type='text' id='carrierUrl' value='www.correios.com.br')
                 .buttons
                     input.btn-primary(type='button' onclick='setStatus()' value='Sim')
                     input.btn-exit(type='button' onclick='divSetStatus.style.display = "none"' value='Não')
@@ -165,7 +155,10 @@ append internal_scripts
         let divSetStatus = document.getElementById('set-status');
         let titleSetStatus = document.getElementById('title-set-status');
         let btnShowSetStatus = document.getElementById('btn-show-set-status');
-        divSetStatus.style.display = 'none';
+        // Show set status panel on load.
+        if (!!{showSetStatusPanel}) {
+            divSetStatus.style.display = 'none';
+        }
         // Action
         let action = '';
         switch(zoomOrder.status.toLowerCase()) {
@@ -186,11 +179,38 @@ append internal_scripts
                 break;
             default:
         }
+        // Show set status panel.
+        function showSetStatus() {
+            // Check if invoice has been registered.
+            if (zoomOrder.status == 'processed') {
+                axios.get(`/admin/invoice-by-order/${order._id}/registred`, { headers: {'csrf-token' : csrfToken} })
+                .then(response => {
+                    // Validation error.
+                    if (response.data.success) {
+                        // Show set status panel.
+                        if (response.data.registred) {
+                            divSetStatus.style.display = 'flex'
+                        }
+                        // Show invoice page.
+                        else {
+                            window.location.href=`/admin/invoice-by-order/${order._id}?setStatus=true`;
+                        }
+                    } else {
+                        console.error(response.data.errMessage);
+                        alert('Alguma coisa não deu certo.');
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert('Alguma coisa não deu certo.');
+                })  
+            }
+        }
         // Set status.
         function setStatus() {
             console.log(`action: ${action}`);
             // Process selected freight.
-            axios.post(window.location.pathname, { action: action, zoomOrderNumber: zoomOrder.order_number }, { headers: {'csrf-token' : csrfToken} })
+            axios.post(`/admin/zoom-order/${order._id}`, { action: action, zoomOrderNumber: zoomOrder.order_number }, { headers: {'csrf-token' : csrfToken} })
             .then(response => {
                 // Validation error.
                 if (response.data.err) {

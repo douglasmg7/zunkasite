@@ -447,52 +447,19 @@ router.get('/order/:_id', checkPermission, function(req, res, next) {
                             return res.status(500).send('Could not retrive zoom order');
                         }
                         // log.debug(`zoomOrder: ${JSON.stringify(zoomOrder, null, 2)}`);
-                        return res.render('admin/zoomOrder', { order, zoomOrder, formatDate, formatMoney });
+                        let today = moment().format('YYY-MM-DD');
+                        // Signal to show set status panel.
+                        let showSetStatusPanel = req.query.setStatus? true: false
+                        return res.render('admin/zoomOrder', { order, zoomOrder, formatDate, formatMoney, today: today, showSetStatusPanel: showSetStatusPanel });
                     });
                 }
                 else {
-                    return res.render('admin/order', { nav: {}, order });
+                    return res.render('admin/order', { order });
                 }
             }
             // Order not exist.
             else {
                 return res.status(410).send(`Pedido não existe.`);
-            }
-        }).catch(err=>{
-            return next(err);
-        });
-});
-
-// Zoom order info page.
-router.get('/zoom-order/:_id', checkPermission, function(req, res, next) {
-    let promises = [
-        Order.findById(req.params._id).exec().catch(err=>{log.error(`Finding order by id. ${err}`)})
-    ]
-    Promise.all(promises)
-        .then(([order])=>{
-            // Order exist.
-            if (order) {
-                if (order.externalOrderNumber) {
-                    // Get zoom order.
-                    zoom.getZoomOrder(order.externalOrderNumber, (err, zoomOrder)=>{
-                        if (err) {
-                            log.error(err.stack);
-                            return res.status(500).send();
-                        }
-                        if (!zoomOrder) {
-                            return res.status(500).send('Could not retrive zoom order');
-                        }
-                        // log.debug(`zoomOrder: ${JSON.stringify(zoomOrder, null, 2)}`);
-                        return res.render('admin/zoomOrder', { order, zoomOrder, formatDate, formatMoney });
-                    });
-                }
-                else {
-                    return res.status(410).send(`Order not have external order number.`);
-                }
-            }
-            // Order not exist.
-            else {
-                return res.status(410).send(`Order not exist.`);
             }
         }).catch(err=>{
             return next(err);
@@ -530,20 +497,85 @@ router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
         // Shipment
         else if (req.body.action === 'shipment') {
             console.log(`${req.body.invoice}`);
-            axios.post(`${s.zoom.host}/order/${req.body.zoomOrderNumber}/processed`, { invoice }, { auth: { username: s.zoom.user, password: s.zoom.password }, })
-                .then(response => {
-                    console.log(`zoom orders: ${JSON.stringify(response.data, null, 2)}`);
-                    if (response.data.err) {
-                        log.error(`Set zoom order shipment, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}, invoice: ${invoice}. ${response.data.err}`);
-                        return res.json({success: false, errMessage: response.data.err});
-                    } else {
-                        return res.json({success: true});
-                    }
-                })
-                .catch(err => {
-                    log.error(`[catch] Set zoom order shipment, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}, invoice: ${invoice}. ${err.stack}`);
-                    return res.json({success: false, errMessage: err.message});
-                }); 
+            // log.debug(`req.body: ${JSON.stringify(req.body, null, 2)}`)
+            let data = {
+                invoice: {
+                    number: req.body.number,
+                    access_key: req.body.accessKey,
+                    cnpj: req.body.cnpj,
+                    issue_date: req.body.issueDate,
+                    series: req.body.series,
+                    url: url
+                },
+                sent_date: req.body.sentDate,
+                carrier_name: req.body.carrierName,
+                sent_items: [{
+                    product_id: '',
+                    quantity: 0
+                }],
+                shipment_id: '0',
+                tracking_number: req.body.trackingNumber,
+                url: req.body.url
+            }
+            // Check fields.
+            // Number.
+            if (!req.body.number.match(/^.{1,24}$/)) {
+                invoice.invalid.number = 'Valor inválido'; 
+            }
+            // Access key.
+            if (!req.body.accessKey.match(/^.{1,24}$/)) {
+                invoice.invalid.accessKey = 'Valor inválido'; 
+            }
+            // CNPJ.
+            if (cnpj.isValid(req.body.cnpj)) {
+                req.body.cnpj = cnpj.format(req.body.cnpj);
+            }
+            else {
+                invoice.invalid.cnpj = 'Valor inválido'; 
+            }
+            // Invalid fields.
+            if (Object.keys(invoice.invalid).length) {
+                return res.render('admin/editInvoice', { invoice: invoice });
+            } 
+            // Valid.
+            else {
+
+                // Find orders.
+                let orderPromise = Order.findById(req.params._id).exec();
+                // Order count.
+                let invoicePromise = Invoice.findOne({ 'orderId': new ObjectId(req.params._id) }).exec();
+                Promise.all([orderPromise, invoicePromise])
+                    .then(([order, invoice])=>{
+                        // No order.
+                        if (!order) {
+                            log.error(`Set zoom order shipped, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. Order not found.`);
+                            return res.json({success: false, errMessage: 'Order not found.'});
+                        }
+                        // No invoice.
+                        if (!invoice){
+                            log.error(`Set zoom order shipped, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. Invoice not found.`);
+                            return res.json({success: false, errMessage: 'Invoice not found.'});
+                        }
+                        // Set shipped on zoom server.
+                        axios.post(`${s.zoom.host}/order/${req.body.zoomOrderNumber}/shipped`, { invoice }, { auth: { username: s.zoom.user, password: s.zoom.password }, })
+                            .then(response => {
+                                console.log(`zoom orders: ${JSON.stringify(response.data, null, 2)}`);
+                                if (response.data.err) {
+                                    log.error(`Set zoom order shipment, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}, invoice: ${invoice}. ${response.data.err}`);
+                                    return res.json({success: false, errMessage: response.data.err});
+                                } else {
+                                    return res.json({success: true});
+                                }
+                            })
+                            .catch(err => {
+                                log.error(`[catch] Set zoom order shipment, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}, invoice: ${invoice}. ${err.stack}`);
+                                return res.json({success: false, errMessage: err.message});
+                            }); 
+                    }).catch(error=>{
+                        log.error(`Set zoom order shipped, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${error.stack}`);
+                        return res.json({success: false, errMessage: 'Alguma coisa deu errado.'});
+                    });
+            }        
         }
         // Delivered.
         else if (req.body.action === 'delivered') {
@@ -667,11 +699,38 @@ router.post('/api/order/status/:_id/:status', checkPermission, function(req, res
 /******************************************************************************
 /   INVOICE
  ******************************************************************************/
+// Check if invoice is registred.
+router.get('/invoice-by-order/:orderId/registred', checkPermission, (req, res, next)=>{
+    try {
+        Invoice.findOne({ 'orderId': new ObjectId(req.params.orderId) })
+            .then(invoice=>{
+                // Exist invoice.
+                if (invoice) {
+                    return res.json({ success: true, registred: true });
+                } 
+                // Not exist invoice.
+                else {
+                    return res.json({ success: true, registred: false });
+                }
+            }) 
+            .catch(err=>{
+                log.error(new Error(`get if invoice registred, order: ${req.params.orderId}. ${err.stack}`));
+                return res.json({ success: false, errMessage: err.message });
+            })
+    } 
+    catch(err) {
+        log.error(new Error(`get if invoice registred, order: ${req.params.orderId}. ${err.stack}`));
+        return res.json({ success: false, errMessage: err.message });
+    }
+});
+
 // Get one invoice.
 router.get('/invoice-by-order/:orderId', checkPermission, (req, res, next)=>{
     try {
         Invoice.findOne({ 'orderId': new ObjectId(req.params.orderId) })
             .then(invoice=>{
+                // Signal to return to the order page with set status panel opened.
+                let setStatus = req.query.setStatus? true: false
                 // New invoice.
                 if (!invoice) {
                     let invoice = {
@@ -685,12 +744,12 @@ router.get('/invoice-by-order/:orderId', checkPermission, (req, res, next)=>{
                         url: '',
                         invalid: {}
                     }
-                    return res.render('admin/editInvoice', { invoice: invoice });
+                    return res.render('admin/editInvoice', { invoice: invoice, setStatus: setStatus });
                 } 
                 // Edit invoice.
                 else {
                     invoice.invalid = {};
-                    return res.render('admin/editInvoice', { invoice: invoice });
+                    return res.render('admin/editInvoice', { invoice: invoice, setStatus: setStatus });
                 }
             }) 
             .catch(err=>{
@@ -750,18 +809,20 @@ router.post('/invoice/:id', checkPermission, (req, res, next)=>{
     } 
     // Valid.
     else {
+        // New.
         if (invoice._id == "new") { 
             delete invoice._id; 
             let invoiceBd = new Invoice(invoice);
-            // log.debug(`invoice._id: ${invoice._id}`);
             invoiceBd.save()
                 .then(invoice=>{
-                    return res.redirect(`/admin/order/${invoice.orderId}`);
+                    let setStatus = req.body.setStatus? '?setStatus=true': '';
+                    return res.redirect(`/admin/order/${invoice.orderId}${setStatus}`);
                 })
                 .catch(err=>{
                     return next(new Error(`Saving invoice ${invoice._id} from order ${invoice.orderId}. ${err}`));
                 });
         } 
+        // Edit existing one.
         else {
             // log.debug(`invoice._id: ${invoice._id}`);
             Invoice.findByIdAndUpdate(invoice._id, invoice)
