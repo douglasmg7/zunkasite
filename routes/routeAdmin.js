@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const log = require('../config/log');
+const util = require('util');
 const path = require('path');
 const fse = require('fs-extra');
 const axios = require('axios');
@@ -447,7 +448,7 @@ router.get('/order/:_id', checkPermission, function(req, res, next) {
                             return res.status(500).send('Could not retrive zoom order');
                         }
                         // log.debug(`zoomOrder: ${JSON.stringify(zoomOrder, null, 2)}`);
-                        let today = moment().format('YYY-MM-DD');
+                        let today = moment().format('YYYY-MM-DD');
                         // Signal to show set status panel.
                         let showSetStatusPanel = req.query.setStatus? true: false
                         return res.render('admin/zoomOrder', { order, zoomOrder, formatDate, formatMoney, today: today, showSetStatusPanel: showSetStatusPanel });
@@ -496,49 +497,38 @@ router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
         }
         // Shipment
         else if (req.body.action === 'shipment') {
-            console.log(`${req.body.invoice}`);
             // log.debug(`req.body: ${JSON.stringify(req.body, null, 2)}`)
-            let data = {
-                invoice: {
-                    number: req.body.number,
-                    access_key: req.body.accessKey,
-                    cnpj: req.body.cnpj,
-                    issue_date: req.body.issueDate,
-                    series: req.body.series,
-                    url: url
-                },
-                sent_date: req.body.sentDate,
-                carrier_name: req.body.carrierName,
-                sent_items: [{
-                    product_id: '',
-                    quantity: 0
-                }],
-                shipment_id: '0',
-                tracking_number: req.body.trackingNumber,
-                url: req.body.url
-            }
             // Check fields.
-            // Number.
-            if (!req.body.number.match(/^.{1,24}$/)) {
-                invoice.invalid.number = 'Valor inválido'; 
+            // Sent date.
+            let invalid = {};
+            // log.debug(`req.body.sentDate: ${req.body.sentDate}`);
+            if (!req.body.sentDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                invalid.sentDate = 'Valor inválido'; 
             }
-            // Access key.
-            if (!req.body.accessKey.match(/^.{1,24}$/)) {
-                invoice.invalid.accessKey = 'Valor inválido'; 
+            // Carrier name.
+            if (!req.body.carrierName.match(/^.{1,100}$/)) {
+                invalid.carrierName = 'Valor inválido'; 
             }
-            // CNPJ.
-            if (cnpj.isValid(req.body.cnpj)) {
-                req.body.cnpj = cnpj.format(req.body.cnpj);
+            // Tracking number.
+            if (!req.body.trackingNumber.match(/^.{1,20}$/)) {
+                invalid.trackingNumber = 'Valor inválido'; 
             }
-            else {
-                invoice.invalid.cnpj = 'Valor inválido'; 
+            // Url.
+            if (!req.body.trackingUrl.match(/^.{1,100}$/)) {
+                invalid.trackingUrl = 'Valor inválido'; 
             }
             // Invalid fields.
-            if (Object.keys(invoice.invalid).length) {
-                return res.render('admin/editInvoice', { invoice: invoice });
+            if (Object.keys(invalid).length) {
+                return res.json({ success: false, invalid });
             } 
             // Valid.
             else {
+                let data = {
+                    sent_date: moment(req.body.sentDate, 'YYYY-MM-DD'),
+                    carrier_name: req.body.carrierName,
+                    tracking_number: req.body.trackingNumber,
+                    url: req.body.trackingUrl,
+                }
 
                 // Find orders.
                 let orderPromise = Order.findById(req.params._id).exec();
@@ -556,23 +546,46 @@ router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
                             log.error(`Set zoom order shipped, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. Invoice not found.`);
                             return res.json({success: false, errMessage: 'Invoice not found.'});
                         }
+                        data.invoice = {
+                            number: invoice.number,
+                            access_key: invoice.accessKey,
+                            cnpj: invoice.cnpj,
+                            issue_date: moment(invoice.issueDate, 'YYYY-MM-DD'),
+                            series: invoice.serie,
+                            url: invoice.url
+                        };
+                        data.sent_items = [];
+                        order.items.forEach(item=>{
+                            data.sent_items.push({
+                                product_id: item._id,
+                                quantity: item.quantity
+                            })
+                        });
+                        // Nothing to put here, so order _id.
+                        data.shipment_id = order._id;
+                        // log.debug(`data: ${JSON.stringify(data, null, 2)}`);
+                        // return res.json({success: false, errMessage: 'some test.'});
+
                         // Set shipped on zoom server.
-                        axios.post(`${s.zoom.host}/order/${req.body.zoomOrderNumber}/shipped`, { invoice }, { auth: { username: s.zoom.user, password: s.zoom.password }, })
+                        axios.post(`${s.zoom.host}/order/${req.body.zoomOrderNumber}/shipment`, data, { auth: { username: s.zoom.user, password: s.zoom.password }, })
                             .then(response => {
-                                console.log(`zoom orders: ${JSON.stringify(response.data, null, 2)}`);
+                                log.debug(`zoom order set shipment response: ${JSON.stringify(response.data, null, 2)}`);
                                 if (response.data.err) {
-                                    log.error(`Set zoom order shipment, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}, invoice: ${invoice}. ${response.data.err}`);
+                                    log.error(`Set zoom order shipment, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}, \ndata: ${JSON.stringify(data, null, 2)}. ${response.data.err}`);
                                     return res.json({success: false, errMessage: response.data.err});
                                 } else {
                                     return res.json({success: true});
                                 }
                             })
                             .catch(err => {
-                                log.error(`[catch] Set zoom order shipment, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}, invoice: ${invoice}. ${err.stack}`);
+                                log.error(`[catch] [axios] Set zoom order shipment, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}, \ndata: ${JSON.stringify(data, null, 2)}\n\t ${err.stack}`);
+                                // log.error(`err.request: ${util.inspect(err.request, true, 2)}`);
+                                log.error(`err.response.data: ${util.inspect(err.response.data)}`);
+                                // log.error(`err.response.headers: ${util.inspect(err.response.headers)}`);
                                 return res.json({success: false, errMessage: err.message});
                             }); 
                     }).catch(error=>{
-                        log.error(`Set zoom order shipped, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${error.stack}`);
+                        log.error(`[catch] Set zoom order shipment, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${error.stack}`);
                         return res.json({success: false, errMessage: 'Alguma coisa deu errado.'});
                     });
             }        

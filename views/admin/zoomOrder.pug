@@ -132,14 +132,25 @@ block content
                 .item
                     h3#title-set-status.title message
                     if zoomOrder.status == 'processed'
+                        //- Data de envio.
                         label(for='sentDate') Data de envio
                         input(type='date' id='sentDate' value=today)
+                        p#invalidSentDate.invalid
+
+                        //- Carrier name.
                         label(for='carrierName') Transportadora
                         input(type='text' id='carrierName' value='Correios')
+                        p#invalidCarrierName.invalid
+
+                        //- Tracking number.
                         label(for='trackingNumber') Número de rastreamento
                         input(type='text' id='trackingNumber' value='')
-                        label(for='carrierUrl') URL de rastreamento
-                        input(type='text' id='carrierUrl' value='www.correios.com.br')
+                        p#invalidTrackingNumber.invalid
+
+                        //- Tracking URL.
+                        label(for='trackingUrl') URL de rastreamento
+                        input(type='text' id='trackingUrl' value='www.correios.com.br')
+                        p#invalidTrackingUrl.invalid
                 .buttons
                     input.btn-primary(type='button' onclick='setStatus()' value='Sim')
                     input.btn-exit(type='button' onclick='divSetStatus.style.display = "none"' value='Não')
@@ -155,6 +166,14 @@ append internal_scripts
         let divSetStatus = document.getElementById('set-status');
         let titleSetStatus = document.getElementById('title-set-status');
         let btnShowSetStatus = document.getElementById('btn-show-set-status');
+        let inputSentDate = document.getElementById('sentDate');
+        let inputCarrierName = document.getElementById('carrierName');
+        let inputTrackingNumber = document.getElementById('trackingNumber');
+        let inputTrackingUrl = document.getElementById('trackingUrl');
+        let InvalidSentDate = document.getElementById('invalidSentDate');
+        let InvalidCarrierName = document.getElementById('invalidCarrierName');
+        let InvalidTrackingNumber = document.getElementById('InvalidTrackingNumber');
+        let InvalidTrackingUrl = document.getElementById('InvalidTrackingUrl');
         // Show set status panel on load.
         if (!!{showSetStatusPanel}) {
             divSetStatus.style.display = 'none';
@@ -178,6 +197,20 @@ append internal_scripts
                 btnShowSetStatus.value = 'Pedido entregue'
                 break;
             default:
+        }
+        // Invalid messages.
+        function setInvalidMessages(invalid) {
+            invalidSentDate.innerHTML = invalid.sentDate || '';
+            invalidCarrierName.innerHTML = invalid.carrierName || '';
+            invalidTrackingNumber.innerHTML = invalid.trackingNumber || '';
+            invalidTrackingUrl.innerHTML = invalid.trackingUrl || '';
+        }
+        // Clear invalid messages.
+        function celarInvalidMessages() {
+            inputSentDate.innerHTML = '';
+            inputCarrierName.innerHTML = '';
+            inputTrackingNumber.innerHTML = '';
+            inputTrackingUrl.innerHTML = '';
         }
         // Show set status panel.
         function showSetStatus() {
@@ -210,15 +243,26 @@ append internal_scripts
         function setStatus() {
             console.log(`action: ${action}`);
             // Process selected freight.
-            axios.post(`/admin/zoom-order/${order._id}`, { action: action, zoomOrderNumber: zoomOrder.order_number }, { headers: {'csrf-token' : csrfToken} })
+            formData = new FormData();
+            data = { action: action, zoomOrderNumber: zoomOrder.order_number };
+            if (action === 'shipment') {
+                data.sentDate = inputSentDate.value;
+                data.carrierName = inputCarrierName.value;
+                data.trackingNumber = inputTrackingNumber.value;
+                data.trackingUrl = inputTrackingUrl.value;
+            }
+            axios.post(`/admin/zoom-order/${order._id}`, data, { headers: {'csrf-token' : csrfToken} })
             .then(response => {
+                //- console.log(response);
                 // Validation error.
-                if (response.data.err) {
-                    window.location.href=`/error?err=${response.data.err}`;
-                }
-                if (response.data.success) {
+                if (response.data.invalid) {
+                    setInvalidMessages(response.data.invalid)
+                } 
+                // Success.
+                else if (response.data.success) {
                     window.location.href=window.location.pathname;
-                } else {
+                } 
+                else {
                     console.error(response.data.errMessage);
                     divSetStatus.style.display = 'none';
                     // Give time to hide modal.
@@ -228,6 +272,8 @@ append internal_scripts
                 }
             })
             .catch(err => {
-                window.location.href=`/error?err=${err}`;
+                console.log(err.stack);
+                alert('Alguma coisa não deu certo.');
+                //- window.location.href=`/error?err=${err}`;
             })  
         }
