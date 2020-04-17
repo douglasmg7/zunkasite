@@ -448,7 +448,7 @@ router.get('/order/:_id', checkPermission, function(req, res, next) {
                             return res.status(500).send('Could not retrive zoom order');
                         }
                         // log.debug(`zoomOrder: ${JSON.stringify(zoomOrder, null, 2)}`);
-                        let today = moment().format('YYYY-MM-DD');
+                        let today = moment().format('YYYY-MM-DDTHH:mm');
                         // Signal to show set status panel.
                         let showSetStatusPanel = req.query.setStatus? true: false
                         return res.render('admin/zoomOrder', { order, zoomOrder, formatDate, formatMoney, today: today, showSetStatusPanel: showSetStatusPanel });
@@ -501,8 +501,8 @@ router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
             // Check fields.
             // Sent date.
             let invalid = {};
-            // log.debug(`req.body.sentDate: ${req.body.sentDate}`);
-            if (!req.body.sentDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            log.debug(`req.body.sentDate: ${req.body.sentDate}`);
+            if (!req.body.sentDate.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)) {
                 invalid.sentDate = 'Valor inválido'; 
             }
             // Carrier name.
@@ -524,7 +524,7 @@ router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
             // Valid.
             else {
                 let data = {
-                    sent_date: moment(req.body.sentDate, 'YYYY-MM-DD'),
+                    sent_date: moment(req.body.sentDate, 'YYYY-MM-DDTHH:mm').format('DD/MM/YYYY HH:mm:00'),
                     carrier_name: req.body.carrierName,
                     tracking_number: req.body.trackingNumber,
                     url: req.body.trackingUrl,
@@ -550,7 +550,7 @@ router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
                             number: invoice.number,
                             access_key: invoice.accessKey,
                             cnpj: invoice.cnpj,
-                            issue_date: moment(invoice.issueDate, 'YYYY-MM-DD'),
+                            issue_date: moment(invoice.issueDate, 'YYYY-MM-DDTHH:mm').format('DD/MM/YYYY HH:mm:00'),
                             series: invoice.serie,
                             url: invoice.url
                         };
@@ -578,11 +578,11 @@ router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
                                 }
                             })
                             .catch(err => {
-                                log.error(`[catch] [axios] Set zoom order shipment, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}, \ndata: ${JSON.stringify(data, null, 2)}\n\t ${err.stack}`);
+                                log.error(`[catch] [axios] Set zoom order shipment, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}, \nresponse.data: ${util.inspect(err.response.data)}, \ndata: ${JSON.stringify(data, null, 2)}\n\t ${err.stack}`);
                                 // log.error(`err.request: ${util.inspect(err.request, true, 2)}`);
-                                log.error(`err.response.data: ${util.inspect(err.response.data)}`);
+                                // log.error(`err.response.data: ${util.inspect(err.response.data)}`);
                                 // log.error(`err.response.headers: ${util.inspect(err.response.headers)}`);
-                                return res.json({success: false, errMessage: err.message});
+                                return res.json({success: false, errMessage: err.response.data});
                             }); 
                     }).catch(error=>{
                         log.error(`[catch] Set zoom order shipment, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${error.stack}`);
@@ -752,7 +752,7 @@ router.get('/invoice-by-order/:orderId', checkPermission, (req, res, next)=>{
                         number: '',
                         accessKey: '',
                         cnpj: '',
-                        issueDate: '',
+                        issueDate: moment().format('YYYY-MM-DDTHH:mm'),
                         serie: '',
                         url: '',
                         invalid: {}
@@ -778,14 +778,6 @@ router.get('/invoice-by-order/:orderId', checkPermission, (req, res, next)=>{
 router.post('/invoice/:id', checkPermission, (req, res, next)=>{
     // log.debug(`req.body: ${JSON.stringify(req.body, null, 2)}`)
     let invoice = {
-        _id: req.body._id,
-        orderId: req.body.orderId,
-        number: req.body.number,
-        accessKey: req.body.accessKey,
-        cnpj: req.body.cnpj,
-        issueDate: req.body.issueDate,
-        serie: req.body.serie,
-        url: req.body.url,
         invalid: {}
     }
     // Check fields.
@@ -805,7 +797,7 @@ router.post('/invoice/:id', checkPermission, (req, res, next)=>{
         invoice.invalid.cnpj = 'Valor inválido'; 
     }
     // Issue date.
-    if (!req.body.issueDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    if (!req.body.issueDate.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)) {
         invoice.invalid.issueDate = 'Valor inválido'; 
     }
     // Serie.
@@ -822,6 +814,15 @@ router.post('/invoice/:id', checkPermission, (req, res, next)=>{
     } 
     // Valid.
     else {
+        delete invoice.invalid;
+        invoice._id = req.body._id;
+        invoice.orderId = req.body.orderId;
+        invoice.number = req.body.number;
+        invoice.accessKey = req.body.accessKey;
+        invoice.cnpj = req.body.cnpj;
+        invoice.issueDate = req.body.issueDate;
+        invoice.serie = req.body.serie;
+        invoice.url = req.body.url;
         // New.
         if (invoice._id == "new") { 
             delete invoice._id; 

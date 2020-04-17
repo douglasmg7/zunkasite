@@ -134,7 +134,7 @@ block content
                     if zoomOrder.status == 'processed'
                         //- Data de envio.
                         label(for='sentDate') Data de envio
-                        input(type='date' id='sentDate' value=today)
+                        input(type='datetime-local' id='sentDate' value=today)
                         p#invalidSentDate.invalid
 
                         //- Carrier name.
@@ -206,11 +206,11 @@ append internal_scripts
             invalidTrackingUrl.innerHTML = invalid.trackingUrl || '';
         }
         // Clear invalid messages.
-        function celarInvalidMessages() {
-            inputSentDate.innerHTML = '';
-            inputCarrierName.innerHTML = '';
-            inputTrackingNumber.innerHTML = '';
-            inputTrackingUrl.innerHTML = '';
+        function clearInvalidMessages() {
+            invalidSentDate.innerHTML = '';
+            invalidCarrierName.innerHTML = '';
+            invalidTrackingNumber.innerHTML = '';
+            invalidTrackingUrl.innerHTML = '';
         }
         // Show set status panel.
         function showSetStatus() {
@@ -256,13 +256,14 @@ append internal_scripts
                 //- console.log(response);
                 // Validation error.
                 if (response.data.invalid) {
-                    setInvalidMessages(response.data.invalid)
+                    setInvalidMessages(response.data.invalid);
                 } 
                 // Success.
                 else if (response.data.success) {
-                    window.location.href=window.location.pathname;
+                    window.location.href=`/admin/order/#{order.id}`;
                 } 
                 else {
+                    clearInvalidMessages();
                     console.error(response.data.errMessage);
                     divSetStatus.style.display = 'none';
                     // Give time to hide modal.
