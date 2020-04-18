@@ -11,7 +11,7 @@ let options = {
 	// useMongoClient: true,  // WARNING: The `useMongoClient` option is no longer necessary in mongoose 5.x, please remove it.
 	socketTimeoutMS: 0,
 	keepAlive: true,
-	reconnectTries: 30,
+	// reconnectTries: 30,  // DeprecationWarning: The option `reconnectTries` is incompatible with the unified topology, please read more by visiting http://bit.ly/2D8WfT6
 	promiseLibrary: global.Promise,  // Set promise for MongoDb Driver.
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
