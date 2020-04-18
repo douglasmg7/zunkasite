@@ -2,16 +2,21 @@
 const log = require('../config/log');
 const axios = require('axios');
 const s = require('../config/s');
-const zoomOrder31559839856 = require('../test/zoom/order-31559839856.json');
+const zoomOrderJson = require('../test/zoom/order-31559839856.json');
+// console.log(`zoomOrderJson.status: ${zoomOrderJson.status}`);
 
 // Get zoom order.
 function getZoomOrder(orderId, cb){
     // todo - remove test.
     if (process.env.NODE_ENV == 'development') {
-        // zoomOrder31559839856.status = 'new';
-        // zoomOrder31559839856.status = 'approvedpayment';
-        zoomOrder31559839856.status = 'processed';
-        return cb(null, zoomOrder31559839856);
+        // zoomorder31559839856.status = 'New';
+        // zoomorder31559839856.status = 'Approvedpayment';
+        // zoomorder31559839856.status = 'Processed';
+        zoomOrderJson.status = 'Shipped';
+        // zoomOrder31559839856.status = 'Delivered';
+        // console.log(`zoomOrderJson.status: ${zoomOrderJson.status}`);
+        zoomOrderJson.status = zoomOrderJson.status.toLowerCase();
+        return cb(null, zoomOrderJson);
     } else {
         axios.get(`${s.zoom.host}/order/${orderId}`, {
             headers: {
@@ -27,6 +32,10 @@ function getZoomOrder(orderId, cb){
                 if (response.data.err) {
                     return cb(new Error(`Get zoom order ${orderId}. ${response.data.err}`), null)
                 } 
+                // todo - test.
+                if (response.status) {
+                    response.status = response.status.toLowerCase();
+                }
                 return cb(null, response.data); 
             })
             .catch(err => {

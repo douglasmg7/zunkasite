@@ -8,9 +8,9 @@ block append css
 
 block content 
     section.shadow
-        h2.title(class=zoomOrder.status.toLowerCase())
+        h2.title(class=zoomOrder.status)
             span [Zoom] Pedido&nbsp
-            case zoomOrder.status.toLowerCase()
+            case zoomOrder.status
                 when 'new'
                     span novo
                 when 'approvedpayment'
@@ -25,7 +25,7 @@ block content
                     span cancelado
                 default
                     span [Erro] #{zoomOrder.status}
-        case zoomOrder.status.toLowerCase()
+        case zoomOrder.status
             when 'new'
                 h3(class='verifyPayment') Aguarde o pagamento
             when 'approvedpayment'
@@ -162,6 +162,7 @@ append internal_scripts
     script.
         let order = !{JSON.stringify(order)};
         let zoomOrder = !{JSON.stringify(zoomOrder)};
+        zoomOrder.status = zoomOrder.status.toLowerCase();
         // Elements.
         let divSetStatus = document.getElementById('set-status');
         let titleSetStatus = document.getElementById('title-set-status');
@@ -180,7 +181,7 @@ append internal_scripts
         }
         // Action
         let action = '';
-        switch(zoomOrder.status.toLowerCase()) {
+        switch(zoomOrder.status) {
             case 'approvedpayment':
                 action = 'processed'
                 titleSetStatus.innerHTML = 'Pedido processado?';
@@ -214,8 +215,12 @@ append internal_scripts
         }
         // Show set status panel.
         function showSetStatus() {
-            // Check if invoice has been registered.
-            if (zoomOrder.status == 'processed') {
+            console.log(`showSetStatus(): ${zoomOrder.status}`);
+            if (zoomOrder.status == 'new' || zoomOrder.status == 'approvedpayment' || zoomOrder.status == 'shipped') {
+                divSetStatus.style.display = 'flex'
+            } 
+            else if (zoomOrder.status == 'processed') {
+                // Check if invoice has been registered.
                 axios.get(`/admin/invoice-by-order/${order._id}/registred`, { headers: {'csrf-token' : csrfToken} })
                 .then(response => {
                     // Validation error.
