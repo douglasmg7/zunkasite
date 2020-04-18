@@ -7,17 +7,19 @@ const zoomOrderJson = require('../test/zoom/order-31559839856.json');
 
 // Get zoom order.
 function getZoomOrder(orderId, cb){
-    // todo - remove test.
-    if (process.env.NODE_ENV == 'development') {
-        // zoomorder31559839856.status = 'New';
-        // zoomorder31559839856.status = 'Approvedpayment';
-        // zoomorder31559839856.status = 'Processed';
-        zoomOrderJson.status = 'Shipped';
-        // zoomOrder31559839856.status = 'Delivered';
-        // console.log(`zoomOrderJson.status: ${zoomOrderJson.status}`);
+    // if (process.env.NODE_ENV == 'development') {
+    if (process.env.NODE_ENV == 'nothing') {
+        // zoomOrderJson.status = 'New';
+        // zoomOrderJson.status = 'Approvedpayment';
+        // zoomOrderJson.status = 'Processed';
+        // zoomOrderJson.status = 'Shipped';
+        // zoomOrderJson.status = 'Delivered';
+        log.debug('Getting zoom order from json file.');
+        log.debug(`zoomOrderJson.status: ${zoomOrderJson.status}`);
         zoomOrderJson.status = zoomOrderJson.status.toLowerCase();
         return cb(null, zoomOrderJson);
     } else {
+        // log.debug('Getting zoom order from zoom server.');
         axios.get(`${s.zoom.host}/order/${orderId}`, {
             headers: {
                 "Accept": "application/json", 
@@ -28,13 +30,12 @@ function getZoomOrder(orderId, cb){
             },
         })
             .then(response => {
-                // console.log(`zoom orders: ${JSON.stringify(response.data, null, 2)}`);
+                // log.debug(`zoom orders: ${JSON.stringify(response.data, null, 2)}`);
                 if (response.data.err) {
                     return cb(new Error(`Get zoom order ${orderId}. ${response.data.err}`), null)
                 } 
-                // todo - test.
-                if (response.status) {
-                    response.status = response.status.toLowerCase();
+                if (response.data.status) {
+                    response.data.status = response.data.status.toLowerCase();
                 }
                 return cb(null, response.data); 
             })

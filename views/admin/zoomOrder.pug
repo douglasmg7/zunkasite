@@ -119,12 +119,16 @@ block content
         //- Change order status.
         .change-status
             .buttons
-                input#btn-show-set-status.btn-primary(type='button' onclick='showSetStatus()' value='value')
-            if zoomOrder.status == 'processed' || zoomOrder.status == 'shipped' || zoomOrder.status == 'delivered'
-                input.btn-primary(type='button' onclick='window.location.href=`/admin/invoice-by-order/${order._id}`;' value='Nota fiscal')
+                //- Show set status.
+                if zoomOrder.status == 'approvedpayment' || zoomOrder.status == 'processed' || zoomOrder.status == 'shipped'
+                    input#btn-show-set-status.btn-primary(type='button' onclick='showSetStatus()' value='value')
+                //- Show invoice.
+                if zoomOrder.status == 'processed' || zoomOrder.status == 'shipped' || zoomOrder.status == 'delivered'
+                    input.btn-primary(type='button' onclick='window.location.href=`/admin/invoice-by-order/${order._id}`;' value='Nota fiscal')
 
         //- Exit.
-        input.btn-exit(type='button' onclick='javascript:history.back()' value='Sair') 
+        input.btn-exit(type='button' onclick='window.location.href="/admin/orders"' value='Sair') 
+        //- input.btn-exit(type='button' onclick='javascript:history.back()' value='Sair') 
 
         //- Window to set status.
         #set-status
@@ -151,6 +155,12 @@ block content
                         label(for='trackingUrl') URL de rastreamento
                         input(type='text' id='trackingUrl' value='www.correios.com.br')
                         p#invalidTrackingUrl.invalid
+                    if zoomOrder.status == 'shipped'
+                        //- Data da entrega.
+                        label(for='deliveryDate') Data da entrega
+                        input(type='datetime-local' id='deliveryDate' value=today)
+                        p#invalidDeliveryDate.invalid
+
                 .buttons
                     input.btn-primary(type='button' onclick='setStatus()' value='Sim')
                     input.btn-exit(type='button' onclick='divSetStatus.style.display = "none"' value='Não')
@@ -162,7 +172,7 @@ append internal_scripts
     script.
         let order = !{JSON.stringify(order)};
         let zoomOrder = !{JSON.stringify(zoomOrder)};
-        zoomOrder.status = zoomOrder.status.toLowerCase();
+        //- zoomOrder.status = zoomOrder.status.toLowerCase();
         // Elements.
         let divSetStatus = document.getElementById('set-status');
         let titleSetStatus = document.getElementById('title-set-status');
@@ -171,10 +181,12 @@ append internal_scripts
         let inputCarrierName = document.getElementById('carrierName');
         let inputTrackingNumber = document.getElementById('trackingNumber');
         let inputTrackingUrl = document.getElementById('trackingUrl');
+        let inputDeliveryDate = document.getElementById('deliveryDate');
         let InvalidSentDate = document.getElementById('invalidSentDate');
         let InvalidCarrierName = document.getElementById('invalidCarrierName');
-        let InvalidTrackingNumber = document.getElementById('InvalidTrackingNumber');
-        let InvalidTrackingUrl = document.getElementById('InvalidTrackingUrl');
+        let InvalidTrackingNumber = document.getElementById('invalidTrackingNumber');
+        let InvalidTrackingUrl = document.getElementById('invalidTrackingUrl');
+        let InvalidDeliveryDate = document.getElementById('invalidDeliveryDate');
         // Show set status panel on load.
         if (!!{showSetStatusPanel}) {
             divSetStatus.style.display = 'none';
@@ -185,7 +197,7 @@ append internal_scripts
             case 'approvedpayment':
                 action = 'processed'
                 titleSetStatus.innerHTML = 'Pedido processado?';
-                btnShowSetStatus.value = 'Peido processado'
+                btnShowSetStatus.value = 'Pedido processado'
                 break;
             case 'processed':
                 action = 'shipment'
@@ -201,21 +213,31 @@ append internal_scripts
         }
         // Invalid messages.
         function setInvalidMessages(invalid) {
-            invalidSentDate.innerHTML = invalid.sentDate || '';
-            invalidCarrierName.innerHTML = invalid.carrierName || '';
-            invalidTrackingNumber.innerHTML = invalid.trackingNumber || '';
-            invalidTrackingUrl.innerHTML = invalid.trackingUrl || '';
+            if(zoomOrder.status == 'processed') {
+                invalidSentDate.innerHTML = invalid.sentDate || '';
+                invalidCarrierName.innerHTML = invalid.carrierName || '';
+                invalidTrackingNumber.innerHTML = invalid.trackingNumber || '';
+                invalidTrackingUrl.innerHTML = invalid.trackingUrl || '';
+            }
+            if(zoomOrder.status == 'shipped') {
+                InvalidDeliveryDate.innerHTML = invalid.deliveryDate || '';
+            }
         }
         // Clear invalid messages.
         function clearInvalidMessages() {
-            invalidSentDate.innerHTML = '';
-            invalidCarrierName.innerHTML = '';
-            invalidTrackingNumber.innerHTML = '';
-            invalidTrackingUrl.innerHTML = '';
+            if(zoomOrder.status == 'processed') {
+                invalidSentDate.innerHTML = '';
+                invalidCarrierName.innerHTML = '';
+                invalidTrackingNumber.innerHTML = '';
+                invalidTrackingUrl.innerHTML = '';
+            }
+            if(zoomOrder.status == 'shipped') {
+                InvalidDeliveryDate.innerHTML = '';
+            }
         }
         // Show set status panel.
         function showSetStatus() {
-            console.log(`showSetStatus(): ${zoomOrder.status}`);
+            //- console.log(`showSetStatus(): ${zoomOrder.status}`);
             if (zoomOrder.status == 'new' || zoomOrder.status == 'approvedpayment' || zoomOrder.status == 'shipped') {
                 divSetStatus.style.display = 'flex'
             } 
@@ -246,15 +268,20 @@ append internal_scripts
         }
         // Set status.
         function setStatus() {
-            console.log(`action: ${action}`);
+            //- console.log(`action: ${action}`);
             // Process selected freight.
             formData = new FormData();
             data = { action: action, zoomOrderNumber: zoomOrder.order_number };
+            // Shipment.
             if (action === 'shipment') {
                 data.sentDate = inputSentDate.value;
                 data.carrierName = inputCarrierName.value;
                 data.trackingNumber = inputTrackingNumber.value;
                 data.trackingUrl = inputTrackingUrl.value;
+            } 
+            // Delivered.
+            else if (action === 'delivered') {
+                data.deliveryDate = inputDeliveryDate.value;
             }
             axios.post(`/admin/zoom-order/${order._id}`, data, { headers: {'csrf-token' : csrfToken} })
             .then(response => {

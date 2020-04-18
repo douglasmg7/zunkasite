@@ -469,9 +469,9 @@ router.get('/order/:_id', checkPermission, function(req, res, next) {
 
 // Set zoom order processed.
 router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
-    log.debug(`req.params._id: ${req.params._id}`);
-    log.debug(`req.body.zoomOrderNumber: ${req.body.zoomOrderNumber}`);
-    log.debug(`req.body.action: ${req.body.action}`);
+    // log.debug(`req.params._id: ${req.params._id}`);
+    // log.debug(`req.body.zoomOrderNumber: ${req.body.zoomOrderNumber}`);
+    // log.debug(`req.body.action: ${req.body.action}`);
     // Not valid zoom order number.
     if (!req.body.zoomOrderNumber) {
         return res.json({success: false, errMessage: `Inválido zoom order number: ${req.body.zoomOrderNumber}`});
@@ -491,8 +491,8 @@ router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
                     }
                 })
                 .catch(err => {
-                    log.error(`[catch] Set zoom order processed, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${err.stack}`);
-                    return res.json({success: false, errMessage: err.message});
+                    log.error(`[catch] [axios] Set zoom order processed, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}\nresponse.hreaders: ${util.inspect(err.response.headers)}\nresponse.data: ${util.inspect(err.response.data)}\n${err.stack}`);
+                    return res.json({success: false, errMessage: err.response.data});
                 }); 
         }
         // Shipment
@@ -590,24 +590,40 @@ router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
                     });
             }        
         }
-        // Delivered.
+        // Delivery.
         else if (req.body.action === 'delivered') {
-            let config = { auth: { username: s.zoom.user, password: s.zoom.password } }
-            if (req.body.deliveredDate) { config.params = { delivered_date: req.body.deliveredDate } }
-            axios.put(`${s.zoom.host}/order/${req.body.zoomOrderNumber}/delivered`, {}, config)
-                .then(response => {
-                    console.log(`zoom orders: ${JSON.stringify(response.data, null, 2)}`);
-                    if (response.data.err) {
-                        log.error(`Set zoom order delivered, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${response.data.err}`);
-                        return res.json({success: false, errMessage: response.data.err});
-                    } else {
-                        return res.json({success: true});
-                    }
-                })
-                .catch(err => {
-                    log.error(`[catch] Set zoom order delivered, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${err.stack}`);
-                    return res.json({success: false, errMessage: err.message});
-                }); 
+            log.debug(`req.body: ${JSON.stringify(req.body, null, 2)}`)
+            // Check fields.
+            let invalid = {};
+            if (!req.body.deliveryDate.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)) {
+                invalid.deliveryDate = 'Valor inválido'; 
+            }
+            // Invalid fields.
+            if (Object.keys(invalid).length) {
+                return res.json({ success: false, invalid });
+            } 
+            // Valid.
+            else {
+                // Set shipped on zoom server.
+                let config = { 
+                    auth: { username: s.zoom.user, password: s.zoom.password },
+                    params: { delivered_date: req.body.deliveredDate }
+                }
+                axios.put(`${s.zoom.host}/order/${req.body.zoomOrderNumber}/delivered`, {}, config)
+                    .then(response => {
+                        log.debug(`zoom order set deliverd response: ${JSON.stringify(response.data, null, 2)}`);
+                        if (response.data.err) {
+                            log.error(`Set zoom order delivered, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}\n${response.data.err}`);
+                            return res.json({success: false, errMessage: response.data.err});
+                        } else {
+                            return res.json({success: true});
+                        }
+                    })
+                    .catch(err => {
+                        log.error(`[catch] [axios] Set zoom order delivered, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}\nresponse.hreaders: ${util.inspect(err.response.headers)}\nresponse.data: ${util.inspect(err.response.data)}\n${err.stack}`);
+                        return res.json({success: false, errMessage: err.response.data});
+                    }); 
+            }        
         }
     }
 });
