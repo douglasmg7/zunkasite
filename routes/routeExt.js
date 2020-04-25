@@ -31,9 +31,13 @@ function converToBRCurrencyString(val) {
 /******************************************************************************
 / Zoom
  ******************************************************************************/
+// Zoom hello.
+router.get('/zoom/hello', s.checkZoomAuth, function(req, res, next) {
+    return res.status(200).send('Hello!');
+});
 
 // Zoom order status notification.
-router.post('/zoom/order-status', s.basicAuth, function(req, res, next) {
+router.post('/zoom/order-status', s.checkZoomAuth, function(req, res, next) {
     // log.debug(`body: ${JSON.stringify(req.body)}`);
     switch (req.body.status.toLowerCase()) {
         case "new":
@@ -49,7 +53,7 @@ router.post('/zoom/order-status', s.basicAuth, function(req, res, next) {
                     log.error(err.stack);
                     return res.status(500).send();
                 }
-                createPiadOrder(zoomOrder, (err, inStock, msg)=>{
+                createPaidOrder(zoomOrder, (err, inStock, msg)=>{
                     if (err) {
                         log.error(err.stack);
                         emailSender.sendMailToDev('Error creating zoom paid order.', err.stack);
@@ -80,7 +84,7 @@ router.post('/zoom/order-status', s.basicAuth, function(req, res, next) {
 });
 
 // Create paid order.
-function createPiadOrder(zoomOrder, cb) {
+function createPaidOrder(zoomOrder, cb) {
     // log.debug(`zoomOrder: ${JSON.stringify(zoomOrder, null, 2)}`);
     // Get products itens.
     let items = []
