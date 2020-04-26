@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
 
-RESULT=$(curl -u zoomteste_zunka:H2VA79Ug4fjFsJb -X POST 'https://merchant.zoom.com.br/api/merchant/order/31559839856/shipment' \
+if [ -z "$1" ]
+  then
+    echo "Usage: $0 order-id"
+    exit
+fi
+
+[[ -z $ZUNKA_SITE_PATH ]] && printf "[error] ZUNKA_SITE_PATH enviorment not defined.\n" >&2 && exit 1 
+
+read -r HOST USER PASS <<< $($ZUNKA_SITE_PATH/bin/zoom/zoom-auth.sh)
+
+RESULT=$(curl -u $USER:$PASS -X POST $HOST/order/$1/shipment \
   -H "Content-Type: application/json" \
   -d '{
   "sent_date": "15/01/2020 14:52:16",

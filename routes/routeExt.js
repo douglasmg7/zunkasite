@@ -38,49 +38,63 @@ router.get('/zoom/hello', s.checkZoomAuth, function(req, res, next) {
 
 // Zoom order status notification.
 router.post('/zoom/order-status', s.checkZoomAuth, function(req, res, next) {
-    // log.debug(`body: ${JSON.stringify(req.body)}`);
-    switch (req.body.status.toLowerCase()) {
-        case "new":
-            // Nothing to do, waiting payment confirmation.
-            log.debug(`[Zoom] New order, order number ${req.body.orderNumber}`);
-            return res.status(200).send();
-            break;
-        case "approvedpayment":
-            log.debug(`[Zoom] Payment approved, order number ${req.body.orderNumber}`);
-            // Get zoom order.
-            zoom.getZoomOrder(req.body.orderNumber, (err, zoomOrder)=>{
-                if (err) {
-                    log.error(err.stack);
-                    return res.status(500).send();
-                }
-                createPaidOrder(zoomOrder, (err, inStock, msg)=>{
+    try {
+        if (!req.body.status) {
+            log.warn(`[zoom] Received zoom product information with unknow status: ${req.body.status}`);
+            return res.status(400).send(`Unknown status: ${req.body.status}`);
+        }
+        if (!req.body.orderNumber) {
+            log.warn(`[zoom] Received zoom product information with unknow order number: ${req.body.orderNumber}`);
+            return res.status(400).send(`Unknown orderNumber: ${req.body.orderNumber}`);
+        }
+        // log.debug(`body: ${JSON.stringify(req.body)}`);
+        switch (req.body.status.toLowerCase()) {
+            case "new":
+                // Nothing to do, waiting payment confirmation.
+                log.debug(`[Zoom] New order, order number ${req.body.orderNumber}`);
+                return res.status(200).send();
+                break;
+            case "approvedpayment":
+                log.debug(`[Zoom] Payment approved, order number ${req.body.orderNumber}`);
+                // Get zoom order.
+                zoom.getZoomOrder(req.body.orderNumber, (err, zoomOrder)=>{
                     if (err) {
                         log.error(err.stack);
-                        emailSender.sendMailToDev('Error creating zoom paid order.', err.stack);
-                        return res.status(500).send('Internal error.');
+                        return res.status(500).send();
                     }
-                    // Processing order.
-                    if (inStock) {
-                        return res.status(200).send();
-                    } 
-                    // Out of stock.
-                    else {
-                        log.debug(`[zoom] Order not created. ${msg}`);
-                        emailSender.sendMailToDev('Zoom order not created.', msg);
-                        return res.status(500).send('Product(s) out of stock.');
-                    }
+                    createPaidOrder(zoomOrder, (err, inStock, msg)=>{
+                        if (err) {
+                            log.error(err.stack);
+                            emailSender.sendMailToDev('Error creating zoom paid order.', err.stack);
+                            return res.status(500).send('Internal error.');
+                        }
+                        // Processing order.
+                        if (inStock) {
+                            return res.status(200).send();
+                        } 
+                        // Out of stock.
+                        else {
+                            log.debug(`[zoom] Order not created. ${msg}`);
+                            emailSender.sendMailToDev('Zoom order not created.', msg);
+                            return res.status(500).send('Product(s) out of stock.');
+                        }
+                    });
                 });
-            });
-            break;
-        case "canceled":
-            log.debug(`[Zoom] Canceled order, order number ${req.body.orderNumber}`);
-            // Send email.
-            return res.status(200).send();
-            break;
-        default:
-            log.debug(`[zoom] Received zoom product information with unknow status: ${req.body.status}`);
-            return res.status(400).send(`Unknown status: ${req.body.status}`);
+                break;
+            case "canceled":
+                log.debug(`[Zoom] Canceled order, order number ${req.body.orderNumber}`);
+                // Send email.
+                return res.status(200).send();
+                break;
+            default:
+                log.debug(`[zoom] Received zoom product information with unknow status: ${req.body.status}`);
+                return res.status(400).send(`Unknown status: ${req.body.status}`);
+        }
     }
+    catch(err){
+        log.error(`[catch] Zoom order status notification: ${err.stack}`);
+        return res.status(500).send('Internal error.');
+    };
 });
 
 // Create paid order.
