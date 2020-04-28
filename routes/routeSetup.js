@@ -16,7 +16,11 @@ const imageUtil = require('../util/image');
 // Get a zunka product information.
 router.get('/product-info', s.basicAuth, function(req, res, next) {
     // log.debug(`body: ${JSON.stringify(req.body.productsId)}`);
-
+    // No valid productsId.
+    if (!req.body.productsId || !req.body.productsId.length) {
+        log.warn(`[product-info] Requested products informations with productsId: ${req.body.productsId}`);
+        return res.status(400).send(`Inválid productsId: ${req.body.productsId}`);
+    }
     let productsId = [];
     // Get all products ids.
     for (let i = 0; i < req.body.productsId.length; i++) {
