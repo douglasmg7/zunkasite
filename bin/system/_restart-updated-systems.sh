@@ -40,16 +40,17 @@ if [[ -f $ZUNKAPATH/restart-zunkasrv ]];then
     sleep .1
 fi
 
-# Restart zoomproducts.
-# if [[ -f $ZUNKAPATH/restart-zoomproducts ]];then
-    # echo :: Restarting zoomproducts...
-    # # Stop zoomproducts.
-    # pkill zoomproducts
-    # # Start zoomproducts.
+#Restart zoomproducts.
+if [[ -f $ZUNKAPATH/restart-zoomproducts ]];then
+    echo :: Restarting zoomproducts...
+    # Stop zoomproducts.
+    pkill zoomproducts
+    # Start zoomproducts.
     # RUN_MODE=production zoomproducts &
-    # rm $ZUNKAPATH/restart-zoomproducts
-    # sleep .1
-# fi
+    zoomproducts &
+    rm $ZUNKAPATH/restart-zoomproducts
+    sleep .1
+fi
 
 # Reload nginx.
 if [[ -f $ZUNKAPATH/reload-nginx ]];then
