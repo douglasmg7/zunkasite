@@ -17,7 +17,7 @@ if (process.env.NODE_ENV == 'development') {
 } else if (process.env.NODE_ENV == 'production'){
     mode = 'production';
 }
-log.info(`Starting zunka site in ${mode} mode (version ${version}) ***`);
+log.info(`Running in ${mode} mode (version ${version}) ***`);
 // Log transaction.
 // const morgan = require('morgan');
 // Body.

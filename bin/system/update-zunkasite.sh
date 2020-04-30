@@ -21,7 +21,7 @@ if [[ ! -z $FILES_CHANGED ]]; then
     echo :: Merging zunka site...
     git merge
 else
-    echo Already up to date.
+    printf "Already up to date.\n"
 fi
 
 # Npm install.
