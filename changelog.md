@@ -1,3 +1,7 @@
+# 1.5.2 (05 mai 2020)
+## Melhorias
+* Mensagem de produto inválido para requisiçoes de informações dos produtos.
+
 # 1.5.1 (11 abr 2020)
 ## Bug fix
 * Correios não era exibido na hora do fechamento da compra.

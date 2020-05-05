@@ -24,7 +24,14 @@ router.get('/product-info', s.basicAuth, function(req, res, next) {
     let productsId = [];
     // Get all products ids.
     for (let i = 0; i < req.body.productsId.length; i++) {
-        productsId.push(mongoose.Types.ObjectId(req.body.productsId[i]));
+        try {
+            // productsId.push(mongoose.Types.ObjectId(req.body.productsId[i]));
+            let productId = mongoose.Types.ObjectId(req.body.productsId[i]);
+            productsId.push(productId);
+        } catch(err){
+            log.warn(`[product-info] Could not create ObjectId from req.body.productsId[${i}]: ${req.body.productsId[i]}`);
+            return res.status(400).send(`Inválid product id: ${req.body.productsId[i]}`);
+        }
     }
     // Get all products into cart from db.
     Product.find({'_id': { $in: productsId }}, (err, dbProducts)=>{
