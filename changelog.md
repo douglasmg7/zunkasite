@@ -1,15 +1,15 @@
-# 1.5.4 (08 mai 2020)
+# 1.5.5 (08 mai 2020)
+## Mudanças
+* Zoom não precisa de credenciais para mudar informar mudança de status da ordem.
+
 ## Buxfix
 * Atualização do status do pedido da Zoom na lista de pedidos.
+* Nota fiscal não mostrava corretamente os campos inválidos na criação da mesma.
 
 ## Melhorias
 * Iclusão automática do CNPJ e dá série na nota fiscal.
 
 
-
-# 1.5.3 (08 mai 2020)
-## Mudanças
-* Zoom não precisa de credenciais para mudar informar mudança de status da ordem.
 
 # 1.5.2 (05 mai 2020)
 ## Melhorias

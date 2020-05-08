@@ -791,6 +791,7 @@ router.get('/invoice-by-order/:orderId', checkPermission, (req, res, next)=>{
                 // Edit invoice.
                 else {
                     invoice.invalid = {};
+                    // log.debug(`invoice: ${JSON.stringify(invoice, null, 2)}`)
                     return res.render('admin/editInvoice', { invoice: invoice, setStatus: setStatus });
                 }
             }) 
@@ -807,36 +808,45 @@ router.get('/invoice-by-order/:orderId', checkPermission, (req, res, next)=>{
 router.post('/invoice/:id', checkPermission, (req, res, next)=>{
     // log.debug(`req.body: ${JSON.stringify(req.body, null, 2)}`)
     let invoice = {
+        _id: req.body._id,
+        orderId: req.body.orderId,
+        number: req.body.number,
+        accessKey: req.body.accessKey,
+        cnpj: req.body.cnpj,
+        issueDate: req.body.issueDate,
+        serie: req.body.serie,
+        url: req.body.url,
         invalid: {}
     }
     // Check fields.
     // Number.
-    if (!req.body.number.match(/^.{1,24}$/)) {
+    if (!invoice.number.match(/^.{1,24}$/)) {
         invoice.invalid.number = 'Valor inválido'; 
     }
     // Access key.
-    if (!req.body.accessKey.match(/^.{1,24}$/)) {
+    if (!invoice.accessKey.match(/^.{1,24}$/)) {
         invoice.invalid.accessKey = 'Valor inválido'; 
     }
     // CNPJ.
-    if (cnpj.isValid(req.body.cnpj)) {
-        req.body.cnpj = cnpj.format(req.body.cnpj);
+    if (cnpj.isValid(invoice.cnpj)) {
+        invoice.cnpj = cnpj.format(invoice.cnpj);
     }
     else {
         invoice.invalid.cnpj = 'Valor inválido'; 
     }
     // Issue date.
-    if (!req.body.issueDate.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)) {
+    if (!invoice.issueDate.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)) {
         invoice.invalid.issueDate = 'Valor inválido'; 
     }
     // Serie.
-    if (!req.body.serie.match(/^.{1,24}$/)) {
+    if (!invoice.serie.match(/^.{1,24}$/)) {
         invoice.invalid.serie = 'Valor inválido'; 
     }
     // URL.
-    if (!req.body.url.match(/^.{1,100}$/)) {
+    if (invoice.url.length > 100) {
         invoice.invalid.url = 'Valor inválido'; 
     }
+
     // Invalid fields.
     if (Object.keys(invoice.invalid).length) {
         return res.render('admin/editInvoice', { invoice: invoice });
@@ -844,14 +854,6 @@ router.post('/invoice/:id', checkPermission, (req, res, next)=>{
     // Valid.
     else {
         delete invoice.invalid;
-        invoice._id = req.body._id;
-        invoice.orderId = req.body.orderId;
-        invoice.number = req.body.number;
-        invoice.accessKey = req.body.accessKey;
-        invoice.cnpj = req.body.cnpj;
-        invoice.issueDate = req.body.issueDate;
-        invoice.serie = req.body.serie;
-        invoice.url = req.body.url;
         // New.
         if (invoice._id == "new") { 
             delete invoice._id; 

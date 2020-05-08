@@ -33,7 +33,7 @@ block content
 
             //- CNPJ.
             label(for='CNPJ') CNPJ
-            input(type='text' name='cnpj' id='cnpj' value=invoice.cnpj disabled)
+            input(type='text' name='cnpj' id='cnpj' value=invoice.cnpj readonly="readonly")
             if invoice.invalid.cnpj
                 label.error(for='cnpj') !{invoice.invalid.cnpj}
 

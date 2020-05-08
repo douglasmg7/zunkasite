@@ -8,7 +8,7 @@ let schema = new mongoose.Schema({
   cnpj: { type: String, required: true },
   issueDate: { type: String, required: true },
   serie: { type: String, required: true },
-  url: { type: String, required: true },
+  url: { type: String, default: '' },
 },
 {
   timestamps: true
