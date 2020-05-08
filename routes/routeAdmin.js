@@ -574,7 +574,7 @@ router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
                                     log.error(`Set zoom order shipment, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}, \ndata: ${JSON.stringify(data, null, 2)}. ${response.data.err}`);
                                     return res.json({success: false, errMessage: response.data.err});
                                 } else {
-                                    return res.json({success: true});
+                                    res.json({success: true});
                                     // Set order status.
                                     order.timestamps.shippedAt = new Date(); 
                                     order.status = 'shipped';
@@ -583,6 +583,7 @@ router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
                                             log.error(`Saving on db, zoom order to status shipped, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${err.stack}`);
                                         }
                                     });
+                                    return;
                                 }
                             })
                             .catch(err => {
@@ -624,12 +625,13 @@ router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
                             log.error(`Set zoom order delivered, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}\n${response.data.err}`);
                             return res.json({success: false, errMessage: response.data.err});
                         } else {
-                            return res.json({success: true});
+                            res.json({success: true});
                             Order.findByIdAndUpdate(req.params._id, {'order.timestamps.deliveredAt': new Date(), 'order.status': 'delivered'}, (err)=>{
                                 if (err) {
                                     log.error(`Saving on db, zoom order to status deliverd, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${err.stack}`);
                                 }
                             });
+                            return;
                         }
                     })
                     .catch(err => {

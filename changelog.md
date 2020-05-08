@@ -1,4 +1,4 @@
-# 1.5.5 (08 mai 2020)
+# 1.5.6 (08 mai 2020)
 ## Mudanças
 * Zoom não precisa de credenciais para mudar informar mudança de status da ordem.
 
