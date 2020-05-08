@@ -575,6 +575,14 @@ router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
                                     return res.json({success: false, errMessage: response.data.err});
                                 } else {
                                     return res.json({success: true});
+                                    // Set order status.
+                                    order.timestamps.shippedAt = new Date(); 
+                                    order.status = 'shipped';
+                                    order.save(err=>{
+                                        if (err) {
+                                            log.error(`Saving on db, zoom order to status shipped, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${err.stack}`);
+                                        }
+                                    });
                                 }
                             })
                             .catch(err => {
@@ -617,6 +625,11 @@ router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
                             return res.json({success: false, errMessage: response.data.err});
                         } else {
                             return res.json({success: true});
+                            Order.findByIdAndUpdate(req.params._id, {'order.timestamps.deliveredAt': new Date(), 'order.status': 'delivered'}, (err)=>{
+                                if (err) {
+                                    log.error(`Saving on db, zoom order to status deliverd, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${err.stack}`);
+                                }
+                            });
                         }
                     })
                     .catch(err => {
@@ -767,9 +780,9 @@ router.get('/invoice-by-order/:orderId', checkPermission, (req, res, next)=>{
                         orderId: req.params.orderId,
                         number: '',
                         accessKey: '',
-                        cnpj: '',
+                        cnpj: '15.178.404/0001-47',
                         issueDate: moment().format('YYYY-MM-DDTHH:mm'),
-                        serie: '',
+                        serie: '1',
                         url: '',
                         invalid: {}
                     }
