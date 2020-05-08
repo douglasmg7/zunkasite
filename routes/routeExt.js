@@ -32,12 +32,14 @@ function converToBRCurrencyString(val) {
 / Zoom
  ******************************************************************************/
 // Zoom hello.
-router.get('/zoom/hello', s.checkZoomAuth, function(req, res, next) {
+// router.get('/zoom/hello', s.checkZoomAuth, function(req, res, next) {
+router.get('/zoom/hello', function(req, res, next) {
     return res.status(200).send('Hello!');
 });
 
 // Zoom order status notification.
-router.post('/zoom/order-status', s.checkZoomAuth, function(req, res, next) {
+// router.post('/zoom/order-status', s.checkZoomAuth, function(req, res, next) {
+router.post('/zoom/order-status', function(req, res, next) {
     try {
         if (!req.body.status) {
             log.warn(`[zoom] Received zoom product information with unknow status: ${req.body.status}`);

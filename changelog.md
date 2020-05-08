@@ -1,3 +1,7 @@
+# 1.5.3 (08 mai 2020)
+## Mudanças
+* Zoom não precisa de credenciais para mudar informar mudança de status da ordem.
+
 # 1.5.2 (05 mai 2020)
 ## Melhorias
 * Mensagem de produto inválido para requisiçoes de informações dos produtos.
