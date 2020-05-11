@@ -626,11 +626,18 @@ router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
                             return res.json({success: false, errMessage: response.data.err});
                         } else {
                             res.json({success: true});
-                            Order.findByIdAndUpdate(req.params._id, {'order.timestamps.deliveredAt': new Date(), 'order.status': 'delivered'}, (err)=>{
-                                if (err) {
-                                    log.error(`Saving on db, zoom order to status deliverd, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${err.stack}`);
+                            Order.findByIdAndUpdate(req.params._id, { 
+                                $set: { 
+                                    status: 'delivered',
+                                    'timestamps.deliveredAt': new Date(),
                                 }
-                            });
+                            })
+                                .then(()=>{
+                                    res.json({success: true});
+                                })
+                                .catch(err=>{
+                                    log.error(`Saving on db, zoom order to status deliverd, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${err.stack}`);
+                                });
                             return;
                         }
                     })
