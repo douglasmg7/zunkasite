@@ -134,7 +134,7 @@ var app = new Vue({
 						return '';
 				}
 			}
-			else if (order.payment.method === 'paypal' || order.payment.method === undefined) {
+			else if (order.payment.method === 'paypal') {
 				switch(order.status) {
 					case 'shipped':
 						return '';
@@ -147,6 +147,18 @@ var app = new Vue({
 				}
 			} 
 			else if (order.payment.method === 'ppp-credit') {
+				switch(order.status) {
+					case 'shipped':
+						return '';
+					case 'paid':
+						return 'Enviar';
+					case 'placed':
+						return 'Verificar pagamento';
+					default:
+						return '';
+				}
+			} 
+			else if (order.payment.method === undefined) {
 				switch(order.status) {
 					case 'shipped':
 						return '';
@@ -195,7 +207,7 @@ var app = new Vue({
 						return '';
 				}
 			}
-			else if (order.payment.method === 'paypal' || order.payment.method === undefined) {
+			else if (order.payment.method === 'paypal') {
 				switch(order.status) {
 					case 'shipped':
 						return msgVerifyDelivery;
@@ -208,6 +220,18 @@ var app = new Vue({
 				}
 			} 
 			else if (order.payment.method === 'ppp-credit') {
+				switch(order.status) {
+					case 'shipped':
+						return msgVerifyDelivery;
+					case 'paid':
+                        return msgSend;
+					case 'placed':
+                        return msgVerifyPayment;
+					default:
+						return '';
+				}
+			} 
+			else if (order.payment.method === undefined) {
 				switch(order.status) {
 					case 'shipped':
 						return msgVerifyDelivery;

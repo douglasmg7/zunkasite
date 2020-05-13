@@ -1,3 +1,8 @@
+# 1.5.8 (13 mai 2020)
+## Mudanças
+* Cria a ordem zoom no evento de nova ordem, não mais no evento de pagamento aprovado.
+
+
 # 1.5.7 (11 mai 2020)
 ## Mudanças
 * Zoom não precisa de credenciais para mudar informar mudança de status da ordem.

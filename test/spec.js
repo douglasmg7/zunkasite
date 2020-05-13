@@ -97,17 +97,7 @@ describe('Zunka', function () {
                 .send({ "orderNumber": "5015679200", "status": "Deleted" })
                 .expect(400, /Unknown status: /, done);
         });
-        // New order.
-        it('Order status new ', done=>{
-            this.timeout(10000);
-            request(server)
-                .post('/ext/zoom/order-status')
-                // .auth(s.zoomInternalAuth.user, s.zoomInternalAuth.password)
-                .send({ "orderNumber": zoomOrderId, "status": "New" })
-                .expect(200, done);
-        });
-        // Approved payment order - product not exist.
-        it('Order status approved Payment (produto não existe)', done=>{
+        it('New zoom order (produto não existe)', done=>{
             this.timeout(6000);
             // Mock request.
             nock(s.zoom.host)
@@ -116,12 +106,10 @@ describe('Zunka', function () {
             // Url request.
             request(server)
                 .post('/ext/zoom/order-status')
-                // .auth(s.zoomInternalAuth.user, s.zoomInternalAuth.password)
-                .send({ "orderNumber": zoomOrderId, "status": "ApprovedPayment" })
+                .send({ "orderNumber": zoomOrderId, "status": "new" })
                 .expect(500, 'Product(s) out of stock.', done);
         });
-        // Order status approved Payment.
-        it('Order status approved Payment', done=>{
+        it('New zoom order', done=>{
             this.timeout(6000);
             // Request products in stock.
             zoomOrderTest.items = [
@@ -149,12 +137,12 @@ describe('Zunka', function () {
             // console.log(`stock product 2: ${newestProducts[1].storeProductQtd}`);
             // Add stock product to test sell.
             Product.updateMany({ _id: { $in:  [newestProducts[0]._id, newestProducts[1]._id] }}, { $inc: { storeProductQtd: 2 }}, err=>{
-                expect(err).to.be.null
+                expect(err).to.be.null;
                 // Approved payment.
                 request(server)
                     .post('/ext/zoom/order-status')
                     // .auth(s.zoomInternalAuth.user, s.zoomInternalAuth.password)
-                    .send({ "orderNumber": zoomOrderId, "status": "ApprovedPayment" })
+                    .send({ "orderNumber": zoomOrderId, "status": "new" })
                     .end((err, res)=>{
                         expect(res.statusCode).to.be.equal(200);
                         // Check if order was created.
@@ -165,13 +153,15 @@ describe('Zunka', function () {
                                 expect(orderDb.externalOrderNumber).to.not.be.empty;
                                 expect(orderDb.externalOrderNumber).to.be.equal(zoomOrderTest.order_number);
                                 expect(orderDb.timestamps).to.not.be.null;
-                                expect(orderDb.timestamps.paidAt).to.not.be.null;
+                                expect(orderDb.timestamps.placedAt).to.not.be.null;
+                                expect(orderDb.timestamps.paidAt).to.be.undefined;
+                                expect(orderDb.status).to.be.equal('placed');
                                 // console.log(`orderDb.timestamps.placedAt: ${JSON.stringify(orderDb.timestamps.placedAt, null, 2)}`);
                                 // Now less 5 min.
                                 let someMunutesEarly = new Date();
                                 someMunutesEarly.setMinutes(someMunutesEarly.getMinutes - 2);
                                 // console.log(`type of orderDb.timestamps.paidAt: ${typeof orderDb.timestamps.paidAt}`);
-                                expect(orderDb.timestamps.paidAt).to.not.be.above(someMunutesEarly);
+                                expect(orderDb.timestamps.placedAt).to.not.be.above(someMunutesEarly);
                                 expect(orderDb.items, "No one order item").to.not.be.empty;
                                 // Total price
                                 let totalPrice = 0;
@@ -202,15 +192,110 @@ describe('Zunka', function () {
             });
 
         });
-        // Canceled order.
-        it('Order status canceled', done=>{
+        it('Approved payment zoom order', done=>{
+            this.timeout(6000);
+            // Mock request.
+            zoomOrderTest.status = 'ApprovedPayment';
+            nock(s.zoom.host)
+                .get(`/order/${zoomOrderId}`)
+                .reply(200, zoomOrderTest);
+            // Url request.
             request(server)
                 .post('/ext/zoom/order-status')
-                // .auth(s.zoomInternalAuth.user, s.zoomInternalAuth.password)
-                .send({ "orderNumber": "31559839856", "status": "Canceled" })
+                .send({ "orderNumber": zoomOrderId, "status": "ApprovedPayment" })
                 .end((err, res)=>{
-                    assert.equal(res.statusCode, 200);
-                    done();
+                    expect(res.statusCode).to.be.equal(200);
+                    // Check if order was created.
+                    Order.find({}, {}).sort({"timestamps.paidAt": -1}).limit(1)
+                        .then(docs=>{
+                            let orderDb = docs[0];
+                            expect(orderDb).to.not.be.null;
+                            expect(orderDb.externalOrderNumber).to.not.be.empty;
+                            expect(orderDb.externalOrderNumber).to.be.equal(zoomOrderTest.order_number);
+                            expect(orderDb.timestamps).to.not.be.null;
+                            expect(orderDb.timestamps.placedAt).to.not.be.null;
+                            expect(orderDb.timestamps.paidAt).to.not.be.null;
+                            expect(orderDb.status).to.be.equal('paid');
+                            // console.log(`orderDb.timestamps.placedAt: ${JSON.stringify(orderDb.timestamps.placedAt, null, 2)}`);
+                            // Now less 5 min.
+                            let someMunutesEarly = new Date();
+                            someMunutesEarly.setMinutes(someMunutesEarly.getMinutes - 2);
+                            // console.log(`type of orderDb.timestamps.paidAt: ${typeof orderDb.timestamps.paidAt}`);
+                            expect(orderDb.timestamps.paidAt).to.not.be.above(someMunutesEarly);
+                            expect(orderDb.items, "No one order item").to.not.be.empty;
+                            // Total price
+                            let totalPrice = 0;
+                            zoomOrderTest.items.forEach(item=>{
+                                totalPrice += item.total;
+                            });
+                            if (zoomOrderTest.total_discount_value) { totalPrice -= zoomOrderTest.total_discount_value };
+                            expect(parseFloat(orderDb.subtotalPrice)).to.be.above(0);
+                            // console.log(`orderDb.subtotalPrice: ${orderDb.subtotalPrice}`);
+                            // console.log(`totalPrice: ${totalPrice}`);
+                            expect(parseFloat(orderDb.subtotalPrice)).to.be.equal(totalPrice);
+                            expect(parseFloat(orderDb.totalPrice)).to.be.equal(totalPrice + zoomOrderTest.shipping.freight_price);
+                            expect(orderDb.user_id.toString()).to.be.equal('123456789012345678901234');
+                            expect(orderDb.name).to.be.equal(zoomOrderTest.customer.first_name);
+                            expect(orderDb.email).to.be.equal('zoom@zoom.com.br');
+                            expect(orderDb.cpf).to.be.equal(zoomOrderTest.customer.cpf);
+                            expect(orderDb.mobileNumber).to.be.equal(zoomOrderTest.customer.user_phone);
+                            done();
+                        }).catch(err=>{
+                            console.log(err.stack);
+                        });
+                });
+        });
+        it('Canceled zoom order', done=>{
+            this.timeout(6000);
+            // Mock request.
+            zoomOrderTest.status = 'Canceled';
+            nock(s.zoom.host)
+                .get(`/order/${zoomOrderId}`)
+                .reply(200, zoomOrderTest);
+            // Url request.
+            request(server)
+                .post('/ext/zoom/order-status')
+                .send({ "orderNumber": zoomOrderId, "status": "Canceled" })
+                .end((err, res)=>{
+                    expect(res.statusCode).to.be.equal(200);
+                    // Check if order was created.
+                    Order.find({}, {}).sort({"timestamps.canceledAt": -1}).limit(1)
+                        .then(docs=>{
+                            let orderDb = docs[0];
+                            expect(orderDb).to.not.be.null;
+                            expect(orderDb.externalOrderNumber).to.not.be.empty;
+                            expect(orderDb.externalOrderNumber).to.be.equal(zoomOrderTest.order_number);
+                            expect(orderDb.timestamps).to.not.be.null;
+                            expect(orderDb.timestamps.placedAt).to.not.be.null;
+                            expect(orderDb.timestamps.canceledAt).to.not.be.null;
+                            expect(orderDb.status).to.be.equal('canceled');
+                            // console.log(`orderDb.timestamps.placedAt: ${JSON.stringify(orderDb.timestamps.placedAt, null, 2)}`);
+                            // Now less 5 min.
+                            let someMunutesEarly = new Date();
+                            someMunutesEarly.setMinutes(someMunutesEarly.getMinutes - 2);
+                            // console.log(`type of orderDb.timestamps.paidAt: ${typeof orderDb.timestamps.paidAt}`);
+                            expect(orderDb.timestamps.canceledAt).to.not.be.above(someMunutesEarly);
+                            expect(orderDb.items, "No one order item").to.not.be.empty;
+                            // Total price
+                            let totalPrice = 0;
+                            zoomOrderTest.items.forEach(item=>{
+                                totalPrice += item.total;
+                            });
+                            if (zoomOrderTest.total_discount_value) { totalPrice -= zoomOrderTest.total_discount_value };
+                            expect(parseFloat(orderDb.subtotalPrice)).to.be.above(0);
+                            // console.log(`orderDb.subtotalPrice: ${orderDb.subtotalPrice}`);
+                            // console.log(`totalPrice: ${totalPrice}`);
+                            expect(parseFloat(orderDb.subtotalPrice)).to.be.equal(totalPrice);
+                            expect(parseFloat(orderDb.totalPrice)).to.be.equal(totalPrice + zoomOrderTest.shipping.freight_price);
+                            expect(orderDb.user_id.toString()).to.be.equal('123456789012345678901234');
+                            expect(orderDb.name).to.be.equal(zoomOrderTest.customer.first_name);
+                            expect(orderDb.email).to.be.equal('zoom@zoom.com.br');
+                            expect(orderDb.cpf).to.be.equal(zoomOrderTest.customer.cpf);
+                            expect(orderDb.mobileNumber).to.be.equal(zoomOrderTest.customer.user_phone);
+                            done();
+                        }).catch(err=>{
+                            console.log(err.stack);
+                        });
                 });
         });
     });

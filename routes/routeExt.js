@@ -52,22 +52,17 @@ router.post('/zoom/order-status', function(req, res, next) {
         // log.debug(`body: ${JSON.stringify(req.body)}`);
         switch (req.body.status.toLowerCase()) {
             case "new":
-                // Nothing to do, waiting payment confirmation.
                 log.debug(`[Zoom] New order, order number ${req.body.orderNumber}`);
-                return res.status(200).send();
-                break;
-            case "approvedpayment":
-                log.debug(`[Zoom] Payment approved, order number ${req.body.orderNumber}`);
                 // Get zoom order.
                 zoom.getZoomOrder(req.body.orderNumber, (err, zoomOrder)=>{
                     if (err) {
                         log.error(err.stack);
                         return res.status(500).send();
                     }
-                    createPaidOrder(zoomOrder, (err, inStock, msg)=>{
+                    createNewZoomOrder(zoomOrder, (err, inStock, msg)=>{
                         if (err) {
                             log.error(err.stack);
-                            emailSender.sendMailToDev('Error creating zoom paid order.', err.stack);
+                            emailSender.sendMailToDev('Error creating new zoom order.', err.stack);
                             return res.status(500).send('Internal error.');
                         }
                         // Processing order.
@@ -76,17 +71,137 @@ router.post('/zoom/order-status', function(req, res, next) {
                         } 
                         // Out of stock.
                         else {
-                            log.debug(`[zoom] Order not created. ${msg}`);
-                            emailSender.sendMailToDev('Zoom order not created.', msg);
+                            log.debug(`[zoom] New zoom order not created. ${msg}`);
+                            emailSender.sendMailToDev('New zoom order not created.', msg);
                             return res.status(500).send('Product(s) out of stock.');
                         }
                     });
                 });
                 break;
+            case "approvedpayment":
+                log.debug(`[Zoom] Payment approved, order number ${req.body.orderNumber}`);
+                // Get zoom order.
+                zoom.getZoomOrder(req.body.orderNumber, (err, zoomOrder)=>{
+                    if (err) {
+                        log.error(err.stack);
+                        return res.status(500).send(`Error finding Zoom order ${req.body.orderNumber} at Zoom server.`);
+                    }
+                    // Request returned order not paided.
+                    if (zoomOrder.status.toLowerCase() != 'approvedpayment') {
+                        let customErr = new Error(`[zoom] Received zoom notification with order ${zoomOrder.order_number} paided, but a request for zoom server returned not paided.`)
+                        log.error(customErr.stack);
+                        emailSender.sendMailToDev('Zoom approved payment order error.', customErr.stack);
+                        return res.status(500).send('Request to Zoom server returned order not paided.');
+                    }
+                    // Find zunka order from zoom order.
+                    Order.find({externalOrderNumber: zoomOrder.order_number})
+                    .then(orders=>{
+                        if (orders.length == 0) {
+                            let customErr = new Error(`[zoom] Not found zunka order for zoom order number ${zoomOrder.order_number}.`)
+                            log.error(customErr.stack);
+                            emailSender.sendMailToDev('Zoom approved payment order error.', customErr.stack);
+                            return res.status(500).send();
+                        }
+                        else if (orders.length > 1 ) {
+                            let customErr = new Error(`[zoom] Found more than one zunka order for zoom order number ${zoomOrder.order_number}.`)
+                            log.error(customErr.stack);
+                            emailSender.sendMailToDev('Zoom approved payment order error.', customErr.stack);
+                            return res.status(500).send();
+                        }
+                        else {
+                            let order = orders[0];
+                            order.timestamps.paidAt = new Date();
+                            order.status = 'paid';
+                            order.save(err=>{
+                                if (err) {
+                                    let msgErr = `[zoom] Saving zoom order, zunka order id: ${order._id}, zoom order number: ${zoomOrder.order_number}.`;
+                                    log.error(`${msgErr}. ${err.stack}`);
+                                    emailSender.sendMailToDev('Zoom approved payment order error.', `${msgErr}. ${err.stack}`);
+                                    return res.status(500).send();
+                                }
+                                emailSender.sendMailToAdmin(`Pedido Zoom ${order._id} foi pago`, 'https://www.zunka.com.br/admin/order/' + order._id + '\n\n');
+                                return res.status(200).send();
+                            });
+                        }
+                    })
+                    .catch(err=>{
+                        let msgErr = `[zoom] [catch] Finding zunka order for paided zoom order number: ${zoomOrder.order_number}.`;
+                        log.error(`${msgErr}. ${err.stack}`);
+                        emailSender.sendMailToDev('Zoom approved payment order catch error.', `${msgErr}. ${err.stack}`);
+                        return res.status(500).send('Internal error.');
+                    });
+                });
+                break;
             case "canceled":
                 log.debug(`[Zoom] Canceled order, order number ${req.body.orderNumber}`);
-                // Send email.
-                return res.status(200).send();
+                // Get zoom order.
+                zoom.getZoomOrder(req.body.orderNumber, (err, zoomOrder)=>{
+                    if (err) {
+                        log.error(err.stack);
+                        return res.status(500).send(`Error finding Zoom order ${req.body.orderNumber} at Zoom server.`);
+                    }
+                    // Request returned order not canceled.
+                    if (zoomOrder.status.toLowerCase() != 'canceled') {
+                        let customErr = new Error(`[zoom] Received zoom notification with order ${zoomOrder.order_number} canceled, but a request for zoom server returned not canceled.`)
+                        log.error(customErr.stack);
+                        emailSender.sendMailToDev('Zoom canceled order error.', customErr.stack);
+                        return res.status(500).send('Request to Zoom server returned order not paided.');
+                    }
+                    // Find zunka order from zoom order.
+                    Order.find({externalOrderNumber: zoomOrder.order_number})
+                    .then(orders=>{
+                        if (orders.length == 0) {
+                            let customErr = new Error(`[zoom] Not found zunka order for zoom order number ${zoomOrder.order_number}.`)
+                            log.error(customErr.stack);
+                            emailSender.sendMailToDev('Zoom canceled order error.', customErr.stack);
+                            return res.status(500).send();
+                        }
+                        else if (orders.length > 1 ) {
+                            let customErr = new Error(`[zoom] Found more than one zunka order for zoom order number ${zoomOrder.order_number}.`)
+                            log.error(customErr.stack);
+                            emailSender.sendMailToDev('Zoom canceled order error.', customErr.stack);
+                            return res.status(500).send();
+                        }
+                        else {
+                            let order = orders[0];
+                            order.timestamps.canceledAt = new Date();
+                            order.status = 'canceled';
+                            order.save(err=>{
+                                if (err) {
+                                    let customErr = new Error(`[zoom] Saving zoom order, zunka order id: ${order._id}, zoom order number: ${zoomOrder.order_number}.`)
+                                    log.error(customErr.stack);
+                                    emailSender.sendMailToDev('Zoom canceled order error.', customErr.stack);
+                                    return res.status(500).send();
+                                }
+                                emailSender.sendMailToAdmin(`Pedido Zoom ${order._id} foi cancelado`, 'https://www.zunka.com.br/admin/order/' + order._id + '\n\n');
+                                res.status(200).send();
+                                // Update stock.
+                                for (var i = 0; i < order.items.length; i++) {
+                                    // Not update aldo products, because the actual stock is undetermined.
+                                    if (order.items[i].dealerName !== "Aldo") {
+                                        Product.updateOne(
+                                            { _id: order.items[i]._id },
+                                            { $inc: {
+                                                storeProductQtd: -1 * order.items[i].quantity,
+                                                storeProductQtdSold: 1 * order.items[i].quantity
+                                            } }, err=>{
+                                                if (err) {
+                                                    log.error(err.stack);
+                                                }
+                                            });
+                                    }
+                                }
+                                return 
+                            });
+                        }
+                    })
+                    .catch(err=>{
+                        let msgErr = `[zoom] [catch] Finding zunka order for paided zoom order number: ${zoomOrder.order_number}.`;
+                        log.error(`${msgErr}. ${err.stack}`);
+                        emailSender.sendMailToDev('Zoom canceled order catch error.', `${msgErr}. ${err.stack}`);
+                        return res.status(500).send('Internal error.');
+                    });
+                });
                 break;
             default:
                 log.debug(`[zoom] Received zoom product information with unknow status: ${req.body.status}`);
@@ -99,8 +214,8 @@ router.post('/zoom/order-status', function(req, res, next) {
     };
 });
 
-// Create paid order.
-function createPaidOrder(zoomOrder, cb) {
+// Create new zoom order.
+function createNewZoomOrder(zoomOrder, cb) {
     // log.debug(`zoomOrder: ${JSON.stringify(zoomOrder, null, 2)}`);
     // Get products itens.
     let items = []
@@ -144,11 +259,9 @@ function createPaidOrder(zoomOrder, cb) {
         shippingAddressSelectedAt: new Date(),
         shippingMethodSelectedAt: new Date(), 
         placedAt: new Date(), 
-        paidAt: new Date(), 
-        shippingAddressSelectedAt: new Date() 
     };
     order.payment = {};
-    order.status = 'paid';
+    order.status = 'placed';
 
     // Check if all products in stock.
     checkOrderProductsInStock(order)
@@ -179,7 +292,7 @@ function createPaidOrder(zoomOrder, cb) {
                 // Save order.
                 order.save((err, savedOrder)=>{
                     if (err) { 
-                        return cb(new Error(`Saving created paid order. ${err}`, true, ""));
+                        return cb(new Error(`Saving created new zoom order. ${err}`, true, ""));
                     }
                     emailSender.sendMailToAdmin(`Novo pedido Zoom ${savedOrder._id}`, 'https://www.zunka.com.br/admin/order/' + savedOrder._id + '\n\n');
                     return cb(null, true, "");
@@ -187,7 +300,7 @@ function createPaidOrder(zoomOrder, cb) {
             } 
         })
         .catch(err=>{
-            return cb(new Error(`catch() - Saving created paid order. ${err}`, true, ""));
+            return cb(new Error(`catch() - Saving created new zoom order. ${err}`, true, ""));
         });    
 }
 
