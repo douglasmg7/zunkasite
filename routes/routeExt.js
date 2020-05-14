@@ -119,7 +119,7 @@ router.post('/zoom/order-status', function(req, res, next) {
                                     emailSender.sendMailToDev('Zoom approved payment order error.', `${msgErr}. ${err.stack}`);
                                     return res.status(500).send();
                                 }
-                                emailSender.sendMailToAdmin(`Pedido Zoom ${order._id} foi pago`, 'https://www.zunka.com.br/admin/order/' + order._id + '\n\n');
+                                emailSender.sendMailToAdmin(`Pedido Zoom foi pago`, 'https://www.zunka.com.br/admin/order/' + order._id + '\n\n');
                                 return res.status(200).send();
                             });
                         }
@@ -173,7 +173,7 @@ router.post('/zoom/order-status', function(req, res, next) {
                                     emailSender.sendMailToDev('Zoom canceled order error.', customErr.stack);
                                     return res.status(500).send();
                                 }
-                                emailSender.sendMailToAdmin(`Pedido Zoom ${order._id} foi cancelado`, 'https://www.zunka.com.br/admin/order/' + order._id + '\n\n');
+                                emailSender.sendMailToAdmin(`Pedido Zoom foi cancelado`, 'https://www.zunka.com.br/admin/order/' + order._id + '\n\n');
                                 res.status(200).send();
                                 // Update stock.
                                 for (var i = 0; i < order.items.length; i++) {
@@ -294,7 +294,7 @@ function createNewZoomOrder(zoomOrder, cb) {
                     if (err) { 
                         return cb(new Error(`Saving created new zoom order. ${err}`, true, ""));
                     }
-                    emailSender.sendMailToAdmin(`Novo pedido Zoom ${savedOrder._id}`, 'https://www.zunka.com.br/admin/order/' + savedOrder._id + '\n\n');
+                    emailSender.sendMailToAdmin(`Novo pedido Zoom`, 'https://www.zunka.com.br/admin/order/' + savedOrder._id + '\n\n');
                     return cb(null, true, "");
                 });
             } 

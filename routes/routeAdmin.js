@@ -569,7 +569,7 @@ router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
                         // Set shipped on zoom server.
                         axios.post(`${s.zoom.host}/order/${req.body.zoomOrderNumber}/shipment`, data, { auth: { username: s.zoom.user, password: s.zoom.password }, })
                             .then(response => {
-                                log.debug(`zoom order set shipment response: ${JSON.stringify(response.data, null, 2)}`);
+                                // log.debug(`zoom order set shipment response: ${JSON.stringify(response.data, null, 2)}`);
                                 if (response.data.err) {
                                     log.error(`Set zoom order shipment, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}, \ndata: ${JSON.stringify(data, null, 2)}. ${response.data.err}`);
                                     return res.json({success: false, errMessage: response.data.err});
@@ -620,7 +620,7 @@ router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
                 }
                 axios.put(`${s.zoom.host}/order/${req.body.zoomOrderNumber}/delivered`, {}, config)
                     .then(response => {
-                        log.debug(`zoom order set deliverd response: ${JSON.stringify(response.data, null, 2)}`);
+                        // log.debug(`zoom order set deliverd response: ${JSON.stringify(response.data, null, 2)}`);
                         if (response.data.err) {
                             log.error(`Set zoom order delivered, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}\n${response.data.err}`);
                             return res.json({success: false, errMessage: response.data.err});
@@ -633,7 +633,6 @@ router.post('/zoom-order/:_id', checkPermission, function(req, res, next) {
                                 }
                             })
                                 .then(()=>{
-                                    res.json({success: true});
                                 })
                                 .catch(err=>{
                                     log.error(`Saving on db, zoom order to status deliverd, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${err.stack}`);

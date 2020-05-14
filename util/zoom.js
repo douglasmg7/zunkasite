@@ -21,7 +21,7 @@ function getZoomOrder(orderId, cb){
     } else {
         // log.debug('Getting zoom order from zoom server.');
         // todo - comment and redirect s.zoom to production.
-        log.debug(`Getting zoom order from zoom server. URL: ${s.zoom.host}/order/${orderId}`);
+        // log.debug(`Getting zoom order from zoom server. URL: ${s.zoom.host}/order/${orderId}`);
         axios.get(`${s.zoom.host}/order/${orderId}`, {
             headers: {
                 "Accept": "application/json", 
