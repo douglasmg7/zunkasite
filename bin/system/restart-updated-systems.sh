@@ -67,8 +67,8 @@ fi
 # zoomproducts.
 if [[ -f $ZUNKAPATH/restart-zoomproducts ]];then
     printf ":: Starting zoomproducts...\n"
-    # RUN_MODE=production zoomproducts &
-    zoomproducts &
+    RUN_MODE=production zoomproducts &
+    # zoomproducts &
     rm $ZUNKAPATH/restart-zoomproducts
     sleep 3
 fi

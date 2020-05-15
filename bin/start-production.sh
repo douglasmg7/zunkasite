@@ -29,5 +29,5 @@ cd - > /dev/null
 sleep .1
 
 # Start zoomproducts.
-# zoomproducts &
+RUN_MODE=production zoomproducts &
 # sleep .1
