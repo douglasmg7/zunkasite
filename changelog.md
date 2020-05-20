@@ -1,3 +1,8 @@
+# 1.5.9 (20 mai 2020)
+## Mudanças
+* Linka para produto aldo na página de edição de produto.
+
+
 # 1.5.8 (13 mai 2020)
 ## Mudanças
 * Cria a ordem zoom no evento de nova ordem, não mais no evento de pagamento aprovado.
