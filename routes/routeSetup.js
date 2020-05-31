@@ -169,24 +169,74 @@ router.post('/product/add', s.basicAuth, [
 	}
 });
 
-// // Store products.
-// router.get('/store', checkPermission, (req, res, next)=>{
-// res.render('productsStore', { user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined }, csrfToken: req.csrfToken() });
-// });
+// Update product price and av..
+router.post('/product/update', s.basicAuth, [
+		check('storeProductId').isLength(24),
+		check('dealerProductActive').isBoolean(),
+		check('dealerProductPrice').isNumeric(),
+], (req, res, next)=>{
+	try {
+		// log.debug("Headers: " + JSON.stringify(req.headers, null, 3));
+		// Check erros.
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			// log.debug(JSON.stringify(errors.array(), null, 2));
+            // log.debug(`dealerProductPrice: ${req.body.dealerProductPrice}`);
+			return res.status(422).json({ erros: errors.array() });
+		}
+        // log.debug("req.body: " + JSON.stringify(req.body, null, 2));
+		// Verify if product exist.
+		Product.findById(req.body.storeProductId, (err, product)=>{
+			if (err) {
+				log.error(`Updating product from service. Finding product ${req.body.storeProductPrice}. ${err.stack}`);
+				return res.status(500).send(err);
+			}
+			// Product exist and not marked as deleted.
+			if (product && !product.deletedAt) {
+                product.dealerProductActive = req.body.dealerProductActive;
+                if (!product.dealerProductActive) {
+                    product.storeProductCommercialize = false
+                } 
+                product.dealerProductPrice = parseFloat(req.body.dealerProductPrice);
+                if (product.dealerProductPrice === NaN || product.dealerProductPrice < 1000.00) {
+			        return res.status(422).json({ erros: [ `dealerProductPrice: ${product.dealerProductPrice}, must be bigger than 1000.00`] });
+                } else  {
+                    // Price with markup.
+                    let priceWithMarkup = product.dealerProductPrice * (product.storeProductMarkup / 100 + 1);
+                    // Use discount.
+                    if(product.storeProductDiscountEnable){
+                        // Use percentage.
+                        if(product.storeProductDiscountType === '%'){
+                            product.storeProductPrice = priceWithMarkup * (1 - (product.storeProductDiscountValue / 100));
+                        }
+                        // Use monetary value.
+                        else {
+                            product.storeProductPrice = priceWithMarkup - product.storeProductDiscountValue;
+                        }
+                    }
+                    // No discount.
+                    else {
+                        product.storeProductPrice = priceWithMarkup;
+                    }
+                    // Only two digits.
+                    product.storeProductPrice = parseFloat(product.storeProductPrice.toFixed(2));
 
-// // All nations products.
-// router.get('/allnations', checkPermission, (req, res, next)=>{
-// res.render('productsAllNations', { user: req.isAuthenticated() ? req.user : { username: undefined, group: undefined } });
-// });
-
-// Check permission.
-function checkPermission (req, res, next) {
-	// Should be admin.
-	if (req.isAuthenticated() && req.user.group.includes('admin')) {
-		return next();
+                    // Save product.
+                    product.save(err=>{
+                        if (err) {
+				            log.error(`Updating product from service. Saving product _id: ${product.storeProductPrice}, dealerProductActive: ${product.dealerProductActive}, storeProductPrice: ${product.storeProductPrice}. ${err.stack}`);
+                            return res.status(500).send(err);
+                        }
+                        log.debug(`Product was updated from service, _id: ${product._id}, dealerProductActive: ${product.dealerProductActive}, storeProductPrice: ${product.storeProductPrice}`);
+                        return res.send(product._id);
+                    });
+                }
+			} 
+		});
+	} catch(err) {
+		log.error(`Updating product from service: ${err.stack}`);
+		return res.status(500).send(err.message);
 	}
-	res.redirect('/');
-}
-
+});
 
 module.exports = router;
