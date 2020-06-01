@@ -69,8 +69,9 @@ router.get('/products/aldo', s.basicAuth, function(req, res, next) {
                 // console.log(`dbProduct: ${dbProducts[i]}`);
                 products.push({
                     id: dbProducts[i]._id,
+                    dealerProductId: dbProducts[i].dealerProductId,
                     dealerProductActive: dbProducts[i].dealerProductActive,
-                    dealerProductPrice: dbProducts[i].dealerProductPrice,   // price x 100
+                    dealerProductPrice: dbProducts[i].dealerProductPrice,
                 });
             }
             return res.json(products);

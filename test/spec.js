@@ -79,10 +79,11 @@ describe('Zunka', function () {
                 .end((err, res)=>{
                     // console.log(res.text);
                     let products = JSON.parse(res.text);
-                    // console.log(`newestProducts.length: ${newestProducts.length}`);
                     expect(products).to.have.length.above(0);
                     products.forEach(product=>{
                         expect(product.id).to.be.length(24);
+                        expect(product.dealerProductId).length.be.above(2);
+                        expect(product.dealerProductPrice).to.be.above(1000);
                     });
                     Product.findById(products[0].id, (err, productDb)=>{
                         expect(productDb.dealerName).to.be.eq('Aldo');
@@ -205,7 +206,8 @@ describe('Zunka', function () {
                                 // console.log(`orderDb.subtotalPrice: ${orderDb.subtotalPrice}`);
                                 // console.log(`totalPrice: ${totalPrice}`);
                                 expect(parseFloat(orderDb.subtotalPrice)).to.be.equal(totalPrice);
-                                expect(parseFloat(orderDb.totalPrice)).to.be.equal(totalPrice + zoomOrderTest.shipping.freight_price);
+                                // expect(parseFloat(orderDb.totalPrice)).to.be.equal(totalPrice + zoomOrderTest.shipping.freight_price);
+                                expect(orderDb.totalPrice).to.be.equal((totalPrice + zoomOrderTest.shipping.freight_price).toFixed(2));
                                 expect(orderDb.user_id.toString()).to.be.equal('123456789012345678901234');
                                 expect(orderDb.name).to.be.equal(zoomOrderTest.customer.first_name);
                                 expect(orderDb.email).to.be.equal('zoom@zoom.com.br');
@@ -265,7 +267,8 @@ describe('Zunka', function () {
                             // console.log(`orderDb.subtotalPrice: ${orderDb.subtotalPrice}`);
                             // console.log(`totalPrice: ${totalPrice}`);
                             expect(parseFloat(orderDb.subtotalPrice)).to.be.equal(totalPrice);
-                            expect(parseFloat(orderDb.totalPrice)).to.be.equal(totalPrice + zoomOrderTest.shipping.freight_price);
+                            // expect(parseFloat(orderDb.totalPrice)).to.be.equal(totalPrice + zoomOrderTest.shipping.freight_price);
+                            expect(orderDb.totalPrice).to.be.equal((totalPrice + zoomOrderTest.shipping.freight_price).toFixed(2));
                             expect(orderDb.user_id.toString()).to.be.equal('123456789012345678901234');
                             expect(orderDb.name).to.be.equal(zoomOrderTest.customer.first_name);
                             expect(orderDb.email).to.be.equal('zoom@zoom.com.br');
@@ -317,8 +320,10 @@ describe('Zunka', function () {
                             expect(parseFloat(orderDb.subtotalPrice)).to.be.above(0);
                             // console.log(`orderDb.subtotalPrice: ${orderDb.subtotalPrice}`);
                             // console.log(`totalPrice: ${totalPrice}`);
-                            expect(parseFloat(orderDb.subtotalPrice)).to.be.equal(totalPrice);
-                            expect(parseFloat(orderDb.totalPrice)).to.be.equal(totalPrice + zoomOrderTest.shipping.freight_price);
+                            // expect(parseFloat(orderDb.subtotalPrice)).to.be.equal(totalPrice);
+                            // expect(parseFloat(orderDb.totalPrice)).to.be.equal(totalPrice + zoomOrderTest.shipping.freight_price);
+                            expect(orderDb.subtotalPrice).to.be.equal(totalPrice.toFixed(2));
+                            expect(orderDb.totalPrice).to.be.equal((totalPrice + zoomOrderTest.shipping.freight_price).toFixed(2));
                             expect(orderDb.user_id.toString()).to.be.equal('123456789012345678901234');
                             expect(orderDb.name).to.be.equal(zoomOrderTest.customer.first_name);
                             expect(orderDb.email).to.be.equal('zoom@zoom.com.br');
