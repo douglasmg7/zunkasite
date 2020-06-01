@@ -68,10 +68,41 @@ describe('Zunka', function () {
         });
     });
 
+    // Aldo.
+    describe("Aldo", ()=>{
+        // New products API.
+        it('/setup/products/aldo', done=>{
+            request(server)
+                .get('/setup/products/aldo')
+                .auth(s.zunkaSite.user, s.zunkaSite.password)
+                .expect(200)
+                .end((err, res)=>{
+                    // console.log(res.text);
+                    let products = JSON.parse(res.text);
+                    // console.log(`newestProducts.length: ${newestProducts.length}`);
+                    expect(products).to.have.length.above(0);
+                    products.forEach(product=>{
+                        expect(product.id).to.be.length(24);
+                    });
+                    Product.findById(products[0].id, (err, productDb)=>{
+                        expect(productDb.dealerName).to.be.eq('Aldo');
+                        done();
+                    });
+                });
+        });
+    });
+
     // Zoom API.
     describe("Zoom API", ()=>{
         const zoomOrderId = '31559839856'; 
         const zoomOrderTest = require(`./zoom/order-${zoomOrderId}.json`);
+
+        before(done=> {
+            Order.deleteMany({externalOrderNumber: zoomOrderId}, err=>{
+                expect(err).to.be.null;
+                done();
+            })
+        });
 
         // Not using auth anymore.
         // // Invalid auth.
@@ -82,6 +113,7 @@ describe('Zunka', function () {
                 // .send({ "orderNumber": "5015679200", "status": "New" })
                 // .expect(401, /Unauthorised/, done);
         // });
+
         // Hello.
         it('Hello', done=>{
             request(server)

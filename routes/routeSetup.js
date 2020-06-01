@@ -55,6 +55,32 @@ router.get('/product-info', s.basicAuth, function(req, res, next) {
     });
 });
 
+// Get all zunkasite aldo products.
+router.get('/products/aldo', s.basicAuth, function(req, res, next) {
+    try{
+        // Get all products into cart from db.
+        Product.find({'dealerName': 'Aldo'}, (err, dbProducts)=>{
+            if (err) {
+                log.error(`Getting all Aldo products: ${err.stack}`);
+                return res.status(500).send(err);
+            }
+            let products = [];
+            for (let i = 0; i < dbProducts.length; i++) {
+                // console.log(`dbProduct: ${dbProducts[i]}`);
+                products.push({
+                    id: dbProducts[i]._id,
+                    dealerProductActive: dbProducts[i].dealerProductActive,
+                    dealerProductPrice: dbProducts[i].dealerProductPrice,   // price x 100
+                });
+            }
+            return res.json(products);
+        });
+    } catch(err) {
+        log.error(`[catch] Getting all Aldo products: ${err.stack}`);
+        return res.status(500).send(err);
+    }
+});
+
 // Add product.
 router.post('/product/add', s.basicAuth, [
 		check('dealerName').isLength(4, 20),
@@ -169,7 +195,7 @@ router.post('/product/add', s.basicAuth, [
 	}
 });
 
-// Update product price and av..
+// Update product price and availability.
 router.post('/product/update', s.basicAuth, [
 		check('storeProductId').isLength(24),
 		check('dealerProductActive').isBoolean(),

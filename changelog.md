@@ -1,3 +1,9 @@
+# 1.5.10 (01 jun 2020)
+## Novos recursos.
+* End point para atualização do dealerPrice e dealerProductAvailability do produto.
+* End point para obter dealerPrice e dealerProductAvailability do produto.
+
+
 # 1.5.9 (20 mai 2020)
 ## Mudanças
 * Linka para produto aldo na página de edição de produto.
