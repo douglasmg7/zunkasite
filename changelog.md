@@ -1,3 +1,8 @@
+# 1.5.11 (03 jun 2020)
+## Novos recursos.
+* No cadastro da nota fiscal aceita número e chave de acesso com até 60 caracteres.
+
+
 # 1.5.10 (01 jun 2020)
 ## Novos recursos.
 * End point para atualização do dealerPrice e dealerProductAvailability do produto.

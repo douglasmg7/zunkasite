@@ -828,11 +828,11 @@ router.post('/invoice/:id', checkPermission, (req, res, next)=>{
     }
     // Check fields.
     // Number.
-    if (!invoice.number.match(/^.{1,24}$/)) {
+    if (!invoice.number.match(/^.{1,60}$/)) {
         invoice.invalid.number = 'Valor inválido'; 
     }
     // Access key.
-    if (!invoice.accessKey.match(/^.{1,24}$/)) {
+    if (!invoice.accessKey.match(/^.{1,60}$/)) {
         invoice.invalid.accessKey = 'Valor inválido'; 
     }
     // CNPJ.
