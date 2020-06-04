@@ -1,3 +1,8 @@
+# 1.5.12 (04 jun 2020)
+## Bug fix.
+* End point get all products aldo, not return deleted products.
+
+
 # 1.5.11 (03 jun 2020)
 ## Novos recursos.
 * No cadastro da nota fiscal aceita número e chave de acesso com até 60 caracteres.

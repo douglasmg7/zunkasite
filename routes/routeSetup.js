@@ -59,7 +59,7 @@ router.get('/product-info', s.basicAuth, function(req, res, next) {
 router.get('/products/aldo', s.basicAuth, function(req, res, next) {
     try{
         // Get all products into cart from db.
-        Product.find({'dealerName': 'Aldo'}, (err, dbProducts)=>{
+        Product.find({dealerName: 'Aldo', deletedAt: {$exists: false}}, (err, dbProducts)=>{
             if (err) {
                 log.error(`Getting all Aldo products: ${err.stack}`);
                 return res.status(500).send(err);
@@ -67,6 +67,7 @@ router.get('/products/aldo', s.basicAuth, function(req, res, next) {
             let products = [];
             for (let i = 0; i < dbProducts.length; i++) {
                 // console.log(`dbProduct: ${dbProducts[i]}`);
+                log.debug(`product: ${dbProducts[i]._id} deletedAt: ${dbProducts[i].deletedAt}, dealerProductId: ${dbProducts[i].dealerProductId}`);
                 products.push({
                     id: dbProducts[i]._id,
                     dealerProductId: dbProducts[i].dealerProductId,
@@ -214,51 +215,57 @@ router.post('/product/update', s.basicAuth, [
         // log.debug("req.body: " + JSON.stringify(req.body, null, 2));
 		// Verify if product exist.
 		Product.findById(req.body.storeProductId, (err, product)=>{
-			if (err) {
-				log.error(`Updating product from service. Finding product ${req.body.storeProductPrice}. ${err.stack}`);
-				return res.status(500).send(err);
-			}
-			// Product exist and not marked as deleted.
-			if (product && !product.deletedAt) {
+            if (err) {
+                log.error(`Updating product from service. Finding product ${req.body.storeProductPrice}. ${err.stack}`);
+                return res.status(500).send(err);
+            }
+            // Product exist and not marked as deleted.
+            const minPrice = 10.00;
+            if (product && !product.deletedAt) {
+                let dealerProductPrice = parseFloat(req.body.dealerProductPrice);
+                // Inválid price.
+                if (dealerProductPrice === NaN || dealerProductPrice < minPrice) {
+                    return res.status(422).json({ erros: [ `dealerProductPrice: ${dealerProductPrice}, must be bigger than ${minPrice}`] });
+                } 
+                // Valid price.
+                else {
+                    product.dealerProductPrice = dealerProductPrice;
+                }
                 product.dealerProductActive = req.body.dealerProductActive;
+                // Product inactive.
                 if (!product.dealerProductActive) {
                     product.storeProductCommercialize = false
                 } 
-                product.dealerProductPrice = parseFloat(req.body.dealerProductPrice);
-                if (product.dealerProductPrice === NaN || product.dealerProductPrice < 1000.00) {
-			        return res.status(422).json({ erros: [ `dealerProductPrice: ${product.dealerProductPrice}, must be bigger than 1000.00`] });
-                } else  {
-                    // Price with markup.
-                    let priceWithMarkup = product.dealerProductPrice * (product.storeProductMarkup / 100 + 1);
-                    // Use discount.
-                    if(product.storeProductDiscountEnable){
-                        // Use percentage.
-                        if(product.storeProductDiscountType === '%'){
-                            product.storeProductPrice = priceWithMarkup * (1 - (product.storeProductDiscountValue / 100));
-                        }
-                        // Use monetary value.
-                        else {
-                            product.storeProductPrice = priceWithMarkup - product.storeProductDiscountValue;
-                        }
+                // Price with markup.
+                let priceWithMarkup = product.dealerProductPrice * (product.storeProductMarkup / 100 + 1);
+                // Use discount.
+                if(product.storeProductDiscountEnable){
+                    // Use percentage.
+                    if(product.storeProductDiscountType === '%'){
+                        product.storeProductPrice = priceWithMarkup * (1 - (product.storeProductDiscountValue / 100));
                     }
-                    // No discount.
+                    // Use monetary value.
                     else {
-                        product.storeProductPrice = priceWithMarkup;
+                        product.storeProductPrice = priceWithMarkup - product.storeProductDiscountValue;
                     }
-                    // Only two digits.
-                    product.storeProductPrice = parseFloat(product.storeProductPrice.toFixed(2));
-
-                    // Save product.
-                    product.save(err=>{
-                        if (err) {
-				            log.error(`Updating product from service. Saving product _id: ${product.storeProductPrice}, dealerProductActive: ${product.dealerProductActive}, storeProductPrice: ${product.storeProductPrice}. ${err.stack}`);
-                            return res.status(500).send(err);
-                        }
-                        log.debug(`Product was updated from service, _id: ${product._id}, dealerProductActive: ${product.dealerProductActive}, storeProductPrice: ${product.storeProductPrice}`);
-                        return res.send(product._id);
-                    });
                 }
-			} 
+                // No discount.
+                else {
+                    product.storeProductPrice = priceWithMarkup;
+                }
+                // Only two digits.
+                product.storeProductPrice = parseFloat(product.storeProductPrice.toFixed(2));
+
+                // Save product.
+                product.save(err=>{
+                    if (err) {
+                        log.error(`Updating product from service. Saving product _id: ${product.storeProductPrice}, dealerProductActive: ${product.dealerProductActive}, storeProductPrice: ${product.storeProductPrice}. ${err.stack}`);
+                        return res.status(500).send(err);
+                    }
+                    log.debug(`Product was updated from service, _id: ${product._id}, dealerProductActive: ${product.dealerProductActive}, storeProductPrice: ${product.storeProductPrice}`);
+                    return res.send(product._id);
+                });
+            } 
 		});
 	} catch(err) {
 		log.error(`Updating product from service: ${err.stack}`);
