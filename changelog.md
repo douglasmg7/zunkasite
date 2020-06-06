@@ -1,3 +1,8 @@
+# 1.5.13 (06 jun 2020)
+## Novos recursos.
+* Também muda o pedido zoom para entrege no evento de recebimento do pedido da zoom.
+
+
 # 1.5.12 (04 jun 2020)
 ## Bug fix.
 * End point get all products aldo, not return deleted products.

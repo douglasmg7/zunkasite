@@ -451,6 +451,22 @@ router.get('/order/:_id', checkPermission, function(req, res, next) {
                         let today = moment().format('YYYY-MM-DDTHH:mm');
                         // Signal to show set status panel.
                         let showSetStatusPanel = req.query.setStatus? true: false
+                        // If order status changed to delivered by zoom.
+                        if (zoomOrder.status.toLowerCase() == 'delivered') {
+                            // UPdate status on the zunkasite.
+                            Order.findByIdAndUpdate(order._id, { 
+                                $set: { 
+                                    status: 'delivered',
+                                    'timestamps.deliveredAt': new Date(),
+                                }
+                            })
+                                .then(()=>{
+                                    log.debug(`Zoom changed order to deliverd status automatically, order _id: ${order._id}, zoom order number: ${oreder.externalOrderNumber}`);
+                                })
+                                .catch(err=>{
+                                    log.error(`Saving on db, zoom order to status deliverd, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${err.stack}`);
+                                });
+                        }
                         return res.render('admin/zoomOrder', { order, zoomOrder, formatDate, formatMoney, today: today, showSetStatusPanel: showSetStatusPanel });
                     });
                 }
