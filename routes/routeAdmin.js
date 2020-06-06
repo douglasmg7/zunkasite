@@ -461,7 +461,7 @@ router.get('/order/:_id', checkPermission, function(req, res, next) {
                                 }
                             })
                                 .then(()=>{
-                                    log.debug(`Zoom changed order to deliverd status automatically, order _id: ${order._id}, zoom order number: ${oreder.externalOrderNumber}`);
+                                    log.debug(`Zoom changed order to deliverd status automatically, order _id: ${order._id}, zoom order number: ${order.externalOrderNumber}`);
                                 })
                                 .catch(err=>{
                                     log.error(`Saving on db, zoom order to status deliverd, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${err.stack}`);
