@@ -1,9 +1,13 @@
+# 1.5.15 (07 jun 2020)
+## Novos recursos.
+* End point para to disable product.
+
+
 # 1.5.14 (06 jun 2020)
 ## Novos recursos.
 * Também muda o pedido zoom para entregue no evento de recebimento do pedido da zoom.
 ## Bug fix.
 * Erro no log de pedido alterado para entregue.
- 
 
 
 # 1.5.12 (04 jun 2020)

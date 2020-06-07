@@ -216,7 +216,7 @@ router.post('/product/update', s.basicAuth, [
 		// Verify if product exist.
 		Product.findById(req.body.storeProductId, (err, product)=>{
             if (err) {
-                log.error(`Updating product from service. Finding product ${req.body.storeProductPrice}. ${err.stack}`);
+                log.error(`Updating product from service. Finding product ${req.body.storeProductId}. ${err.stack}`);
                 return res.status(500).send(err);
             }
             // Product exist and not marked as deleted.
@@ -259,7 +259,7 @@ router.post('/product/update', s.basicAuth, [
                 // Save product.
                 product.save(err=>{
                     if (err) {
-                        log.error(`Updating product from service. Saving product _id: ${product.storeProductPrice}, dealerProductActive: ${product.dealerProductActive}, storeProductPrice: ${product.storeProductPrice}. ${err.stack}`);
+                        log.error(`Updating product from service. Saving product _id: ${product._id}, dealerProductActive: ${product.dealerProductActive}, storeProductPrice: ${product.storeProductPrice}. ${err.stack}`);
                         return res.status(500).send(err);
                     }
                     log.debug(`Product was updated from service, _id: ${product._id}, dealerProductActive: ${product.dealerProductActive}, storeProductPrice: ${product.storeProductPrice}`);
@@ -273,4 +273,44 @@ router.post('/product/update', s.basicAuth, [
 	}
 });
 
+// Disable product.
+router.post('/product/disable', s.basicAuth, [
+		check('storeProductId').isLength(24),
+], (req, res, next)=>{
+	try {
+		// log.debug("Headers: " + JSON.stringify(req.headers, null, 3));
+		// Check erros.
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			// log.debug(JSON.stringify(errors.array(), null, 2));
+            // log.debug(`dealerProductPrice: ${req.body.dealerProductPrice}`);
+			return res.status(422).json({ erros: errors.array() });
+		}
+        // log.debug("req.body: " + JSON.stringify(req.body, null, 2));
+		// Verify if product exist.
+		Product.findById(req.body.storeProductId, (err, product)=>{
+            if (err) {
+                log.error(`Disabling product from service. Finding product ${req.body.storeProductId}. ${err.stack}`);
+                return res.status(500).send(err);
+            }
+            // Product exist and not marked as deleted.
+            if (product && !product.deletedAt) {
+                product.dealerProductActive = false;
+                product.storeProductCommercialize = false
+                // Save product.
+                product.save(err=>{
+                    if (err) {
+                        log.error(`Disabling product from service. Saving product ${product._id}. ${err.stack}`);
+                        return res.status(500).send(err);
+                    }
+                    log.debug(`Product was disabled from service, _id: ${product._id}`);
+                    return res.send(product._id);
+                });
+            } 
+		});
+	} catch(err) {
+		log.error(`Disabling product from service: ${err.stack}`);
+		return res.status(500).send(err.message);
+	}
+});
 module.exports = router;
