@@ -26,10 +26,11 @@ Product.find({deletedAt: {$exists: false}})
             storeProductPrice = priceWithMarkup.toFixed(2);
         }
         let diff = product.storeProductPrice - storeProductPrice;
-        if (diff !== 0) {
+        if (diff >= 1) {
             console.log(`${product._id} - diff ${Math.abs(diff).toFixed(4)}, markup: ${product.storeProductMarkup},  discount: ${product.storeProductDiscountEnable}, dealer price: ${product.dealerProductPrice}, store price ${storeProductPrice}`);
         }
     });
+    console.log('Checking product prices finished');
     mongoose.close(()=>{
         process.exit();
     });
