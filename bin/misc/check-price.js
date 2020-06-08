@@ -26,8 +26,8 @@ Product.find({deletedAt: {$exists: false}})
             storeProductPrice = priceWithMarkup.toFixed(2);
         }
         let diff = product.storeProductPrice - storeProductPrice;
-        if (diff >= 1) {
-            console.log(`${product._id} - diff ${Math.abs(diff).toFixed(4)}, markup: ${product.storeProductMarkup},  discount: ${product.storeProductDiscountEnable}, dealer price: ${product.dealerProductPrice}, store price ${storeProductPrice}`);
+        if (Math.abs(diff) >= 1) {
+            console.log(`${product._id} - diff: ${Math.abs(diff).toFixed(4)}, calc: ${storeProductPrice}, markup: ${product.storeProductMarkup},  discount: ${product.storeProductDiscountEnable}, dealer price: ${product.dealerProductPrice}, store price ${product.storeProductPrice}`);
         }
     });
     console.log('Checking product prices finished');
