@@ -1,0 +1,5 @@
+# Find invalid status - product removed and set to commercialize.
+db.products.find({storeProductCommercialize: true, deletedAt: {$exists: true}}, {_id:false, deletedAt: true}).count();
+
+# Set not commercialize for deleted products.
+db.products.updateMany({storeProductCommercialize: true, deletedAt: {$exists: true}}, { $set: {storeProductCommercialize: false}});
