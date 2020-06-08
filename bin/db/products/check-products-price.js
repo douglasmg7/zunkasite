@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 'use strict';
-const mongoose = require('../../db/mongoose');
-const Product = require('../../model/product');
-// const log = require('../../config/log');
+const mongoose = require('../../../db/mongoose');
+const Product = require('../../../model/product');
 console.log('Checking product prices...');
 
 // Order.find({status: {$nin: ["placed", "canceled"]}}).sort({ "timestamps.paidAt": 1 })
