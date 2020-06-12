@@ -64,7 +64,7 @@ block content
             p {{ order.totalPrice | formatMoney }}
 
         //- Verify payment complete for credit card.
-        input#verify-payment-completed.btn-primary(type='button' v-if='status(order) === "aberto" && order.payment.method === "ppp-credit"' @click='verifyPaymentCompleted(order)' value='Verificar se pagamento foi realizado')
+        input#verify-payment-completed.btn-primary(type='button' v-if='status(order) === "aberto" && (order.payment.method === "ppp-credit" || order.payment.method === "paypal")' @click='verifyPaymentCompleted(order)' value='Verificar se pagamento foi realizado')
 
         //- Items.
         h3(v-if='order.items.length > 0') Produtos

@@ -1,3 +1,9 @@
+# 1.5.16 (12 jun 2020)
+## Melhorias.
+* Verifica se pagamento concluído para vendas pelo paypal.
+* Botão para verificar se ordem foi paga, para pagamento pelo paypal também.
+
+
 # 1.5.15 (07 jun 2020)
 ## Novos recursos.
 * End point para to disable product.

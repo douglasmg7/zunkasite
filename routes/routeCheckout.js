@@ -566,13 +566,27 @@ router.post('/payment/order/:order_id', (req, res, next)=>{
         }
 		switch(req.query.method) {
 			case 'paypal':
-				order.status = 'paid';
+				order.status = 'placed';
 				order.timestamps.placedAt = new Date();
-				order.timestamps.paidAt = order.timestamps.placedAt;
+                try{
+                    if (req.body.payment.transactions[0].related_resources[0].sale.state.toLowerCase() == "completed") {
+                        order.status = 'paid';
+                        order.timestamps.paidAt = order.timestamps.placedAt;
+                    }
+                } catch(err) {
+                    log.error(`Getting payment completed for order ${order._id}`);
+                }
 				order.payment = {
 					paypal: req.body.payment,
 					method: 'paypal'
 				};
+				// order.status = 'paid';
+				// order.timestamps.placedAt = new Date();
+				// order.timestamps.paidAt = order.timestamps.placedAt;
+				// order.payment = {
+					// paypal: req.body.payment,
+					// method: 'paypal'
+				// };
 				closeOrder(order, req, res);
 				break;
 			case 'money':
@@ -1155,7 +1169,14 @@ router.get('/ppp/payment/complete/:order_id', (req, res, next)=>{
 				return res.json({success: true, completed: false});
 			}
 			// update order.
-			order.payment.pppExecutePayment.transactions[0].related_resources[0].sale.state = "completed";
+            // Paypal.
+            if (order.payment.method == "paypal") {
+			    order.payment.paypal.transactions[0].related_resources[0].sale.state = "completed";
+            } 
+            // Credit card.
+            else {
+			    order.payment.pppExecutePayment.transactions[0].related_resources[0].sale.state = "completed";
+            }
 			order.timestamps.paidAt = new Date();
 			order.status = 'paid';
 			order.save(err=>{
@@ -1289,8 +1310,17 @@ function getPayment(order, cb){
 			return cb(new Error(`Getting payment info from paypal web service. ${err}`));
 		} 	
 		// Payer id.
-		let paymentId = order.payment.pppExecutePayment.id;
-		// log.debug(`url: ${ppUrl}payments/payment/${paymentId}`);
+        let paymentId = "";
+        // Paypal.
+        if (order.payment.method == "paypal"){
+            paymentId = order.payment.paypal.id;
+        } 
+        // Credit card.
+        else {
+            paymentId = order.payment.pppExecutePayment.id;
+        }
+
+        // log.debug(`url: ${ppUrl}payments/payment/${paymentId}`);
 		axios.get(`${ppUrl}payments/payment/${paymentId}`, {
 			headers: {
 				"Accept": "application/json", 
@@ -1303,7 +1333,7 @@ function getPayment(order, cb){
 			if (response.data.err) {
 				return cb(new Error(`Getting payment info from paypal web service. ${response.data.err}`));
 			} else {
-				// log.silly(`Payment info: ${JSON.stringify(response.data, null, 2)}`);
+                // log.debug(`Payment info: ${JSON.stringify(response.data, null, 2)}`);
 				return cb(null, response.data);
 			}
 		})
