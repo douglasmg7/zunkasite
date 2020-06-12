@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-read -r URL TYPE TOKEN <<< $(./token.sh $1)
+read -r URL TYPE TOKEN <<< $(./token.sh)
 
 RES=$(curl -s -X POST ${URL}payment-experience/web-profiles/ \
   -H "Content-Type: application/json" \

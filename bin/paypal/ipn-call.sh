@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-read -r URL TYPE TOKEN <<< $(./token.sh $1)
+read -r URL TYPE TOKEN <<< $(./token.sh)
 
 RES=$(curl -s -X POST localhost:3080/ext/ppp/ipn/ \
   -H "Content-Type: application/json" \

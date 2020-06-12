@@ -7,7 +7,7 @@ cd $(dirname "$0")
 IFS=
 
 # Run mode.
-[[ $1 == production ]] && MODE="production:\s{" || MODE="sandbox:\s{"
+[[ $RUN_MODE == production ]] && MODE="production:\s{" || MODE="sandbox:\s{"
 
 # Production.
 CLIENT_ID=$(grep $MODE ../../config/s.js -A 10 | grep ppClientId | head -1 | cut -d " " -f2 | sed 's/"//;s/",//')

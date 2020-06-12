@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-read -r URL TYPE TOKEN <<< $(./token.sh $1)
+read -r URL TYPE TOKEN <<< $(./token.sh)
 
 WEB_EXP_PROFILES=$(curl -s -X GET ${URL}payment-experience/web-profiles/ \
   -H "Content-Type: application/json" \

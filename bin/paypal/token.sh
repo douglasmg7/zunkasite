@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-
-# $1 = production, for production mode.
-read -r URL CLIENT_ID SECRET <<< $(./paypal-config.sh $1)
+read -r URL CLIENT_ID SECRET <<< $(./paypal-config.sh)
 
 RES=$(curl -s ${URL}oauth2/token \
    -H "Accept: application/json" \
