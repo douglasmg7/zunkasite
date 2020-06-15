@@ -6,6 +6,7 @@ const s = require('../config/s');
 const nock = require('nock');
 const Product = require('../model/product');
 const Order = require('../model/order');
+const routeCheckout = require('../routes/routeCheckout');
 
 // Array with newest products.
 let newestProducts;
@@ -65,6 +66,51 @@ describe('Zunka', function () {
             request(server)
                 .get('/foo/bar')
                 .expect(404, "Página não encontrada.", done);
+        });
+        // Check CPF, CNPJ and mobile number registred..
+        it('function checkCpfCnpjMobileRegistred()', done=>{
+            let order = new Order();
+
+            // Nothing.
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(order)).to.be.false;
+
+            // Only mobile number.
+            order.cpf = "";
+            order.cnpj = "";
+            order.mobileNumber = "1";
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(order)).to.be.false;
+
+            // Only CPF.
+            order.cpf = "1";
+            order.cnpj = "";
+            order.mobileNumber = "";
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(order)).to.be.false;
+
+            // Only CNPJ.
+            order.cpf = "";
+            order.cnpj = "1";
+            order.mobileNumber = "";
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(order)).to.be.false;
+
+            // CPF and CNPJ.
+            order.cpf = "";
+            order.cnpj = "1";
+            order.mobileNumber = "";
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(order)).to.be.false;
+
+            // Válid with cpf.
+            order.cpf = "1";
+            order.cnpj = "";
+            order.mobileNumber = "1";
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(order)).to.be.true;
+
+            // Válid with cnpj.
+            order.cpf = "";
+            order.cnpj = "1";
+            order.mobileNumber = "1";
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(order)).to.be.true;
+
+            done();
         });
     });
 

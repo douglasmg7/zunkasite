@@ -1,0 +1,104 @@
+extends ../layout/layout
+
+block title
+    title Zunka - Informação de dados
+
+block append css
+    link(rel="stylesheet" href="/css/checkout/needMoreInformation.css" charset="utf-8")
+
+block content 
+    section.shadow
+        h2.title Favor informas os dados
+        //- p.warn-message(v-show='this.warnMessage !== ""') {{ warnMessage }}  
+
+        //- CPF or CNPJ.
+        .radio
+            label
+                input(type='radio' name='infoType' id='cpf', value=index onclick='selectInfoType()')
+                span Pessoa físcia
+            label 
+                input(type='radio' name='infoType' id='cnpj', value=index onclick='selectInfoType()')
+                span Pessoa jurídica
+
+        //- CPF.
+        #cpf(style='display: none')
+            label(for='cpf') CPF
+            input(type='text' name='cpf' id='cpf' v-model='cpf')
+
+        //- CNPJ.
+        #cnpj(style='display: none')
+            label(for='cnpj') CNPJ
+            input(type='text' name='cnpj' id='cnpj' v-model='cnpj')
+
+            //- State registration.
+            label(for='stateRegistration') Inscrição estadual (opcional)
+            input(type='text' name='stateRegistration' id='stateRegistration' v-model='stateRegistration')
+
+            //- Nome para contato.
+            label(for='contactName') Nome para contato
+            input(type='text' name='contactName' id='contactName' v-model='contactName')
+
+        //- Mobile number.
+        #mobile(style='display: none')
+            label(for='mobileNumber') Número de Celular
+            input(type='text' name='mobileNumber' id='mobileNumber' v-model='mobileNumber' placeholder='(99) 9 9999-9999')
+            input.btn-primary#save(type='button' value='Salvar' @click='save()' style='display: none') 
+
+append internal_scripts
+  script.
+    //- let cpf = !{JSON.stringify(cpf)};
+    //- let mobileNumber = !{JSON.stringify(mobileNumber)};
+    //- let orderId = !{JSON.stringify(orderId)};
+        let radios = document.getElementsByName('infoType');
+        let btnSave = document.getElementById('save');
+        let divCpf = document.getElementById('cpf');
+        let divCnpj = document.getElementById('cnpj');
+        let divMobile = document.getElementById('mobile');
+        //- divLoading.style.display = 'none';
+        function selectInfoType() {
+            divMobile.style.display = 'block';
+            btnSave.style.display = 'block';
+        }
+        //- function selectFreight(){
+            //- let selFreightIndex = ""
+            //- for (var i = 0, length = radios.length; i < length; i++) {
+                //- if (radios[i].checked) {
+                    //- selFreightIndex = radios[i].value;
+                //- break;
+              //- }
+            //- }
+            //- if (selFreightIndex == "") {
+                //- btnContinue.disabled = true;
+                //- console.log('block');
+                //- return;
+            //- }
+            //- //- console.log(selFreightIndex);
+            //- divLoading.style.display = 'flex';
+
+            //- // Process selected freight.
+            //- axios.post(window.location.pathname, {selFreightIndex}, { headers: {'csrf-token' : csrfToken} })
+            //- .then(response => {
+                //- // Validation error.
+                //- if (response.data.err) {
+                    //- window.location.href=`/error?err=${response.data.err}`;
+                //- }
+                //- if (response.data.success) {
+                    //- window.location.href=`/checkout/payment/order/${order._id}`;
+                //- } else {
+                    //- console.log("cart");
+                    //- divLoading.style.display = 'none';
+                    //- // Give time to hide modal-loading.
+                    //- setTimeout(()=>{
+                        //- alert(response.data.message);
+                        //- window.location.href=`/cart`;
+                    //- }, 300);
+                //- }
+            //- })
+            //- .catch(err => {
+                //- window.location.href=`/error?err=${err}`;
+            //- })  
+        //- }
+
+append external_scripts
+    //- script(src='/js/checkout/needMoreInformation.js?0003')  
+    include ../components/axios.js.pug

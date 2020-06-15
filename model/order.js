@@ -126,6 +126,9 @@ let schema = new mongoose.Schema({
 	name: { type: String, required: true },    // If user change his name, it will keep the name used at order request.
 	email: { type: String, required: true },    // If user change his email, it will keep the email used at order request.
 	cpf: { type: String, default: '' },     // If user change his cpf, it will keep the cpf used at order request.
+    cnpj: { type: String, default: '' },     // If user change his cnpj, it will keep the cnpj used at order request.
+    stateRegistration: { type: String, default: '' },   // Inscrição estadual - only when using CNPJ.
+    contactName: { type: String, default: '' },   // Only when using CNPJ.
 	mobileNumber: { type: String, default: '' },    // If user change his mobile number, it will keep the mobile number used at order request.   
 	items: [item],   // Itens to be bought.
 	shipping: shipping,   // Shipping information.

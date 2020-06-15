@@ -450,6 +450,25 @@ router.post('/shipping-method/order/:order_id', (req, res, next)=>{
 	});
 });
 
+// check if CPF or CNPJ resgistred and mobile number.
+function checkCpfCnpjMobileRegistred(order) {
+    return ((order.cpf != "" || order.cnpj != "") && order.mobileNumber != "");
+}
+
+// More information - page - only for test, not called directly.
+router.get('/need-more-information', (req, res, next)=>{
+    res.render('checkout/needMoreInformation',
+        {
+            cpf: "",
+            cnpj: "",
+            stateRegistration: "",
+            contactName: "",
+            mobileNumber: "",
+            orderId: "",
+        }
+    )
+});
+
 // Payment - page.
 router.get('/payment/order/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
@@ -460,8 +479,9 @@ router.get('/payment/order/:order_id', (req, res, next)=>{
         if (order.timestamps.placedAt) {
 	        return res.redirect('/user/orders');
         }
-		// Must have cpf and mobile number.
-		if (!order.cpf || !order.mobileNumber ) {
+		// Must have cpf and mobile number ou cnpj and mobile number.
+		// if (!order.cpf || !order.mobileNumber ) {
+		if (!checkCpfCnpjMobileRegistred(order)) {
 			res.render('checkout/needCpfAndMobileNumber',
 				{
 					cpf: req.user.cpf,
@@ -1345,3 +1365,4 @@ function getPayment(order, cb){
 }
 
 module.exports.getPayment = getPayment;
+module.exports.checkCpfCnpjMobileRegistred = checkCpfCnpjMobileRegistred;
