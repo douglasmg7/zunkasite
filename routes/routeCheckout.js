@@ -4,6 +4,10 @@ const router = express.Router();
 const passport = require('passport');
 const emailSender = require('../config/email');
 const soap = require('soap');
+// const cpf = require('@fnando/cpf');
+const cpf = require("@fnando/cpf/commonjs")
+const cnpj = require("@fnando/cnpj/commonjs");
+// const cnpj = require('@fnando/cnpj');
 // const https = require('https');
 // const request = require('request');
 const axios = require('axios');
@@ -19,6 +23,7 @@ const Product = require('../model/product');
 const ShippingPrice = require('../model/shippingPrice');
 const ppConfig = require('../config/s').paypal;
 const aldo = require('../util/aldo');
+const mobileNumber = require('../util/mobileNumber');
 
 // Redis.
 const redis = require('../db/redis');
@@ -455,20 +460,6 @@ function checkCpfCnpjMobileRegistred(order) {
     return ((order.cpf != "" || order.cnpj != "") && order.mobileNumber != "");
 }
 
-// More information - page - only for test, not called directly.
-router.get('/need-more-information', (req, res, next)=>{
-    res.render('checkout/needMoreInformation',
-        {
-            cpf: "",
-            cnpj: "",
-            stateRegistration: "",
-            contactName: "",
-            mobileNumber: "",
-            orderId: "",
-        }
-    )
-});
-
 // Payment - page.
 router.get('/payment/order/:order_id', (req, res, next)=>{
 	Order.findById(req.params.order_id, (err, order)=>{
@@ -482,15 +473,18 @@ router.get('/payment/order/:order_id', (req, res, next)=>{
 		// Must have cpf and mobile number ou cnpj and mobile number.
 		// if (!order.cpf || !order.mobileNumber ) {
 		if (!checkCpfCnpjMobileRegistred(order)) {
-			res.render('checkout/needCpfAndMobileNumber',
-				{
-					cpf: req.user.cpf,
-					mobileNumber: req.user.mobileNumber,
-					orderId: req.params.order_id,
-					nav: {
-					},
-				}
-			);
+            res.render('checkout/needMoreInformation',
+                {
+                    registryType: '',
+                    cpf: "",
+                    cnpj: "",
+                    stateRegistration: "",
+                    contactName: "",
+                    mobileNumber: "",
+                    orderId: req.params.order_id,
+                    invalid: {}
+                }
+            )
 		}
 		// Render payment page.
 		else {
@@ -510,65 +504,113 @@ router.get('/payment/order/:order_id', (req, res, next)=>{
 	});
 });
 
-// Need cpf and mobile number.
-router.post('/needCpfAndMobileNumber', checkPermission, (req, res, next)=>{
-	// Validation.
-	// Only digits.
-	let mobileNumberTemp = req.body.mobileNumber.match(/\d+/g);
-	if (mobileNumberTemp != null) {
-		req.body.mobileNumber = mobileNumberTemp.join('');
-	}
-	req.sanitize("cpf").trim();
-	req.checkBody('mobileNumber', 'Campo NÚMERO DE CELULAR ínválido.').isLength({ min: 10});
-	req.checkBody('mobileNumber', 'Campo NÚMERO DE CELULAR inválido.').isLength({ max: 11});
-	req.checkBody('cpf', 'Campo CPF deve ser preenchido.').notEmpty();
-	req.checkBody('cpf', 'CPF inválido.').isCpf();
-	req.getValidationResult().then(function(result) {
-		// Send validations errors to client.
-		if (!result.isEmpty()) {
-			let messages = [];
-			messages.push(result.array()[0].msg);
-			return res.json({ success: false, message: messages[0]});
-		}
-		// Save cpf.
-		else {
-			// Format CPF.
-			// Get only the digits.
-			let cpf = req.body.cpf.match(/\d+/g).join('');
-			// Array [3][3][3][2].
-			cpf = cpf.match(/\d{2}\d?/g);
-			// Format to 000.000.000-00.
-			cpf = `${cpf[0]}.${cpf[1]}.${cpf[2]}-${cpf[3]}`
-			// Format mobile number.
-			// Get only the digits.
-			let mobileNumber = req.body.mobileNumber.match(/\d+/g).join('');
-			// Array [2][1][1+][4].
-			mobileNumber = mobileNumber.match(/(^\d{2})(\d)(\d+)(\d{4})$/);
-			// Format to 000.000.000-00.
-			mobileNumber = `(${mobileNumber[1]}) ${mobileNumber[2]} ${mobileNumber[3]}-${mobileNumber[4]}`;
-			// Save user data.
-			User.findById(req.user._id, (err, user)=>{
-				if (err) { return next(err) };
-				if (!user) { return next(new Error('Not found user to save.')); }
-				user.cpf = cpf;
-				user.mobileNumber = mobileNumber;
-				user.save(function(err) {
-					if (err) { return next(err); }
-					// Save order data.
-					Order.findById(req.body.orderId, (err, order)=>{
-						if (err) { return next(err) };
-						if (!order) { return next(new Error('Not found order to save cpf and mobile number.')); }
-						order.cpf = cpf;
-						order.mobileNumber = mobileNumber;
-						order.save(function(err) {
-							if (err) { return next(err); }
-							return res.json({ success: true});
-						});
-					});
-				});
-			});
-		}
-	});
+// // More information - page - only for test, not called directly.
+// router.get('/need-more-information', (req, res, next)=>{
+    // res.render('checkout/needMoreInformation',
+        // {
+            // registryType: '',
+            // cpf: "",
+            // cnpj: "",
+            // stateRegistration: "",
+            // contactName: "",
+            // mobileNumber: "",
+            // orderId: "",
+            // invalid: {}
+        // }
+    // )
+// });
+
+// Need more information.
+router.post('/need-more-information/:orderId', checkPermission, (req, res, next)=>{
+    log.debug(`req.body: ${JSON.stringify(req.body, null, '  ')}`)
+    // Invalid fields.
+    let invalid = {};
+    let invalidValueMsg = "Valor inválido";
+    // Type of registry.
+    if (req.registryType != "") {
+        // Mobile number.
+        if (!mobileNumber.isValid(req.body.mobileNumber)) {
+            invalid.mobileNumber = invalidValueMsg;
+        }     
+    } else {
+        invalid.registryType = "Tipo de registro não selecionado";
+    }
+    // CPF.
+    if (req.body.registryType == 'cpf') {
+        if (!cpf.isValid(req.body.cpf)) {
+            invalid.cpf = invalidValueMsg;
+        }
+    } 
+    // CNPJ.
+    else if (req.body.registryType == 'cnpj') {
+        if (!cnpj.isValid(req.body.cnpj)) {
+            invalid.cnpj = invalidValueMsg;
+        }
+        // State registration.
+        if (req.body.stateRegistration.length > 100) {
+            invalid.stateRegistration = invalidValueMsg;
+        }
+        // Name for contact.
+        if (req.body.contactName.length < 3) {
+            invalid.contactName = invalidValueMsg;
+        }
+    } 
+    // Invalid fields.
+    if (Object.keys(invalid).length) {
+        console.log(`invalid: ${JSON.stringify(invalid, null, 2)}`);
+        return res.render('checkout/needMoreInformation', {
+            invalid: invalid,
+            registryType: req.body.registryType,
+            cpf: req.body.cpf,
+            cnpj: req.body.cnpj,
+            stateRegistration: req.body.stateRegistration,
+            contactName: req.body.contactName,
+            mobileNumber: req.body.mobileNumber,
+            orderId: req.params.orderId 
+        });
+    }
+    // Save cpf.
+    else {
+        // Save user data.
+        User.findById(req.user._id, (err, user)=>{
+            if (err) { return next(err) };
+            if (!user) { return next(new Error('Not found user to save.')); }
+            // CPF.
+            if (req.body.registryType == 'cpf') {
+                user.cpf = cpf.format(req.body.cpf);
+            } 
+            // CNPJ.
+            else if(req.body.registryType == 'cnpj') {
+                user.cnpj = cnpj.format(req.body.cnpj);
+                user.stateRegistration = req.body.stateRegistration;
+                user.contactName = req.body.contactName;
+            }
+            user.mobileNumber = mobileNumber.format(req.body.mobileNumber);
+            user.save(function(err) {
+                if (err) { return next(err); }
+                // Save order data.
+                Order.findById(req.params.orderId, (err, order)=>{
+                    if (err) { return next(err) };
+                    if (!order) { return next(new Error('Not found order to save cpf and mobile number.')); }
+                    // CPF.
+                    if (req.body.registryType == 'cpf') {
+                        order.cpf = cpf.format(req.body.cpf);
+                    } 
+                    // CNPJ.
+                    else if(req.body.registryType == 'cnpj') {
+                        order.cnpj = cnpj.format(req.body.cnpj);
+                        order.stateRegistration = req.body.stateRegistration;
+                        order.contactName = req.body.contactName;
+                    }
+                    order.mobileNumber = mobileNumber.format(req.body.mobileNumber);
+                    order.save(function(err) {
+                        if (err) { return next(err); }
+                        return res.redirect(`/checkout/payment/order/${order._id}`);
+                    });
+                });
+            });
+        });
+    }
 });
 
 // Payment.

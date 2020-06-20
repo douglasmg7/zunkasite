@@ -7,6 +7,7 @@ const nock = require('nock');
 const Product = require('../model/product');
 const Order = require('../model/order');
 const routeCheckout = require('../routes/routeCheckout');
+const mobileNumber = require('../util/mobileNumber');
 
 // Array with newest products.
 let newestProducts;
@@ -33,7 +34,7 @@ describe('Zunka', function () {
     });
 
     // Site.
-    describe("Site", ()=>{
+    describe.only("Site", ()=>{
         // Root page.
         it('/', done=>{
             request(server)
@@ -110,6 +111,28 @@ describe('Zunka', function () {
             order.mobileNumber = "1";
             expect(routeCheckout.checkCpfCnpjMobileRegistred(order)).to.be.true;
 
+            done();
+        });
+        // Check if is a válid mobile number.
+        it.only('Validate mobile number', done=>{
+            expect(mobileNumber.isValid("")).to.be.false;
+            expect(mobileNumber.isValid("313872023")).to.be.false;
+            expect(mobileNumber.isValid("319993872023")).to.be.false;
+            expect(mobileNumber.isValid("31938720236")).to.be.true;
+            expect(mobileNumber.isValid("(31)93872-0236")).to.be.true;
+            expect(mobileNumber.isValid("av3er1938gt720236")).to.be.false;
+            expect(mobileNumber.isValid("(31)938720236")).to.be.true;
+            done();
+        });
+        // Format mobile number.
+        it.only('Validate mobile number', done=>{
+            expect(mobileNumber.format("")).to.be.eq("");
+            expect(mobileNumber.format("313872023")).to.be.eq("");
+            expect(mobileNumber.format("319993872023")).to.be.eq("");
+            expect(mobileNumber.format("31938720236")).to.be.eq("(31) 9 3872-0236");
+            expect(mobileNumber.format("(31)93872-0236")).to.be.eq("(31) 9 3872-0236");
+            expect(mobileNumber.format("av3er1938gt720236")).to.be.eq("(31) 9 3872-0236");
+            expect(mobileNumber.format("(31)938720236")).to.be.eq("(31) 9 3872-0236");
             done();
         });
     });

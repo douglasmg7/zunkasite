@@ -36,7 +36,12 @@ block content
                 h3.sub-title Cliente
                 p Nome: {{orderSelec.name}}
                 p Email: {{orderSelec.email}}
-                p CPF: {{orderSelec.cpf}}
+                .cpf(v-if='orderSelec.cpf!=""')
+                    p CPF: {{orderSelec.cpf}}
+                .cnpj(v-if='orderSelec.cnpj!=""')
+                    p CNPJ: {{orderSelec.cnpj}}
+                    p Inscrição estadual: {{orderSelec.stateRegistration}}
+                    p Nome para contato: {{orderSelec.contactName}}
                 p Celular: {{orderSelec.mobileNumber}}
             .item
                 h3.sub-title Endereço de entrega
