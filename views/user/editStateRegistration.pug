@@ -1,0 +1,37 @@
+extends ../layout/layout
+
+block title
+    title Zunka - Alteração da inscrição estadual
+
+block append internal_style
+    style.
+        section {
+            background-color: var(--white-lighter);
+            max-width: var(--width-small);
+            min-width: 14em;
+            padding: 1em;
+            margin: 2em 1em;
+        }
+        section .title {
+            margin-top: 0;
+        }
+        section .invalid {
+            color: var(--red);
+            margin-top: 0;
+        }
+
+block content 
+    section.shadow
+        form(method='post')
+            input(type='hidden' name='_csrf' value=csrfToken)
+
+            //- Title.
+            h2.title Alteração da inscrição estaudal
+
+            //- State registration.
+            label(for='stateRegistration') Inscrição estadual
+            input(type='text' name='stateRegistration' id='stateRegistration' value=stateRegistration)
+            label.invalid= invalid.stateRegistration
+
+            //- Save.
+            input.btn-primary(type='submit' value='Salvar Alterações') 

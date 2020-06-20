@@ -1,3 +1,8 @@
+# 1.5.17 (20 jun 2020)
+## Melhorias.
+* Inclusão da opção de cadastro por CNPJ com número de inscrição e nome para contato.
+
+
 # 1.5.16 (12 jun 2020)
 ## Melhorias.
 * Verifica se pagamento concluído para vendas pelo paypal.

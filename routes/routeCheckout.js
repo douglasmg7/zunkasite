@@ -522,7 +522,7 @@ router.get('/payment/order/:order_id', (req, res, next)=>{
 
 // Need more information.
 router.post('/need-more-information/:orderId', checkPermission, (req, res, next)=>{
-    log.debug(`req.body: ${JSON.stringify(req.body, null, '  ')}`)
+    // log.debugv`req.body: ${JSON.stringify(req.body, null, '  ')}`)
     // Invalid fields.
     let invalid = {};
     let invalidValueMsg = "Valor inválido";
@@ -557,7 +557,7 @@ router.post('/need-more-information/:orderId', checkPermission, (req, res, next)
     } 
     // Invalid fields.
     if (Object.keys(invalid).length) {
-        console.log(`invalid: ${JSON.stringify(invalid, null, 2)}`);
+        // console.log(`invalid: ${JSON.stringify(invalid, null, 2)}`);
         return res.render('checkout/needMoreInformation', {
             invalid: invalid,
             registryType: req.body.registryType,
