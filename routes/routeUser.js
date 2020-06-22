@@ -306,7 +306,7 @@ router.get('/access', checkPermission, (req, res, next)=>{
 
 // Edit name page.
 router.get('/access/edit-name', checkPermission, (req, res, next)=>{
-    res.render('user/editName', { nav: {}, name: req.user.name });
+    res.render('user/editName', { name: req.user.name, cnpj: req.user.cnpj });
 });
 // Edit name.
 router.post('/access/edit-name', checkPermission, (req, res, next)=>{

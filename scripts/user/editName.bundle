@@ -6,8 +6,8 @@ var app = new Vue({
   data: {
     // Warn message.
     warnMessage: '',
-    // User.
-    name: name
+    name: name,
+    cnpj: cnpj
   },
   methods: {
     exit(){

@@ -1,6 +1,8 @@
-# 1.5.17 (20 jun 2020)
+# 1.5.17 (22 jun 2020)
 ## Melhorias.
 * Inclusão da opção de cadastro por CNPJ com número de inscrição e nome para contato.
+* Páginas para edição do número do CNPJ, inscrição e nome para contato.
+* Exibição do CNPJ, inscirção e nome para contato nas páginas de pedidos e detalhes os usuário.
 
 
 # 1.5.16 (12 jun 2020)

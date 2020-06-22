@@ -6,6 +6,7 @@ const s = require('../config/s');
 const nock = require('nock');
 const Product = require('../model/product');
 const Order = require('../model/order');
+const User = require('../model/user');
 const routeCheckout = require('../routes/routeCheckout');
 const mobileNumber = require('../util/mobileNumber');
 
@@ -34,7 +35,7 @@ describe('Zunka', function () {
     });
 
     // Site.
-    describe.only("Site", ()=>{
+    describe("Site", ()=>{
         // Root page.
         it('/', done=>{
             request(server)
@@ -70,51 +71,51 @@ describe('Zunka', function () {
         });
         // Check CPF, CNPJ and mobile number registred..
         it('function checkCpfCnpjMobileRegistred()', done=>{
-            let order = new Order();
+            let user = new User();
 
             // Nothing.
-            expect(routeCheckout.checkCpfCnpjMobileRegistred(order)).to.be.false;
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(user)).to.be.false;
 
             // Only mobile number.
-            order.cpf = "";
-            order.cnpj = "";
-            order.mobileNumber = "1";
-            expect(routeCheckout.checkCpfCnpjMobileRegistred(order)).to.be.false;
+            user.cpf = "";
+            user.cnpj = "";
+            user.mobileNumber = "1";
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(user)).to.be.false;
 
             // Only CPF.
-            order.cpf = "1";
-            order.cnpj = "";
-            order.mobileNumber = "";
-            expect(routeCheckout.checkCpfCnpjMobileRegistred(order)).to.be.false;
+            user.cpf = "1";
+            user.cnpj = "";
+            user.mobileNumber = "";
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(user)).to.be.false;
 
             // Only CNPJ.
-            order.cpf = "";
-            order.cnpj = "1";
-            order.mobileNumber = "";
-            expect(routeCheckout.checkCpfCnpjMobileRegistred(order)).to.be.false;
+            user.cpf = "";
+            user.cnpj = "1";
+            user.mobileNumber = "";
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(user)).to.be.false;
 
             // CPF and CNPJ.
-            order.cpf = "";
-            order.cnpj = "1";
-            order.mobileNumber = "";
-            expect(routeCheckout.checkCpfCnpjMobileRegistred(order)).to.be.false;
+            user.cpf = "";
+            user.cnpj = "1";
+            user.mobileNumber = "";
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(user)).to.be.false;
 
             // Válid with cpf.
-            order.cpf = "1";
-            order.cnpj = "";
-            order.mobileNumber = "1";
-            expect(routeCheckout.checkCpfCnpjMobileRegistred(order)).to.be.true;
+            user.cpf = "1";
+            user.cnpj = "";
+            user.mobileNumber = "1";
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(user)).to.be.true;
 
             // Válid with cnpj.
-            order.cpf = "";
-            order.cnpj = "1";
-            order.mobileNumber = "1";
-            expect(routeCheckout.checkCpfCnpjMobileRegistred(order)).to.be.true;
+            user.cpf = "";
+            user.cnpj = "1";
+            user.mobileNumber = "1";
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(user)).to.be.true;
 
             done();
         });
         // Check if is a válid mobile number.
-        it.only('Validate mobile number', done=>{
+        it('Validate mobile number', done=>{
             expect(mobileNumber.isValid("")).to.be.false;
             expect(mobileNumber.isValid("313872023")).to.be.false;
             expect(mobileNumber.isValid("319993872023")).to.be.false;
@@ -125,7 +126,7 @@ describe('Zunka', function () {
             done();
         });
         // Format mobile number.
-        it.only('Validate mobile number', done=>{
+        it('Format mobile number', done=>{
             expect(mobileNumber.format("")).to.be.eq("");
             expect(mobileNumber.format("313872023")).to.be.eq("");
             expect(mobileNumber.format("319993872023")).to.be.eq("");

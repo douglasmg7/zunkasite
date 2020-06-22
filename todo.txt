@@ -1,10 +1,5 @@
-[zoom]
-Pode fazer mais de um post de ordem enviada, quando itens são enviados separadamente?
-
 pesquisar pelo comando "vmstat 1 30"
     atop
-
-Sleep some time when unauthorized access.
 
 Install
     npm install --global rollup
@@ -30,10 +25,6 @@ Aldo
     logística reversa
         Sedex: 4170
         Pac: 4677 
-
-Payment
-    Loading modal for paypal page and credit card.
-    Juntar as telas de forma de envio e forma de pagamento.
 
 Address add
     Validation must be in the same way cep validation.

@@ -209,6 +209,7 @@ require('./config/passport');
 // Log request.
 app.use(function(req, res, next) {
     // Log now.
+    // log.info(`USER: ${JSON.stringify(req.user, null, 2)}`);
     log.info(`${req.method} ${req.url} ${req.user ? req.user.email : "anonymous"}`);
 
     let initTime = Date.now();

@@ -25,9 +25,9 @@ block content
         p {{ order._id }}
 
         //- User.
-        h3 Usuário - {{ order.email }}
+        h3 Usuário
         a(:href='`/admin/user/${order.user_id}`') {{order.name}}
-        //- a(:href='`mailto:${this.order.email}`') {{ order.email }}
+        a(:href='`mailto:${this.order.email}`') {{ order.email }} &nbsp [Email]
         a(:href='`tel:${this.order.mobileNumber }`') {{ order.mobileNumber }} &nbsp [Telefone]
         .cpf(v-if='order.cpf!=""')
             p {{order.cpf}} &nbsp [CPF]

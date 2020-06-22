@@ -182,6 +182,9 @@ router.post('/shipping-address', (req, res, next)=>{
 				order.name = req.user.name;
 				order.email = req.user.email;
 				order.cpf = req.user.cpf;
+				order.cnpj = req.user.cnpj;
+				order.stateRegistration = req.user.stateRegistration;
+				order.contactName = req.user.contactName;
 				order.mobileNumber = req.user.mobileNumber;
 				order.timestamps = { shippingAddressSelectedAt: new Date() };
 				order.status = 'shippingAddressSelected';
@@ -456,8 +459,8 @@ router.post('/shipping-method/order/:order_id', (req, res, next)=>{
 });
 
 // check if CPF or CNPJ resgistred and mobile number.
-function checkCpfCnpjMobileRegistred(order) {
-    return ((order.cpf != "" || order.cnpj != "") && order.mobileNumber != "");
+function checkCpfCnpjMobileRegistred(user) {
+    return ((user.cpf != "" || user.cnpj != "") && user.mobileNumber != "");
 }
 
 // Payment - page.
@@ -471,8 +474,7 @@ router.get('/payment/order/:order_id', (req, res, next)=>{
 	        return res.redirect('/user/orders');
         }
 		// Must have cpf and mobile number ou cnpj and mobile number.
-		// if (!order.cpf || !order.mobileNumber ) {
-		if (!checkCpfCnpjMobileRegistred(order)) {
+        if (!checkCpfCnpjMobileRegistred(req.user)) {
             res.render('checkout/needMoreInformation',
                 {
                     registryType: '',
@@ -485,22 +487,22 @@ router.get('/payment/order/:order_id', (req, res, next)=>{
                     invalid: {}
                 }
             )
-		}
-		// Render payment page.
-		else {
-			res.render('checkout/payment',
-				{
-					order: order,
-					nav: {
-					},
-					client: {
-						sandbox: ppConfig.sandbox.ppClientId,
-						production: ppConfig.production.ppClientId
-					},
-					env: (process.env.NODE_ENV === 'production' ? 'production': 'sandbox')
-				}
-			);
-		}
+        }
+        // Render payment page.
+        else {
+            res.render('checkout/payment',
+                {
+                    order: order,
+                    nav: {
+                    },
+                    client: {
+                        sandbox: ppConfig.sandbox.ppClientId,
+                        production: ppConfig.production.ppClientId
+                    },
+                    env: (process.env.NODE_ENV === 'production' ? 'production': 'sandbox')
+                }
+            );
+        }
 	});
 });
 
@@ -522,7 +524,6 @@ router.get('/payment/order/:order_id', (req, res, next)=>{
 
 // Need more information.
 router.post('/need-more-information/:orderId', checkPermission, (req, res, next)=>{
-    // log.debugv`req.body: ${JSON.stringify(req.body, null, '  ')}`)
     // Invalid fields.
     let invalid = {};
     let invalidValueMsg = "Valor inválido";

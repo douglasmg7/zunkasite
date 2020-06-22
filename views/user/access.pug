@@ -10,7 +10,8 @@ block content
   section.shadow
     h2.title Dados da conta
     //- Name
-    h3.sub-title Nome completo
+    h3.sub-title(v-if='!user.cnpj') Nome completo
+    h3.sub-title(v-if='user.cnpj') Razão social
     p {{ user.name }}
     a(href='access/edit-name') Editar
     //- E-mail.
