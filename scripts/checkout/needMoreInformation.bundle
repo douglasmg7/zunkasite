@@ -6,24 +6,25 @@ var app = new Vue({
   data: {
     // Warn message.
     warnMessage: '',
-    name: name,
-    cnpj: cnpj
+    // Cpf.
+    cpf: cpf,
+    // Mobile number.
+    mobileNumber: mobileNumber,
+    // Order id.
+    orderId: orderId
   },
   methods: {
-    exit(){
-      window.location.href = '/user/account';
-    },
     save(){
       axios({
         method: 'post',
-        url: `/user/access/edit-name`,
+        url: `/checkout/needCpfAndMobileNumber`,
         headers: {'csrf-token' : csrfToken},
-        data: { name: this.name }
+        data: { cpf: this.cpf, mobileNumber: this.mobileNumber, orderId: this.orderId }
       })
       .then((res)=>{
         // Successful change the name.
         if (res.data.success) {
-          window.location.href = '/user/access';
+          window.location.href = `/checkout/payment/order/${orderId}`;
         }
         // Something wrong.
         else

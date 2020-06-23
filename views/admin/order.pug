@@ -25,11 +25,16 @@ block content
         p {{ order._id }}
 
         //- User.
-        h3 Usuário - {{ order.email }}
+        h3 Usuário
         a(:href='`/admin/user/${order.user_id}`') {{order.name}}
-        //- a(:href='`mailto:${this.order.email}`') {{ order.email }}
+        a(:href='`mailto:${this.order.email}`') {{ order.email }} &nbsp [Email]
         a(:href='`tel:${this.order.mobileNumber }`') {{ order.mobileNumber }} &nbsp [Telefone]
-        p {{order.cpf}} &nbsp [CPF]
+        .cpf(v-if='order.cpf!=""')
+            p {{order.cpf}} &nbsp [CPF]
+        .cnpj(v-if='order.cnpj!=""')
+            p {{order.cnpj}} &nbsp [CNPJ]
+            p {{order.stateRegistration}} &nbsp [Inscrição estadual]
+            p {{order.contactName}} &nbsp [Nome para contato]
 
         //- Address.
         h3 Destinatário

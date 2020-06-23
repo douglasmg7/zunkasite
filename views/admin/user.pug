@@ -14,9 +14,22 @@ block content
         //- Email.
         h3 Email
         a(:href='`mailto:${this.user.email}`') {{ user.email }}
-        //- Cpf.
-        h3(v-if='user.cpf') Cpf
-        p(v-if='user.cpf') {{ user.cpf }}
+        //- CPF.
+        .cpf(v-if='user.cpf')
+            h3 CPF
+            p {{ user.cpf }}
+        //- CNPJ
+        .cnpj(v-if='user.cnpj')
+            h3 CNPJ
+            p {{ user.cnpj }}
+            // Inscrição estadual.
+            .state-registration(v-if='user.stateRegistration')
+                h3 Inscrição estadual
+                p {{ user.stateRegistration }}
+            // Contact name.
+            .contact-name(v-if='user.contactName')
+                h3 Contato
+                p {{ user.contactName }}
         //- Mobile number..
         h3(v-if='user.mobileNumber') Celular
         a(:href='`tel:${this.user.mobileNumber }`') {{ user.mobileNumber }}

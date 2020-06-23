@@ -1,0 +1,80 @@
+extends ../layout/layout
+
+block title
+    title Zunka - Informação de dados
+
+block append css
+    link(rel="stylesheet" href="/css/checkout/needMoreInformation.css" charset="utf-8")
+
+block content 
+    section.shadow
+        h2.title Favor informas os dados
+        form(method='post' action=`/checkout/need-more-information/${orderId}`)
+            input(type='hidden' name='_csrf' value=csrfToken)
+
+            //- Registry type.
+            .radio
+                label
+                    input(type='radio' name='registryType' id='rdCPF' value='cpf'  checked=registryType=='cpf' onclick='selectInfoType()')
+                    span Pessoa física
+                label 
+                    input(type='radio' name='registryType' id='rdCNPJ' value='cnpj' checked=registryType=='cnpj' onclick='selectInfoType()')
+                    span Pessoa jurídica
+
+            //- CPF.
+            #cpf(style='display: none')
+                label(for='cpf') CPF
+                input(type='text' name='cpf' id='cpf' value=cpf)
+                label.invalid #{invalid.cpf}
+
+            //- CNPJ.
+            #cnpj(style='display: none')
+                label(for='cnpj') CNPJ
+                input(type='text' name='cnpj' id='cnpj' value=cnpj)
+                label.invalid #{invalid.cnpj}
+
+                //- State registration.
+                label(for='stateRegistration') Inscrição estadual (opcional)
+                input(type='text' name='stateRegistration' id='stateRegistration' value=stateRegistration)
+                label.invalid #{invalid.stateRegistration}
+
+                //- Nome para contato.
+                label(for='contactName') Nome para contato
+                input(type='text' name='contactName' id='contactName' value=contactName)
+                label.invalid #{invalid.contactName}
+
+            //- Mobile number.
+            #divDefault(style='display: none')
+                //- Mobile number.
+                label(for='mobileNumber') Número de Celular
+                input(type='text' name='mobileNumber' id='mobileNumber' value=mobileNumber placeholder='(99) 9 9999-9999')
+                label.invalid #{invalid.mobileNumber}
+
+            //- Save button.
+            input.btn-primary(type='submit' value='Salvar') 
+
+append internal_scripts
+    script.
+        //- let orderId = !{JSON.stringify(orderId)};
+        let radios = document.getElementsByName('infoType');
+        let rdCpf = document.getElementById('rdCPF');
+        let rdCnpj = document.getElementById('rdCNPJ');
+        let divDefault = document.getElementById('divDefault');
+        let divCpf = document.getElementById('cpf');
+        let divCnpj = document.getElementById('cnpj');
+        let divMobile = document.getElementById('mobile');
+        selectInfoType()
+
+        // Select registry type.
+        function selectInfoType() {
+            if (rdCpf.checked) {
+                divCnpj.style.display = 'none';
+                divCpf.style.display = 'block';
+                divDefault.style.display = 'block';
+            }
+            if (rdCnpj.checked) {
+                divCpf.style.display = 'none';
+                divCnpj.style.display = 'block';
+                divDefault.style.display = 'block';
+            }
+        }

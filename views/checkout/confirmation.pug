@@ -41,7 +41,10 @@ block content
             P {{order._id}}
         .client
             h2 Cliente
-            h3 Nome
+            //- p cpf {{order.cnpj}}
+            //- p cnpj {{order.cnpj}}
+            h3(v-if='order.cnpj') Razão social
+            h3(v-if='!order.cnpj') Nome
             p {{order.name}}
             h3 Email
             p {{order.email}}

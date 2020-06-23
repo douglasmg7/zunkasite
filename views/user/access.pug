@@ -10,7 +10,8 @@ block content
   section.shadow
     h2.title Dados da conta
     //- Name
-    h3.sub-title Nome completo
+    h3.sub-title(v-if='!user.cnpj') Nome completo
+    h3.sub-title(v-if='user.cnpj') Razão social
     p {{ user.name }}
     a(href='access/edit-name') Editar
     //- E-mail.
@@ -26,9 +27,24 @@ block content
     p ********
     a(href='access/edit-password') Editar
     //- CPF.
-    h3.sub-title CPF
-    p {{ user.cpf ? user.cpf : '********' }}
-    a(href='access/edit-cpf') Editar
+    .cpf(v-if='user.cpf')
+        h3.sub-title CPF
+        p {{ user.cpf ? user.cpf : '********' }}
+        a(href='access/edit-cpf') Editar
+    //- CNPJ.
+    .cnpj(v-if='user.cnpj')
+        //- CNPJ.
+        h3.sub-title CNPJ
+        p {{ user.cnpj ? user.cnpj : '********' }}
+        a(href='access/edit-cnpj') Editar
+        //- State registry.
+        h3.sub-title Inscrição statual
+        p {{ user.stateRegistration ? user.stateRegistration : '********' }}
+        a(href='access/edit-state-registration') Editar
+        //- Contact name.
+        h3.sub-title Nome para contato
+        p {{ user.contactName ? user.contactName : '********' }}
+        a(href='access/edit-contact-name') Editar
     //- Remove account.
     h3.sub-title Apagar conta
     a(href='access/delete-account') Apagar

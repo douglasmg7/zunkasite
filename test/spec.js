@@ -6,6 +6,9 @@ const s = require('../config/s');
 const nock = require('nock');
 const Product = require('../model/product');
 const Order = require('../model/order');
+const User = require('../model/user');
+const routeCheckout = require('../routes/routeCheckout');
+const mobileNumber = require('../util/mobileNumber');
 
 // Array with newest products.
 let newestProducts;
@@ -65,6 +68,73 @@ describe('Zunka', function () {
             request(server)
                 .get('/foo/bar')
                 .expect(404, "Página não encontrada.", done);
+        });
+        // Check CPF, CNPJ and mobile number registred..
+        it('function checkCpfCnpjMobileRegistred()', done=>{
+            let user = new User();
+
+            // Nothing.
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(user)).to.be.false;
+
+            // Only mobile number.
+            user.cpf = "";
+            user.cnpj = "";
+            user.mobileNumber = "1";
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(user)).to.be.false;
+
+            // Only CPF.
+            user.cpf = "1";
+            user.cnpj = "";
+            user.mobileNumber = "";
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(user)).to.be.false;
+
+            // Only CNPJ.
+            user.cpf = "";
+            user.cnpj = "1";
+            user.mobileNumber = "";
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(user)).to.be.false;
+
+            // CPF and CNPJ.
+            user.cpf = "";
+            user.cnpj = "1";
+            user.mobileNumber = "";
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(user)).to.be.false;
+
+            // Válid with cpf.
+            user.cpf = "1";
+            user.cnpj = "";
+            user.mobileNumber = "1";
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(user)).to.be.true;
+
+            // Válid with cnpj.
+            user.cpf = "";
+            user.cnpj = "1";
+            user.mobileNumber = "1";
+            expect(routeCheckout.checkCpfCnpjMobileRegistred(user)).to.be.true;
+
+            done();
+        });
+        // Check if is a válid mobile number.
+        it('Validate mobile number', done=>{
+            expect(mobileNumber.isValid("")).to.be.false;
+            expect(mobileNumber.isValid("313872023")).to.be.false;
+            expect(mobileNumber.isValid("319993872023")).to.be.false;
+            expect(mobileNumber.isValid("31938720236")).to.be.true;
+            expect(mobileNumber.isValid("(31)93872-0236")).to.be.true;
+            expect(mobileNumber.isValid("av3er1938gt720236")).to.be.false;
+            expect(mobileNumber.isValid("(31)938720236")).to.be.true;
+            done();
+        });
+        // Format mobile number.
+        it('Format mobile number', done=>{
+            expect(mobileNumber.format("")).to.be.eq("");
+            expect(mobileNumber.format("313872023")).to.be.eq("");
+            expect(mobileNumber.format("319993872023")).to.be.eq("");
+            expect(mobileNumber.format("31938720236")).to.be.eq("(31) 9 3872-0236");
+            expect(mobileNumber.format("(31)93872-0236")).to.be.eq("(31) 9 3872-0236");
+            expect(mobileNumber.format("av3er1938gt720236")).to.be.eq("(31) 9 3872-0236");
+            expect(mobileNumber.format("(31)938720236")).to.be.eq("(31) 9 3872-0236");
+            done();
         });
     });
 

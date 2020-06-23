@@ -71,7 +71,10 @@ block content
         p=  zoomOrder.customer.first_name
         //- a(:href='`mailto:${this.order.email}`') {{ order.email }}
         a(href=`tel:${zoomOrder.customer.user_phone}`) #{zoomOrder.customer.user_phone} &nbsp [Telefone]
-        p #{zoomOrder.customer.cpf} &nbsp [CPF]
+        if zoomOrder.customer.cpf
+            p #{zoomOrder.customer.cpf} &nbsp [CPF]
+        if zoomOrder.customer.cnpj
+            p #{zoomOrder.customer.cnpj} &nbsp [CNPJ]
 
         //- Address.
         h3 Destinatário

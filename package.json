@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "version": "1.5.16",
+  "version": "1.5.17",
   "private": true,
   "scripts": {
     "start": "NODE_ENV=production DB=production ./bin/www",
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@fnando/cnpj": "^1.0.1",
+    "@fnando/cpf": "^1.0.1",
     "axios": "^0.19.2",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.19.0",
