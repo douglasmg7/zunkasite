@@ -1,11 +1,14 @@
 # 1.5.18 (25 jun 2020)
-## Melhorias.
+## Melhorias
 * Na página de seleção/criação de endereço, mensagens de erros mais pŕoximo dos campos.
 * Na página de seleção/criação de endereço, foi corrigida as mensagens exibidas durante a pesquisa de CEP.
 * Na página de conta deletada, texto da mensagem na cor preta.
 * Na página de inserção de CPF/CNPJ foi alterada a mensagem quando o campo é inválido.
 * Na página de seleção da forma de pagamento, a opção de pagamento por cartão de débito foi removida.
 * Na página de confirmação do pedido, a cor do título foi alterado para verde.
+
+## Bugfix
+* Mostrando produtos apagados no site.
 
 
 # 1.5.17 (22 jun 2020)
