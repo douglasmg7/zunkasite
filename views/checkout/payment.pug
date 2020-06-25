@@ -16,7 +16,7 @@ block content
             input.btn-info(type='button' @click='directPayment("transfer")' value='Transferência bancária')
             //- Presential card.
             input.btn-info#btnPresentialCard(type='button' @click='directPayment("card-machine")' value='Cartão presencial')
-            p#pPresentialCard Débito ou Crédito a vista
+            p#pPresentialCard Crédito a vista
             //- Credit card, using PayPal Plus.
             input.btn-primary#btnCreditCard(type='button' @click='payPalPlusPayment()' value='Cartão')
             //- PayPal.

@@ -130,19 +130,25 @@ var app = new Vue({
                     // console.log(`response.error: ${JSON.stringify(response.error)}`);
                     // Not found CEP.
                     if (response.data.error) {
-                        this.validation.cep = 'Serviço indisponível';
+                        // this.validation.cep = 'Serviço indisponível';
                         this.cepNotFound = true;
-
                         this.newAddress.address = '';            
                         this.newAddress.district = '';
                         this.newAddress.city = '';
                         this.newAddress.state = '';
                     }
+                    else if (response.data.address.uf == ''){
+                        this.cepNotFound = true;
+                        this.validation.cep = '';
+                        this.newAddress.address = response.data.address.logradouro;
+                        this.newAddress.district = response.data.address.bairro;
+                        this.newAddress.city = response.data.address.localidade;
+                        this.newAddress.state = response.data.address.uf;
+                    }
                     // Found CEP.
                     else {
                         this.cepNotFound = false;
                         this.validation.cep = '';
-
                         this.newAddress.address = response.data.address.logradouro;
                         this.newAddress.district = response.data.address.bairro;
                         this.newAddress.city = response.data.address.localidade;
@@ -151,8 +157,8 @@ var app = new Vue({
                 })
                 .catch((err)=>{
                     this.loadingCepInfo = false;
-                    this.validation.cep = 'Serviço indisponível';
-                    this.cepNotFound = true;
+                    // this.validation.cep = 'Serviço indisponível';
+                    // this.cepNotFound = true;
                     this.newAddress.address = '';            
                     this.newAddress.district = '';
                     this.newAddress.city = '';

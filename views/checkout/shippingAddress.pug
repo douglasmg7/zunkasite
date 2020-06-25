@@ -4,7 +4,7 @@ block title
     title Zunka - Endereço para envio
 
 block append css
-    link(rel="stylesheet" href="/css/checkout/shippingAddress.css?0003" charset="utf-8")
+    link(rel="stylesheet" href="/css/checkout/shippingAddress.css?0004" charset="utf-8")
 
 block content 
     section.shadow
@@ -31,11 +31,14 @@ block content
             input(type='text' name='name' id='name' v-model='newAddress.name')
             p.validation(v-if='validation.name') {{validation.name}}    
             //- Cep.      
-            label(for='cep' :class='{ error: validation.cep }') {{ validation.cep ? validation.cep : "CEP"}}
+            //- label(for='cep' :class='{ error: validation.cep }') {{ validation.cep ? validation.cep : "CEP"}}
+            label(for='name') CEP
             input(type='text' name='cep' id='cep' v-model='newAddress.cep')
+            p.validation(v-if='validation.cep') {{validation.cep}}    
             a(href='http://www.buscacep.correios.com.br/sistemas/buscacep/' target='_blank') Não sei meu CEP
             p.loading-cep(v-if='loadingCepInfo') Buscando dados do CEP...
-            p.cep-not-found(v-if='cepNotFound') Não foi possível encontrar o CEP informado. Por favor confira os dados e tente novamente.
+            p.cep-not-found(v-if='cepNotFound') Não foi possível encontrar o CEP informado.
+            p.cep-not-found(v-if='cepNotFound') Por favor confira os dados e tente novamente.
             //- Address.
             label(for='address') Endereço
             input(type='text' name='address' id='address' v-model='newAddress.address')
@@ -45,7 +48,7 @@ block content
             input(type='text' name='addressNumber' id='addressNumber' v-model='newAddress.addressNumber')
             p.validation(v-if='validation.addressNumber') {{validation.addressNumber}} 
             //- Address complement.
-            label(for='addressComplement') Complemento
+            label(for='addressComplement') Complemento (opcional)
             input(type='text' name='addressComplement' id='addressComplement' v-model='newAddress.addressComplement')
             p.validation(v-if='validation.addressComplement') {{validation.addressComplement}} 
             //- District.

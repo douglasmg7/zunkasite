@@ -119,14 +119,14 @@ router.post('/shipping-address', (req, res, next)=>{
 		req.sanitize("newAddress.city").trim();
 		req.sanitize("newAddress.state").trim();
 		req.sanitize("newAddress.phone").trim();
-		req.checkBody('newAddress.name', 'Campo deve ser preenchido.').notEmpty();
-		req.checkBody('newAddress.cep', 'Campo deve ser preenchido.').notEmpty();
-		req.checkBody('newAddress.address', 'Campo deve ser preenchido.').notEmpty();
-		req.checkBody('newAddress.addressNumber', 'Campo deve ser preenchido.').notEmpty();
-		req.checkBody('newAddress.district', 'Campo deve ser preenchido.').notEmpty();
-		req.checkBody('newAddress.city', 'Campo deve ser preenchido.').notEmpty();
-		req.checkBody('newAddress.state', 'Campo deve ser preenchido.').notEmpty();
-		req.checkBody('newAddress.phone', 'Campo deve ser preenchido.').notEmpty();
+		req.checkBody('newAddress.name', 'Campo deve ser preenchido').notEmpty();
+		req.checkBody('newAddress.cep', 'Campo deve ser preenchido').notEmpty();
+		req.checkBody('newAddress.address', 'Campo deve ser preenchido').notEmpty();
+		req.checkBody('newAddress.addressNumber', 'Campo deve ser preenchido').notEmpty();
+		req.checkBody('newAddress.district', 'Campo deve ser preenchido').notEmpty();
+		req.checkBody('newAddress.city', 'Campo deve ser preenchido').notEmpty();
+		req.checkBody('newAddress.state', 'Campo deve ser preenchido').notEmpty();
+		req.checkBody('newAddress.phone', 'Campo deve ser preenchido').notEmpty();
 		req.getValidationResult().then(function(result) {
 			// Send validations errors to client.
 			if (!result.isEmpty()) {
@@ -289,7 +289,7 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                         if (freights[i].carrier.toLowerCase() === 'motoboy' ) {
                             if (order.shipping.allProductFromZunka){
                                 paymentOptions.push('money', 'card-pres');
-                                text += ', dinheiro, cartão de débito ou crédito no momento da entrega';
+                                text += ', dinheiro ou cartão de crédito no momento da entrega';
                             }
                         } 
                         // Correios or shipping company.
@@ -526,34 +526,34 @@ router.get('/payment/order/:order_id', (req, res, next)=>{
 router.post('/need-more-information/:orderId', checkPermission, (req, res, next)=>{
     // Invalid fields.
     let invalid = {};
-    let invalidValueMsg = "Valor inválido";
+    let invalidNumberMsg = "Ops! Este número não é valido.";
     // Type of registry.
     if (req.registryType != "") {
         // Mobile number.
         if (!mobileNumber.isValid(req.body.mobileNumber)) {
-            invalid.mobileNumber = invalidValueMsg;
+            invalid.mobileNumber = invalidNumberMsg;
         }     
     } else {
-        invalid.registryType = "Tipo de registro não selecionado";
+        invalid.registryType = "Tipo de registro não selecionado.";
     }
     // CPF.
     if (req.body.registryType == 'cpf') {
         if (!cpf.isValid(req.body.cpf)) {
-            invalid.cpf = invalidValueMsg;
+            invalid.cpf = invalidNumberMsg;
         }
     } 
     // CNPJ.
     else if (req.body.registryType == 'cnpj') {
         if (!cnpj.isValid(req.body.cnpj)) {
-            invalid.cnpj = invalidValueMsg;
+            invalid.cnpj = invalidNumberMsg;
         }
         // State registration.
         if (req.body.stateRegistration.length > 100) {
-            invalid.stateRegistration = invalidValueMsg;
+            invalid.stateRegistration = invalidNumberMsg;
         }
         // Name for contact.
         if (req.body.contactName.length < 3) {
-            invalid.contactName = invalidValueMsg;
+            invalid.contactName = "Ops! Este nome não é valido.";
         }
     } 
     // Invalid fields.
