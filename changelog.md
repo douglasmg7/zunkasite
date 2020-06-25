@@ -9,6 +9,7 @@
 
 ## Bugfix
 * Mostrando produtos apagados no site.
+* Removendo produto do estoque quando a Zoom cancela uma ordem.
 
 
 # 1.5.17 (22 jun 2020)

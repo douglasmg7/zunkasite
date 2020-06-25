@@ -182,8 +182,8 @@ router.post('/zoom/order-status', function(req, res, next) {
                                         Product.updateOne(
                                             { _id: order.items[i]._id },
                                             { $inc: {
-                                                storeProductQtd: -1 * order.items[i].quantity,
-                                                storeProductQtdSold: 1 * order.items[i].quantity
+                                                storeProductQtd: 1 * order.items[i].quantity,
+                                                storeProductQtdSold: -1 * order.items[i].quantity
                                             } }, err=>{
                                                 if (err) {
                                                     log.error(err.stack);
