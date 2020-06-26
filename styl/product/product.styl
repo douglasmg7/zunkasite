@@ -180,18 +180,25 @@ input[type="button"] {
 .modal .panel {
     position: relative;
 	margin: 1em auto;
-    border-radius: 4px;
+    border-radius: 1px;
     background-color: var(--white-lighter);
+    background-position: center;
+    background-repeat: no-repeat;
+    // background-attachment: fixed;
+    background-size: contain;
     padding: 1em;
-    overflow: hidden;
-    max-width: 92%;
+    // overflow: hidden;
+    // overflow: scroll;
+    // max-width: 100%;
+    width: 90%;
+    height: 90%;
 }
 .modal .panel .zoom-image {
-    overflow: scroll;
+    // overflow: scroll;
 }
 .modal .panel img {
     // width: 800px;
-    width: 100%;
+    // width: 100%;
 }
 .modal .close {
     position: absolute;

@@ -1,3 +1,8 @@
+# 1.5.19 (26 jun 2020)
+## Bugfix
+* Zoom do produto na página de produto.
+
+
 # 1.5.18 (25 jun 2020)
 ## Melhorias
 * Na página de seleção/criação de endereço, mensagens de erros mais pŕoximo dos campos.

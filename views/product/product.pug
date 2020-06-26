@@ -4,10 +4,10 @@ block title
   title Zunka - Produto
 
 block append css
-  link(rel="stylesheet" href="/css/product/product.css?0005" charset="utf-8")
+  link(rel="stylesheet" href="/css/product/product.css?0006" charset="utf-8")
 
 block content
-    section
+    section#section-content
         .layout.shadow
             .product-thumbnail
                 img(v-for='image, index in product.images', :src='srcImg0080(product, index)' @click='selectedThumbnail=index')
@@ -83,11 +83,13 @@ block content
                     //- Without title.
                     p(v-if='(typeof item == "string") && (item != "")') {{ item }}
                     p(v-if='(typeof item == "string") && (item == "")') &nbsp 
-        .modal(v-if='showModal')
-            .panel
-                i.close.far.fa-window-close(@click='hideZoomImg')
-                .zoom-image
-                    img(:src='srcImgZoom(product, selectedThumbnail)' v-if='product.images.length > 0')
+        //- .modal(v-if='showModal')
+            //- .panel#zoom-img
+                //- img(:src='srcImgZoom(product, selectedThumbnail)' v-if='product.images.length > 0' @click='hideZoomImg')
+
+                //- i.close.far.fa-window-close(@click='hideZoomImg')
+                //- .zoom-image
+                    //- img(:src='srcImgZoom(product, selectedThumbnail)' v-if='product.images.length > 0')
         include ../misc/loading.pug
 
 append internal_scripts
@@ -96,4 +98,4 @@ append internal_scripts
 
 append external_scripts
     include ../components/accounting.js.pug
-    script(src='/js/product/product.js?0011')
+    script(src='/js/product/product.js?0012')

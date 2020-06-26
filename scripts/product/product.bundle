@@ -1,5 +1,9 @@
 import _search from '../lib/_search';
 
+let modal;
+let panel;
+let section;
+
 // Vue.
 var app = new Vue({
     el: '#app',
@@ -20,6 +24,9 @@ var app = new Vue({
             show: false,
             message: 'Confirmando a disponibilidade do produto ',
         },
+    },
+    mounted() {
+        this.createZoomPanel();
     },
     methods: {
         // Accaunting.
@@ -107,7 +114,7 @@ var app = new Vue({
                 window.location.href=`/error?err=${err}`;
             });
         },
-        // Get image source 300 pixels.
+        // Get image source with max pixels.
         srcImgZoom(product, index){
             // let regExpResult = product.images[index].match(/\.[0-9a-z]+$/i);
             // console.debug(fileName);
@@ -125,13 +132,53 @@ var app = new Vue({
             // console.debug(fileName);
             return '/img/' + product._id + '/' + product.images[index].slice(0, regExpResult.index) + '_0080px' + regExpResult[0]
         },
+        // Create zoom panel.
+        createZoomPanel(){
+            // Modal.
+            modal = document.createElement("div");
+            modal.classList.add("modal");
+            modal.addEventListener("click", this.hideZoomImg);
+            // Panel.
+            panel = document.createElement("div");
+            panel.classList.add("panel");
+            // let imgSrc = this.srcImgZoom(product, this.selectedThumbnail);
+            // panel.style.backgroundImage = "url('" + imgSrc + "')";
+            // panel.style.backgroundRepeat = "no-repeat";
+            // Insert.
+            modal.insertBefore(panel, null);
+            section = document.getElementById("section-content");
+        },
         // Show zoom image.
         showZoomImg(){
-            this.showModal = true;
+            // Modal.
+            // let modal = document.createElement("div");
+            // modal.classList.add("modal");
+            // // Panel.
+            // let panel = document.createElement("div");
+            // panel.classList.add("panel");
+            // let imgSrc = this.srcImgZoom(product, this.selectedThumbnail);
+            // panel.style.backgroundImage = "url('" + imgSrc + "')";
+            // // panel.style.backgroundRepeat = "no-repeat";
+            // // Insert.
+            // modal.insertBefore(panel, null);
+            // let section = document.getElementById("section-content");
+
+            let imgSrc = this.srcImgZoom(product, this.selectedThumbnail);
+            panel.style.backgroundImage = "url('" + imgSrc + "')";
+            section.insertBefore(modal, null);
+
+            // console.log(this.srcImgZoom(product, this.selectedThumbnail));
+            // let panelZoom = document.getElementById("zoom-img");
+            // panelZoom.style.backgroundImage = imgSrc;
+
+
+            // this.showModal = true;
         },
         // Hide zoom image.
         hideZoomImg(){
-            this.showModal = false;
+            console.log("Remove");
+            modal.remove();
+            // this.showModal = false;
         },
         makeList(text) {
             let list = [];
