@@ -35,7 +35,7 @@ ZUNKASRV_FILE_DB=$ZUNKAPATH/db/$ZUNKA_SRV_DB
 ALDOWSC_FILE_DB=$ZUNKAPATH/db/$ZUNKA_ALDOWSC_DB
 
 # Backup dir.
-BACKUP_DIR=$ZUNKA_SITE_PATH/dump/$(date +%Y-%h-%d)
+BACKUP_DIR=$ZUNKA_SITE_PATH/dump/$(date +%Y-%m-%d)
 
 # echo $FREIGHT_FILE_DB
 # echo $ZUNKASRV_FILE_DB
@@ -88,9 +88,6 @@ printf "\nroot password:\n"
 sudo cp /var/lib/redis/dump.rdb ../dump/$BACKUP_DIR/redis.rdb
 
 # Backup images.
-# tar cvzf ../dump/img-$(date +%Y-%h-%d@%T).tar.gz ../dist/img/ ../dist/banner/   # Tar err if this name format.
-# tar cvzf ../dump/img-$(date +%Y-%h-%d).tar.gz ../dist/img/ ../dist/banner/
-# tar cvzf ../dump/$(date +%Y-%h-%d)-img.tar.gz ../dist/img/ ../dist/banner/
 echo Creating images backup...
 tar cvzf $BACKUP_DIR/img.tar.gz $ZUNKA_SITE_PATH/dist/img/ $ZUNKA_SITE_PATH/dist/banner/
 
