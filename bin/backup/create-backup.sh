@@ -78,6 +78,8 @@ echo Creating redis backup...
 redis-cli save
 printf "\nroot password:\n"
 sudo cp /var/lib/redis/dump.rdb $BACKUP_DIR/redis.rdb
+sudo chown douglasmg7:users $BACKUP_DIR/redis.rdb
+# chgrp users $BACKUP_DIR/redis.rdb
 
 # Backup images.
 echo Creating images backup...
