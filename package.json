@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "version": "1.5.19",
+  "version": "1.5.20",
   "private": true,
   "scripts": {
     "start": "NODE_ENV=production DB=production ./bin/www",

@@ -1,3 +1,10 @@
+# 1.5.20 (03 jul 2020)
+## Melhorias
+* Usando imagem com resolção 300px em vez de 200px na página de produtos.
+* Usando shadow apenas com mouse over.
+* Removendo padding na página de produtos quando formato é apenas uma coluna.
+
+
 # 1.5.19 (26 jun 2020)
 ## Bugfix
 * Zoom do produto na página de produto.

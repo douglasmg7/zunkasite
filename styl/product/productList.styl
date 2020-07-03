@@ -150,8 +150,22 @@ section.cart .buttons a:nth-child(1) {
 }
 /* Mobile. */
 @media (min-width: 0px) {
+    main {
+        margin: 0 0;
+        }
+    section .section-title {
+        margin: 0 0 0 .4em
+        }
+    section.new-products,
+    section.best-sellers
+    {
+        padding: 0;
+    }
     .products {
         grid-template-columns: 1fr;
+    }
+    .product {
+        margin: .7em 0 .7em 0;
     }
     .banners {
         display: none;
@@ -159,8 +173,20 @@ section.cart .buttons a:nth-child(1) {
 }
 /* Tablet. */
 @media (min-width: 600px) {
+    main {
+        margin: 0 auto;
+        }
+    section.new-products,
+    section.best-sellers
+    {
+        padding: 0 0.4em;
+    }
     .products {
         grid-template-columns: 1fr 1fr;
+    }
+    .product {
+        margin: .7em;
+        padding: .7em;
     }
 }
 /* Small laptop. */
@@ -168,6 +194,9 @@ section.cart .buttons a:nth-child(1) {
     .products {
         grid-template-columns: 1fr 1fr 1fr ;
     }
+    // .product {
+        // margin: .7em;
+    // }
     .banners {
         display: flex;
     }

@@ -4,7 +4,7 @@ block title
   title Zunka - Produtos
 
 block append css
-  link(rel="stylesheet" href="/css/product/productList.css" charset="utf-8")
+  link(rel="stylesheet" href="/css/product/productList.css?002" charset="utf-8")
       
 block append internal_style
 
@@ -31,11 +31,11 @@ block content
                 a.button.btn-primary(href="/cart") Carrinho
                 a.button.btn-primary(href="/checkout/shipping-address") Finailzar compra ({{ cart.totalQtd }} {{cart.totalQtd > 1 ? "itens" : "item"}})
     //- New products.
-    section
+    section.new-products
         h4.section-title Novidades na loja
         .products
             a.product.shadow(v-for='product in newProducts', :href='"/product/" + product._id' :title='product.storeProductDetail')
-                img(:src='srcImg0200(product)', v-if='product.images[0]' alt="Imagem não disponível")
+                img(:src='srcImg0300(product)', v-if='product.images[0]' alt="Imagem não disponível")
                 p.product-title {{ product.storeProductTitle }}
                 //- p.product-price R$ {{ product.storeProductPrice | currency}}        
                 p.product-price
@@ -43,11 +43,11 @@ block content
                     | {{ product.storeProductPrice | currency | currencyInt }}
                     sup {{ product.storeProductPrice | currency | currencyCents }}   
     //- Best selling products.
-    section
+    section.best-sellers
         h5.section-title Produtos mais vendidos
         .products
             a.product.shadow(v-for='product in bestSellingProducts', :href='"/product/" + product._id' :title='product.storeProductDetail')
-                img(:src='srcImg0200(product)', v-if='product.images[0]' alt="Imagem não disponível")
+                img(:src='srcImg0300(product)', v-if='product.images[0]' alt="Imagem não disponível")
                 p.product-title {{ product.storeProductTitle }}
                 p.product-price
                     sup R$
@@ -64,4 +64,4 @@ append internal_scripts
         let banners = !{JSON.stringify(banners)};
 
 append external_scripts
-    script(src='/js/product/productList.js?0002')
+    script(src='/js/product/productList.js?0003')
