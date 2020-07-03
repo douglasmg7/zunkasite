@@ -30,10 +30,6 @@ if [ -z "$ZUNKA_SITE_PATH" ]; then
 	exit 1 
 fi
 
-FREIGHT_FILE_DB=$ZUNKAPATH/db/$ZUNKA_FREIGHT_DB
-ZUNKASRV_FILE_DB=$ZUNKAPATH/db/$ZUNKA_SRV_DB
-ALDOWSC_FILE_DB=$ZUNKAPATH/db/$ZUNKA_ALDOWSC_DB
-
 while true; do
     read -p "Import backup from which date? [ENTER] for $(date +%Y-%m-%d) or yyyy-mm-dd to custom date: " ANSWER
     if [[ $ANSWER =~ [0-9]{4}-[0-9]{2}-[0-9]{2} ]]; then
@@ -46,6 +42,21 @@ while true; do
         echo "Invalid date: $ANSWER"
     fi
 done
+
+# Freight db.
+FREIGHT_FILE_DB=$ZUNKAPATH/db/$ZUNKA_FREIGHT_DB
+FREIGHT_FILE_DB_OLD=$ZUNKAPATH/db/freight-$(date +%Y_%m_%d).db
+FREIGHT_DB_BACKUP=$BACKUP_DIR/sqlite3.freight.backup
+
+# Zunkasrv db.
+ZUNKASRV_FILE_DB=$ZUNKAPATH/db/$ZUNKA_SRV_DB
+ZUNKASRV_FILE_DB_OLD=$ZUNKAPATH/db/zunkasrv-$(date +%Y_%m_%d).db
+ZUNKASRV_DB_BACKUP=$BACKUP_DIR/sqlite3.zunkasrv.backup
+
+# Aldowsc db.
+ALDOWSC_FILE_DB=$ZUNKAPATH/db/$ZUNKA_ALDOWSC_DB
+ALDOWSC_FILE_DB_OLD=$ZUNKAPATH/db/aldowsc-$(date +%Y_%m_%d).db
+ALDOWSC_DB_BACKUP=$BACKUP_DIR/sqlite3.aldowsc.backup
 
 # Warn freight db exist.
 if [[ -f $FREIGHT_FILE_DB ]]; then
@@ -63,11 +74,12 @@ if [[ -f $ALDOWSC_FILE_DB ]]; then
 fi
 
 # Freight sqlite3 db.
-FREIGHT_DB_BACKUP=$BACKUP_DIR/sqlite3.freight.backup
 while true; do
+    echo
     read -p "Import freight from $FREIGHT_DB_BACKUP to $FREIGHT_FILE_DB? (y/n):" ANSWER
     if [[ $ANSWER == y ]]; then
         echo "Importing freight db..."
+        mv $FREIGHT_FILE_DB $FREIGHT_FILE_DB_OLD
         sqlite3 $FREIGHT_FILE_DB ".restore $FREIGHT_DB_BACKUP"
         break
     elif [[ $ANSWER == n ]]; then
@@ -79,11 +91,12 @@ while true; do
 done
 
 # Zunkasrv sqlite3 db.
-ZUNKASRV_DB_BACKUP=$BACKUP_DIR/sqlite3.zunkasrv.backup
 while true; do
+    echo
     read -p "Import zunkasrv from $ZUNKASRV_DB_BACKUP to $ZUNKASRV_FILE_DB? (y/n):" ANSWER
     if [[ $ANSWER == y ]]; then
         echo "Importing zunkasrv db..."
+        mv $ZUNKASRV_FILE_DB $ZUNKASRV_FILE_DB_OLD
         sqlite3 $ZUNKASRV_FILE_DB ".restore $ZUNKASRV_DB_BACKUP"
         break
     elif [[ $ANSWER == n ]]; then
@@ -95,11 +108,12 @@ while true; do
 done
 
 # Aldowsc sqlite3 db.
-ALDOWSC_DB_BACKUP=$BACKUP_DIR/sqlite3.aldowsc.backup
 while true; do
+    echo
     read -p "Import aldowsc from $ALDOWSC_DB_BACKUP to $ALDOWSC_FILE_DB? (y/n):" ANSWER
     if [[ $ANSWER == y ]]; then
         echo "Importing aldowsc db..."
+        mv $ALDOWSC_FILE_DB $ALDOWSC_FILE_DB_OLD
         sqlite3 $ALDOWSC_FILE_DB ".restore $ALDOWSC_DB_BACKUP"
         break
     elif [[ $ANSWER == n ]]; then
@@ -113,6 +127,7 @@ done
 # Import mongodb.
 MONGO_DB_BACKUP=$BACKUP_DIR/mongodb.gz
 while true; do
+    echo
     read -p "Import mongo db? (y/n):" ANSWER
     if [[ $ANSWER == y ]]; then
         echo "Importing mongo db..."
@@ -130,17 +145,17 @@ done
 # Import redis db.
 REDIS_DB_BACKUP=$BACKUP_DIR/redis.rdb
 while true; do
+    echo
     read -p "Import redis db? (y/n):" ANSWER
     if [[ $ANSWER == y ]]; then
         echo "Importing redis db..."
         printf "\nroot password:\n"
-        sudo service redis-server stop
-        sudo service redis-server status
-        sudo mv /var/lib/redis/dump.rdb /var/lib/redis/$(date +%Y-%m-%d).dump.rdb.old
-        sudo cp -p $REDIS_DB_BACKUP/var/lib/redis
+        sudo systemctl stop redis
+        sudo mv /var/lib/redis/dump.rdb /var/lib/redis/dump-$(date +%Y-%m-%d).rdb.old
+        sudo cp -p $REDIS_DB_BACKUP /var/lib/redis/dump.rdb
         sudo chown redis:redis /var/lib/redis/dump.rdb
         sudo chmod 660 /var/lib/redis/dump.rdb
-        sudo service redis-server start
+        sudo systemctl start redis
         break
     elif [[ $ANSWER == n ]]; then
         echo "Redis db will not be imported"
@@ -153,6 +168,7 @@ done
 # Import images.
 IMAGES_BACKUP=$BACKUP_DIR/img.tar.gz
 while true; do
+    echo
     read -p "Import images? (y/n):" ANSWER
     if [[ $ANSWER == y ]]; then
         echo Importing images.
@@ -166,4 +182,5 @@ while true; do
     fi
 done
 
+echo
 echo Import finished
