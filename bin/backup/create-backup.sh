@@ -37,14 +37,6 @@ ALDOWSC_FILE_DB=$ZUNKAPATH/db/$ZUNKA_ALDOWSC_DB
 # Backup dir.
 BACKUP_DIR=$ZUNKA_SITE_PATH/dump/$(date +%Y-%m-%d)
 
-# echo $FREIGHT_FILE_DB
-# echo $ZUNKASRV_FILE_DB
-# echo $ALDOWSC_FILE_DB
-# echo $BACKUP_DIR
-# echo $FREIGHT_BACKUP
-# echo $ZUNKASRV_BACKUP
-# echo $ALDOWSC_BACKUP
-
 # Check if freight db exist.
 if [[ ! -f $FREIGHT_FILE_DB ]]; then
     printf "error: $FREIGHT_FILE_DB not exist.\n" >&2
@@ -85,10 +77,13 @@ mongodump --db zunka -u admin --authenticationDatabase admin --gzip --archive=$B
 echo Creating redis backup...
 redis-cli save
 printf "\nroot password:\n"
-sudo cp /var/lib/redis/dump.rdb ../dump/$BACKUP_DIR/redis.rdb
+sudo cp /var/lib/redis/dump.rdb $BACKUP_DIR/redis.rdb
 
 # Backup images.
 echo Creating images backup...
-tar cvzf $BACKUP_DIR/img.tar.gz $ZUNKA_SITE_PATH/dist/img/ $ZUNKA_SITE_PATH/dist/banner/
+cd $ZUNKA_SITE_PATH
+pwd
+tar cvzf $BACKUP_DIR/img.tar.gz ./dist/img ./dist/banner
+cd -
 
 echo Finished
