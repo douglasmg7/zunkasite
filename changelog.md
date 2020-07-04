@@ -1,6 +1,7 @@
 # 1.6.0 (04 jul 2020)
 ## Melhorias
 * Usando imagem dos produtos com resolção 500px em vez de 300px.
+* Título maior nas telas de lista de produtos.
 
 
 # 1.5.20 (03 jul 2020)
