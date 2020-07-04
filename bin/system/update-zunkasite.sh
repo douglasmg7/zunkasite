@@ -11,7 +11,8 @@ git fetch
 FILES_CHANGED=`git diff --name-only master...origin/master`
 BUNDLE_FILES_CHANGED=`git diff --name-only master...origin/master | grep "\.bundle$"`
 STYLE_FILES_CHANGED=`git diff --name-only master...origin/master | grep "\.styl$"`
-PACKAGE_JSON_FILE_CHANGED=`git diff --name-only master...origin/master | grep "package\.json$"`
+# PACKAGE_JSON_FILE_CHANGED=`git diff --name-only master...origin/master | grep "package\.json$"`
+PACKAGE_JSON_FILE_CHANGED=`git diff  master...origin/master package.json | grep "^\+\s" | grep -v version`
 SECRET_FILES_CHANGED=`git diff --name-only master...origin/master | grep "\.secret$"`
 RESTART_ZUNKA_SITE=`git diff --name-only master...origin/master | egrep \.'(json|secret|pug|js|styl|bundle)'$`
 RELOAD_NGINX=`git diff --name-only master...origin/master | egrep '(nginx.conf.secret|zunka.conf.secret)'$`
