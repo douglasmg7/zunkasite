@@ -1,3 +1,8 @@
+# 1.6.0 (04 jul 2020)
+## Melhorias
+* Usando imagem dos produtos com resolção 500px em vez de 300px.
+
+
 # 1.5.20 (03 jul 2020)
 ## Melhorias
 * Usando imagem com resolção 300px em vez de 200px na página de produtos.

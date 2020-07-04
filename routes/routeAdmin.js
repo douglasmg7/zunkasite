@@ -265,9 +265,8 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 								// Not remove resized images.
 								let pathObj = path.parse(image);
 								let img_0080 = pathObj.name + '_0080px' + pathObj.ext;
-								let img_0200 = pathObj.name + '_0200px' + pathObj.ext;
-								let img_0300 = pathObj.name + '_0300px' + pathObj.ext;
-								if ((file === image) || (file === img_0080) || (file === img_0200) || (file === img_0300)) {
+								let img_0500 = pathObj.name + '_0500px' + pathObj.ext;
+								if ((file === image) || (file === img_0080) || (file === img_0500)) {
 									exist = true;
 								}
 							});

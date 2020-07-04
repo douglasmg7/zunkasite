@@ -120,17 +120,17 @@ var app = new Vue({
             // console.debug(fileName);
             return '/img/' + product._id + '/' + product.images[index];
         },
-        // Get image source 300 pixels.
-        srcImg0300(product, index){
-            let regExpResult = product.images[index].match(/\.[0-9a-z]+$/i);
-            // console.debug(fileName);
-            return '/img/' + product._id + '/' + product.images[index].slice(0, regExpResult.index) + '_0300px' + regExpResult[0]
-        },
         // Get image source 80 pixels.
         srcImg0080(product, index){
             let regExpResult = product.images[index].match(/\.[0-9a-z]+$/i);
             // console.debug(fileName);
             return '/img/' + product._id + '/' + product.images[index].slice(0, regExpResult.index) + '_0080px' + regExpResult[0]
+        },
+        // Get image source 500 pixels.
+        srcImg0500(product, index){
+            let regExpResult = product.images[index].match(/\.[0-9a-z]+$/i);
+            // console.debug(fileName);
+            return '/img/' + product._id + '/' + product.images[index].slice(0, regExpResult.index) + '_0500px' + regExpResult[0]
         },
         // Create zoom panel.
         createZoomPanel(){

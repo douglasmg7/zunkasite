@@ -12,7 +12,7 @@ block content
             .product-thumbnail
                 img(v-for='image, index in product.images', :src='srcImg0080(product, index)' @click='selectedThumbnail=index')
             .product-image(@click='showZoomImg')
-                img(:src='srcImg0300(product, selectedThumbnail)' v-if='product.images.length > 0')
+                img(:src='srcImg0500(product, selectedThumbnail)' v-if='product.images.length > 0')
             .product-summary
                 if user.name && user.group.includes('admin')
                     a.title(href=`/admin/product/${product._id}`) {{product.storeProductTitle}}
@@ -83,13 +83,6 @@ block content
                     //- Without title.
                     p(v-if='(typeof item == "string") && (item != "")') {{ item }}
                     p(v-if='(typeof item == "string") && (item == "")') &nbsp 
-        //- .modal(v-if='showModal')
-            //- .panel#zoom-img
-                //- img(:src='srcImgZoom(product, selectedThumbnail)' v-if='product.images.length > 0' @click='hideZoomImg')
-
-                //- i.close.far.fa-window-close(@click='hideZoomImg')
-                //- .zoom-image
-                    //- img(:src='srcImgZoom(product, selectedThumbnail)' v-if='product.images.length > 0')
         include ../misc/loading.pug
 
 append internal_scripts
@@ -98,4 +91,4 @@ append internal_scripts
 
 append external_scripts
     include ../components/accounting.js.pug
-    script(src='/js/product/product.js?0012')
+    script(src='/js/product/product.js?0013')

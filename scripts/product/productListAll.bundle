@@ -88,10 +88,10 @@ var app = new Vue({
         });
       }
     },
-    srcImg0200(product){
+    srcImg0500(product){
       let regExpResult = product.images[0].match(/\.[0-9a-z]+$/i);
       // console.debug(fileName);
-      return '/img/' + product._id + '/' + product.images[0].slice(0, regExpResult.index) + '_0200px' + regExpResult[0]
+      return '/img/' + product._id + '/' + product.images[0].slice(0, regExpResult.index) + '_0500px' + regExpResult[0]
     }
   },  
   watch: {

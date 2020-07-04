@@ -68,8 +68,7 @@ function createResizedImgs(images){
 		// File output.
 		let fileOut = {
 			_0080: path.format({dir: pathObj.dir, name: pathObj.name + '_0080px', ext: pathObj.ext }),
-			_0200: path.format({dir: pathObj.dir, name: pathObj.name + '_0200px', ext: pathObj.ext }),
-			_0300: path.format({dir: pathObj.dir, name: pathObj.name + '_0300px', ext: pathObj.ext })
+			_0500: path.format({dir: pathObj.dir, name: pathObj.name + '_0500px', ext: pathObj.ext })
 		}
 		// 0080 pixels.
 		sharp(imgPath)
@@ -80,23 +79,14 @@ function createResizedImgs(images){
 				}
 				log.debug('Resized image was created: ' + fileOut._0080);
 			});
-		// 0200 pixels.
+		// 0500 pixels.
 		sharp(imgPath)
-			.resize(200)
-			.toFile(fileOut._0200, (err, info)=>{
+			.resize(500)
+			.toFile(fileOut._0500, (err, info)=>{
 				if (err) {
 					log.error(err);
 				}
-				log.debug('Resized image was created: ' + fileOut._0200);
-			});
-		// 0300 pixels.
-		sharp(imgPath)
-			.resize(300)
-			.toFile(fileOut._0300, (err, info)=>{
-				if (err) {
-					log.error(err);
-				}
-				log.debug('Resized image was created: ' + fileOut._0300);
+				log.debug('Resized image was created: ' + fileOut._0500);
 			});
 	})
 }

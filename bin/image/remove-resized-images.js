@@ -5,7 +5,15 @@ const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 
-const IMG_PATH = path.join(__dirname, '../dist/img');
+// ZUNKAPATH must be defined.
+if (!process.env.ZUNKA_SITE_PATH) {
+    console.error(`ZUNKA_SITE_PATH not defined.`);
+    process.exit(1);
+} 
+
+const IMG_PATH = path.join(process.env.ZUNKA_SITE_PATH, 'dist/img');
+// console.log(`PATH: ${IMG_PATH}`);
+
 // Get all image dirs.
 fs.readdir(IMG_PATH, {withFileTypes: true}, (err, imgDirs)=>{
   imgDirs.forEach((imgDir)=>{
@@ -18,12 +26,11 @@ fs.readdir(IMG_PATH, {withFileTypes: true}, (err, imgDirs)=>{
           if (img.isFile()) {
             let imgPath = path.join(imgDirPath, img.name)
             // console.log(imgPath);
-            // var ext = /\.[0-9a-z]{1,5}$/i;
             var ext = /_[0-9a-z]{4}px\.[0-9a-z]+$/i;
             if (imgPath.match(ext)) {
               // // Remvove old resize.
               // console.log(imgPath, 'to delete.');
-              // Uncoment to delete file.
+              // // Uncoment to delete file.
               fs.unlink(imgPath, (err)=>{
                 if(err) { 
                   console.error(err); 

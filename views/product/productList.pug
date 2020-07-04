@@ -35,7 +35,7 @@ block content
         h4.section-title Novidades na loja
         .products
             a.product.shadow(v-for='product in newProducts', :href='"/product/" + product._id' :title='product.storeProductDetail')
-                img(:src='srcImg0300(product)', v-if='product.images[0]' alt="Imagem não disponível")
+                img(:src='srcImg0500(product)', v-if='product.images[0]' alt="Imagem não disponível")
                 p.product-title {{ product.storeProductTitle }}
                 //- p.product-price R$ {{ product.storeProductPrice | currency}}        
                 p.product-price
@@ -47,7 +47,7 @@ block content
         h5.section-title Produtos mais vendidos
         .products
             a.product.shadow(v-for='product in bestSellingProducts', :href='"/product/" + product._id' :title='product.storeProductDetail')
-                img(:src='srcImg0300(product)', v-if='product.images[0]' alt="Imagem não disponível")
+                img(:src='srcImg0500(product)', v-if='product.images[0]' alt="Imagem não disponível")
                 p.product-title {{ product.storeProductTitle }}
                 p.product-price
                     sup R$
@@ -64,4 +64,4 @@ append internal_scripts
         let banners = !{JSON.stringify(banners)};
 
 append external_scripts
-    script(src='/js/product/productList.js?0003')
+    script(src='/js/product/productList.js?0004')

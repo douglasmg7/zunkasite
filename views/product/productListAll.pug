@@ -30,7 +30,7 @@ block content
             .products
                 .product.shadow(v-for='product in products' :title='product.storeProductDetail')
                     a(:href='"/product/" + product._id')
-                        img(:src='srcImg0200(product)', v-if='product.images[0]')
+                        img(:src='srcImg0500(product)', v-if='product.images[0]')
                         p.product-title {{ product.storeProductTitle }}
                         p.product-price
                             sup R$
@@ -46,4 +46,4 @@ append internal_scripts
         let categoriesFilter = !{JSON.stringify(categoriesFilter)};
 
 append external_scripts
-    script(src='/js/product/productListAll.js?0001')
+    script(src='/js/product/productListAll.js?0002')

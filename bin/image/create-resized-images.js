@@ -5,7 +5,15 @@ const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 
-const IMG_PATH = path.join(__dirname, '../dist/img');
+// ZUNKAPATH must be defined.
+if (!process.env.ZUNKA_SITE_PATH) {
+    console.error(`ZUNKA_SITE_PATH not defined.`);
+    process.exit(1);
+} 
+
+const IMG_PATH = path.join(process.env.ZUNKA_SITE_PATH, 'dist/img');
+// console.log(`PATH: ${IMG_PATH}`);
+
 // Get all image dirs.
 fs.readdir(IMG_PATH, {withFileTypes: true}, (err, imgDirs)=>{
   imgDirs.forEach((imgDir)=>{
@@ -27,10 +35,8 @@ fs.readdir(IMG_PATH, {withFileTypes: true}, (err, imgDirs)=>{
               // File output.
               let fileOut = {
                 _0080: path.format({dir: pathObj.dir, name: pathObj.name + '_0080px', ext: pathObj.ext }), 
-                _0200: path.format({dir: pathObj.dir, name: pathObj.name + '_0200px', ext: pathObj.ext }), 
-                _0300: path.format({dir: pathObj.dir, name: pathObj.name + '_0300px', ext: pathObj.ext }) 
+                _0500: path.format({dir: pathObj.dir, name: pathObj.name + '_0500px', ext: pathObj.ext }) 
               }
-              // console.log(fileOut._0080);
               // 0080 pixels.
               sharp(imgPath)
                 .resize(80)
@@ -40,23 +46,14 @@ fs.readdir(IMG_PATH, {withFileTypes: true}, (err, imgDirs)=>{
                   }
                   console.debug('Creted file: ', fileOut._0080);
                 });
-              // 0200 pixels.
+              // 0500 pixels.
               sharp(imgPath)
-                .resize(200)
-                .toFile(fileOut._0200, (err, info)=>{
+                .resize(500)
+                .toFile(fileOut._0500, (err, info)=>{
                   if (err) {
                     console.error(err);
                   }
-                  console.debug('Creted file: ', fileOut._0200);
-                });
-              // 0300 pixels.
-              sharp(imgPath)
-                .resize(300)
-                .toFile(fileOut._0300, (err, info)=>{
-                  if (err) {
-                    console.error(err);
-                  }
-                  console.debug('Creted file: ', fileOut._0300);
+                  console.debug('Creted file: ', fileOut._0500);
                 });
             }
           }
@@ -65,31 +62,3 @@ fs.readdir(IMG_PATH, {withFileTypes: true}, (err, imgDirs)=>{
     }
   })
 })
-
-
-// sharp('../dist/img/5bb77fb064660516779500e4/upload_038bf8c97212c141b73686c20d4cd462.jpg')
-//   .resize(300)
-//   .toFile('../dist/img/5bb77fb064660516779500e4/upload_038bf8c97212c141b73686c20d4cd462_300.jpg', (err, info)=>{
-//     if (err) {
-//       console.error(err);
-//     }
-//     console.debug(info);
-//   });
-
-// sharp('../dist/img/5bb77fb064660516779500e4/upload_038bf8c97212c141b73686c20d4cd462.jpg')
-//   .resize(200)
-//   .toFile('../dist/img/5bb77fb064660516779500e4/upload_038bf8c97212c141b73686c20d4cd462_200.jpg', (err, info)=>{
-//     if (err) {
-//       console.error(err);
-//     }
-//     console.debug(info);
-//   });
-
-// sharp('../dist/img/5bb77fb064660516779500e4/upload_038bf8c97212c141b73686c20d4cd462.jpg')
-//   .resize(80)
-//   .toFile('../dist/img/5bb77fb064660516779500e4/upload_038bf8c97212c141b73686c20d4cd462_80.jpg', (err, info)=>{
-//     if (err) {
-//       console.error(err);
-//     }
-//     console.debug(info);
-//   });
