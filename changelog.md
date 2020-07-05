@@ -1,3 +1,9 @@
+# 1.6.1 (05 jul 2020)
+## Melhorias
+* API para alterar quantidade de produtos em estoque.
+* API para obter produto aldo, informa quantidade de estoque.
+
+
 # 1.6.0 (04 jul 2020)
 ## Melhorias
 * Usando imagem dos produtos com resolção 500px em vez de 300px.

@@ -6,6 +6,7 @@ const s = require('../config/s');
 const { check, validationResult } = require('express-validator/check');
 // Models.
 const mongoose = require('mongoose');
+const ObjectId = require('mongoose').Types.ObjectId;
 const Product = require('../model/product');
 // Utils.
 const categories = require('../util/productCategories');
@@ -67,12 +68,13 @@ router.get('/products/aldo', s.basicAuth, function(req, res, next) {
             let products = [];
             for (let i = 0; i < dbProducts.length; i++) {
                 // console.log(`dbProduct: ${dbProducts[i]}`);
-                log.debug(`product: ${dbProducts[i]._id} deletedAt: ${dbProducts[i].deletedAt}, dealerProductId: ${dbProducts[i].dealerProductId}`);
+                // log.debug(`product: ${dbProducts[i]._id} deletedAt: ${dbProducts[i].deletedAt}, dealerProductId: ${dbProducts[i].dealerProductId}, storeProductQtd: ${dbProducts[i].storeProductQtd}`);
                 products.push({
                     id: dbProducts[i]._id,
                     dealerProductId: dbProducts[i].dealerProductId,
                     dealerProductActive: dbProducts[i].dealerProductActive,
                     dealerProductPrice: dbProducts[i].dealerProductPrice,
+                    storeProductQtd: dbProducts[i].storeProductQtd,
                 });
             }
             return res.json(products);
@@ -171,7 +173,7 @@ router.post('/product/add', s.basicAuth, [
 				product.storeProductWarrantyDays = 0;
 				product.storeProductWarrantyDetail = "";
 				product.storeProductQtdSold = 0;
-				product.storeProductQtd = 3;
+				product.storeProductQtd = 1;
 				product.storeProductActive = product.dealerProductActive;
                 product.displayPriority = 200;
 				let newProduct = new Product(product);
@@ -313,4 +315,39 @@ router.post('/product/disable', s.basicAuth, [
 		return res.status(500).send(err.message);
 	}
 });
+
+// Update product stock.
+router.post('/product/quantity', s.basicAuth, [
+		check('_id').isLength(24),
+		check('storeProductQtd').isNumeric(),
+], (req, res, next)=>{
+	try {
+		// log.debug("Headers: " + JSON.stringify(req.headers, null, 3));
+		// Check erros.
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			// log.debug(JSON.stringify(errors.array(), null, 2));
+            // log.debug(`dealerProductPrice: ${req.body.dealerProductPrice}`);
+			return res.status(422).json({ erros: errors.array() });
+		}
+        // log.debug("req.body: " + JSON.stringify(req.body, null, 2));
+        // Update stock.
+        // Product.findByIdAndUpdate(req.body._id, { 
+        mongoose.connection.db.collection('products').updateOne({_id: new ObjectId(req.body._id)}, { 
+            $set: { storeProductQtd: req.body.storeProductQtd }
+        })
+            .then(()=>{
+                log.debug(`Product ${req.body.dealerProductId} was updated to ${req.body.storeProductQtd} quantity by external service}`);
+                return res.send();
+            })
+            .catch(err=>{
+		        log.error(`Updating product ${req.body._id} quantity from external service: ${err.stack}`);
+                return res.status(500).send(err.stack);
+            });
+	} catch(err) {
+		log.error(`Updating product ${req.body._id} quantity from external service: ${err.stack}`);
+		return res.status(500).send(err.stack);
+	}
+});
+
 module.exports = router;

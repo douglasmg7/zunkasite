@@ -139,8 +139,8 @@ describe('Zunka', function () {
     });
 
     // Aldo.
-    describe("Aldo", ()=>{
-        // New products API.
+    describe.only("Aldo", ()=>{
+        // Get aldo products.
         it('/setup/products/aldo', done=>{
             request(server)
                 .get('/setup/products/aldo')
@@ -153,13 +153,40 @@ describe('Zunka', function () {
                     products.forEach(product=>{
                         expect(product.id).to.be.length(24);
                         expect(product.dealerProductId).length.be.above(2);
-                        expect(product.dealerProductPrice).to.be.above(1000);
+                        expect(product.dealerProductPrice).to.be.above(300);
+                        expect(product.storeProductQtd).to.be.gte(0);
                     });
                     Product.findById(products[0].id, (err, productDb)=>{
                         expect(productDb.dealerName).to.be.eq('Aldo');
                         done();
                     });
                 });
+        });
+        // Set aldo products quantity.
+        it.only('/setup/product/quantity', done=>{
+            // Find code to use.
+            Product.findOne({ dealerName: "Aldo", dealerProductId: {$exists: true} }, (err, product)=>{
+                // console.log(`product: ${JSON.stringify(product, null, 2)}`);
+                let _id = product._id;
+                let storeProductQtd = product.storeProductQtd + 1;
+                if (storeProductQtd > 100) {
+                    storeProductQtd = 1;
+                }
+                expect(_id).to.not.be.empty;
+                // Test api.
+                request(server)
+                    .post('/setup/product/quantity')
+                    .auth(s.zunkaSite.user, s.zunkaSite.password)
+                    .send({_id: _id, storeProductQtd: storeProductQtd})
+                    .end((err, res)=>{
+                        // console.log(JSON.stringify(res, null, 2));
+                        expect(res.statusCode).to.be.equal(200);
+                        Product.findById(_id, (err, productUpdated)=>{
+                            expect(productUpdated.storeProductQtd).to.be.eq(storeProductQtd);
+                            done();
+                        });
+                    });
+            });
         });
     });
 
