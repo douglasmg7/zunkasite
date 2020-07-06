@@ -139,7 +139,7 @@ describe('Zunka', function () {
     });
 
     // Aldo.
-    describe.only("Aldo", ()=>{
+    describe("Aldo", ()=>{
         // Get aldo products.
         it('/setup/products/aldo', done=>{
             request(server)
@@ -163,7 +163,7 @@ describe('Zunka', function () {
                 });
         });
         // Set aldo products quantity.
-        it.only('/setup/product/quantity', done=>{
+        it('/setup/product/quantity', done=>{
             // Find code to use.
             Product.findOne({ dealerName: "Aldo", dealerProductId: {$exists: true} }, (err, product)=>{
                 // console.log(`product: ${JSON.stringify(product, null, 2)}`);

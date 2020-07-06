@@ -1,4 +1,4 @@
-# 1.6.1 (05 jul 2020)
+# 1.6.2 (06 jul 2020)
 ## Melhorias
 * API para alterar quantidade de produtos em estoque.
 * API para obter produto aldo, informa quantidade de estoque.

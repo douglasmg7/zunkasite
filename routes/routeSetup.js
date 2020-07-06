@@ -331,19 +331,38 @@ router.post('/product/quantity', s.basicAuth, [
 			return res.status(422).json({ erros: errors.array() });
 		}
         // log.debug("req.body: " + JSON.stringify(req.body, null, 2));
-        // Update stock.
-        // Product.findByIdAndUpdate(req.body._id, { 
-        mongoose.connection.db.collection('products').updateOne({_id: new ObjectId(req.body._id)}, { 
-            $set: { storeProductQtd: req.body.storeProductQtd }
-        })
-            .then(()=>{
-                log.debug(`Product ${req.body.dealerProductId} was updated to ${req.body.storeProductQtd} quantity by external service}`);
-                return res.send();
-            })
-            .catch(err=>{
+        // Update stock, using findById to update timestamps.updatedAt.
+		Product.findById(req.body._id, (err, product)=>{
+            if (err) {
 		        log.error(`Updating product ${req.body._id} quantity from external service: ${err.stack}`);
-                return res.status(500).send(err.stack);
-            });
+                return res.status(500).send(err);
+            }
+            // Product exist and not marked as deleted.
+            if (product && !product.deletedAt) {
+                product.storeProductQtd = req.body.storeProductQtd;
+                // Save product.
+                product.save(err=>{
+                    if (err) {
+                        log.error(`Updating product ${req.body._id} quantity from external service: ${err.stack}`);
+                        return res.status(500).send(err);
+                    }
+                    log.debug(`Product ${req.body._id} was updated to quantity ${req.body.storeProductQtd} by external service}`);
+                    return res.send(product._id);
+                });
+            } 
+		});
+        // mongoose.connection.db.collection('products').updateOne({_id: new ObjectId(req.body._id)}, { 
+            // $set: { storeProductQtd: req.body.storeProductQtd }, 
+            // $currentDate: {updatedAt: true}
+        // })
+            // .then(()=>{
+                // log.debug(`Product ${req.body._id} was updated to ${req.body.storeProductQtd} quantity by external service}`);
+                // return res.send();
+            // })
+            // .catch(err=>{
+				// log.error(`Updating product ${req.body._id} quantity from external service: ${err.stack}`);
+                // return res.status(500).send(err.stack);
+            // });
 	} catch(err) {
 		log.error(`Updating product ${req.body._id} quantity from external service: ${err.stack}`);
 		return res.status(500).send(err.stack);
