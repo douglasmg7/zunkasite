@@ -100,7 +100,7 @@ router.post('/zoom/order-status', function(req, res, next) {
                             let customErr = new Error(`[zoom] Not found zunka order for zoom order number ${zoomOrder.order_number}.`)
                             log.error(customErr.stack);
                             emailSender.sendMailToDev('Zoom approved payment order error.', customErr.stack);
-                            return res.status(500).send('No order found');
+                            return res.status(200).send('No order found');
                         }
                         else if (orders.length > 1 ) {
                             let customErr = new Error(`[zoom] Found more than one zunka order for zoom order number ${zoomOrder.order_number}.`)
