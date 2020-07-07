@@ -20,7 +20,7 @@ var app = new Vue({
         showModal: false,
         productDescriptionWithTitle: false,
         // outOfStockMessage: "Produto fora de estoque",
-        outOfStockMessage: "Sob Encomenda",
+        outOfStockMessage: "Sob Consulta",
         loading: {
             show: false,
             message: 'Confirmando a disponibilidade do produto ',
