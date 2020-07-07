@@ -4,7 +4,7 @@ block title
   title Zunka - Produto
 
 block append css
-  link(rel="stylesheet" href="/css/product/product.css?0008" charset="utf-8")
+  link(rel="stylesheet" href="/css/product/product.css?0010" charset="utf-8")
 
 block content
     section#section-content
@@ -25,6 +25,11 @@ block content
                     //- | R$ {{ product.storeProductPrice | currency}}
                 ul.detail(v-if='productDetail.length > 0')
                     li(v-for='detail in productDetail') {{detail}}
+                .warranty
+                    h3.title Garantia
+                    p {{ product.storeProductWarrantyDetail }}
+                    p Prazo com o fabricante: {{ product.dealerProductWarrantyDays }} dia(s)
+                    p Prazo com o logista: {{ product.storeProductWarrantyDays }} dia(s)
                 h2(v-if='product.storeProductQtd < 1').out-of-stock {{ outOfStockMessage }}
                 input.add-to-cart.btn-primary(v-if='product.storeProductQtd > 0' type='button' @click='addToCart' value='Adicionar ao carrinho')
                 .estimate-ship(v-if='product.storeProductQtd > 0')
