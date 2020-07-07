@@ -132,6 +132,63 @@ router.get('/product/:_id', function(req, res, next) {
 		});
 });
 
+// Get product page.
+router.get('/productn/:_id', function(req, res, next) {
+    if(!req.params._id.match(/^[a-f\d]{24}$/)){
+        return res.status(400).send(`produto "${req.params._id}" inválido.`);
+    }
+	Product.findById(req.params._id)
+		.then(product=>{
+			if (product._id && product.storeProductCommercialize) {
+				// console.log(JSON.stringify(result));
+                // console.log(`md: ${product.storeProductInfoMD}`);
+                // console.log(`html: ${marked(product.storeProductInfoMD)}`);
+                // Markdown text.
+                let productInfo = '';
+                if (product.storeProductInfoMD) {
+                    productInfo = marked(replaceIncludeTokens(product.storeProductInfoMD));
+                }
+                // Warranty text.
+                let warrantyText = '';
+                if (product.warrantyMarkdownName) {
+                    let markdownText = markdownCache.getCache().get(`garantia-${product.warrantyMarkdownName}`);
+                    if (markdownText) {
+                        warrantyText = marked(markdownText);
+                    }
+                }
+                // Deprecatead - begin.
+                else if (product.includeWarrantyText) {
+                    let markdownText = markdownCache.getCache().get('garantia');
+                    if (markdownText) {
+                        warrantyText = marked(markdownText);
+                    }
+                }
+                // Deprecatead - end.
+                // Outlet text.
+                let outletText = '';
+                if (product.includeOutletText) {
+                    let markdownText = markdownCache.getCache().get('outlet');
+                    if (markdownText) {
+                        outletText = marked(markdownText);
+                    }
+                }
+				res.render('product/productNew', {
+					nav: {
+					},
+					product,
+                    productInfo,
+                    warrantyText,
+                    outletText
+				});
+			} else {
+				log.debug(`product ${req.params._id} not found`);
+				res.status(404).send('Produto não existe.');
+			}
+		}).catch(err=>{
+			return next(err);
+		});
+});
+
 // Replace include tokens.
 function replaceIncludeTokens(text) {
     let lines = text.split("\n");
