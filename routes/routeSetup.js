@@ -347,9 +347,11 @@ router.post('/product/quantity', s.basicAuth, [
                         return res.status(500).send(err);
                     }
                     log.debug(`Product ${req.body._id} was updated to quantity ${req.body.storeProductQtd} by external service}`);
-                    return res.send(product._id);
+                    return res.send();
                 });
-            } 
+            } else {
+                return res.status(422).send('Product not exist');
+            }
 		});
         // mongoose.connection.db.collection('products').updateOne({_id: new ObjectId(req.body._id)}, { 
             // $set: { storeProductQtd: req.body.storeProductQtd }, 

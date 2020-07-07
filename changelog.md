@@ -1,7 +1,10 @@
-# 1.6.2 (06 jul 2020)
+# 1.6.3 (07 jul 2020)
 ## Melhorias
 * API para alterar quantidade de produtos em estoque.
 * API para obter produto aldo, informa quantidade de estoque.
+* Não mostra produtos aldo sem estoque.
+* Exibe produtos sem estoque como "Sob Encomenda".
+* Cria zoom ordem, mesmo sem estoque.
 
 
 # 1.6.0 (04 jul 2020)

@@ -19,7 +19,8 @@ var app = new Vue({
         estimateShipmentData: [],
         showModal: false,
         productDescriptionWithTitle: false,
-        outOfStockMessage: "Produto fora de estoque",
+        // outOfStockMessage: "Produto fora de estoque",
+        outOfStockMessage: "Sob Encomenda",
         loading: {
             show: false,
             message: 'Confirmando a disponibilidade do produto ',

@@ -71,9 +71,9 @@ router.post('/zoom/order-status', function(req, res, next) {
                         } 
                         // Out of stock.
                         else {
-                            log.debug(`[zoom] New zoom order not created. ${msg}`);
-                            emailSender.sendMailToDev('New zoom order not created.', msg);
-                            return res.status(500).send('Product(s) out of stock.');
+                            log.warn(`[zoom] New zoom order created. ${msg}`);
+                            emailSender.sendMailToDev('New zoom order created without stock.', msg);
+                            return res.status(200).send('Product(s) out of stock.');
                         }
                     });
                 });
@@ -100,13 +100,13 @@ router.post('/zoom/order-status', function(req, res, next) {
                             let customErr = new Error(`[zoom] Not found zunka order for zoom order number ${zoomOrder.order_number}.`)
                             log.error(customErr.stack);
                             emailSender.sendMailToDev('Zoom approved payment order error.', customErr.stack);
-                            return res.status(500).send();
+                            return res.status(500).send('No order found');
                         }
                         else if (orders.length > 1 ) {
                             let customErr = new Error(`[zoom] Found more than one zunka order for zoom order number ${zoomOrder.order_number}.`)
                             log.error(customErr.stack);
                             emailSender.sendMailToDev('Zoom approved payment order error.', customErr.stack);
-                            return res.status(500).send();
+                            return res.status(500).send('Found more than one order');
                         }
                         else {
                             let order = orders[0];
@@ -145,7 +145,7 @@ router.post('/zoom/order-status', function(req, res, next) {
                         let customErr = new Error(`[zoom] Received zoom notification with order ${zoomOrder.order_number} canceled, but a request for zoom server returned not canceled.`)
                         log.error(customErr.stack);
                         emailSender.sendMailToDev('Zoom canceled order error.', customErr.stack);
-                        return res.status(500).send('Request to Zoom server returned order not paided.');
+                        return res.status(500).send('Request to Zoom server returned order not canceled.');
                     }
                     // Find zunka order from zoom order.
                     Order.find({externalOrderNumber: zoomOrder.order_number})
@@ -154,13 +154,15 @@ router.post('/zoom/order-status', function(req, res, next) {
                             let customErr = new Error(`[zoom] Not found zunka order for zoom order number ${zoomOrder.order_number}.`)
                             log.error(customErr.stack);
                             emailSender.sendMailToDev('Zoom canceled order error.', customErr.stack);
-                            return res.status(500).send();
+                            // 200 to make zoom stop to send the same message.
+                            return res.status(200).send();
                         }
                         else if (orders.length > 1 ) {
                             let customErr = new Error(`[zoom] Found more than one zunka order for zoom order number ${zoomOrder.order_number}.`)
                             log.error(customErr.stack);
                             emailSender.sendMailToDev('Zoom canceled order error.', customErr.stack);
-                            return res.status(500).send();
+                            // 200 to make zoom stop to send the same message.
+                            return res.status(200).send();
                         }
                         else {
                             let order = orders[0];
@@ -223,7 +225,7 @@ function createNewZoomOrder(zoomOrder, cb) {
     for (var i = 0; i < zoomOrder.items.length; i++) {
         // Inválid product id.
 	    if (!zoomOrder.items[i].product_id.match(/^[a-f\d]{24}$/i)) {
-            return cb(null, false, `Invalid product id ${zoomOrder.items[i].product_id}`);
+            return cb(new Error(`Creating new zoom order, invalid product id ${zoomOrder.items[i].product_id}`), false, '');
         }
         let item = {
             _id: zoomOrder.items[i].product_id,
@@ -267,42 +269,128 @@ function createNewZoomOrder(zoomOrder, cb) {
     checkOrderProductsInStock(order)
         .then(result=>{
             let [inStock, productsIdOutOfStock] = result; 
-            // Not in stock.
-            if (!inStock) {
-                return cb(null, false, `Produto(s) ${productsIdOutOfStock.join(', ')} sem disponibilidade na quantidade requerida.`);
-            }
-            // In stock.
-            else {
-                // Update stock.
+            // Update stock.
+            if (inStock) {
                 for (var i = 0; i < order.items.length; i++) {
-                    // Not update aldo products, because the actual stock is undetermined.
-                    if (order.items[i].dealerName !== "Aldo") {
-                        Product.updateOne(
-                            { _id: order.items[i]._id },
-                            { $inc: {
-                                storeProductQtd: -1 * order.items[i].quantity,
-                                storeProductQtdSold: 1 * order.items[i].quantity
-                            } }, err=>{
-                                if (err) {
-                                    log.error(err.stack);
-                                }
-                            });
-                    }
+                    Product.updateOne(
+                        { _id: order.items[i]._id },
+                        { $inc: {
+                            storeProductQtd: -1 * order.items[i].quantity,
+                            storeProductQtdSold: 1 * order.items[i].quantity
+                        } }, err=>{
+                            if (err) {
+                                log.error(err.stack);
+                            }
+                        });
                 }
-                // Save order.
-                order.save((err, savedOrder)=>{
-                    if (err) { 
-                        return cb(new Error(`Saving created new zoom order. ${err}`, true, ""));
-                    }
+            }
+            // Save order.
+            order.save((err, savedOrder)=>{
+                if (err) { 
+                    return cb(new Error(`Saving created new zoom order. ${err}`, true, ""));
+                }
+                if (inStock) {
                     emailSender.sendMailToAdmin(`Novo pedido Zoom`, 'https://www.zunka.com.br/admin/order/' + savedOrder._id + '\n\n');
                     return cb(null, true, "");
-                });
-            } 
+                } else {
+                    emailSender.sendMailToAdmin(`Novo pedido Zoom - SEM ESTOQUE `, 'https://www.zunka.com.br/admin/order/' + savedOrder._id + '\n\n');
+                    return cb(null, false, `Produto(s) ${productsIdOutOfStock.join(', ')} sem disponibilidade na quantidade requerida.`);
+                }
+            });
         })
         .catch(err=>{
-            return cb(new Error(`catch() - Saving created new zoom order. ${err}`, true, ""));
+            return cb(new Error(`catch() - Saving created new zoom order. ${err}`, false, ""));
         });    
 }
+// // Create new zoom order.
+// function createNewZoomOrder(zoomOrder, cb) {
+    // // log.debug(`zoomOrder: ${JSON.stringify(zoomOrder, null, 2)}`);
+    // // Get products itens.
+    // let items = []
+    // let totalPrice = 0;
+    // for (var i = 0; i < zoomOrder.items.length; i++) {
+        // // Inválid product id.
+		// if (!zoomOrder.items[i].product_id.match(/^[a-f\d]{24}$/i)) {
+            // return cb(null, false, `Invalid product id ${zoomOrder.items[i].product_id}`);
+        // }
+        // let item = {
+            // _id: zoomOrder.items[i].product_id,
+            // name: zoomOrder.items[i].product_name,
+            // quantity: zoomOrder.items[i].amount,
+            // price: zoomOrder.items[i].total.toFixed(2),
+            // length: 0,
+            // width: 0,
+            // height: 0,
+            // weight: 0
+            // // price: zoomOrder.product_price.toFixed(2),
+        // }
+        // totalPrice += zoomOrder.items[i].total;
+        // // console.log(`item preço: ${zoomOrder.items[i].total}`);
+        // items.push(item);
+    // }
+    // // Create a new order.
+    // let order = new Order();
+    // order.externalOrderNumber = zoomOrder.order_number;
+    // order.items = items;
+    // if (zoomOrder.total_discount_value) { totalPrice -= zoomOrder.total_discount_value };
+    // // console.log(`zoomOrder.total_discount_value: ${zoomOrder.total_discount_value}`);
+    // // console.log(`zoomOrder.shipping.freight_price: ${zoomOrder.shipping.freight_price}`);
+    // order.subtotalPrice = totalPrice.toFixed(2);
+    // order.totalPrice = (totalPrice + zoomOrder.shipping.freight_price).toFixed(2);
+    // order.user_id = '123456789012345678901234';
+    // order.name = zoomOrder.customer.first_name;
+    // order.email = 'zoom@zoom.com.br';
+    // // order.name = zoomOrder.customer.first_name + zoomOrder.customer.second_name;
+    // order.cpf = zoomOrder.customer.cpf;
+    // order.mobileNumber = zoomOrder.customer.user_phone;
+    // order.timestamps = { 
+        // shippingAddressSelectedAt: new Date(),
+        // shippingMethodSelectedAt: new Date(), 
+        // placedAt: new Date(), 
+    // };
+    // order.payment = {};
+    // order.status = 'placed';
+
+    // // Check if all products in stock.
+    // checkOrderProductsInStock(order)
+        // .then(result=>{
+            // let [inStock, productsIdOutOfStock] = result; 
+            // // Not in stock.
+            // if (!inStock) {
+                // return cb(null, false, `Produto(s) ${productsIdOutOfStock.join(', ')} sem disponibilidade na quantidade requerida.`);
+            // }
+            // // In stock.
+            // else {
+                // // Update stock.
+                // for (var i = 0; i < order.items.length; i++) {
+                    // // Not update aldo products, because the actual stock is undetermined.
+                    // if (order.items[i].dealerName !== "Aldo") {
+                        // Product.updateOne(
+                            // { _id: order.items[i]._id },
+                            // { $inc: {
+                                // storeProductQtd: -1 * order.items[i].quantity,
+                                // storeProductQtdSold: 1 * order.items[i].quantity
+                            // } }, err=>{
+                                // if (err) {
+                                    // log.error(err.stack);
+                                // }
+                            // });
+                    // }
+                // }
+                // // Save order.
+                // order.save((err, savedOrder)=>{
+                    // if (err) { 
+                        // return cb(new Error(`Saving created new zoom order. ${err}`, true, ""));
+                    // }
+                    // emailSender.sendMailToAdmin(`Novo pedido Zoom`, 'https://www.zunka.com.br/admin/order/' + savedOrder._id + '\n\n');
+                    // return cb(null, true, "");
+                // });
+            // } 
+        // })
+        // .catch(err=>{
+            // return cb(new Error(`catch() - Saving created new zoom order. ${err}`, true, ""));
+        // });    
+// }
 
 // Check order products in stock.
 async function checkOrderProductsInStock(order, cb) {

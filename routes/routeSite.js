@@ -161,7 +161,21 @@ router.get('/api/products', function (req, res) {
 	// log.debug(JSON.stringify(req.query.sort));
 	// Not qtd 0.
     // const search = {'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
-    const search = {'deletedAt': {$exists: false}, 'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$gt: 0}};
+    // const search = {'deletedAt': {$exists: false}, 'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductPrice': {$gt: 0}};
+    const search = {
+        $nor: [
+            { $and: [
+                { 'dealerName': {$eq: 'Aldo'} }, 
+                { 'storeProductQtd': {$eq: 0} }
+            ] }
+        ], 
+        'deletedAt': {$exists: false}, 
+        'storeProductCommercialize': true, 
+        'storeProductTitle': {$regex: /\S/}, 
+        'storeProductPrice': {$gt: 0}
+    };
+    // db.products.find({$nor:[ {$and: [{dealerName: {$eq: "Aldo"}}, {storeProductQtd: {$eq: 0}}]} ]},{ _id: false, dealerName: true, storeProductQtd: true });
+
 	// Text search.
 	if (req.query.search) {
 		search.storeProductTitle = {$regex: req.query.search, $options: 'i'};
