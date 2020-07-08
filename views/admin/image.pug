@@ -1,0 +1,80 @@
+extends ../layout/layout
+
+block title
+    title Zunka - Imagens
+
+block append css
+    link(rel="stylesheet" href="/css/admin/image.css?0002" charset="utf-8")
+
+block content 
+    section#section-content
+        h2.title Imagens
+        each image in images
+            .image
+                img(src=`/img/misc/${image}`)   
+                h3 /img/misc/#{image}
+                input.button.btn-danger(type='button' href="#" onclick=`deleteImage('${image}')` value='Apgar')
+        .buttons
+            label.upload-image(for='uploadImage') Carregar imagem(s)
+            input(type='file' id='uploadImage' accept='image/*' multiple onchange=`uploadImage()`)
+            //- input.btn-primary(type='button' v-on:click='saveBanners()' value='Salvar')
+            input.btn-exit(type='button' onclick='window.location.href="/admin"' value='Sair')
+
+block footer
+
+append internal_scripts
+    script.
+        let images = !{JSON.stringify(images)};
+        //- let user = !{JSON.stringify(user)};
+        // Delete an image.
+        function deleteImage(image) {
+            if (confirm('Confirma a remoção?')) {
+                axios.delete(`/admin/image/${image}`, { headers: { 'csrf-token': csrfToken } })
+                .then(()=>{
+                    document.location.reload(true)
+                    //- window.location.href = '/admin/image';
+                })
+                .catch((err)=>{
+                    console.error(`${err.response.status} - ${err.response.statusText}`);
+                    alert(`Alguma coisa deu errada!`);
+                });
+            }
+        }
+        // Upload image(s) to server.
+        function uploadImage(){
+            let self = this;
+            let files = document.getElementById('uploadImage').files;
+            // no files
+            if (files.length === 0) {
+                alert('Nenhuma imagem para upload foi selecionada.');
+                // too many files
+            } else if (files.length > 8) {
+                alert('Selecione no máximo 8 imagens por vez.')
+            }
+            // it's ok
+            else {
+                let formData = new FormData();
+                for (var i = 0; i < files.length; i++) {
+                    formData.append('pictures[]', files[i]);
+                }
+                // Send images.
+                axios({
+                    method: 'put',
+                    url: `/admin/image`,
+                    headers:{'csrf-token' : csrfToken},
+                    data: formData
+                })
+                    .then(response => {
+                        //- document.location.reload(true)
+                        window.location.href = '/admin/image';
+                    })
+                    .catch(e => {
+                        alert('Não foi fazer o upload da(s) imagem(s).');
+                        console.error(e);
+                    }) 
+            }
+        }
+
+append external_scripts
+    //- script(src='/js/admin/image.js?0002')
+    include ../components/axios.js.pug

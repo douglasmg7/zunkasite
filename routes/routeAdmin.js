@@ -1082,6 +1082,86 @@ router.put('/upload-banner-images', checkPermission, (req, res)=>{
 });
 
 /******************************************************************************
+/   IMAGES
+ ******************************************************************************/
+// Get image page.
+router.get('/image', (req, res, next)=>{
+    // Get list of uploaded images.
+    fse.readdir(path.join(__dirname, '..', 'dist/img/misc'), (err, images)=>{
+        if (err) {
+            log.error(err.stack);
+        }
+        else {
+            // // Remove .gitkeep.
+            for (let i=0; i < images.length; i++) {
+                if (images[i] == '.gitkeep') {
+                    images.splice(i,1);
+                    break;
+                }
+            }
+            return res.render('admin/image', {  images: images || [] });
+        }
+    });
+});
+
+// Delete image.
+router.delete('/image/:image', checkPermission, (req, res, next)=>{
+    // Delete image.
+    fse.remove(path.join(__dirname, '..', 'dist/img/misc/', req.params.image), (err)=>{
+        if (err) {
+            log.error(err.stack);
+            return res.status(500).send(err.stack);
+        }
+        else {
+            return res.send();
+        }
+    });
+});
+
+// Upload images.
+router.put('/image/', checkPermission, (req, res)=>{
+	const form = formidable.IncomingForm();
+	const DIR_IMG_BANNER = path.join(__dirname, '..', 'dist/img/misc');
+	const MAX_FILE_SIZE_UPLOAD = 10 * 1024 * 1024;
+	form.uploadDir = DIR_IMG_BANNER;
+	form.keepExtensions = true;
+	form.multiples = true;
+	form.images = [];
+	// Verifiy file size.
+	form.on('fileBegin', function(name, file){
+		if (form.bytesExpected > MAX_FILE_SIZE_UPLOAD) {
+			this.emit('error', `"${file.name}" too big (${(form.bytesExpected / (1024 * 1024)).toFixed(1)}mb)`);
+		}
+	});
+	// Received name and file.
+	form.on('file', function(name, file) {
+		log.info(`"${file.name}" uploaded to "${file.path}"`);
+		form.images.push(path.basename(file.path));
+	});
+	// Err.
+	form.on('error', function(err) {
+		log.error(err.stack);
+		res.writeHead(413, {'connection': 'close', 'content-type': 'text/plain'});
+		res.status(500).send(err);
+		req.connection.destroy();
+	});
+	// All files have been uploaded.
+	form.on('end', function() {
+		res.send();
+	});
+	// Create folder if not exist and start upload.
+	fse.ensureDir(DIR_IMG_BANNER, err=>{
+		// Other erro than file alredy exist.
+		if (err && err.code !== 'EEXIST') {
+			log.error(err.stack);
+		} else {
+			form.parse(req);
+		}
+	});
+});
+
+
+/******************************************************************************
 /   MOTOBY DELIVERY
  ******************************************************************************/
 // Convert 3456 to R$ 34,56.

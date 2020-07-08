@@ -1,3 +1,8 @@
+# 1.6.4 (08 jul 2020)
+## Melhorias
+* Página para upload de imagens gerais.
+
+
 # 1.6.3 (07 jul 2020)
 ## Melhorias
 * API para alterar quantidade de produtos em estoque.
