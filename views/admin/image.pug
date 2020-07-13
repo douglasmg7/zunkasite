@@ -9,16 +9,16 @@ block append css
 block content 
     section#section-content
         h2.title Imagens
-        each image in images
-            .image
-                img(src=`/img/misc/${image}`)   
-                h3 /img/misc/#{image}
-                input.button.btn-danger(type='button' href="#" onclick=`deleteImage('${image}')` value='Apgar')
         .buttons
             label.upload-image(for='uploadImage') Carregar imagem(s)
             input(type='file' id='uploadImage' accept='image/*' multiple onchange=`uploadImage()`)
-            //- input.btn-primary(type='button' v-on:click='saveBanners()' value='Salvar')
-            input.btn-exit(type='button' onclick='window.location.href="/admin"' value='Sair')
+            //- input.btn-exit(type='button' onclick='window.location.href="/admin"' value='Sair')
+        each image in images
+            .image
+                img(src=`/img/misc/${image}`)   
+                //- h3 /img/misc/#{image}
+                input.button.btn-info(type='button' href="#" onclick=`updateClipboard('/img/misc/${image}')` value='Copiar link')
+                input.button.btn-danger(type='button' href="#" onclick=`deleteImage('${image}')` value='Apgar')
 
 block footer
 
@@ -73,6 +73,15 @@ append internal_scripts
                         console.error(e);
                     }) 
             }
+        }
+        function updateClipboard(newClip) {
+            navigator.clipboard.writeText(newClip).then(()=>{
+                console.log(`Copied: ${newClip}`);
+                /* clipboard successfully set */
+            }, ()=>{
+                console.log('Copied filed');
+                /* clipboard write failed */
+            });
         }
 
 append external_scripts

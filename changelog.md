@@ -1,3 +1,9 @@
+# 1.6.5 (13 jul 2020)
+## Melhorias
+* Botão para copiar imagem link na página de imagens.
+* Outline removido quando botão está selecionado.
+
+
 # 1.6.4 (08 jul 2020)
 ## Melhorias
 * Página para upload de imagens gerais.
