@@ -7,8 +7,8 @@ block append css
   link(rel="stylesheet" href="/css/product/product.css?0011" charset="utf-8")
 
 block content
-    section#section-content
-        .layout.shadow
+    section
+        .layout
             .product-thumbnail
                 img(v-for='image, index in product.images', :src='srcImg0080(product, index)' @click='selectedThumbnail=index')
             .product-image(@click='showZoomImg')
