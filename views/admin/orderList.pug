@@ -1,14 +1,14 @@
-extends ../layout/layout_vue_n
+extends ../layout/layout_vue
 
 block title
     title Admin - Pedidos
 
 block append css
     link(rel="stylesheet" href="/css/admin/orderList.css" charset="utf-8")
-    link(rel="stylesheet" href="/css/menu/pagination.css" charset="utf-8")
+    link(rel="stylesheet" href="/css/layout/pagination.css" charset="utf-8")
 
 block content
-    section.shadow
+    section
         h2.title Pedidos
         .search-order
             input(type='text' v-model='searchOrder' @keyup.enter='getOrders()' placeholder='Pesquise por ordens')

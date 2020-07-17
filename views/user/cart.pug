@@ -1,4 +1,4 @@
-extends ../layout/layout_vue_n
+extends ../layout/layout_vue
 
 block title
     title Zunka - Carrinho de compras
@@ -7,7 +7,7 @@ block append css
     link(rel="stylesheet" href="/css/user/cart.css" charset="utf-8")
 
 block content 
-    section.shadow
+    section
         .cart-empty(v-if='!cart.products.length')
             h2.title Ainda não existem produtos no seu carrinho de compras
         .cart(v-if='cart.products.length')

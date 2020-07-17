@@ -8,22 +8,22 @@ html(lang="en")
         block meta
         block title
         block css
-            link(rel="stylesheet" href="/css/normalize.css" charset="utf-8")
-            link(rel="stylesheet" href="/css/reset_n.css" charset="utf-8")
-            link(rel="stylesheet" href="/css/layout.css" charset="utf-8")
+            link(rel="stylesheet" href="/css/layout/normalize.css" charset="utf-8")
+            link(rel="stylesheet" href="/css/layout/reset.css" charset="utf-8")
+            link(rel="stylesheet" href="/css/layout/layout.css" charset="utf-8")
             link(rel="stylesheet" href="/fontawesome/css/all.min.css" charset="utf-8")
     block internal_style
 
     body
         #header
-            include ../menu/header_n.pug
+            include header
         #menu-container
             #menu
-                include ../menu/menu_n.pug
+                include menu
         main#app
             block content
         block footer
-            include ../menu/footer_n
+            include footer
 
     block internal_scripts
         script.

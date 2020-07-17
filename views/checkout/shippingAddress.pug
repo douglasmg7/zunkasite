@@ -1,4 +1,4 @@
-extends ../layout/layout_vue_n
+extends ../layout/layout_vue
 
 block title
     title Zunka - Endereço para envio
@@ -7,9 +7,9 @@ block append css
     link(rel="stylesheet" href="/css/checkout/shippingAddress.css?0004" charset="utf-8")
 
 block content 
-    section.shadow
+    section
         h2.title Selecione um endereço para envio
-        p Ou você pode 
+        p.mt0 Ou você pode 
             a(href='#new-address') adicionar um novo endereço para envio.
         //- Address list.
         .address(v-if='address' v-for='address in addresss' data-address-id='this.address._id')

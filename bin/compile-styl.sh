@@ -2,13 +2,9 @@
 # Change to fire directory.
 cd $(dirname "$0")
 # Compile stylus to css.
-# Root.
-stylus ../styl/layout_f.styl --out ../dist/css/
-stylus ../styl/layout.styl --out ../dist/css/
-stylus ../styl/reset_n.styl --out ../dist/css/
-# Pagination.
-mkdir -p ../dist/css/menu
-stylus ../styl/menu/pagination.styl --out ../dist/css/menu/
+# Layout.
+mkdir -p ../dist/css/layout
+stylus ../styl/layout/ --out ../dist/css/layout/
 # Product.
 mkdir -p ../dist/css/product
 stylus ../styl/product --out ../dist/css/product/
