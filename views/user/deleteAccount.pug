@@ -3,12 +3,9 @@ extends ../layout/layout_vue
 block title
   title Zunka - Apagar conta
 
-block append css
-  link(rel="stylesheet" href="/css/user/deleteAccount.css" charset="utf-8")
-
 block content 
-  section.shadow
-    h2.title Apagar Conta
+  section
+    h2.mt0 Apagar Conta
     p.warn-message(v-show='this.warnMessage !== ""') {{warnMessage}}
     label(for='email') E-mail
     input(type='text' id='email' v-model='email')

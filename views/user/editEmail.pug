@@ -3,12 +3,9 @@ extends ../layout/layout_vue
 block title
   title Zunka - Alteração de e-mail
 
-block append css
-  link(rel="stylesheet" href="/css/user/editEmail.css" charset="utf-8")
-
 block content 
-  section.shadow
-    h2.title Altereção de e-mail
+  section
+    h2.mt0 Altereção de e-mail
     //- Warn message.
     p.warn-message(v-show='this.warnMessage !== ""') {{ warnMessage }}   
     label E-mail antigo

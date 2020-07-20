@@ -4,13 +4,10 @@ block title
   title(v-if='cnpj') Zunka - Alteração da razão social
   title(v-if='!cnpj') Zunka - Alteração do nome
 
-block append css
-  link(rel="stylesheet" href="/css/user/editName.css" charset="utf-8")
-
 block content 
-  section.shadow
-    h2.title(v-if='cnpj') Alteração da razão social
-    h2.title(v-if='!cnpj') Alteração do nome
+  section
+    h2.mt0(v-if='cnpj') Alteração da razão social
+    h2.mt0(v-if='!cnpj') Alteração do nome
     //- Warn message.
     p.warn-message(v-show='this.warnMessage !== ""') {{ warnMessage }}   
     //- Name.
