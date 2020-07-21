@@ -3,8 +3,26 @@ extends ../layout/layout_vue
 block title
     title Zunka - Changelog
 
-append css
-    link(rel="stylesheet" href="/css/info/changelog.css?0001" charset="utf-8")
+block append internal_style
+    style.
+        .changelog h1 {
+            margin-top: 3em;
+            font-weight: 600;
+        }
+        .changelog h1:first-child {
+            margin-top: 0.5em;
+        }
+        .changelog h2 {
+            font-weight: 600;
+            margin-top: 1em;
+            margin-bottom: .5em;
+        }
+        .changelog ul {
+            padding-left: 2em;
+        }
+        .changelog li {
+            margin-top: .5em;
+        }
 
 block content 
     section.changelog!= text

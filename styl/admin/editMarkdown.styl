@@ -1,18 +1,16 @@
-section {
-    background-color: var(--white-lighter);
-    max-width: var(--width-large);
-    min-width: var(--width-small);
-    padding 1em;
-    margin 2em 1em;
-}
-.title {
-    margin-top: 0;
-}
+@require '../misc/markdown.styl'
 section a {
     display: block;
 }
 section textarea {
     height: 30em;
+    margin-bottom: 2em;
     // overflow: hidden;
 }
-@require '../misc/markdown.styl'
+section > hr {
+    border: none;
+    height: 2px;
+    color: var(--black-light); /* old IE */
+    background-color: var(--black-light); /* Modern Browsers */
+    margin-bottom: 2em;
+}

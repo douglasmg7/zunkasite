@@ -3,18 +3,51 @@ extends ../layout/layout_vue
 block title
   title Zunka - Markdown
 
-block append css
-  link(rel="stylesheet" href="/css/admin/markdownList.css" charset="utf-8")
+block append internal_style
+    style.
+        section > h2:first-child {
+            margin-top: 0;
+            margin-bottom: .5em;
+        }
+        section h3 {
+            margin-top: .5em;
+        }
+        section a {
+            display: block;
+            display: flex;
+            flex-flow: row wrap;
+            color: var(--green);
+            cursor: pointer;
+        }
+        section a:hover {
+            color: var(--green);
+            text-decoration: underline;
+        }
+        section a span.deadline {
+            min-width: 4em;
+            text-align: right;
+            // margin-right: 3em;
+        }
+        section a span.max-weight {
+            min-width: 5em;
+            text-align: right;
+        }
+        section a span.price {
+            min-width: 7em;
+            text-align: right;
+        }
+        section > input[type='button'] {
+            margin-top: 0;
+            margin-bottom: 1em;
+        }
 
 block content 
-  section.shadow
-    //- title.
-    h2.title Markdowns
+  section
+    h2 Markdowns
 
-    //- Regions.
+    input.btn-info(type='button' onclick='window.location.href="/admin/markdown/new"' value='Criar markdown') 
     each md in mds
         a(href=`/admin/markdown/${md._id}`)=  md.name
-    input.btn-info(type='button' onclick='window.location.href="/admin/markdown/new"' value='Criar markdown') 
 
 append internal_scripts
   script.

@@ -1,26 +1,32 @@
 extends ../layout/layout_vue
 
 block title
-    title Zunka - Frete
+    if md._id === 'new'
+        title Criar markdown
+    else
+        title Editar markdown
 
 block append css
     link(rel="stylesheet" href="/css/admin/editMarkdown.css" charset="utf-8")
 
 block content 
-    section.shadow
+    section
         //- title.
-        h2.title {{ md._id === 'new' ? "Novo markdown": "Alterar markdown" }}
+        h2.mt0 {{ md._id === 'new' ? "Criar markdown": "Editar markdown" }}
         //- Warn message.
         p.warn-message {{ warnMessage }}    
         //- Name.
         label(for='name') Nome
         input(type='text' id='name' v-model='md.name' autofocus)
-        //- Compiled markdown.
-        .markdown(v-html='compiledMd')
-        //- .markdown(v-html='marked(md.markdown)')
         //- Markdown.
         label(for='markdown') Markdown 
         textarea(id='markdown' v-model='md.markdown')
+
+        hr
+
+        //- Compiled markdown.
+        .markdown(v-html='compiledMd')
+        //- .markdown(v-html='marked(md.markdown)')
 
         input.btn-primary(type='button', :value='md._id === "new" ? "Criar": "Salvar"' @click='save()')
         input.btn-danger(v-if='!(md._id === "new")' type='button' value='Apagar' @click='remove()')
