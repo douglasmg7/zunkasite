@@ -9,7 +9,7 @@ block append css
 
 block content
     section
-        h2.title Pedidos
+        h2.mt0 Pedidos
         .search-order
             input(type='text' v-model='searchOrder' @keyup.enter='getOrders()' placeholder='Pesquise por ordens')
             i.fas.fa-search.fa-lg(@click='getOrders()')

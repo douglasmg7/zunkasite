@@ -8,17 +8,19 @@ block append css
 
 block content 
     section#section-content
-        h2.title Imagens
+        h2.mt0 Imagens
         .buttons
             label.upload-image(for='uploadImage') Carregar imagem(s)
             input(type='file' id='uploadImage' accept='image/*' multiple onchange=`uploadImage()`)
             //- input.btn-exit(type='button' onclick='window.location.href="/admin"' value='Sair')
-        each image in images
+        each image, index in images
             .image
                 img(src=`/img/misc/${image}`)   
                 //- h3 /img/misc/#{image}
                 input.button.btn-info(type='button' href="#" onclick=`updateClipboard('/img/misc/${image}')` value='Copiar link')
                 input.button.btn-danger(type='button' href="#" onclick=`deleteImage('${image}')` value='Apgar')
+            if index != (images.length - 1)
+                hr
 
 block footer
 

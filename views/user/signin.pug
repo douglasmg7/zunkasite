@@ -3,12 +3,23 @@ extends ../layout/layout_vue
 block title
   title Zunka - Autenticação
 
-block append css
-  link(rel="stylesheet" href="/css/user/signin.css" charset="utf-8")
+block append internal_style
+    style.
+        .signup {
+             text-align:center;
+             border-bottom: 1px solid #ccc;
+             line-height: 0.1em;
+             margin: 2em 0 0 0;
+        }
+        .signup span {
+            color: var(--black);
+            background:#fff;
+            padding:0 .2em;
+        }
 
 block content 
-  section.shadow
-    h2.title Identificação
+  section
+    h2.mt0 Identificação
     p.success-message(v-show='this.successMessage !== ""') {{successMessage}}
     p.warn-message(v-show='this.warnMessage !== ""') {{warnMessage}}
     label(for='email') E-mail

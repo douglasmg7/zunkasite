@@ -3,12 +3,9 @@ extends ../layout/layout_vue
 block title
   title Zunka - Cadastro de usuário
 
-block append css
-  link(rel="stylesheet" href="/css/user/signup.css" charset="utf-8")
-
 block content 
-  section.shadow
-    h2.title Cadastro 
+  section
+    h2.mt0 Cadastro 
     //- Warn message.
     p.warn-message(v-show='this.warnMessage !== ""') {{ warnMessage }}
     //- Name.

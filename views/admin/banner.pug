@@ -7,8 +7,8 @@ block append css
     link(rel="stylesheet" href="/css/admin/banner.css" charset="utf-8")
 
 block content 
-    section.shadow
-        h2.title Banners
+    section
+        h2.mt0 Banners
         .wrapper-image(v-for='banner, index in banners')
             h4.sub-title Link
             input(type='text' id='link' v-model='banner.link')

@@ -1,23 +1,19 @@
-section {
-	background-color: var(--white-light);
-	padding: 1em;
-	margin: 0 1em 1em 1em;
-    max-width: var(--width-x-large);
-}
-.title, .sub-title {
-    margin-top: 0;
-    margin-bottom: 0;
-    // padding: 0 1em 1em 1em;
-    // background-color: yellow;
+hr {
+    border: none;
+    height: 2px;
+    color: var(--black-light); /* old IE */
+    background-color: var(--black-light); /* Modern Browsers */
 }
 .buttons label.upload-image {
     margin-top: .5em;
     margin-bottom: 2em;
 }
 .image {
-    margin-bottom: 2em;
+    margin-top: 1em;
+    margin-bottom: 1em;
     padding 1em;
     background-color: var(--white-lighter);
+    // border-bottom: 2px var(--black-light) solid;
 }
 .image h3, .image input {
     margin: 0;
@@ -58,21 +54,21 @@ section {
 input[type="file"] {
     display: none;
 }
-@media (min-width: 0px) {
-    #section-content {
-        padding: 1em 0;
-        margin: 0;
-    }
-    .title {
-        padding-left: .5em;
-    }
-}
-@media (min-width: 800px){
-    #section-content {
-        margin: 0 1em 1em 1em;
-        padding: 1em;
-    }
-    .title {
-        padding-left: 0;
-    }
-}
+// @media (min-width: 0px) {
+    // #section-content {
+        // padding: 1em 0;
+        // margin: 0;
+    // }
+    // .title {
+        // padding-left: .5em;
+    // }
+// }
+// @media (min-width: 800px){
+    // #section-content {
+        // margin: 0 1em 1em 1em;
+        // padding: 1em;
+    // }
+    // .title {
+        // padding-left: 0;
+    // }
+// }
