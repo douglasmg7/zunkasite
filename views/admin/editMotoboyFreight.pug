@@ -1,17 +1,26 @@
 extends ../layout/layout
 
 block title
-    title Zunka - Motoboy frete
+    if freight.id == 'new'
+        title Zunka - Criar motoboy frete
+    else
+        title Zunka - Editar motoboy frete
 
-block append css
-    link(rel="stylesheet" href="/css/admin/editMotoboyFreight.css" charset="utf-8")
+block append internal_style
+    style.
+        section > h2:first-child {
+            margin-top: 0;
+        }
+        section a {
+          display: block;
+        }
 
 block content 
-    section.shadow
+    section
         if freight.id == 'new'
-            h2.title Criar frete
+            h2 Criar motoboy frete
         else
-            h2.title Salvar frete
+            h2 Editar motoboy frete
         form(method='post')
             //- Csrf.
             input(type='hidden' name='_csrf' value=csrfToken)

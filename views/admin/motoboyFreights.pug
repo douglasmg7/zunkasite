@@ -3,13 +3,42 @@ extends ../layout/layout
 block title
     title Zunka - Motoboy
 
-block append css
-    link(rel="stylesheet" href="/css/admin/motoboyFreights.css" charset="utf-8")
+block append internal_style
+    style.
+        section > h2:first-child {
+            margin-top: 0;
+            margin-bottom: .5em;
+        }
+        section h3 {
+            margin-top: .5em;
+        }
+        section a {
+            display: block;
+            display: flex;
+            flex-flow: row wrap;
+            // font-size: 1.2em;
+            color: var(--green);
+            cursor: pointer;
+        }
+        section a:hover {
+            color: var(--green);
+            text-decoration: underline;
+        }
+        section a span.deadline {
+            // min-width: 4em;
+            text-align: right;
+            // margin-right: 3em;
+        }
+        section a span.price {
+            // min-width: 5em;
+            text-align: right;
+            // margin-right: 3em;
+        }
 
 block content 
-    section.shadow
+    section
         //- title.
-        h2.title Motoboy fretes
+        h2 Motoboy fretes
 
         //- Regions.
         each fr in freights
