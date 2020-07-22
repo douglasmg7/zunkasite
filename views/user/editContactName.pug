@@ -1,32 +1,22 @@
 extends ../layout/layout
 
 block title
-    title Zunka - Alteração do NOME PARA CONTATO
+    title Zunka - Alteração do nome para contato
 
 block append internal_style
     style.
-        section {
-            background-color: var(--white-lighter);
-            max-width: var(--width-small);
-            min-width: 14em;
-            padding: 1em;
-            margin: 2em 1em;
-        }
-        section .title {
-            margin-top: 0;
-        }
         section .invalid {
             color: var(--red);
             margin-top: 0;
         }
 
 block content 
-    section.shadow
+    section
         form(method='post')
             input(type='hidden' name='_csrf' value=csrfToken)
 
             //- Title.
-            h2.title Alteração do nome para contato
+            h2.mt0 Alteração do nome para contato
 
             //- Contato name.
             label(for='contactName') Nome para contato

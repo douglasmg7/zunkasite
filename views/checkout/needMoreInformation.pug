@@ -3,12 +3,32 @@ extends ../layout/layout
 block title
     title Zunka - Informação de dados
 
-block append css
-    link(rel="stylesheet" href="/css/checkout/needMoreInformation.css" charset="utf-8")
+block append internal_style
+    style.
+        section label input[type='radio'] {
+            color: blue;
+            width: auto;
+            height: auto;
+            margin-right: .4em;
+        }
+        section label span {
+            margin-top: .1em;
+            font-weight: bold; 
+        }
+        section .radio {
+            margin-top: 1em;
+        }
+        section .radio label {
+            margin-top: 0;
+        }
+        section .invalid {
+            margin-top: 0;
+            color: var(--red);
+        }
 
 block content 
-    section.shadow
-        h2.title Favor informas os dados
+    section
+        h2.mt0 Favor informas os dados
         form(method='post' action=`/checkout/need-more-information/${orderId}`)
             input(type='hidden' name='_csrf' value=csrfToken)
 

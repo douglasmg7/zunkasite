@@ -3,12 +3,26 @@ extends ../layout/layout_vue
 block title
     title Zunka - Mensagem
 
-block append css
-    link(rel="stylesheet" href="/css/user/messageLink.css" charset="utf-8")
+block append internal_style
+    style.
+        section h3 {
+            color: #937848;
+            background-color: lightyellow;
+            border: 1px solid #FCF8E3;
+            border-radius: 4px  ;
+            padding: 1em;
+            text-align: center;
+        }
+        section a {
+            margin-top: 1em;
+            text-decoration: none;
+            color: green;
+            text-align: center;
+        }
 
 block content 
-    section.shadow
-        h3 #{message} 
+    section
+        h3.mt0 #{message} 
         a(href=linkUrl) #{linkMessage}
 
 append internal_scripts

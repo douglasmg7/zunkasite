@@ -13,7 +13,7 @@ block append css
 	link(rel="stylesheet" href="/css/checkout/pppApproval.css" charset="utf-8")
 
 block content
-	section#ppplus-container.shadow
+	section#ppplus-container
 		#ppplus
 		input#continueButton.btn-primary(type='button' onclick='ppp.doContinue(); return false;' value='Continuar')
 		input.btn-info(type='button' onclick='window.location.href="/checkout/payment/order/" + order._id' value='Selecionar outra forma de pagamento')

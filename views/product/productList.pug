@@ -18,7 +18,7 @@ block content
             .arrow.right(@click='changeBanner(1)') &#10095;
     section.cart(v-if='this.productAddedToCart._id')
         h4.section-title Adicionado ao carrinho
-        .cart-container.shadow
+        .cart-container
             a.item(:href='"/product/" + this.productAddedToCart._id')
                 img(v-if='this.productAddedToCart.images[0]' :src='"/img/" + this.productAddedToCart._id + "/" + this.productAddedToCart.images[0]')
                 //- span Adicionado ao carrinho

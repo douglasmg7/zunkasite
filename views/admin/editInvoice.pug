@@ -3,15 +3,18 @@ extends ../layout/layout
 block title
     title Zunka - Nota fiscal
 
-block append css
-    link(rel="stylesheet" href="/css/admin/editInvoice.css" charset="utf-8")
+block append internal_style
+    style.
+        section a {
+            display: block;
+        }
 
 block content 
-    section.shadow
+    section
         if invoice._id == 'new'
-            h2.title Criar nota fiscal
+            h2.mt0 Criar nota fiscal
         else
-            h2.title Nota fiscal
+            h2.mt0 Nota fiscal
 
         form(method='post' action=`/admin/invoice/${invoice._id}`)
             input(type='hidden' name='_csrf' value=csrfToken)
