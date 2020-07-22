@@ -1,6 +1,9 @@
-## 1.7.0 (22 jul 2020)
+## 1.7.1 (22 jul 2020)
 ### Melhorias
 * Formatação das páginas para uso em celular.
+
+### Bugfix
+* Zoom da imagem do produto.
 
 
 ## 1.6.5 (13 jul 2020)

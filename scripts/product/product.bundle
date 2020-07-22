@@ -142,44 +142,20 @@ var app = new Vue({
             // Panel.
             panel = document.createElement("div");
             panel.classList.add("panel");
-            // let imgSrc = this.srcImgZoom(product, this.selectedThumbnail);
-            // panel.style.backgroundImage = "url('" + imgSrc + "')";
-            // panel.style.backgroundRepeat = "no-repeat";
             // Insert.
             modal.insertBefore(panel, null);
-            section = document.getElementById("section-content");
+            section = document.querySelectorAll("main > section")[0];
         },
         // Show zoom image.
         showZoomImg(){
-            // Modal.
-            // let modal = document.createElement("div");
-            // modal.classList.add("modal");
-            // // Panel.
-            // let panel = document.createElement("div");
-            // panel.classList.add("panel");
-            // let imgSrc = this.srcImgZoom(product, this.selectedThumbnail);
-            // panel.style.backgroundImage = "url('" + imgSrc + "')";
-            // // panel.style.backgroundRepeat = "no-repeat";
-            // // Insert.
-            // modal.insertBefore(panel, null);
-            // let section = document.getElementById("section-content");
-
             let imgSrc = this.srcImgZoom(product, this.selectedThumbnail);
             panel.style.backgroundImage = "url('" + imgSrc + "')";
             section.insertBefore(modal, null);
-
-            // console.log(this.srcImgZoom(product, this.selectedThumbnail));
-            // let panelZoom = document.getElementById("zoom-img");
-            // panelZoom.style.backgroundImage = imgSrc;
-
-
-            // this.showModal = true;
         },
         // Hide zoom image.
         hideZoomImg(){
             console.log("Remove");
             modal.remove();
-            // this.showModal = false;
         },
         makeList(text) {
             let list = [];
