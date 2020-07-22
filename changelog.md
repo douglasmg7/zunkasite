@@ -1,3 +1,8 @@
+## 1.7.0 (22 jul 2020)
+### Melhorias
+* Formatação das páginas para uso em celular.
+
+
 ## 1.6.5 (13 jul 2020)
 ### Melhorias
 * Botão para copiar imagem link na página de imagens.
