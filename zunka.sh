@@ -9,6 +9,9 @@ export PATH=$PATH:$GOPATH/bin
 # export GS=$GOPATH/src/github.com/douglasmg7
 export GS=/home/douglasmg7/code
 
+# Rust bin path.
+export PATH="$PATH:$HOME/.cargo/bin"
+
 # Zunka.
 export ZUNKAPATH=~/.local/share/zunka
 # export ZUNKA_SITE_PATH=/home/douglasmg7/zunka
