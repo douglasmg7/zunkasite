@@ -19,3 +19,4 @@ export ZUNKA_SITE_PATH=$GS/zunkasite
 export ZUNKA_SRV_DB=zunkasrv.db
 export ZUNKA_ALDOWSC_DB=aldowsc.db
 export ZUNKA_FREIGHT_DB=freight.db
+export ZUNKA_ALLNATIONS_DB=allnations.db
