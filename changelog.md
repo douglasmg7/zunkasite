@@ -1,3 +1,8 @@
+## 1.7.2 (26 ago 2020)
+### Melhorias
+* Inclusão do fabricante Gigabyte.
+
+
 ## 1.7.1 (22 jul 2020)
 ### Melhorias
 * Formatação das páginas para uso em celular.

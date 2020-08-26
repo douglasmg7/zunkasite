@@ -12,6 +12,7 @@ let regexMakers = [
 	{ name: 'Dell', regex: /\bdell\b/i},
 	{ name: 'Dji', regex: /\bdji\b/i},
 	{ name: 'Galax', regex: /\bgalax\b/i},
+	{ name: 'Gigabyte', regex: /\bgigabyte\b/i},
 	{ name: 'HP', regex: /\bhp\b/i},
 	{ name: 'Intel', regex: /\bintel\b/i},
 	{ name: 'Kingston', regex: /\bkingston\b/i},
