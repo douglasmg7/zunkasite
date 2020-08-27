@@ -10,6 +10,7 @@ export PATH=$PATH:$GOPATH/bin
 export GS=/home/douglasmg7/code
 
 # Rust bin path.
+export CARGOPATH="$HOME/.cargo"
 export PATH="$PATH:$HOME/.cargo/bin"
 
 # Zunka.

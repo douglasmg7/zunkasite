@@ -1,6 +1,8 @@
-## 1.7.2 (26 ago 2020)
+## 1.7.2 (27 ago 2020)
 ### Melhorias
 * Inclusão do fabricante Gigabyte.
+* Mudança nos textos da forma de envio.
+* Formatação do markdown.
 
 
 ## 1.7.1 (22 jul 2020)
