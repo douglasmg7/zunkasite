@@ -71,6 +71,18 @@ if [[ $? == 1 ]]; then
     INSTALL_ZOOMPRODUCTS=true
 fi
 
+# allnations
+pull_roll $GS/allnations
+if [[ $? == 1 ]]; then
+    INSTALL_ALLNATIONS=true
+fi
+
+# allnations.service
+if [[ ! -z `git diff --name-only $REV_OLD | grep "install-allnations-service\.sh$"` ]]; then
+    printf "\n:: Installing allnations.service...\n"
+    ./bin/install-allnations-service.sh
+fi
+
 ########################################################
 # Install
 ########################################################
@@ -113,4 +125,11 @@ if [[ $INSTALL_ZOOMWSC == true ]]; then
     printf "\n:: Installing zoomwsc...\n"
     cd $GS/zoomwsc
     go install
+fi
+
+# Install allnations.
+if [[ $INSTALL_ALLNATIONS == true ]]; then
+    printf "\n:: Installing allnations...\n"
+    cd $GS/allnations
+    cargo install --path .
 fi

@@ -9,5 +9,5 @@
 printf "\n:: Starting update - %s\n" "$(date)" | tee -a $ZUNKAPATH/log/update.log
 
 $ZUNKA_SITE_PATH/bin/system/update-zunkasite.sh | tee -a $ZUNKAPATH/log/update.log
-$ZUNKA_SITE_PATH/bin/system/update-golang-services.sh | tee -a $ZUNKAPATH/log/update.log
+$ZUNKA_SITE_PATH/bin/system/update-services.sh | tee -a $ZUNKAPATH/log/update.log
 . $ZUNKA_SITE_PATH/bin/system/restart-updated-systems.sh
