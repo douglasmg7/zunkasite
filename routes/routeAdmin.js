@@ -296,7 +296,8 @@ router.delete('/product/:_id', checkPermission, function(req, res) {
         }).then(product=>{
             res.json({});
             log.info(`Deleted product ${product._id}.`);
-            // Delete from zunkasrv.
+            // Delete mongodb id from zunkasrv.
+            // Aldo
             if (product.dealerName = "Aldo") {
                 // Delete reference product on integration server.
                 // log.debug(`axios delete: ${s.zunkaServer.host}/${product.dealerName.toLowerCase()}/product/mongodb_id/${product.dealerProductId}`);
@@ -316,6 +317,29 @@ router.delete('/product/:_id', checkPermission, function(req, res) {
                 })
                 .catch(err => {
                     log.error(`Deleting mongodbId from zunkasrv, id: ${product._id}, code: ${product.dealerProductId}. ${err}`);
+                }); 
+            }
+            // Delete mongodb id from zunkasrv.
+            // Aldo
+            if (product.dealerName = "Allnations") {
+                // Delete reference product on integration server.
+                // log.debug(`axios delete: ${s.zunkaServer.host}/${product.dealerName.toLowerCase()}/product/mongodb_id/${product.dealerProductId}`);
+                axios.delete(`${s.zunkaServer.host}/${product.dealerName.toLowerCase()}/product/zunka_product_id/${product.dealerProductId}`, {
+                    headers: {
+                        "Accept": "text/plain", 
+                    },
+                    auth: {
+                        username: s.zunkaServer.user,
+                        password: s.zunkaServer.password
+                    },
+                })
+                .then(response => {
+                    if (response.data.err) {
+                        log.err(`Deleting zunka product id from zunkasrv, id: ${product._id}, code: ${product.dealerProductId}. ${response.data.err}`);
+                    } 
+                })
+                .catch(err => {
+                    log.error(`Deleting zunka product id from zunkasrv, id: ${product._id}, code: ${product.dealerProductId}. ${err}`);
                 }); 
             }
         }).catch(err=>{

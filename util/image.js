@@ -9,7 +9,7 @@ const sharp = require('sharp');
 const Product = require('../model/product');
 
 // Download ao images product, create resized images and save product image list.
-function downloadImagesAndUpdateProduct(imagesLink, product) {
+function downloadAldoImagesAndUpdateProduct(imagesLink, product) {
     try {
         const pathOut = path.resolve(process.env.ZUNKA_SITE_PATH, 'dist/img', product._id.toString());
         if (!fs.existsSync(pathOut)){
@@ -60,6 +60,57 @@ function downloadImagesAndUpdateProduct(imagesLink, product) {
     }
 };
 
+// Download allnations images product, create resized images and save product image list.
+function downloadAllnationsImagesAndUpdateProduct(imageLink, item, product) {
+    try {
+        if (item == 0) {
+            downloadAllnationsImagesAndUpdateProduct(imageLink, item + 1, product);
+            return;
+        } 
+        if (item > 10) {
+            return;
+        }
+        let imgageLinkComplete = imageLink + "-" + item.toString().padStart(2, "0"); 
+        // log.debug(`imageLink: ${imageLink}`);
+        log.debug(`Downloading image ${imgageLinkComplete}`);
+        axios.get(imgageLinkComplete, { responseType: 'arraybuffer' })
+            .then(response=>{
+                // console.log(`size: ${response.data.length}`);
+                // Imagens less than 3000 are unavailable images.
+                if (response.data.length < 3000) {
+                    return log.debug(`Downloaded image ${imgageLinkComplete} is "Imagem não Disponível"`);
+                } else {
+                    const pathOut = path.resolve(process.env.ZUNKA_SITE_PATH, 'dist/img', product._id.toString());
+                    if (!fs.existsSync(pathOut)){
+                        fs.mkdirSync(pathOut);
+                    }
+                    const fileOut = path.resolve(pathOut , path.basename("allnations-" + item.toString().padStart(2, "0") + '.jpeg'))
+                    fs.writeFile(fileOut, response.data, function (err) {
+                        if (err) {
+                            return log.error(`Saving downloaded product image. ${err.stack}`);
+                        }
+                        log.debug(`Image for product ${product._id} was downloaded to ${fileOut}`);
+                        // Create resized images.
+                        createResizedImgs([fileOut]);
+                        // Save product image list.
+                        product.images.push(path.basename(fileOut));
+                        product.save(err=>{
+                            if (err) {
+                                return log.error(`Saving product ${product._id} after downloading images.  ${err.stack}`);
+                            }
+                            downloadAllnationsImagesAndUpdateProduct(imageLink, item + 1, product);
+                        })
+                    });
+                }
+            })
+            .catch(err=>{
+                console.log(`Downloading product images (axios catch err): ${err}`);
+            });
+    } catch(err) {
+        log.error(`Downloading product images (catch err). ${err.stack}`);
+    }
+};
+
 // Create resized images.
 function createResizedImgs(images){
 	images.forEach(imgPath=>{
@@ -91,5 +142,36 @@ function createResizedImgs(images){
 	})
 }
 
+function downloadImage(imageLink, item) {
+    if (item == 0) {
+        downloadImage(imageLink, item + 1);
+        return;
+    } 
+    if (item > 10) {
+        return;
+    }
+    let imgageLinkComplete = imageLink + "-" + item.toString().padStart(2, "0"); 
+    axios.get(imgageLinkComplete, { responseType: 'arraybuffer' })
+        .then(response=>{
+            console.log(`size: ${response.data.length}`);
+            if (response.data.length < 3000) {
+                return;
+            } else {
+                fs.writeFile(item.toString().padStart(2, "0") + '.jpeg', response.data, function (err) {
+                    if (err) {
+                        console.error(err);
+                    }
+                    console.log('Saved! - ' + item.toString());
+                });
+                downloadImage(imageLink, item + 1);
+            }
+        })
+        .catch(err=>{
+            console.log(`catch err: ${err}`);
+        });
+}
+
+
 module.exports.createResizedImgs = createResizedImgs;
-module.exports.downloadImagesAndUpdateProduct = downloadImagesAndUpdateProduct;
+module.exports.downloadAldoImagesAndUpdateProduct = downloadAldoImagesAndUpdateProduct;
+module.exports.downloadAllnationsImagesAndUpdateProduct = downloadAllnationsImagesAndUpdateProduct;

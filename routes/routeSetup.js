@@ -140,10 +140,10 @@ router.post('/product/add', s.basicAuth, [
 				// Update only dealer data.
 				Product.updateOne({dealerName: product.dealerName, dealerProductId: product.dealerProductId}, product, err=>{
 					if (err) {
-						log.error(`Updating Aldo product: ${err.message}`);
+						log.error(`Updating ${product.dealerName} product: ${err.message}`);
 						return res.status(500).send(err);
 					}
-					log.debug(`Product ${doc._id} was updated by zunkasrv.`, doc._id);
+					log.debug(`Product ${product.dealerName} ${doc._id} was updated by zunkasrv.`, doc._id);
 					return res.send(doc._id);
 				});
 			} 
@@ -173,22 +173,40 @@ router.post('/product/add', s.basicAuth, [
 				product.storeProductWarrantyDays = 0;
 				product.storeProductWarrantyDetail = "";
 				product.storeProductQtdSold = 0;
-				product.storeProductQtd = 1;
+                // Allnations send product quantity.
+                if (req.body.storeProductQtd) {
+                    product.storeProductQtd = req.body.storeProductQtd;
+                } 
+                // Aldo not send product quantity.
+                else {
+                    product.storeProductQtd = 1;
+                }
 				product.storeProductActive = product.dealerProductActive;
                 product.displayPriority = 200;
 				let newProduct = new Product(product);
 				newProduct.save((err, doc)=>{
 					if (err) {
-						log.error(`Creating Aldo product: ${err.message}`);
+						log.error(`Creating ${product.dealerName} product from zunkasrv: ${err.message}`);
 						return res.status(500).send(err);
 					}
-                    // Import images.
-                    // log.debug(`req.body.dealerProductImagesLink: ${req.body.dealerProductImagesLink}`);
-                    if (req.body.dealerProductImagesLink) {
-                        let imagesLink = req.body.dealerProductImagesLink.split('__,__');
-                        imageUtil.downloadImagesAndUpdateProduct(imagesLink, doc); 
+                    // Import aldo images.
+                    if (doc.dealerName.toLowerCase() == "aldo") {
+                        // log.debug(`req.body.dealerProductImagesLink: ${req.body.dealerProductImagesLink}`);
+                        if (req.body.dealerProductImagesLink) {
+                            let imagesLink = req.body.dealerProductImagesLink.split('__,__');
+                            imageUtil.downloadAldoImagesAndUpdateProduct(imagesLink, doc); 
+                        }
+                    } 
+                    // Import allnations images.
+                    else if (doc.dealerName.toLowerCase() == "allnations") {
+                        if (req.body.dealerProductImagesLink) {
+                            // Set correct image size.
+                            let imageLink = req.body.dealerProductImagesLink.replace("h=196", "h=1000");
+                            imageLink = imageLink.replace("l=246", "l=1000");
+                            imageUtil.downloadAllnationsImagesAndUpdateProduct(imageLink, 1, doc); 
+                        }
                     }
-					log.debug(`Product ${doc._id} was created by zunkasrv.`, doc._id);
+					log.debug(`Product ${product.dealerName} ${doc._id} was created by zunkasrv.`, doc._id);
 					return res.send(doc._id);
 				});
 			}
