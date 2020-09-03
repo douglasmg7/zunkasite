@@ -30,6 +30,7 @@ config/email.js
 nginx/nginx.conf
 nginx/sites-enabled/zunka.conf
 .gitsecret/keys/random_seed
+zunka.sh
 
 # bin.
 bin/*.watch
