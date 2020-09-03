@@ -102,6 +102,8 @@ router.post('/product/add', s.basicAuth, [
 		check('dealerProductPrice').isNumeric(),
 		check('dealerProductFinalPriceSuggestion').isNumeric(),
 		check('dealerProductLastUpdate').isISO8601(),
+		check('ean').isNumeric(),
+		check('ean').isLength(13),
 ], (req, res, next)=>{
 	try {
 		// log.debug("Headers: " + JSON.stringify(req.headers, null, 3));
@@ -128,6 +130,7 @@ router.post('/product/add', s.basicAuth, [
 		product.dealerProductPrice = parseFloat(req.body.dealerProductPrice) / 100;
 		product.dealerProductActive = req.body.dealerProductActive;
 		product.dealerProductLastUpdate = req.body.dealerProductLastUpdate;
+		product.ean = req.body.ean;
 		// log.debug(`product: ${JSON.stringify(product, null, 2)}`);
 		// Verify if product exist.
 		Product.findOne({dealerName: product.dealerName, dealerProductId: product.dealerProductId}, (err, doc)=>{
@@ -217,7 +220,7 @@ router.post('/product/add', s.basicAuth, [
 	}
 });
 
-// Update product price and availability.
+// Update product price, quantity and availability.
 router.post('/product/update', s.basicAuth, [
 		check('storeProductId').isLength(24),
 		check('dealerProductActive').isBoolean(),
@@ -242,6 +245,16 @@ router.post('/product/update', s.basicAuth, [
             // Product exist and not marked as deleted.
             const minPrice = 10.00;
             if (product && !product.deletedAt) {
+                // Update stock.
+                if (req.storeProductQtd) {
+                    let stock = parseInt(req.storeProductQtd);
+                    if (stock != NaN) {
+                        if (stock < 0) {
+                            stock = 0;
+                        }
+                        product.storeProductQtd = stock;
+                    }
+                }
                 let dealerProductPrice = parseFloat(req.body.dealerProductPrice);
                 // Inválid price.
                 if (dealerProductPrice === NaN || dealerProductPrice < minPrice) {

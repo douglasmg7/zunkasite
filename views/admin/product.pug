@@ -23,7 +23,7 @@ block content
         input(type='text' id='dealer' :disabled='product.dealerProductId' v-model='product.dealerName')   
         //- Dealer product id.
         label(for='dealerProductId' v-if='product.dealerProductId') Código produto fornecedor   
-        a#dealerProductId(v-if='product.dealerProductId' :href='`/ns/aldo/product/${product.dealerProductId}`') {{product.dealerProductId}}
+        a#dealerProductId(v-if='product.dealerProductId' :href='`/ns/${product.dealerName.toLowerCase()}/product/${product.dealerProductId}`') {{product.dealerProductId}}
         //- input(type='text' id='dealerProductId' disabled v-model='product.dealerProductId' v-if='product.dealerProductId')   
         //- Categories.
         .category
