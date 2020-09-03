@@ -56,11 +56,12 @@ router.get('/product-info', s.basicAuth, function(req, res, next) {
     });
 });
 
-// Get all zunkasite aldo products.
-router.get('/products/aldo', s.basicAuth, function(req, res, next) {
+// Get all zunkasite products by dealer.
+router.get('/products/:dealer', s.basicAuth, function(req, res, next) {
     try{
         // Get all products into cart from db.
-        Product.find({dealerName: 'Aldo', deletedAt: {$exists: false}}, (err, dbProducts)=>{
+        let dealerName = req.params.dealer.charAt(0).toUpperCase() + req.params.dealer.slice(1).toLowerCase();
+        Product.find({dealerName: dealerName, deletedAt: {$exists: false}}, (err, dbProducts)=>{
             if (err) {
                 log.error(`Getting all Aldo products: ${err.stack}`);
                 return res.status(500).send(err);
