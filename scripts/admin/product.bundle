@@ -38,6 +38,16 @@ var app = new Vue({
         this.storeProductDiscountValue = this.toBRCurrencyString(product.storeProductDiscountValue.toFixed(2));
         this.dealerProductPrice = this.toBRCurrencyString(product.dealerProductPrice.toFixed(2));
     },
+    computed: {
+        // Only external products can be active or unactive, internal products use only the flag commercialize.
+        // So internal products always active.
+        isProductActive() {
+            if (this.product.dealerName.toLowerCase() == "aldo" || this.product.dealerName.toLowerCase() == "allnations") {
+                return this.product.dealerProductActive;
+            }
+            return true;
+        },
+    },
     methods: {
         // Calculate final price with discount.
         calcFinalPrice(){

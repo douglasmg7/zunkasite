@@ -247,8 +247,8 @@ router.post('/product/update', s.basicAuth, [
             const minPrice = 10.00;
             if (product && !product.deletedAt) {
                 // Update stock.
-                if (req.storeProductQtd) {
-                    let stock = parseInt(req.storeProductQtd);
+                if (req.body.storeProductQtd) {
+                    let stock = parseInt(req.body.storeProductQtd);
                     if (stock != NaN) {
                         if (stock < 0) {
                             stock = 0;
@@ -293,10 +293,10 @@ router.post('/product/update', s.basicAuth, [
                 // Save product.
                 product.save(err=>{
                     if (err) {
-                        log.error(`Updating product from service. Saving product _id: ${product._id}, dealerProductActive: ${product.dealerProductActive}, storeProductPrice: ${product.storeProductPrice}. ${err.stack}`);
+                        log.error(`Updating product from service. Saving product _id: ${product._id}, dealerProductActive: ${product.dealerProductActive}, storeProductPrice: ${product.storeProductPrice}, storeProductQtd: ${product.storeProductQtd}. ${err.stack}`);
                         return res.status(500).send(err);
                     }
-                    log.debug(`Product was updated from service, _id: ${product._id}, dealerProductActive: ${product.dealerProductActive}, storeProductPrice: ${product.storeProductPrice}`);
+                    log.debug(`Product was updated from service, _id: ${product._id}, dealerProductActive: ${product.dealerProductActive}, storeProductPrice: ${product.storeProductPrice}, storeProductQtd: ${product.storeProductQtd}`);
                     return res.send(product._id);
                 });
             } 

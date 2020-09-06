@@ -142,7 +142,8 @@ block content
         .status
             h2 Status
             hr
-            input(type='checkbox' id='commercialize' v-model:checked='product.storeProductCommercialize')
+            p(v-if='!isProductActive') Produto inativo no fornecedor
+            input(type='checkbox' id='commercialize' v-model:checked='product.storeProductCommercialize' :disabled='!isProductActive')
             label(for='commercialize') Comercializar produto
             br
             input(type='checkbox' id='marketZoom' v-model:checked='product.marketZoom' :disabled='!product.storeProductCommercialize')
@@ -179,4 +180,4 @@ append internal_scripts
         let user = !{JSON.stringify(user)}; 
 
 append external_scripts
-    script(src='/js/admin/product.js?0004')
+    script(src='/js/admin/product.js?0005')
