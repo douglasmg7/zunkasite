@@ -243,6 +243,10 @@ router.post('/product/update', s.basicAuth, [
                 log.error(`Updating product from service. Finding product ${req.body.storeProductId}. ${err.stack}`);
                 return res.status(500).send(err);
             }
+            if (!product) {
+                log.warn(`Updating product from service. Product ${req.body.storeProductId} not exist.`);
+                return res.status(400).send("Product not exist.");
+            }
             // Product exist and not marked as deleted.
             const minPrice = 10.00;
             if (product && !product.deletedAt) {
