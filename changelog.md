@@ -1,6 +1,7 @@
 ## 1.8.0 (08 set 2020)
 ### Melhorias
-* criação e remoção de produto allnations.
+* Criação e remoção de produtos allnations.
+* Inclusão de link para produtos allnations.
 
 
 ## 1.7.2 (27 ago 2020)
