@@ -1,3 +1,8 @@
+## 1.8.0 (08 set 2020)
+### Melhorias
+* criação e remoção de produto allnations.
+
+
 ## 1.7.2 (27 ago 2020)
 ### Melhorias
 * Inclusão do fabricante Gigabyte.
