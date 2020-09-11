@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DataSet xmlns="http://allnations/wsintegracao/">
+  <xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+      <xs:complexType>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="Reservas">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="DATAHORA" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="CODIGOCLIENTE" type="xs:string" minOccurs="0" />
+                <xs:element name="CODIGOPEDIDOCLIENTE" type="xs:string" minOccurs="0" />
+                <xs:element name="CODIGOPRODUTO" type="xs:string" minOccurs="0" />
+                <xs:element name="QUANTIDADE" type="xs:int" minOccurs="0" />
+                <xs:element name="STATUS" type="xs:int" minOccurs="0" />
+                <xs:element name="CPF_CNPJ_ClienteFinal" type="xs:string" minOccurs="0" />
+                <xs:element name="Valor_ClienteFinal" type="xs:decimal" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">
+    <NewDataSet xmlns="">
+      <Reservas diffgr:id="Reservas1" msdata:rowOrder="0">
+        <DATAHORA>2020-09-11T14:42:24.94-03:00</DATAHORA>
+        <CODIGOCLIENTE>0165673</CODIGOCLIENTE>
+        <CODIGOPEDIDOCLIENTE>1234</CODIGOPEDIDOCLIENTE>
+        <CODIGOPRODUTO>0077620</CODIGOPRODUTO>
+        <QUANTIDADE>1</QUANTIDADE>
+        <STATUS>1</STATUS>
+      </Reservas>
+    </NewDataSet>
+  </diffgr:diffgram>
+</DataSet>

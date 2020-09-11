@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DataSet xmlns="http://allnations/wsintegracao/">
+  <xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+      <xs:complexType>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="Estoques">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="CODIGO" type="xs:string" minOccurs="0" />
+                <xs:element name="PRECOREVENDA" type="xs:decimal" minOccurs="0" />
+                <xs:element name="PRECOSEMST" type="xs:decimal" minOccurs="0" />
+                <xs:element name="DISPONIVEL" type="xs:int" minOccurs="0" />
+                <xs:element name="ESTOQUE" type="xs:string" minOccurs="0" />
+                <xs:element name="ATIVO" type="xs:int" minOccurs="0" />
+                <xs:element name="ESTOQUEDISPONIVEL" type="xs:decimal" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">
+    <NewDataSet xmlns="">
+      <Estoques diffgr:id="Estoques1" msdata:rowOrder="0">
+        <CODIGO>0077620</CODIGO>
+        <PRECOREVENDA>1260.4100</PRECOREVENDA>
+        <PRECOSEMST>1260.4100</PRECOSEMST>
+        <DISPONIVEL>1</DISPONIVEL>
+        <ESTOQUE>SC</ESTOQUE>
+        <ATIVO>1</ATIVO>
+        <ESTOQUEDISPONIVEL>47.0000</ESTOQUEDISPONIVEL>
+      </Estoques>
+    </NewDataSet>
+  </diffgr:diffgram>
+</DataSet>
