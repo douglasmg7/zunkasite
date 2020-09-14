@@ -83,6 +83,9 @@ if [[ ! -z `git diff --name-only $REV_OLD | grep "install-allnations-service\.sh
     ./bin/install-allnations-service.sh
 fi
 
+# zunka_util
+pull_roll $GS/zunka_util
+
 ########################################################
 # Install
 ########################################################
