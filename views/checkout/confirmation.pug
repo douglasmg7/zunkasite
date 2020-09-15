@@ -46,6 +46,9 @@ block content
             h3(v-if='order.cnpj') Razão social
             h3(v-if='!order.cnpj') Nome
             p {{order.name}}
+            .contact-name(v-if='order.cnpj')
+                h3 Contato
+                p {{order.contactName}}
             h3 Email
             p {{order.email}}
         .address

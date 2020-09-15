@@ -1,3 +1,9 @@
+## 1.8.1 (15 set 2020)
+### Melhorias
+* Inclusão de inscrição estatudal, cnpj e contato no email de compra concluída que é enviado para o admin.
+* Inclusão da razão social na confirmação do pedido.
+
+
 ## 1.8.0 (08 set 2020)
 ### Melhorias
 * Criação e remoção de produtos allnations.

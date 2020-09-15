@@ -917,6 +917,20 @@ function closeOrder(order, req, res) {
                     shippingDeadlineAndPrice = '\nPrazo: ' + order.shipping.deadline + 'dia(s)\n' +  
 					'Valor: R$ ' + converToBRCurrencyString(order.shipping.price);
                 }
+                let cpfCnpjStateRegistration; 
+                let name;
+                // CPF.
+                if (order.cpf) {
+                    name = 'Nome: ' + order.name + '\n';
+					cpfCnpjStateRegistration = 'CPF: ' + order.cpf + '\n';
+                }
+                // CNPJ.
+                else {
+                    name = 'Razão social: ' + order.name + '\n' +
+                    'Contato: ' + order.contactName + '\n';
+					cpfCnpjStateRegistration = 'CNPJ: ' + order.cnpj + '\n' + 
+					'Inscrição estaudal: ' + order.stateRegistration + '\n';
+                }
 				// Email to store admin.
 				let toAdminMailOptions = {
 					from: '',
@@ -925,9 +939,9 @@ function closeOrder(order, req, res) {
 					text: 'Número de pedido: ' + order._id + '\n\n' +
 
 					'Cliente\n' +
-					'Nome: ' + order.name + '\n' +
+					name +
 					'Email: ' + order.email + '\n' +
-					'CPF: ' + order.cpf + '\n' +
+                    cpfCnpjStateRegistration + 
 					'Celular: ' + order.mobileNumber + '\n\n' +
 
 					'Endereço\n' +
