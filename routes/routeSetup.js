@@ -131,6 +131,9 @@ router.post('/product/add', s.basicAuth, [
 		product.dealerProductPrice = parseFloat(req.body.dealerProductPrice) / 100;
 		product.dealerProductActive = req.body.dealerProductActive;
 		product.dealerProductLastUpdate = req.body.dealerProductLastUpdate;
+        if (req.body.dealerProductLocation) {
+            product.dealerProductLocation = req.body.dealerProductLocation;
+        }
 		product.ean = req.body.ean;
 		// log.debug(`product: ${JSON.stringify(product, null, 2)}`);
 		// Verify if product exist.

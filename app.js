@@ -3,11 +3,17 @@
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
-// General log.
 const log = require('./config/log');
 // const util = require('util');
 const version = require('./package.json').version;
 const HOSTNAME = 'www.zunka.com.br';
+const checkEnvs = require('./util/checkEnvs.js').check([
+    "ZUNKAPATH",
+    "ALLNATIONS_HOST",
+    "ALLNATIONS_USER",
+    "ALLNATIONS_PASS"
+]);
+
 // Run mode.
 let mode = 'undefined';
 if (process.env.NODE_ENV == 'development') {

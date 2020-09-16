@@ -1,3 +1,10 @@
+## 1.8.2 (-- set 2020)
+### Melhorias
+* Exibe apenas produtos Allnations com estoque igual ou maior que 2.
+* Adiciona localização do produto (caso exista) quando produto é criado a partir do zunkasrv.
+* Exibe localização doe produto (caso exista) na página de edição de produto.
+
+
 ## 1.8.1 (15 set 2020)
 ### Melhorias
 * Inclusão de inscrição estatudal, cnpj e contato no email de compra concluída que é enviado para o admin.

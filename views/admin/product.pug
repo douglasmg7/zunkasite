@@ -149,10 +149,14 @@ block content
             input(type='checkbox' id='marketZoom' v-model:checked='product.marketZoom' :disabled='!product.storeProductCommercialize')
             label(for='marketZoom') Incluir na ZOOM 
             br
-            //- Stock.
+            //- Stock quantity.
             label(for='stock') Estoque (Unidade)
             input(type='text' id='stock' v-model='product.storeProductQtd')
             p.validation(v-if='validation.storeProductQtd') {{validation.storeProductQtd}}
+            //- Stock origin.
+            .stock-location(v-if='product.dealerProductLocation')
+                label(for='stock-origin') Localização
+                input(type='text' id='stock-origin' v-model='product.dealerProductLocation' disabled)
             //- Display priority.
             label(for='display-priority' :class='{ error: validation.displayPriority }') Prioridade de exibição {{ validation.displayPriority }}
             input(type='text' id='display-priority' v-model='product.displayPriority')

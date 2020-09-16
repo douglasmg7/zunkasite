@@ -5,6 +5,7 @@ const log = require('../config/log');
 const axios = require('axios');
 const s = require('../config/s');
 const aldo = require('../util/aldo');
+const allnations = require('../util/allnations.js');
 const marked = require('marked');
 marked.setOptions({
     headerIds: false
@@ -167,6 +168,10 @@ router.get('/api/products', function (req, res) {
             { $and: [
                 { 'dealerName': {$eq: 'Aldo'} }, 
                 { 'storeProductQtd': {$eq: 0} }
+            ] },
+            { $and: [
+                { 'dealerName': {$eq: 'Allnations'} }, 
+                { 'storeProductQtd': {$gte: 2} }
             ] }
         ], 
         'deletedAt': {$exists: false}, 
@@ -299,7 +304,7 @@ router.put('/cart/add/:_id', (req, res, next)=>{
                 aldo.checkAldoProductQty(product, 1, (err, productInStock)=>{
                     // log.debug(`productInStock: ${productInStock}`);
                     if (err) {
-                        log.error(new Error(`Adding product to cart. Product ${req.params._id}. ${err.stack}`).stack);
+                        log.error(new Error(`Adding aldo product to cart. Product ${req.params._id}. ${err.stack}`).stack);
                         return res.json({success: false, outOfStock: false, message: "Não foi possível adicionar o produto ao carrinho.\nAlguma coisa deu errado na solicitação de sua requisição."});
                     }
                     // Into stock.
@@ -315,7 +320,27 @@ router.put('/cart/add/:_id', (req, res, next)=>{
                     }
                 });
             }
-            // No Aldo products.
+            else if (product.dealerName == "Allnations") {
+                allnations.checkStock(product, 2, (err, productInStock)=>{
+                    // log.debug(`productInStock: ${productInStock}`);
+                    if (err) {
+                        log.error(new Error(`Adding allnations product to cart. Product ${req.params._id}. ${err.stack}`).stack);
+                        return res.json({success: false, outOfStock: false, message: "Não foi possível adicionar o produto ao carrinho.\nAlguma coisa deu errado na solicitação de sua requisição."});
+                    }
+                    // Into stock.
+                    else if (productInStock) {
+                        // Add product to cart.
+                        req.cart.addProduct(product, ()=>{
+                            // console.log('user cart', JSON.stringify(user.cart));
+                            return res.json({success: true});
+                        });
+                    // Out of stock.
+                    } else {
+                        return res.json({success: false, outOfStock: true, message: "Não foi possível adicionar o produto ao carrinho.\nNossa última unidade acabou de ser vendida."});
+                    }
+                });
+            }
+            // Zunka in stock products.
             else {
                 // Add product to cart.
                 req.cart.addProduct(product, ()=>{
@@ -329,7 +354,8 @@ router.put('/cart/add/:_id', (req, res, next)=>{
             return res.json({success: false, outOfStock: false, message: "Não foi possível adicionar o produto ao carrinho.\nAlguma coisa deu errado na solicitação de sua requisição."});
         }
     }).catch(err=>{
-        log.error(new Error(`Adding product to cart. Product ${req.params._id}. catch err.`).stack);
+        log.error(new Error(`Adding product to cart. Product ${req.params._id}. catch err. ${err.stack}`).stack);
+        // log.error(new Error(`Adding product to cart. Product ${req.params._id}. catch err. ${err.stack}`).stack);
         return res.json({success: false, outOfStock: false, message: "Não foi possível adicionar o produto ao carrinho.\nAlguma coisa deu errado na solicitação de sua requisição."});
     });
 })
