@@ -8,7 +8,6 @@ const jsdom = require('jsdom');
 // Check aldo product quantity.
 function checkStock(product, qty, cb) {
     try {
-        log.debug("*** 1 ***");
         // Not sell last one.
         let checkQty = qty + 1;
 
@@ -53,31 +52,31 @@ function checkStock(product, qty, cb) {
                     {
                         receivedProduct = {
                             active: stockProduct.active && stockProduct.availability,
-                            stock: stockQty
+                            stock: stockProduct.stockQty
                         }
                     }
                 });
                 // Have some information.
                 if (receivedProduct) {
+                    // Update product.
+                    let update = { storeProductQtd: receivedProduct.stock, dealerProductActive: receivedProduct.active };
+                    if (!receivedProduct.active) {
+                        update.storeProductCommercialize = false;
+                    }
+                    Product.updateOne({ _id: product._id }, update, err=>{
+                        if (err) {
+                            log.error(`Checking allnations product quantity (Product.updateOne()): ${err.stack}`);
+                        } else {
+                            log.debug(`Allnations product ${product.dealerProductId} stock was changed to ${parseInt(update.storeProductQtd, 10)}.`);
+                        }
+                    });
                     // Have stock.
                     if (receivedProduct.active && receivedProduct.stock > checkQty) {
                         return cb(null, true);
                     } 
                     // Not have stock.
                     else {
-                        let update = { storeProductQtd: qty, dealerProductActive: receivedProduct.active };
-                        if (!receivedProduct.active) {
-                            update.storeProductCommercialize = false;
-                        }
-                        // Update product quantity.
-                        Product.updateOne({ _id: product._id }, update, err=>{
-                            if (err) {
-                                log.error(`Checking allnations product quantity (Product.updateOne()): ${err.stack}`);
-                            } else {
-                                log.debug(`Allnations product ${product.dealerProductId} quantity in stock was changed to ${qty - 1}.`);
-                            }
-                            return cb(null, false);
-                        });
+                        return cb(null, false);
                     }
                 } 
                 // Could not get product stock.

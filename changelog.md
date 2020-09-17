@@ -3,6 +3,7 @@
 * Exibe apenas produtos Allnations com estoque igual ou maior que 2.
 * Adiciona localização do produto (caso exista) quando produto é criado a partir do zunkasrv.
 * Exibe localização doe produto (caso exista) na página de edição de produto.
+* Verifica e atualiza a disponibilidade e stock do produto allnations, quando o mesmo é adicionado ao carrinho.
 
 
 ## 1.8.1 (15 set 2020)
