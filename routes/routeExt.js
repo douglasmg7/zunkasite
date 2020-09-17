@@ -17,6 +17,7 @@ const ppConfig = require('../config/s').paypal;
 
 // Other routes.
 const aldo = require('../util/aldo');
+const allnations = require('../util/allnations');
 const zoom = require('../util/zoom');
 const routeCheckout = require('./routeCheckout');
 
@@ -302,100 +303,10 @@ function createNewZoomOrder(zoomOrder, cb) {
             return cb(new Error(`catch() - Saving created new zoom order. ${err}`, false, ""));
         });    
 }
-// // Create new zoom order.
-// function createNewZoomOrder(zoomOrder, cb) {
-    // // log.debug(`zoomOrder: ${JSON.stringify(zoomOrder, null, 2)}`);
-    // // Get products itens.
-    // let items = []
-    // let totalPrice = 0;
-    // for (var i = 0; i < zoomOrder.items.length; i++) {
-        // // Inválid product id.
-		// if (!zoomOrder.items[i].product_id.match(/^[a-f\d]{24}$/i)) {
-            // return cb(null, false, `Invalid product id ${zoomOrder.items[i].product_id}`);
-        // }
-        // let item = {
-            // _id: zoomOrder.items[i].product_id,
-            // name: zoomOrder.items[i].product_name,
-            // quantity: zoomOrder.items[i].amount,
-            // price: zoomOrder.items[i].total.toFixed(2),
-            // length: 0,
-            // width: 0,
-            // height: 0,
-            // weight: 0
-            // // price: zoomOrder.product_price.toFixed(2),
-        // }
-        // totalPrice += zoomOrder.items[i].total;
-        // // console.log(`item preço: ${zoomOrder.items[i].total}`);
-        // items.push(item);
-    // }
-    // // Create a new order.
-    // let order = new Order();
-    // order.externalOrderNumber = zoomOrder.order_number;
-    // order.items = items;
-    // if (zoomOrder.total_discount_value) { totalPrice -= zoomOrder.total_discount_value };
-    // // console.log(`zoomOrder.total_discount_value: ${zoomOrder.total_discount_value}`);
-    // // console.log(`zoomOrder.shipping.freight_price: ${zoomOrder.shipping.freight_price}`);
-    // order.subtotalPrice = totalPrice.toFixed(2);
-    // order.totalPrice = (totalPrice + zoomOrder.shipping.freight_price).toFixed(2);
-    // order.user_id = '123456789012345678901234';
-    // order.name = zoomOrder.customer.first_name;
-    // order.email = 'zoom@zoom.com.br';
-    // // order.name = zoomOrder.customer.first_name + zoomOrder.customer.second_name;
-    // order.cpf = zoomOrder.customer.cpf;
-    // order.mobileNumber = zoomOrder.customer.user_phone;
-    // order.timestamps = { 
-        // shippingAddressSelectedAt: new Date(),
-        // shippingMethodSelectedAt: new Date(), 
-        // placedAt: new Date(), 
-    // };
-    // order.payment = {};
-    // order.status = 'placed';
-
-    // // Check if all products in stock.
-    // checkOrderProductsInStock(order)
-        // .then(result=>{
-            // let [inStock, productsIdOutOfStock] = result; 
-            // // Not in stock.
-            // if (!inStock) {
-                // return cb(null, false, `Produto(s) ${productsIdOutOfStock.join(', ')} sem disponibilidade na quantidade requerida.`);
-            // }
-            // // In stock.
-            // else {
-                // // Update stock.
-                // for (var i = 0; i < order.items.length; i++) {
-                    // // Not update aldo products, because the actual stock is undetermined.
-                    // if (order.items[i].dealerName !== "Aldo") {
-                        // Product.updateOne(
-                            // { _id: order.items[i]._id },
-                            // { $inc: {
-                                // storeProductQtd: -1 * order.items[i].quantity,
-                                // storeProductQtdSold: 1 * order.items[i].quantity
-                            // } }, err=>{
-                                // if (err) {
-                                    // log.error(err.stack);
-                                // }
-                            // });
-                    // }
-                // }
-                // // Save order.
-                // order.save((err, savedOrder)=>{
-                    // if (err) { 
-                        // return cb(new Error(`Saving created new zoom order. ${err}`, true, ""));
-                    // }
-                    // emailSender.sendMailToAdmin(`Novo pedido Zoom`, 'https://www.zunka.com.br/admin/order/' + savedOrder._id + '\n\n');
-                    // return cb(null, true, "");
-                // });
-            // } 
-        // })
-        // .catch(err=>{
-            // return cb(new Error(`catch() - Saving created new zoom order. ${err}`, true, ""));
-        // });    
-// }
 
 // Check order products in stock.
 async function checkOrderProductsInStock(order, cb) {
     // log.debug(`order: ${JSON.stringify(order, null, 2)}`);
-    // Promises.
     let promises = [];
     // Check stock for each item on order.
     order.items.forEach(item=>{
@@ -409,6 +320,14 @@ async function checkOrderProductsInStock(order, cb) {
                     } 
                     else if (product.dealerName == "Aldo") {
                         aldo.checkAldoProductQty(product, item.quantity, (err, inStock)=>{
+                            if (err) {
+                                reject(err);
+                            }
+                            resolve([inStock, item._id]);
+                        });
+                    }
+                    else if (product.dealerName == "Allnations") {
+                        allnations.checkStock(product, item.quantity, (err, inStock)=>{
                             if (err) {
                                 reject(err);
                             }

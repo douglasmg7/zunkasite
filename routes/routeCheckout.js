@@ -23,6 +23,7 @@ const Product = require('../model/product');
 const ShippingPrice = require('../model/shippingPrice');
 const ppConfig = require('../config/s').paypal;
 const aldo = require('../util/aldo');
+const allnations = require('../util/allnations.js');
 const mobileNumber = require('../util/mobileNumber');
 
 // Redis.
@@ -345,6 +346,13 @@ async function checkOrderProductsInStock(order, cb) {
             .then(product=>{
                 if (product.dealerName == "Aldo") {
                     aldo.checkAldoProductQty(product, item.quantity, (err, inStock)=>{
+                        if (err) {
+                            reject(err);
+                        }
+                        resolve([inStock, product]);
+                    });
+                } else if (product.dealerName == "Allnations") {
+                    allnations.checkStock(product, item.quantity, (err, inStock)=>{
                         if (err) {
                             reject(err);
                         }

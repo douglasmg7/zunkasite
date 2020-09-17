@@ -24,7 +24,7 @@ function checkStock(product, qty, cb) {
         let initTime = Date.now();
         axios.get(url)
             .then(response => {
-                log.debug(`Time to check allnation stock, product ${product._id}: ${Date.now() - initTime}ms, response.data: ${response.data}`);
+                // log.debug(`Time to check allnation stock, product ${product._id}: ${Date.now() - initTime}ms, response.data: ${response.data}`);
                 if (response.data.err) {
                     return cb(new Error(`Checking allnations stock. Allnations webservice response.data.err: ${response.data.err}`));
                 } 
