@@ -466,11 +466,12 @@ router.get('/order/:_id', function(req, res, next) {
                 let allnationsBookings = [];
                 for(const item of order.items) {
                     if (item.dealerName == 'Allnations') {
-                        let bookingResult = await allnations.getBookingStatus(item._id);
+                        let bookingResult = await allnations.getBookingStatus(item);
                         if (bookingResult) {
                             allnationsBookings.push(bookingResult);
+                            item.booking = bookingResult;
                         }
-                        log.debug(`bookingResult: ${JSON.stringify(bookingResult, null, 2)}`);
+                        // log.debug(`bookingResult: ${JSON.stringify(bookingResult, null, 2)}`);
                     }
                 };
                 if (order.externalOrderNumber) {

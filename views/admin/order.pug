@@ -4,7 +4,7 @@ block title
     title Zunka - Pedido
 
 block append css
-    link(rel="stylesheet" href="/css/admin/order.css?0002" charset="utf-8")
+    link(rel="stylesheet" href="/css/admin/order.css?0003" charset="utf-8")
 
 block content 
     section
@@ -79,6 +79,10 @@ block content
                 p {{item.price | formatMoney}}
                 //- p {{item.name}}
                 p {{item.quantity}} unidade{{ item.quantity | addS }}
+                .booking-info(v-if='item.dealerName=="Allnations"')
+                    p(:class='bookingWarn(item)') {{ bookingStatus(item) }} - {{item._id}}
+                    p.warn {{ checkBookingProductQty(item) }} 
+                    //- p {{item._id}} [reserva]
 
         //- Change order status.
         .change-status(v-if='order.payment && (status(order) !== "cancelado")')
@@ -118,4 +122,4 @@ append internal_scripts
         let order = !{JSON.stringify(order)};
 
 append external_scripts
-    script(src='/js/admin/order.js?0009')
+    script(src='/js/admin/order.js?0010')

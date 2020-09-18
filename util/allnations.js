@@ -93,13 +93,13 @@ function checkStock(product, qty, cb) {
 };
 
 // Get booking information.
-async function getBookingStatus(itemId) {
+async function getBookingStatus(item) {
     try{
         let url = `${process.env.ALLNATIONS_HOST}/RetornarReservas?` +
             `CodigoCliente=${process.env.ALLNATIONS_USER}&` + 
             `Senha=${process.env.ALLNATIONS_PASS}&` +
-            `PedidoCliente=${itemId}`;
-        log.debug(`getBookingStatus for PedidoCliente: ${itemId}`);
+            `PedidoCliente=${item._id}`;
+        // log.debug(`getBookingStatus for PedidoCliente: ${item._id}`);
 
         let response = await axios.get(url);
         if (response.data.err) {
@@ -120,20 +120,20 @@ async function getBookingStatus(itemId) {
             product.status = booking.querySelector("STATUS").textContent;
             switch(product.status) {
                 case "1":
-                    product.status = "Pending";
+                    product.status = "pending";
                     break;
                 case "2":
-                    product.status = "Confirmed";
+                    product.status = "confirmed";
                     break;
                 case "3":
-                    product.status = "GeneratedOrder";
+                    product.status = "generatedOrder";
                     break;
                 case "4":
-                    product.status = "Canceled";
+                    product.status = "canceled";
                     break;
                 default:
                     product.status = "";
-                    log.warn(`Allnations booking returned a invalid status: ${product.status}.`);
+                    log.warn(`Allnations booking ${item._id} returned a invalid status: ${product.status}.`);
                     return null;
             }
             let cpfCnpjFinalClient = booking.querySelector("CPF_CNPJ_ClienteFinal");
@@ -148,18 +148,24 @@ async function getBookingStatus(itemId) {
         });
         // Supposed to be only one.
         if (result.length > 1) {
-            log.warn(`Allnations booking returned ${result.length} booking, supposed to be only one, booking returned: ${JSON.stringify(result, null, 2)}`);
+            log.warn(`Allnations booking ${item._id} returned ${result.length} booking, supposed to be only one, booking returned: ${JSON.stringify(result, null, 2)}`);
             return null;
         }
         if (result.length == 0) {
-            log.warn(`Allnations booking returned no booking`);
+            log.warn(`Allnations booking ${item._id} returned no booking`);
             return null;
         }
-        if (result[0].zunkasiteOrderItemId != itemId) {
-            log.warn(`Allnations booking returned wrong order item id: ${result[0].zunkasiteOrderItemId}, supposed to be: ${itemId}`);
+        if (result[0].zunkasiteOrderItemId != item._id) {
+            log.warn(`Allnations booking ${item._id} returned wrong order item id: ${result[0].zunkasiteOrderItemId}, supposed to be: ${item._id}`);
+            log.warn(`booking result: ${JSON.stringify(result[0], null, 2)}`);
             return null;
         }
-        log.debug(`result: ${JSON.stringify(result, null, 2)}`);
+        if (result[0].code.trim() != item.dealerProductId) {
+            log.warn(`Allnations booking ${item._id} returned wrong dealer product code: ${result[0].code}, supposed to be: ${item.dealerProductId}`);
+            log.warn(`booking result: ${JSON.stringify(result[0], null, 2)}`);
+            return null;
+        }
+        // log.debug(`result: ${JSON.stringify(result, null, 2)}`);
         return result[0];
     } catch(err) {
         log.error(`catch - Getting allnations booking information. ${err.stack}`);

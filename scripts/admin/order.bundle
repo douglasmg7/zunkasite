@@ -176,6 +176,85 @@ var app = new Vue({
 				alert('Erro ao tentar atualizar o status do pagamento.\n' + err.message);
 			});
 		},    
+		// Booking status.
+		bookingStatus(item){
+            // Only some dealers have booking.
+            if (item.dealerName != 'Allnations') {
+                return "";
+            }
+            if (!item.booking) {
+                return "Não reservado";
+            }
+			switch (item.booking.status){
+				case 'pending':
+                    return "Reserva pendente";
+					break;
+				case 'confirmed':
+                    return "Reserva confirmada";
+					break;
+				case 'generatedOrder':
+                    return "Pedido gerado"
+                    break;
+				case 'canceled':
+                    return "Reserva cancelada"
+					break;
+				default:
+					return "Status inválido";
+			}
+		},
+		// Check booking product quantity.
+		checkBookingProductQty(item){
+            // Only some dealers have booking.
+            if (item.dealerName != 'Allnations' || !item.booking) {
+                return "";
+            }
+            if (item.booking.quantity != item.quantity) {
+                return `Quantidade reservada: ${item.booking.quantity}, necessária: ${item.quantity}`;
+            }
+            return "";
+		},
+		// Booking warn.
+		bookingWarn(item){
+            // Only some dealers have booking.
+            if (item.dealerName != 'Allnations') {
+                return "ok";
+            }
+            if (!item.booking) {
+                return "warn";
+            }
+			switch (this.order.status){
+				case 'placed':
+                    switch (item.booking.status) {
+                        case 'pending':
+                            return "ok";
+                        default:
+                            return "warn";
+                    }
+				case 'paid':
+                    switch (item.booking.status) {
+                        case 'confirmed':
+                        case 'generatedOrder':
+                            return "ok";
+                        default:
+                            return "warn";
+                    }
+				case 'shipped':
+				case 'delivered':
+                    switch (item.booking.status) {
+                        case 'generatedOrder':
+                            return "ok";
+                        default:
+                            return "warn";
+                    }
+				case 'canceled':
+                    switch (item.booking.status) {
+                        case 'canceled':
+                            return "ok";
+                        default:
+                            return "warn";
+                    }
+			}
+		},
     },
 	filters: {
 		// Format number to money format.
