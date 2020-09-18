@@ -4,6 +4,7 @@ const log = require('../config/log');
 const axios = require('axios');
 const Product = require('../model/product');
 const jsdom = require('jsdom');
+const emailSender = require('../config/email');
 
 // Check aldo product quantity.
 function checkStock(product, qty, cb) {
@@ -93,13 +94,13 @@ function checkStock(product, qty, cb) {
 };
 
 // Get booking information.
-async function getBookingStatus(item) {
+async function getBooking(item) {
     try{
         let url = `${process.env.ALLNATIONS_HOST}/RetornarReservas?` +
             `CodigoCliente=${process.env.ALLNATIONS_USER}&` + 
             `Senha=${process.env.ALLNATIONS_PASS}&` +
             `PedidoCliente=${item._id}`;
-        // log.debug(`getBookingStatus for PedidoCliente: ${item._id}`);
+        // log.debug(`getBooking for PedidoCliente: ${item._id}`);
 
         let response = await axios.get(url);
         if (response.data.err) {
@@ -173,5 +174,89 @@ async function getBookingStatus(item) {
     }
 }
 
+// Make booking.
+async function makeBooking(item) {
+    try {
+        // Only make a booking in production mode.
+        // if (process.env.NODE_ENV != 'production') {
+            // log.debug(`Allnations booking ${item._id} will not be made in ${process.env.NODE_ENV} mode.`);
+            // return;
+        // }
+
+        let url = `${process.env.ALLNATIONS_HOST}/InserirReserva?` +
+            `CodigoCliente=${process.env.ALLNATIONS_USER}&` + 
+            `Senha=${process.env.ALLNATIONS_PASS}&` +
+            `PedidoCliente=${item._id}&` +
+            `CodigoProduto=${item.dealerProductId}&` +
+            `Qtd=${item.quantity}`;
+        // console.log(`url: ${url}`);
+
+        let response = await axios.get(url);
+        if (response.data.err) {
+            log.error(response.data.err);
+        } else {
+            log.debug(`Allnations booking ${item._id} maked`);
+            emailSender.sendMailToDev('New allnations booking.', `New allantios booking was made for item._id: ${JSON.stringify(item, null, 2)}`);
+        }
+    } catch(error) {
+        log.error(`catch - Making allnations booking ${item._id}. ${err.stack}`);
+    }
+}
+
+// Cancel booking.
+async function cancelBooking(item) {
+    try {
+        // Only cancel a booking in production mode.
+        if (process.env.NODE_ENV != 'production') {
+            log.debug(`Allnations booking ${item._id} will not be canceled in ${process.env.NODE_ENV} mode.`);
+            return;
+        }
+        let url = `${process.env.ALLNATIONS_HOST}/CancelarReserva?` +
+            `CodigoCliente=${process.env.ALLNATIONS_USER}&` + 
+            `Senha=${process.env.ALLNATIONS_PASS}&` +
+            `PedidoCliente=${item._id}`;
+        // console.log(`url: ${url}`);
+
+        let response = await axios.get(url);
+        if (response.data.err) {
+            log.error(response.data.err);
+        } else {
+            log.debug(`Allnations booking ${item._id} canceled`);
+        }
+    } catch(error) {
+        log.error(`catch - Canceling allnations booking ${item._id}. ${err.stack}`);
+    }
+}
+
+// Confirm booking.
+async function confirmBooking(item) {
+    try {
+        // Only confirm a booking in production mode.
+        if (process.env.NODE_ENV != 'production') {
+            log.debug(`Allnations booking ${item._id} will not be confirmed in ${process.env.NODE_ENV} mode.`);
+            return;
+        }
+
+        let url = `${process.env.ALLNATIONS_HOST}/ConfirmarReserva?` +
+            `CodigoCliente=${process.env.ALLNATIONS_USER}&` + 
+            `Senha=${process.env.ALLNATIONS_PASS}&` +
+            `PedidoCliente=${item._id}`;
+        // console.log(`url: ${url}`);
+
+        let response = await axios.get(url);
+        if (response.data.err) {
+            log.error(response.data.err);
+        } else {
+            log.debug(`Allnations booking ${item._id} confirmed`);
+            emailSender.sendMailToDev('Allnations booking confirmed.', `Allantios booking was confirmed for item._id: ${JSON.stringify(item, null, 2)}`);
+        }
+    } catch(error) {
+        log.error(`catch - Confirming allnations booking ${item._id}. ${err.stack}`);
+    }
+}
+
 module.exports.checkStock = checkStock;
-module.exports.getBookingStatus = getBookingStatus;
+module.exports.getBooking = getBooking;
+module.exports.makeBooking = makeBooking;
+module.exports.cancelBooking = cancelBooking;
+module.exports.confirmBooking = confirmBooking;

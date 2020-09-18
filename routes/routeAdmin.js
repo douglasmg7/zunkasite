@@ -463,12 +463,10 @@ router.get('/order/:_id', function(req, res, next) {
             // Order exist.
             if (order) {
                 // Allnations item booking.
-                let allnationsBookings = [];
                 for(const item of order.items) {
                     if (item.dealerName == 'Allnations') {
-                        let bookingResult = await allnations.getBookingStatus(item);
+                        let bookingResult = await allnations.getBooking(item);
                         if (bookingResult) {
-                            allnationsBookings.push(bookingResult);
                             item.booking = bookingResult;
                         }
                         // log.debug(`bookingResult: ${JSON.stringify(bookingResult, null, 2)}`);
@@ -504,11 +502,11 @@ router.get('/order/:_id', function(req, res, next) {
                                     log.error(`Saving on db, zoom order to status deliverd, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${err.stack}`);
                                 });
                         }
-                        return res.render('admin/zoomOrder', { order, zoomOrder, formatDate, formatMoney, today: today, showSetStatusPanel: showSetStatusPanel, allnationsBookingInfo });
+                        return res.render('admin/zoomOrder', { order, zoomOrder, formatDate, formatMoney, today: today, showSetStatusPanel: showSetStatusPanel });
                     });
                 }
                 else {
-                    return res.render('admin/order', { order, allnationsBookings });
+                    return res.render('admin/order', { order });
                 }
             }
             // Order not exist.
@@ -748,7 +746,7 @@ router.get('/api/orders', checkPermission, function(req, res, next) {
 // Change order status.
 router.post('/api/order/status/:_id/:status', checkPermission, function(req, res, next) {
 	// Find order.
-	Order.findById(req.params._id, (err, order)=>{
+	Order.findById(req.params._id, async (err, order)=>{
 		if (err) { return next(err); }
 		if (!order) {
 			return next(new Error('Did not find order.')); }
@@ -758,6 +756,12 @@ router.post('/api/order/status/:_id/:status', checkPermission, function(req, res
 				case 'paid':
 					order.status = 'paid';
 					order.timestamps.paidAt = new Date();
+                    // Confirm booking.
+                    for(const item of order.items) {
+                        if (item.dealerName == 'Allnations') {
+                            await allnations.confirmBooking(item);
+                        }
+                    }
 					break;
 				case 'shipped':
 					order.status = 'shipped';
@@ -773,24 +777,43 @@ router.post('/api/order/status/:_id/:status', checkPermission, function(req, res
 					// Update stock.
 					if (req.query.updateStock) {
 						for (let i = 0; i < order.items.length; i++) {
-							Product.updateOne({ _id: order.items[i]._id }, { $inc: { storeProductQtd: order.items[i].quantity }}, err=>{
-								if (err) {
-									log.error(err.stack);
-								}
-							});
+                            // Not update allnations stock, stock is updated by allantaions system.
+                            if (order.items[i].dealerName != 'Allnations') {
+                                Product.updateOne({ _id: order.items[i]._id }, { $inc: { storeProductQtd: order.items[i].quantity }}, err=>{
+                                    if (err) {
+                                        log.error(err.stack);
+                                    }
+                                });
+                            }
 						}
 					}
+                    // Cancel booking.
+                    for(const item of order.items) {
+                        if (item.dealerName == 'Allnations') {
+                            await allnations.cancelBooking(item);
+                        }
+                    }
 					break;
 				default:
 					res.json({ err: 'No valid status.'})
 					return;
 			}
 			// Save order.
-			order.save((err, newOrder)=>{
+			order.save(async (err, newOrder)=>{
 				if (err) {
 					res.json({err: err});
 					return next(err);
 				} else {
+                    // Allnations item booking.
+                    for(const item of newOrder.items) {
+                        if (item.dealerName == 'Allnations') {
+                            let bookingResult = await allnations.getBooking(item);
+                            if (bookingResult) {
+                                item.booking = bookingResult;
+                            }
+                            // log.debug(`bookingResult: ${JSON.stringify(bookingResult, null, 2)}`);
+                        }
+                    };
 					res.json({order: newOrder});
 				}
 			});

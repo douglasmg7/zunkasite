@@ -41,6 +41,7 @@ module.exports = function Cart(cart) {
                 showMsgQtdChanged: false, 
                 title: product.storeProductTitle, 
                 dealerName: product.dealerName,
+                dealerProductId: product.dealerProductId,
                 price: product.storeProductPrice, 
                 oldPrice: product.storeProductPrice, 
                 showMsgPriceChanged: false, 

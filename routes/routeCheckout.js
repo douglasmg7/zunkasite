@@ -166,6 +166,7 @@ router.post('/shipping-address', (req, res, next)=>{
 						_id: req.cart.products[i]._id,
 						name: req.cart.products[i].title,
                         dealerName: req.cart.products[i].dealerName,
+                        dealerProductId: req.cart.products[i].dealerProductId,
 						quantity: req.cart.products[i].qtd,
 						price: req.cart.products[i].price.toFixed(2),
 						length: req.cart.products[i].length,
@@ -226,7 +227,7 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
 			// For each item.
 			for (let i = 0; i < order.items.length; i++) {
                 // If some product is from outside zunka wherehouse.
-                if (order.items[i].dealerName.toLowerCase() === 'aldo'){
+                if (order.items[i].dealerName === 'Aldo' || order.items[i].dealerName === 'Allnations'){
                     order.shipping.allProductFromZunka = false;
                 }
                 // Dealer name.
@@ -514,22 +515,6 @@ router.get('/payment/order/:order_id', (req, res, next)=>{
         }
 	});
 });
-
-// // More information - page - only for test, not called directly.
-// router.get('/need-more-information', (req, res, next)=>{
-    // res.render('checkout/needMoreInformation',
-        // {
-            // registryType: '',
-            // cpf: "",
-            // cnpj: "",
-            // stateRegistration: "",
-            // contactName: "",
-            // mobileNumber: "",
-            // orderId: "",
-            // invalid: {}
-        // }
-    // )
-// });
 
 // Need more information.
 router.post('/need-more-information/:orderId', checkPermission, (req, res, next)=>{
@@ -828,7 +813,8 @@ function closeOrder(order, req, res) {
 			for (var i = 0; i < req.cart.products.length; i++) {
 				// Product.updateOne({ _id: req.cart.products[i]._id }, { $inc: { storeProductQtd: -1 * req.cart.products[i].qtd } }, err=>{
                 // Not update aldo products, because the actual stock is undetermined.
-                if (req.cart.products[i].dealerName !== "Aldo") {
+                // Not update allnations products, receive stock from allnations service.
+                if (req.cart.products[i].dealerName !== "Aldo" && req.cart.products[i].dealerName !== "Allnations") {
                     Product.updateOne(
                         { _id: req.cart.products[i]._id },
                         { $inc: {
@@ -841,6 +827,18 @@ function closeOrder(order, req, res) {
                         });
                 }
 			}
+            // Make product booking.
+            for (const item of order.items) {
+                if (item.dealerName == 'Allnations') {
+                    allnations.makeBooking(item);
+                    // If order already paid confirm booking after a while.
+                    if (order.status == 'paid') {
+                        setTimeout(()=>{
+                            allnations.confirmBooking(item);
+                        }, 60000);
+                    }
+                }
+            }
 			// Clean cart.
 			req.cart.clean();
 			// Send email.

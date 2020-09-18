@@ -9,6 +9,7 @@ var app = new Vue({
 		// Window to change status.
 		setStatusWindow: {
 			show: false,
+            disabled: false,
 			message: '',
 			showCheckboxUpdateStock: false,
 			// Change to this status.
@@ -131,6 +132,7 @@ var app = new Vue({
 		},
 		// Set order status from selected order.
 		setStatus(){
+            this.setStatusWindow.disabled = true;
 			axios({
 				method: 'post',
 				url: `/admin/api/order/status/${this.order._id}/${this.setStatusWindow.status}`,
@@ -147,10 +149,12 @@ var app = new Vue({
 				// Update selected order and orders.
 				// console.log(`data: ${JSON.stringify(res.data)}`);
 				this.order = res.data.order;
+                this.setStatusWindow.disabled = false;
 				this.setStatusWindow.show = false;
 			})
 			.catch((err)=>{
 				console.error(`Error - setStatus(), err: ${err}`);
+                this.setStatusWindow.disabled = false;
 				this.setStatusWindow.show = false;
 			});
 		},

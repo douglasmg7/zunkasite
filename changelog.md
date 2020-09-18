@@ -6,6 +6,8 @@
 * Verifica e atualiza a disponibilidade e stock do produto allnations, quando o mesmo é adicionado ao carrinho, zoom ordem é criada e ao selecionar o mode de envio.
 * Alteração de estoque manual desabilitada para produtos allnations.
 * Exibe status da reserva na página de pedidos.
+* Cria reserva na criação de uma ordem.
+* Confirma reserva quando ordem muda para o status paga.
 
 
 ## 1.8.1 (15 set 2020)
