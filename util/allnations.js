@@ -92,4 +92,80 @@ function checkStock(product, qty, cb) {
     }
 };
 
+// Get booking information.
+async function getBookingStatus(itemId) {
+    try{
+        let url = `${process.env.ALLNATIONS_HOST}/RetornarReservas?` +
+            `CodigoCliente=${process.env.ALLNATIONS_USER}&` + 
+            `Senha=${process.env.ALLNATIONS_PASS}&` +
+            `PedidoCliente=${itemId}`;
+        log.debug(`getBookingStatus for PedidoCliente: ${itemId}`);
+
+        let response = await axios.get(url);
+        if (response.data.err) {
+            log.error(response.data.err);
+        } 
+        // log.debug(`response.data: ${response.data}`);
+
+        let result = [];
+        const dom = new jsdom.JSDOM(response.data);
+        let bookings = dom.window.document.querySelectorAll("Reservas");
+        bookings.forEach(booking=>{
+            let product = {};
+            product.date = booking.querySelector("DATAHORA").textContent;
+            product.codeClient = booking.querySelector("CODIGOCLIENTE").textContent;
+            product.zunkasiteOrderItemId = booking.querySelector("CODIGOPEDIDOCLIENTE").textContent;
+            product.code = booking.querySelector("CODIGOPRODUTO").textContent;
+            product.quantity = booking.querySelector("QUANTIDADE").textContent;
+            product.status = booking.querySelector("STATUS").textContent;
+            switch(product.status) {
+                case "1":
+                    product.status = "Pending";
+                    break;
+                case "2":
+                    product.status = "Confirmed";
+                    break;
+                case "3":
+                    product.status = "GeneratedOrder";
+                    break;
+                case "4":
+                    product.status = "Canceled";
+                    break;
+                default:
+                    product.status = "";
+                    log.warn(`Allnations booking returned a invalid status: ${product.status}.`);
+                    return null;
+            }
+            let cpfCnpjFinalClient = booking.querySelector("CPF_CNPJ_ClienteFinal");
+            if (cpfCnpjFinalClient) {
+                product.cpfCnpjFinalClient = cpfCnpjFinalClient.textContent;
+            }
+            let priceFinalClient = booking.querySelector("Valor_ClienteFinal");
+            if (priceFinalClient) {
+                product.priceFinalClient = priceFinalClient.textContent;
+            }
+            result.push(product);
+        });
+        // Supposed to be only one.
+        if (result.length > 1) {
+            log.warn(`Allnations booking returned ${result.length} booking, supposed to be only one, booking returned: ${JSON.stringify(result, null, 2)}`);
+            return null;
+        }
+        if (result.length == 0) {
+            log.warn(`Allnations booking returned no booking`);
+            return null;
+        }
+        if (result[0].zunkasiteOrderItemId != itemId) {
+            log.warn(`Allnations booking returned wrong order item id: ${result[0].zunkasiteOrderItemId}, supposed to be: ${itemId}`);
+            return null;
+        }
+        log.debug(`result: ${JSON.stringify(result, null, 2)}`);
+        return result[0];
+    } catch(err) {
+        log.error(`catch - Getting allnations booking information. ${err.stack}`);
+        return null;
+    }
+}
+
 module.exports.checkStock = checkStock;
+module.exports.getBookingStatus = getBookingStatus;

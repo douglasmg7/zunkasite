@@ -32,6 +32,7 @@ const redis = require('../db/redis');
 // Internal.
 const s = require('../config/s');
 const zoom = require('../util/zoom');
+const allnations = require('../util/allnations');
 // Max product quantity by Page.
 const PRODUCT_QTD_BY_PAGE = 20;
 // Max order quantity by Page.
@@ -452,14 +453,26 @@ router.get('/orders', checkPermission, function(req, res, next) {
 });
 
 // Order info page.
-router.get('/order/:_id', checkPermission, function(req, res, next) {
+// router.get('/order/:_id', checkPermission, async (req, res, next) => {
+router.get('/order/:_id', function(req, res, next) {
     let promises = [
         Order.findById(req.params._id).exec().catch(err=>{log.error(`Finding order by id. ${err}`)})
     ]
     Promise.all(promises)
-        .then(([order])=>{
+        .then(async ([order])=>{
             // Order exist.
             if (order) {
+                // Allnations item booking.
+                let allnationsBookings = [];
+                for(const item of order.items) {
+                    if (item.dealerName == 'Allnations') {
+                        let bookingResult = await allnations.getBookingStatus(item._id);
+                        if (bookingResult) {
+                            allnationsBookings.push(bookingResult);
+                        }
+                        log.debug(`bookingResult: ${JSON.stringify(bookingResult, null, 2)}`);
+                    }
+                };
                 if (order.externalOrderNumber) {
                     // Get zoom order.
                     zoom.getZoomOrder(order.externalOrderNumber, (err, zoomOrder)=>{
@@ -490,11 +503,11 @@ router.get('/order/:_id', checkPermission, function(req, res, next) {
                                     log.error(`Saving on db, zoom order to status deliverd, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${err.stack}`);
                                 });
                         }
-                        return res.render('admin/zoomOrder', { order, zoomOrder, formatDate, formatMoney, today: today, showSetStatusPanel: showSetStatusPanel });
+                        return res.render('admin/zoomOrder', { order, zoomOrder, formatDate, formatMoney, today: today, showSetStatusPanel: showSetStatusPanel, allnationsBookingInfo });
                     });
                 }
                 else {
-                    return res.render('admin/order', { order });
+                    return res.render('admin/order', { order, allnationsBookings });
                 }
             }
             // Order not exist.

@@ -10,8 +10,6 @@ if (!process.argv[2]) {
     process.exit(1);
 }
 
-let now="2018-01-01T00:00:00-03:00";
-
 let url = `${process.env.ALLNATIONS_HOST}/RetornarReservas?` +
     `CodigoCliente=${process.env.ALLNATIONS_USER}&` + 
     `Senha=${process.env.ALLNATIONS_PASS}&` +
