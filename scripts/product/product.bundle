@@ -188,10 +188,6 @@ var app = new Vue({
         productInformationTechnical(){
             return this.makeList(this.product.storeProductTechnicalInformation  )
         },
-        // Each line of additional information become a array item, each item in line separeted by ; become array item.
-        productInformationAdditional(){
-            return this.makeList(this.product.storeProductAdditionalInformation  )
-        }
     },
     filters: {
         currency(val){

@@ -44,7 +44,7 @@ input[type="button"] {
     display: grid;
     grid-template-columns: 80px auto auto;
     grid-template-rows: auto;
-    grid-template-areas: "tub img sum" "inf inf inf" "des des des" "tec tec tec" "add add add" "wty wty wty" "out out out";
+    grid-template-areas: "tub img sum" "inf inf inf" "des des des" "tec tec tec" "wty wty wty" "out out out" "add add add";
 }
 // Thumbnail.
 .product-thumbnail {
@@ -224,7 +224,7 @@ input[type="button"] {
     .layout {
         grid-template-columns: 80px auto;
         grid-template-rows: auto;
-        grid-template-areas: "tub img" "sum sum" "inf inf" "des des" "tec tec" "add add" "wty wty" "out out";
+        grid-template-areas: "tub img" "sum sum" "inf inf" "des des" "tec tec" "wty wty" "out out" "add add";
     }
     .product-thumbnail {
         grid-area: tub;
@@ -244,14 +244,14 @@ input[type="button"] {
     .product-technical {
         grid-area: tec;
     }
-    .product-additional {
-        grid-area: add;
-    }
     .product-warranty {
         grid-area: wty;
     }
     .product-outlet {
         grid-area: out;
+    }
+    .product-additional {
+        grid-area: add;
     }
 }
 @media (min-width: 600px) {
@@ -262,7 +262,7 @@ input[type="button"] {
 @media (min-width: 800px){
     .layout {
         grid-template-columns: 80px auto auto;
-        grid-template-areas: "tub img sum" "inf inf inf" "des des des" "tec tec tec" "add add add" "wty wty wty" "out out out";
+        grid-template-areas: "tub img sum" "inf inf inf" "des des des" "tec tec tec" "wty wty wty" "out out out" "add add add";
     }
 }
 @media (min-width: 1000px) {}

@@ -116,13 +116,19 @@ router.get('/product/:_id', function(req, res, next) {
                         outletText = marked(markdownText);
                     }
                 }
+                // Additional information.
+                let additionalInformation = '';
+                if (product.storeProductAdditionalInformation.trim()) {
+                    additionalInformation = marked(replaceIncludeTokens(product.storeProductAdditionalInformation));
+                }
 				res.render('product/product', {
 					nav: {
 					},
 					product,
                     productInfo,
                     warrantyText,
-                    outletText
+                    outletText,
+                    additionalInformation
 				});
 			} else {
 				log.debug(`product ${req.params._id} not found`);
