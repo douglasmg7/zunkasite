@@ -52,7 +52,9 @@ block content
                                 td R$ {{ estShip.price | currency }}
             //- Markdown.
             if productInfo.trim() !== ""
-                .product-info.markdown!= productInfo
+                .product-info.markdown
+                    h2.title Características
+                    | !{productInfo}
             //- Description.
             .product-description.markdown(v-if='product.storeProductDescription.trim() !== ""')
                 h2.title Descrição
@@ -80,8 +82,9 @@ block content
                 .product-outlet.markdown!= outletText
             //- Additional information.
             if additionalInformation.trim() !== ""
-                .product-additional.markdown!= additionalInformation
-
+                .product-additional.markdown 
+                    h2.title Informações adicionais
+                    | !{additionalInformation}
         include ../misc/loading.pug
 
 append internal_scripts
