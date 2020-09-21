@@ -103,8 +103,8 @@ router.post('/product/add', s.basicAuth, [
 		check('dealerProductPrice').isNumeric(),
 		check('dealerProductFinalPriceSuggestion').isNumeric(),
 		check('dealerProductLastUpdate').isISO8601(),
-		check('ean').isNumeric(),
-		check('ean').isLength(13),
+		// check('ean').isNumeric(),
+		// check('ean').isLength(13),
 ], (req, res, next)=>{
 	try {
 		// log.debug("Headers: " + JSON.stringify(req.headers, null, 3));
@@ -134,7 +134,9 @@ router.post('/product/add', s.basicAuth, [
         if (req.body.dealerProductLocation) {
             product.dealerProductLocation = req.body.dealerProductLocation;
         }
-		product.ean = req.body.ean;
+        if (req.body.ean) {
+            product.ean = req.body.ean;
+        }
 		// log.debug(`product: ${JSON.stringify(product, null, 2)}`);
 		// Verify if product exist.
 		Product.findOne({dealerName: product.dealerName, dealerProductId: product.dealerProductId}, (err, doc)=>{

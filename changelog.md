@@ -1,7 +1,8 @@
-## 1.8.2 (21 set 2020)
+## 1.9.1 (21 set 2020)
 ### Melhorias
 * Informações adicionais do produto é processado como markdown.
 * Título já incluso no html, não é necessário incluir no markdown.
+* API setup não verifica ean, pois aldo não tem eam.
 
 
 ## 1.8.1 (15 set 2020)
