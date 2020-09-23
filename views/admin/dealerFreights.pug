@@ -1,0 +1,47 @@
+extends ../layout/layout
+
+block title
+    title Zunka - Frete por fornecedor
+
+block append internal_style
+    style.
+        section > h2:first-child {
+            margin-top: 0;
+            margin-bottom: 1em;
+        }
+        section h3 {
+            margin-top: .5em;
+        }
+        section a {
+            display: block;
+            display: flex;
+            flex-flow: row wrap;
+            color: var(--green);
+            cursor: pointer;
+        }
+        section a:hover {
+            color: var(--green);
+            text-decoration: underline;
+        }
+        section a span.deadline {
+            text-align: right;
+        }
+        section a span.price {
+            text-align: right;
+        }
+
+block content 
+    section
+        h2 Frete por fornecedor
+
+        each fr in freights
+            a(href=`/admin/dealer-freight/${fr.id}`) 
+                span.dealer fr.dealer &nbsp  &nbsp 
+                    span.weight !{grToKg(fr.weight)} kg &nbsp  &nbsp
+                    span.deadline !{fr.deadline} dia(s) &nbsp  &nbsp
+                    span.price R$ !{brCurrency(fr.price)}
+        input.btn-info(type='button' onclick='window.location.href="/admin/dealer-freight/new"' value='Adicionar frete') 
+
+append internal_scripts
+    script.
+        let freights = !{JSON.stringify(freights)};

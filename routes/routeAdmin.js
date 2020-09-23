@@ -1613,6 +1613,192 @@ router.delete('/region-freight/:id', checkPermission, (req, res, next)=>{
     }); 
 });
 
+/******************************************************************************
+*   Dealer freight
+******************************************************************************/
+// Get all dealer freight.
+router.get('/dealer-freights', (req, res, next)=>{
+    axios.get(`${s.freightServer.host}/dealer-freights`, {
+        headers: {
+            "Accept": "application/json", 
+        },
+        auth: { 
+            username: s.freightServer.user, 
+            password: s.freightServer.password
+        },
+    })
+    .then(response => {
+        // log.debug(`response.data: ${JSON.stringify(response.data, null, 2)}`);
+        // log.debug(`response.err: ${JSON.stringify(response.err, null, 2)}`);
+        if (response.data && response.data.err) {
+            log.error(new Error(`Getting dealer freight from freight server. ${response.data.err}`));
+        } else {
+            // log.debug(`res.data: ${JSON.stringify(response.data, null, "")}`);
+            return res.render('admin/regionFreights', {  freights: response.data || [], brCurrency: brCurrencyFrom100XInt, grToKg: grToKg });
+        }
+    })
+    .catch(err => {
+        log.error(err.stack);
+    }); 
+});
+
+// Get one dealer freight.
+router.get('/dealer-freight/:id', checkPermission, (req, res, next)=>{
+    try {
+        // New.
+        if (req.params.id === 'new') {
+            let freight = {
+                id: 'new',
+                dealer: '',
+                deadline: 2,
+                weight: 4000,
+                price: 10000,
+                invalid: {}
+            }
+            // log.debug(`new shippingPrice: ${JSON.stringify(shippingPrice, null, 2)}`);
+            res.render('admin/editRegionFreight', { freight: freight, brCurrency: brCurrencyFrom100XInt, grToKg: grToKg});
+        } 
+        // Existing item.
+        else {
+            axios.get(`${s.freightServer.host}/dealer-freight/${req.params.id}`, {
+                headers: {
+                    "Accept": "application/json", 
+                },
+                auth: { 
+                    username: s.freightServer.user, 
+                    password: s.freightServer.password
+                },
+            })
+            .then(response => {
+                if (response.data.err) {
+                    return next(new Error(`Getting dealer freight ${req.params.id} from freight server. ${response.data.err}`));
+                } else {
+                    // log.debug(`res.data: ${JSON.stringify(response.data, null, "")}`);
+                    response.data.invalid = {}
+                    return res.render('admin/editRegionFreight', { freight: response.data, brCurrency: brCurrencyFrom100XInt, grToKg: grToKg });
+                }
+            })
+            .catch(err => {
+                return next(new Error(`Getting dealer freight ${req.params.id} from freight server. ${err.stack}`));
+            }); 
+        }
+    } 
+    catch(err) {
+        return next(err);
+    }
+});
+
+// Save/update dealer freight.
+router.post('/dealer-freight/:id', checkPermission, (req, res, next)=>{
+    log.debug(`req.body: ${JSON.stringify(req.body, null, '  ')}`)
+
+	// Validation for price and deadline.
+    // Check fields.
+    let invalid = {};
+    // Pice.
+    if (!req.body.price.match(/^(\d+)(\.\d{3})*(\,\d{0,2})?$/)) {
+        invalid.price = 'Valor inválido'; 
+    }
+    // Weight.
+    if (!req.body.weight.match(/^\d{1,3}$/)) {
+        invalid.weight = 'Valor inválido'; 
+    }
+    // Deadline.
+    if (!req.body.deadline.match(/^\d{1,2}$/)) {
+        invalid.deadline = 'Valor inválido'; 
+    }
+    // Invalid fields.
+    if (Object.keys(invalid).length) {
+        let freight = {
+            id: req.body.id,
+            dealer: req.body.dealer,
+            weight: req.body.weight,
+            deadline: req.body.deadline,
+            price: req.body.price,
+            invalid: invalid
+        };
+        return res.render('admin/editRegionFreight', { freight: freight, brCurrency: function doNothing(val){return val}, grToKg: function doNothing(val){return val} });
+    }
+
+    let freight = {};
+    freight.dealer = req.body.dealer;
+    freight.weight = parseInt(req.body.weight, 10) * 1000;
+    freight.deadline = parseInt(req.body.deadline, 10);
+    freight.price = brCurrencyTo100XInt(req.body.price);
+    // New freight.
+    if (req.body.id == "new") {
+        freight.id = 0;
+        axios.post(`${s.freightServer.host}/dealer-freight`, freight, {
+            headers: {
+                "Accept": "application/json", 
+            },
+            auth: { 
+                username: s.freightServer.user, 
+                password: s.freightServer.password
+            }
+        })
+        .then(response => {
+            if (response.data.err) {
+                return next(new Error(`Creating dealer freight id: ${req.params.id} on freight server. ${response.data.err}`));
+            } else {
+                return res.redirect('/admin/dealer-freights');
+            }
+        })
+        .catch(err => {
+            return next(new Error(`Creating dealer freight ${req.params.id} on freight server. ${err}`));
+        }); 
+    } 
+    // Update freight.
+    else {
+        freight.id = parseInt(req.body.id, 10);
+        axios.put(`${s.freightServer.host}/dealer-freight`, freight, {
+            headers: {
+                "Accept": "application/json", 
+            },
+            auth: { 
+                username: s.freightServer.user, 
+                password: s.freightServer.password
+            }
+        })
+        .then(response => {
+            if (response.data.err) {
+                return next(new Error(`Updating dealer freight id: ${req.params.id} on freight server. ${response.data.err}`));
+            } else {
+                return res.redirect('/admin/dealer-freights');
+            }
+        })
+        .catch(err => {
+            return next(new Error(`Updating dealer freight ${req.params.id} on freight server. ${err}`));
+        }); 
+    }
+});
+
+// Delete dealer freight.
+router.delete('/dealer-freight/:id', checkPermission, (req, res, next)=>{
+    axios.delete(`${s.freightServer.host}/dealer-freight/${req.params.id}`, {
+        headers: {
+            "Accept": "application/json", 
+        },
+        auth: { 
+            username: s.freightServer.user, 
+            password: s.freightServer.password
+        }
+    })
+    .then(response => {
+        if (response.data.err) {
+            log.error(`Deleting dealer freight ${req.params.id} on freight server. ${err}`);
+            return res.sendStatus(500);
+        } else {
+            return res.send();
+        }
+    })
+    .catch(err => {
+        log.error(`Deleting dealer freight ${req.params.id} on freight server. ${err}`);
+        return res.sendStatus(500);
+    }); 
+});
+
+
 
 /******************************************************************************
 /   MARKDOWN LIST

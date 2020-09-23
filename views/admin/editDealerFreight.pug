@@ -1,0 +1,77 @@
+extends ../layout/layout
+
+block title
+    if freight.id == 'new'
+        title Zunka - Criar frete por fornecedor
+    else
+        title Zunka - Editar frete por fornecedor
+
+block append internal_style
+    style.
+        section > h2:first-child {
+            margin-top: 0;
+        }
+        section a {
+          display: block;
+        }
+
+block content 
+    section
+        if freight.id == 'new'
+            h2 Criar frete por fornecedor
+        else
+            h2 Editar frete por fornecedor
+        form(method='post')
+            input(type='hidden' name='_csrf' value=csrfToken)
+            input(type='hidden' name='id' value=freight.id)
+
+            //- Dealer.
+            label(for='dealer') fornecedor
+            input(type='text' name='dealer' id='dealer' value=freight.dealer)
+                label.error(for='dealer') !{freight.invalid.dealer}
+
+            //- Weight.
+            label(for='weight') Peso máximo (kg)
+            input(type='text' name='weight' id='weight' value=grToKg(freight.weight))
+            if freight.invalid.weight
+                label.error(for='weight') !{freight.invalid.weight}
+
+            //- Deadline.
+            label(for='deadline') Prazo (dias)
+            input(type='text' name='deadline' id='deadline' value=freight.deadline)
+            if freight.invalid.deadline
+                label.error(for='deadline') !{freight.invalid.deadline}
+
+            //- Price.
+            label(for='price') Preço (R$)
+            input(type='text' name='price' id='price' value=brCurrency(freight.price))
+            if freight.invalid.price
+                label.error(for='price') !{freight.invalid.price}
+
+            //- Buttons.
+            if freight.id == 'new'
+                input.btn-primary(type='submit', value='Criar frete')
+            else
+                input.btn-primary(type='submit', value='Salvar')
+                input.btn-danger(type='button' value='Apagar' onclick='deleteFreight()')
+            input.btn-exit(type='button' onclick='window.location.href="/admin/dealer-freights"' value='Sair') 
+
+append internal_scripts
+    script.
+        //- let headers = { 'csrf-token': csrfToken };
+        let freight = !{JSON.stringify(freight)};
+        function deleteFreight() {
+            if (confirm('Confirma a remoção?')) {
+                axios.delete(`/admin/dealer-freight/${freight.id}`, { headers: { 'csrf-token': csrfToken } })
+                .then(()=>{
+                    window.location.href = '/admin/dealer-freights';
+                })
+                .catch((err)=>{
+                    console.error(`${err.response.status} - ${err.response.statusText}`);
+                    alert(`Alguma coisa deu errada!`);
+                });
+            }
+        }
+
+append external_scripts
+    include ../components/axios.js.pug

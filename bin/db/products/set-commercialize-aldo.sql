@@ -27,3 +27,7 @@ print("");
 print("Aldo products not set to commercialize")
 db.products.find({dealerName: "Aldo", storeProductCommercialize: false }).count();
 db.products.find({dealerName: "Aldo", storeProductCommercialize: false },{ _id: true, dealerName: true, dealerProductActive: true, updatedAt: true});
+
+
+db.products.find({dealerName: "Aldo", storeProductCommercialize: true, storeProductQtd: { $gt: 0 }}, {storeProductQtd: true}).count();
+db.products.find({dealerName: "Aldo", storeProductCommercialize: true, storeProductQtd: { $gt: 0 }}, {storeProductQtd: true});
