@@ -32,11 +32,11 @@ async function checkProductStock() {
             `p=${pass}&` + 
             `codigo=${productCode}&` + 
             `qtde=${productQty}&` +
-            `emp_filial=2`;
+            `emp_filial=1`;
 
         // let url = `http://webservice.aldo.com.br/asp.net/ferramentas/saldoproduto.ashx?u=146612&p=zunk4c&codigo=${product.dealerProductId}&qtde=${checkQty}&emp_filial=1`;
-        console.log(`url: ${url}`);
-        return;
+        // console.log(`url: ${url}`);
+        // return;
 
         let response = await axios.get(url)
         if (response.data.err) {
