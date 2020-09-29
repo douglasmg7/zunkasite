@@ -1634,7 +1634,7 @@ router.get('/dealer-freights', (req, res, next)=>{
             log.error(new Error(`Getting dealer freight from freight server. ${response.data.err}`));
         } else {
             // log.debug(`res.data: ${JSON.stringify(response.data, null, "")}`);
-            return res.render('admin/regionFreights', {  freights: response.data || [], brCurrency: brCurrencyFrom100XInt, grToKg: grToKg });
+            return res.render('admin/dealerFreights', {  freights: response.data || [], brCurrency: brCurrencyFrom100XInt, grToKg: grToKg });
         }
     })
     .catch(err => {
@@ -1656,7 +1656,7 @@ router.get('/dealer-freight/:id', checkPermission, (req, res, next)=>{
                 invalid: {}
             }
             // log.debug(`new shippingPrice: ${JSON.stringify(shippingPrice, null, 2)}`);
-            res.render('admin/editRegionFreight', { freight: freight, brCurrency: brCurrencyFrom100XInt, grToKg: grToKg});
+            res.render('admin/editDealerFreight', { freight: freight, brCurrency: brCurrencyFrom100XInt, grToKg: grToKg});
         } 
         // Existing item.
         else {
@@ -1675,7 +1675,7 @@ router.get('/dealer-freight/:id', checkPermission, (req, res, next)=>{
                 } else {
                     // log.debug(`res.data: ${JSON.stringify(response.data, null, "")}`);
                     response.data.invalid = {}
-                    return res.render('admin/editRegionFreight', { freight: response.data, brCurrency: brCurrencyFrom100XInt, grToKg: grToKg });
+                    return res.render('admin/editDealerFreight', { freight: response.data, brCurrency: brCurrencyFrom100XInt, grToKg: grToKg });
                 }
             })
             .catch(err => {
@@ -1717,7 +1717,7 @@ router.post('/dealer-freight/:id', checkPermission, (req, res, next)=>{
             price: req.body.price,
             invalid: invalid
         };
-        return res.render('admin/editRegionFreight', { freight: freight, brCurrency: function doNothing(val){return val}, grToKg: function doNothing(val){return val} });
+        return res.render('admin/editDealerFreight', { freight: freight, brCurrency: function doNothing(val){return val}, grToKg: function doNothing(val){return val} });
     }
 
     let freight = {};

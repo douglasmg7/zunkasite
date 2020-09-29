@@ -33,10 +33,15 @@ block append internal_style
 block content 
     section
         h2 Frete por fornecedor
-
+        - var dealer = ""
+        - var newDealer = ""
         each fr in freights
+            - newDealer = fr.dealer
+            if dealer != "" && newDealer != dealer
+                br
+            - dealer = newDealer
             a(href=`/admin/dealer-freight/${fr.id}`) 
-                span.dealer fr.dealer &nbsp  &nbsp 
+                span.dealer #{fr.dealer} &nbsp  &nbsp 
                     span.weight !{grToKg(fr.weight)} kg &nbsp  &nbsp
                     span.deadline !{fr.deadline} dia(s) &nbsp  &nbsp
                     span.price R$ !{brCurrency(fr.price)}

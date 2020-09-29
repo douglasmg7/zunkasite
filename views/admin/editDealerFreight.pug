@@ -28,6 +28,7 @@ block content
             //- Dealer.
             label(for='dealer') fornecedor
             input(type='text' name='dealer' id='dealer' value=freight.dealer)
+            if freight.invalid.dealer
                 label.error(for='dealer') !{freight.invalid.dealer}
 
             //- Weight.

@@ -1,3 +1,8 @@
+## 1.9.2 (-- --- 2020)
+### Melhorias
+* Tabela com frete por fornecedor.
+
+
 ## 1.9.1 (21 set 2020)
 ### Melhorias
 * Informações adicionais do produto é processado como markdown.
