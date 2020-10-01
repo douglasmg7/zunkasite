@@ -43,8 +43,9 @@ router.get('/product-info', s.basicAuth, function(req, res, next) {
         for (let i = 0; i < dbProducts.length; i++) {
             // console.log(`dbProduct: ${dbProducts[i]}`);
             products.push({
-                id: dbProducts[i]._Id,
+                id: dbProducts[i]._id,
                 dealer: dbProducts[i].dealerName,
+                stockLocation: dbProducts[i].dealerProductLocation,
                 length: dbProducts[i].storeProductLength,
                 width: dbProducts[i].storeProductWidth,
                 height: dbProducts[i].storeProductHeight,
