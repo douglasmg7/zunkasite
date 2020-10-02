@@ -558,7 +558,7 @@ router.post('/shipping-method/order/:order_id', (req, res, next)=>{
                 }
                 // Correios.
                 else if (selCarrier = 'Correios') {
-                    log.debug(`freight: ${JSON.stringify(order.shipping.freights[selFreightIndex], null, 2)}`);
+                    // log.debug(`freight: ${JSON.stringify(order.shipping.freights[selFreightIndex], null, 2)}`);
                     order.shipping.carrier = 'Correios';
                     order.shipping.methodCode = order.shipping.freights[selFreightIndex].serviceCode;
                     order.shipping.methodDesc = order.shipping.freights[selFreightIndex].serviceDesc;
@@ -1152,7 +1152,7 @@ router.get('/estimate-freight', (req, res, next)=>{
             })
             .then(response => {
                 if (response.data.err) {
-                    log.error(`Estimating freight for ${JSON.stringify(zunkaProducts, null, 2)}. ${response.data.err}`);
+                    // log.error(`Estimating freight for ${JSON.stringify(zunkaProducts, null, 2)}. ${response.data.err}`);
                     return res.json({ err: response.data.err });
                 } else {
                     // log.debug(`response.data: ${JSON.stringify(response.data, null, 2)}`);

@@ -461,16 +461,22 @@ router.get('/order/:_id', function(req, res, next) {
         .then(async ([order])=>{
             // Order exist.
             if (order) {
-                // Allnations item booking.
-                for(const item of order.items) {
-                    if (item.dealerName == 'Allnations') {
-                        let bookingResult = await allnations.getBooking(item);
+                // Bookings
+                let bookings = [];
+                for(let i=0; i < order.items.length;  i++) {
+                    bookings.push({});
+                    // log.debug(`--- order.items: ${JSON.stringify(order.items[i], null, 2)}`);
+                    if (order.items[i].dealerName == 'Allnations') {
+                        let bookingResult = await allnations.getBooking(order.items[i]);
                         if (bookingResult) {
-                            item.booking = bookingResult;
+                            // order.items[i].booking = bookingResult;
+                            bookings[i] = bookingResult;
+                            // log.debug(`bookingResult: ${JSON.stringify(bookingResult, null, 2)}`);
+                            // log.debug(`order.items[i].booking: ${JSON.stringify(order.items[i].booking, null, 2)}`);
                         }
-                        // log.debug(`bookingResult: ${JSON.stringify(bookingResult, null, 2)}`);
                     }
                 };
+                // log.debug(`order.items: ${JSON.stringify(order.items, null, 2)}`);
                 if (order.externalOrderNumber) {
                     // Get zoom order.
                     zoom.getZoomOrder(order.externalOrderNumber, (err, zoomOrder)=>{
@@ -501,11 +507,12 @@ router.get('/order/:_id', function(req, res, next) {
                                     log.error(`Saving on db, zoom order to status deliverd, order _id: ${req.params._id}, zoom order number: ${req.body.zoomOrderNumber}. ${err.stack}`);
                                 });
                         }
-                        return res.render('admin/zoomOrder', { order, zoomOrder, formatDate, formatMoney, today: today, showSetStatusPanel: showSetStatusPanel });
+                        return res.render('admin/zoomOrder', { order, bookings, zoomOrder, formatDate, formatMoney, today: today, showSetStatusPanel: showSetStatusPanel });
                     });
                 }
                 else {
-                    return res.render('admin/order', { order });
+                    // log.debug(`bookings: ${JSON.stringify(bookings, null, 2)}`);
+                    return res.render('admin/order', { order, bookings });
                 }
             }
             // Order not exist.
@@ -803,17 +810,18 @@ router.post('/api/order/status/:_id/:status', checkPermission, function(req, res
 					res.json({err: err});
 					return next(err);
 				} else {
-                    // Allnations item booking.
-                    for(const item of newOrder.items) {
-                        if (item.dealerName == 'Allnations') {
-                            let bookingResult = await allnations.getBooking(item);
+                    // Bookings
+                    let bookings = [];
+                    for(let i=0; i < newOrder.items.length;  i++) {
+                        bookings.push({});
+                        if (newOrder.items[i].dealerName == 'Allnations') {
+                            let bookingResult = await allnations.getBooking(newOrder.items[i]);
                             if (bookingResult) {
-                                item.booking = bookingResult;
+                                bookings[i] = bookingResult;
                             }
-                            // log.debug(`bookingResult: ${JSON.stringify(bookingResult, null, 2)}`);
                         }
                     };
-					res.json({order: newOrder});
+					res.json({order: newOrder, bookings});
 				}
 			});
 		}

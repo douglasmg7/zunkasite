@@ -74,15 +74,14 @@ block content
         //- Items.
         h3(v-if='order.items.length > 0') Produtos
         ul(v-if='order.items.length > 0')
-            li(v-for='item in order.items') 
+            li(v-for='(item, index) in order.items') 
                 a(:href='"/admin/product/" + item._id') {{item.name}}
                 p {{item.price | formatMoney}}
                 //- p {{item.name}}
                 p {{item.quantity}} unidade{{ item.quantity | addS }}
                 .booking-info(v-if='item.dealerName=="Allnations"')
-                    p(:class='bookingWarn(item)') {{ bookingStatus(item) }} - {{item._id}}
-                    p.warn {{ checkBookingProductQty(item) }} 
-                    //- p {{item._id}} [reserva]
+                    p(:class='bookingWarn(index)') {{ bookingStatus(index) }} - {{item.bookingId}}
+                    p.warn {{ checkBookingProductQty(index) }} 
 
         //- Change order status.
         .change-status(v-if='order.payment && (status(order) !== "cancelado")')
@@ -122,6 +121,7 @@ block content
 append internal_scripts
     script.
         let order = !{JSON.stringify(order)};
+        let bookings = !{JSON.stringify(bookings)};
 
 append external_scripts
-    script(src='/js/admin/order.js?0010')
+    script(src='/js/admin/order.js?0011')

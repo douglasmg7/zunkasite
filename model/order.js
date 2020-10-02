@@ -27,6 +27,7 @@ let item = new mongoose.Schema({
 	height: { type: Number, required: true },
 	width: { type: Number, required: true },
 	weight: { type: Number, required: true },
+	bookingId: { type: mongoose.Schema.Types.ObjectId, required: true, auto: true },   // Used to product booking on dealer
 });
 
 // Motboy freight.

@@ -6,6 +6,7 @@ var app = new Vue({
     el: '#app',
     data: {
         order: order,
+        bookings: bookings,
 		// Window to change status.
 		setStatusWindow: {
 			show: false,
@@ -181,15 +182,16 @@ var app = new Vue({
 			});
 		},    
 		// Booking status.
-		bookingStatus(item){
+		bookingStatus(index){
             // Only some dealers have booking.
-            if (item.dealerName != 'Allnations') {
+            // console.log(`bookings: ${JSON.stringify(bookings, null, 2)}`);
+            if (order.items[index].dealerName != 'Allnations') {
                 return "";
             }
-            if (!item.booking) {
+            if (!bookings[index].status) {
                 return "Não reservado";
             }
-			switch (item.booking.status){
+			switch (bookings[index].status){
 				case 'pending':
                     return "Reserva pendente";
 					break;
@@ -207,35 +209,35 @@ var app = new Vue({
 			}
 		},
 		// Check booking product quantity.
-		checkBookingProductQty(item){
+		checkBookingProductQty(index){
             // Only some dealers have booking.
-            if (item.dealerName != 'Allnations' || !item.booking) {
+            if (order.items[index].dealerName != 'Allnations' || !bookings[index].status) {
                 return "";
             }
-            if (item.booking.quantity != item.quantity) {
-                return `Quantidade reservada: ${item.booking.quantity}, necessária: ${item.quantity}`;
+            if (bookings[index].quantity != order.items[index].quantity) {
+                return `Quantidade reservada: ${bookings[index].quantity}, necessária: ${order.items[index].quantity}`;
             }
             return "";
 		},
 		// Booking warn.
-		bookingWarn(item){
+		bookingWarn(index){
             // Only some dealers have booking.
-            if (item.dealerName != 'Allnations') {
+            if (order.items[index].dealerName != 'Allnations') {
                 return "ok";
             }
-            if (!item.booking) {
+            if (!bookings[index].status) {
                 return "warn";
             }
 			switch (this.order.status){
 				case 'placed':
-                    switch (item.booking.status) {
+                    switch (bookings[index].status) {
                         case 'pending':
                             return "ok";
                         default:
                             return "warn";
                     }
 				case 'paid':
-                    switch (item.booking.status) {
+                    switch (bookings[index].status) {
                         case 'confirmed':
                         case 'generatedOrder':
                             return "ok";
@@ -244,14 +246,14 @@ var app = new Vue({
                     }
 				case 'shipped':
 				case 'delivered':
-                    switch (item.booking.status) {
+                    switch (bookings[index].status) {
                         case 'generatedOrder':
                             return "ok";
                         default:
                             return "warn";
                     }
 				case 'canceled':
-                    switch (item.booking.status) {
+                    switch (bookings[index].status) {
                         case 'canceled':
                             return "ok";
                         default:
