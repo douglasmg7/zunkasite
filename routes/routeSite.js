@@ -327,7 +327,7 @@ router.put('/cart/add/:_id', (req, res, next)=>{
                 });
             }
             else if (product.dealerName == "Allnations") {
-                allnations.checkStock(product, 2, (err, productInStock)=>{
+                allnations.checkStock(product, 1, (err, productInStock)=>{
                     // log.debug(`productInStock: ${productInStock}`);
                     if (err) {
                         log.error(new Error(`Adding allnations product to cart. Product ${req.params._id}. ${err.stack}`).stack);

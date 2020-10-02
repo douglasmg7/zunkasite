@@ -19,6 +19,7 @@ let item = new mongoose.Schema({
 	_id: { type: String, required: true },
 	name: { type: String, required: true },
 	dealerName: { type: String },
+    stockLocation: { type: String , default: ''},
 	dealerProductId: { type: String },
 	quantity: { type: Number, required: true },
 	price: { type: String, required: true },

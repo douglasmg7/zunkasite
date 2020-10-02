@@ -16,7 +16,7 @@ let product = new mongoose.Schema({
 	dealerProductLastUpdate: { type: Date },
 	dealerProductDesc: { type: String },
 	dealerProductWarrantyDays: { type: Number },    // Warrant in days.
-	dealerProductLocation: { type: String },  // Product location (ES, MG, RJ, etc...)
+	dealerProductLocation: { type: String, default: '' },  // Product location (ES, MG, RJ, etc...)
 	dealerProductDeep: { type: Number },    // Deep (comprimento) in cm.
 	dealerProductHeight: { type: Number },  // Height in cm.
 	dealerProductWidth: { type: Number },   // Width in cm.

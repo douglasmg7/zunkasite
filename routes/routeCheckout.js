@@ -166,6 +166,7 @@ router.post('/shipping-address', (req, res, next)=>{
 						_id: req.cart.products[i]._id,
 						name: req.cart.products[i].title,
                         dealerName: req.cart.products[i].dealerName,
+                        stockLocation: req.cart.products[i].stockLocation,
                         dealerProductId: req.cart.products[i].dealerProductId,
 						quantity: req.cart.products[i].qtd,
 						price: req.cart.products[i].price.toFixed(2),
@@ -221,38 +222,26 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
         // Order already placed.
         if (order.timestamps.placedAt) { return res.redirect('/user/orders'); }
 		else {
-			// Calculate box size shipment approximately.
-			let shippingBox = { dealer: "", cepOrigin: CEP_ORIGIN, cepDestiny: order.shipping.address.cep, length: 0, height: 0, width: 0, weight: 0, price: 0 };
-            order.shipping.allProductFromZunka = true;
+            let zunkaProducts = {
+                cepDestiny: order.shipping.address.cep,
+                products: []
+            }
 			// For each item.
 			for (let i = 0; i < order.items.length; i++) {
-                // If some product is from outside zunka wherehouse.
-                if (order.items[i].dealerName === 'Aldo' || order.items[i].dealerName === 'Allnations'){
-                    order.shipping.allProductFromZunka = false;
-                }
-                // Dealer name.
-                if (order.items[i].dealerName != "") {
-                    shippingBox.dealer = order.items[i].dealerName;
-                }
-				// Get dimensions.
-				let dimemsions = [order.items[i].length, order.items[i].height, order.items[i].width];
-				// Sort dimensions.
-				dimemsions = dimemsions.sort(function (a,b){
-					if (a < b) { return -1 }
-					if (a > b) { return 1 }
-					return 0;
-				});
-				// Get the big dimension for the box.
-				if (dimemsions[2] > shippingBox.length) { shippingBox.length = dimemsions[2]; }
-				if (dimemsions[1] > shippingBox.height) { shippingBox.height = dimemsions[1]; }
-				shippingBox.width += dimemsions[0];
-				shippingBox.weight += order.items[i].weight;
-                // Price.
-                shippingBox.price += parseFloat(order.items[i].price);
-			}
-            // Box shipping dimensions.
-            order.shipping.box = shippingBox;
-
+                // Zunka product.
+                let zunkaProduct = {
+                    id:            order.items[i]._id,
+                    dealer:        order.items[i].dealerName,
+                    stockLocation: order.items[i].stockLocation,
+                    length:        order.items[i].length,
+                    width:         order.items[i].width,
+                    height:        order.items[i].height,
+                    weight:        order.items[i].weight,
+                    quantity:      order.items[i].quantity,
+                    price:         parseFloat(order.items[i].price), 
+                };
+                zunkaProducts.products.push(zunkaProduct);
+            }
             // Get freights values.
             axios.get(`${s.freightServer.host}/freights/zunka`, {
                 headers: {
@@ -262,23 +251,23 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                     username: s.freightServer.user, 
                     password: s.freightServer.password
                 },
-                data: shippingBox
+                data: zunkaProducts
             })
             .then(response => {
                 if (response.data.err) {
-		            return next(new Error(`Getting shipping method. Estimating freight for pack ${JSON.stringify(shippingBox, null, 2)}. ${response.data.err}`));
+		            return next(new Error(`Getting shipping method. Estimating freight for ${JSON.stringify(zunkaProducts, null, 2)}. ${response.data.err}`));
                 } else {
                     // log.debug(`response.data: ${JSON.stringify(response.data, null, 2)}`);
 
-                    // todo - remove.
-                    // Motoboy.
-                    order.shipping.motoboyResult = { price: '', deadline: '' };
-                    // Default.
-                    order.shipping.defaultDeliveryResults = [];
-                    // Correios.
-                    order.shipping.correioResult = {};
-                    order.shipping.correioResults = [];
-                    // end - remove.
+                    // // todo - remove.
+                    // // Motoboy.
+                    // order.shipping.motoboyResult = { price: '', deadline: '' };
+                    // // Default.
+                    // order.shipping.defaultDeliveryResults = [];
+                    // // Correios.
+                    // order.shipping.correioResult = {};
+                    // order.shipping.correioResults = [];
+                    // // end - remove.
 
                     // All freights.
                     order.shipping.freights = [];
@@ -330,11 +319,135 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                 }
             })
             .catch(err => {
-                return next(new Error(`Getting shipping method. Estimating freight for pack ${JSON.stringify(shippingBox, null, 2)}. ${err.stack}`));
+                return next(new Error(`Getting shipping method. Estimating freight for ${JSON.stringify(zunkaProducts, null, 2)}. ${err.stack}`));
             }); 
 		}
 	});
 });
+
+// // Select shipment - page.
+// router.get('/shipping-method-old/order/:order_id', (req, res, next)=>{
+	// // Find order not placed yet.
+	// Order.findById(req.params.order_id, (err, order)=>{
+		// if (err) { return next(err); }
+		// if (!order) { return next(new Error('No order to continue with shipping method selection.')); }
+        // // Order already placed.
+        // if (order.timestamps.placedAt) { return res.redirect('/user/orders'); }
+		// else {
+			// // Calculate box size shipment approximately.
+			// let shippingBox = { dealer: "", cepOrigin: CEP_ORIGIN, cepDestiny: order.shipping.address.cep, length: 0, height: 0, width: 0, weight: 0, price: 0 };
+            // order.shipping.allProductFromZunka = true;
+			// // For each item.
+			// for (let i = 0; i < order.items.length; i++) {
+                // // If some product is from outside zunka wherehouse.
+                // if (order.items[i].dealerName === 'Aldo' || order.items[i].dealerName === 'Allnations'){
+                    // order.shipping.allProductFromZunka = false;
+                // }
+                // // Dealer name.
+                // if (order.items[i].dealerName != "") {
+                    // shippingBox.dealer = order.items[i].dealerName;
+                // }
+				// // Get dimensions.
+				// let dimemsions = [order.items[i].length, order.items[i].height, order.items[i].width];
+				// // Sort dimensions.
+				// dimemsions = dimemsions.sort(function (a,b){
+					// if (a < b) { return -1 }
+					// if (a > b) { return 1 }
+					// return 0;
+				// });
+				// // Get the big dimension for the box.
+				// if (dimemsions[2] > shippingBox.length) { shippingBox.length = dimemsions[2]; }
+				// if (dimemsions[1] > shippingBox.height) { shippingBox.height = dimemsions[1]; }
+				// shippingBox.width += dimemsions[0];
+				// shippingBox.weight += order.items[i].weight;
+                // // Price.
+                // shippingBox.price += parseFloat(order.items[i].price);
+			// }
+            // // Box shipping dimensions.
+            // order.shipping.box = shippingBox;
+
+            // // Get freights values.
+            // axios.get(`${s.freightServer.host}/freights/zunka`, {
+                // headers: {
+                    // "Accept": "application/json", 
+                // },
+                // auth: { 
+                    // username: s.freightServer.user, 
+                    // password: s.freightServer.password
+                // },
+                // data: shippingBox
+            // })
+            // .then(response => {
+                // if (response.data.err) {
+					// return next(new Error(`Getting shipping method. Estimating freight for pack ${JSON.stringify(shippingBox, null, 2)}. ${response.data.err}`));
+                // } else {
+                    // // log.debug(`response.data: ${JSON.stringify(response.data, null, 2)}`);
+
+                    // // todo - remove.
+                    // // Motoboy.
+                    // order.shipping.motoboyResult = { price: '', deadline: '' };
+                    // // Default.
+                    // order.shipping.defaultDeliveryResults = [];
+                    // // Correios.
+                    // order.shipping.correioResult = {};
+                    // order.shipping.correioResults = [];
+                    // // end - remove.
+
+                    // // All freights.
+                    // order.shipping.freights = [];
+                    // let freights = response.data;
+                    // let paymentOptionsTexts = [];
+                    // for (let i=0; i < freights.length; i++) {
+                        // let paymentOptions = ['transfer'];
+                        // let text = 'Opção de pagamento por transferência bancária';
+                        // // Motoboy.
+                        // if (freights[i].carrier.toLowerCase() === 'motoboy' ) {
+                            // if (order.shipping.allProductFromZunka){
+                                // paymentOptions.push('money', 'card-pres');
+                                // // text += ', dinheiro ou cartão de crédito no momento da entrega';
+                                // text += ', dinheiro ou cartão a vista no momento da entrega';
+                            // }
+                        // } 
+                        // // Correios or shipping company.
+                        // else {
+                            // paymentOptions.push('credit', 'paypal');
+                            // text += ', cartão de crédito parcelado ou PayPal';
+                        // }
+                        // paymentOptionsTexts.push(text);
+                        // order.shipping.freights.push({
+                            // id: i + 1,
+                            // carrier: freights[i].carrier,
+                            // serviceCode: freights[i].serviceCode,
+                            // serviceDesc: freights[i].serviceDesc,
+                            // deadline: freights[i].deadline,
+                            // price: freights[i].price,
+                            // paymentOptions: paymentOptions,
+                        // });
+                    // }
+                    // // log.debug(`freights: ${JSON.stringify(paymentOptionsTexts, null, 2)}`);
+                    // // Save order.
+                    // order.save(err=>{
+                        // if (err) {
+                            // res.json({err});
+                            // return next(err);
+                        // } else {
+                            // res.render('checkout/shippingMethod', 
+                                // { 
+                                    // order, 
+                                    // toBrCurrency: toBrCurrency, 
+                                    // toDays: toDays,
+                                    // paymentOptionsTexts: paymentOptionsTexts
+                                // });
+                        // }
+                    // });
+                // }
+            // })
+            // .catch(err => {
+                // return next(new Error(`Getting shipping method. Estimating freight for pack ${JSON.stringify(shippingBox, null, 2)}. ${err.stack}`));
+            // }); 
+		// }
+	// });
+// });
 
 // Check if all products orders in stock.
 async function checkOrderProductsInStock(order, cb) {
@@ -1011,15 +1124,21 @@ router.get('/estimate-freight', (req, res, next)=>{
 	Product.findById(req.query.productId)
         .then(product=>{
             if (!product) {  return next(new Error('Product not found.')); }
-            let pack = {
+            let zunkaProducts = {
                 cepDestiny: req.query.cepDestiny.replace(/\D/g, ''),
-                dealer: product.dealer,
-                length: product.storeProductLength,
-                height: product.storeProductHeight,
-                width: product.storeProductWidth,
-                weight: product.storeProductWeight,
-                price: product.storeProductPrice,
+                products: [{
+                    id:            product._id,
+                    dealer:        product.dealerName,
+                    stockLocation: product.dealerProductLocation,
+                    length:        product.storeProductLength,
+                    width:         product.storeProductWidth,
+                    height:        product.storeProductHeight,
+                    weight:        product.storeProductWeight,
+                    quantity:      1,
+                    price:         product.storeProductPrice
+                }]
             }
+            // log.debug(`zunkaProducts: ${JSON.stringify(zunkaProducts)}`);
             // Get shipping values.
             axios.get(`${s.freightServer.host}/freights/zunka`, {
                 headers: {
@@ -1029,11 +1148,11 @@ router.get('/estimate-freight', (req, res, next)=>{
                     username: s.freightServer.user, 
                     password: s.freightServer.password
                 },
-                data: pack
+                data: zunkaProducts
             })
             .then(response => {
                 if (response.data.err) {
-                    log.error(`Estimating freight for pack ${JSON.stringify(pack, null, 2)}. ${response.data.err}`);
+                    log.error(`Estimating freight for ${JSON.stringify(zunkaProducts, null, 2)}. ${response.data.err}`);
                     return res.json({ err: response.data.err });
                 } else {
                     // log.debug(`response.data: ${JSON.stringify(response.data, null, 2)}`);
@@ -1041,7 +1160,7 @@ router.get('/estimate-freight', (req, res, next)=>{
                 }
             })
             .catch(err => {
-                log.error(`Estimating freight for pack ${JSON.stringify(pack, null, 2)}}. ${err.stack}`);
+                log.error(`Estimating freight for ${JSON.stringify(zunkaProducts, null, 2)}}. ${err.stack}`);
                 return res.json({ err: err });
             }); 
         })
@@ -1050,6 +1169,52 @@ router.get('/estimate-freight', (req, res, next)=>{
             return res.json({ err: err });
         });
 });
+
+// // Estimate freight.
+// router.get('/estimate-freight', (req, res, next)=>{
+	// // Get product information.
+	// Product.findById(req.query.productId)
+        // .then(product=>{
+            // if (!product) {  return next(new Error('Product not found.')); }
+            // let pack = {
+                // cepDestiny: req.query.cepDestiny.replace(/\D/g, ''),
+                // dealer: product.dealer,
+                // length: product.storeProductLength,
+                // height: product.storeProductHeight,
+                // width: product.storeProductWidth,
+                // weight: product.storeProductWeight,
+                // price: product.storeProductPrice,
+            // }
+            // // Get shipping values.
+            // axios.get(`${s.freightServer.host}/freights/zunka`, {
+                // headers: {
+                    // "Accept": "application/json", 
+                // },
+                // auth: { 
+                    // username: s.freightServer.user, 
+                    // password: s.freightServer.password
+                // },
+                // data: pack
+            // })
+            // .then(response => {
+                // if (response.data.err) {
+                    // log.error(`Estimating freight for pack ${JSON.stringify(pack, null, 2)}. ${response.data.err}`);
+                    // return res.json({ err: response.data.err });
+                // } else {
+                    // // log.debug(`response.data: ${JSON.stringify(response.data, null, 2)}`);
+                    // res.json({ freights: response.data });
+                // }
+            // })
+            // .catch(err => {
+                // log.error(`Estimating freight for pack ${JSON.stringify(pack, null, 2)}}. ${err.stack}`);
+                // return res.json({ err: err });
+            // }); 
+        // })
+        // .catch(err=>{
+            // log.error(`Estimating freight. ${err.stack}`);
+            // return res.json({ err: err });
+        // });
+// });
 
 /******************************************************************************
 / TEST

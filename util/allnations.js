@@ -6,11 +6,14 @@ const Product = require('../model/product');
 const jsdom = require('jsdom');
 const emailSender = require('../config/email');
 
+// Min stock quantity in stock dealer to permit sell.
+const STOCK_PRODUCT_QTY_MIN = 1;
+
 // Check aldo product quantity.
 function checkStock(product, qty, cb) {
     try {
-        // Not sell last one.
-        let checkQty = qty + 1;
+        // Not sell last ones.
+        let checkQty = qty + STOCK_PRODUCT_QTY_MIN;
 
         // To get the last update.
         let now="2018-01-01T00:00:00-03:00";
@@ -20,7 +23,7 @@ function checkStock(product, qty, cb) {
             `Senha=${process.env.ALLNATIONS_PASS}&` +
             `CodigoProduto=${product.dealerProductId}&` +
             `Data=${now}`;
-        // console.log(`url: ${url}`);
+        console.log(`url: ${url}`);
 
         let initTime = Date.now();
         axios.get(url)
@@ -47,6 +50,8 @@ function checkStock(product, qty, cb) {
                 // Get correct product.
                 let receivedProduct;
                 result.forEach(stockProduct=>{
+                    // log.debug(`product.dealerProductLocation: ${product.dealerProductLocation}`);
+                    // log.debug(`stockProduct: ${JSON.stringify(stockProduct)}`);
                     if (
                         product.dealerProductId == stockProduct.code.trim() &&
                         product.dealerProductLocation.toLowerCase() == stockProduct.stockOrigin.trim().toLowerCase()) 
@@ -60,7 +65,7 @@ function checkStock(product, qty, cb) {
                 // Have some information.
                 if (receivedProduct) {
                     // Update product.
-                    let update = { storeProductQtd: receivedProduct.stock, dealerProductActive: receivedProduct.active };
+                    let update = { storeProductQtd: receivedProduct.stock - STOCK_PRODUCT_QTY_MIN, dealerProductActive: receivedProduct.active };
                     if (!receivedProduct.active) {
                         update.storeProductCommercialize = false;
                     }
@@ -72,7 +77,7 @@ function checkStock(product, qty, cb) {
                         }
                     });
                     // Have stock.
-                    if (receivedProduct.active && receivedProduct.stock > checkQty) {
+                    if (receivedProduct.active && receivedProduct.stock >= checkQty) {
                         return cb(null, true);
                     } 
                     // Not have stock.
@@ -178,10 +183,10 @@ async function getBooking(item) {
 async function makeBooking(item) {
     try {
         // Only make a booking in production mode.
-        // if (process.env.NODE_ENV != 'production') {
-            // log.debug(`Allnations booking ${item._id} will not be made in ${process.env.NODE_ENV} mode.`);
-            // return;
-        // }
+        if (process.env.NODE_ENV != 'production') {
+            log.debug(`Allnations booking ${item._id} will not be made in ${process.env.NODE_ENV} mode.`);
+            return;
+        }
 
         let url = `${process.env.ALLNATIONS_HOST}/InserirReserva?` +
             `CodigoCliente=${process.env.ALLNATIONS_USER}&` + 

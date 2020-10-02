@@ -1,6 +1,10 @@
-## 1.9.2 (-- --- 2020)
+## 1.10.0 (02 out 2020)
 ### Melhorias
 * Tabela com frete por fornecedor.
+* Utilizando nova API de fretes.
+
+### Bugfix
+* Informa corretamente sem tem estoque de produto Allnations.
 
 
 ## 1.9.1 (21 set 2020)
