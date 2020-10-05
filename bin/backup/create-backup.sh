@@ -1,33 +1,22 @@
 #!/usr/bin/env bash
 
-# ZUNKAPATH not defined.
-if [ -z "$ZUNKAPATH" ]; then
-	printf "error: ZUNKAPATH not defined.\n" >&2
-	exit 1 
-fi
+# Check environments variables
+for val in \
+    ZUNKAPATH \
+    ZUNKA_FREIGHT_DB \
+    ZUNKA_SRV_DB \
+    ZUNKA_FREIGHT_DB \
+    ZUNKA_SITE_PATH \
+    ALLNATIONS_DB
+do
+    if [ -z ${!val} ]; then
+        printf "error: $val not defined\n" >&2
+        MISSING_VAR=true
+    fi
+done
 
-# ZUNKA_FREIGHT_DB not defined.
-if [ -z "$ZUNKA_FREIGHT_DB" ]; then
-	printf "error: ZUNKA_FREIGHT_DB not defined.\n" >&2
-	exit 1 
-fi
-
-# ZUNKA_SRV_DB not defined.
-if [ -z "$ZUNKA_SRV_DB" ]; then
-	printf "error: ZUNKA_SRV_DB not defined.\n" >&2
-	exit 1 
-fi
-
-# ZUNKA_FREIGHT_DB not defined.
-if [ -z "$ZUNKA_FREIGHT_DB" ]; then
-	printf "error: ZUNKA_FREIGHT_DB not defined.\n" >&2
-	exit 1 
-fi
-
-# ZUNKA_SITE_PATH not defined.
-if [ -z "$ZUNKA_SITE_PATH" ]; then
-	printf "error: ZUNKA_SITE_PATH not defined.\n" >&2
-	exit 1 
+if [ $MISSING_VAR ]; then
+    exit 1
 fi
 
 FREIGHT_FILE_DB=$ZUNKAPATH/db/$ZUNKA_FREIGHT_DB
@@ -55,6 +44,12 @@ if [[ ! -f $ALDOWSC_FILE_DB ]]; then
     exit
 fi
 
+# Check if allnations db exist.
+if [[ ! -f $ALLNATIONS_DB ]]; then
+    printf "error: $ALLNATIONS_DB not exist.\n" >&2
+    exit
+fi
+
 # Create backup dir.
 mkdir -p $BACKUP_DIR
 
@@ -66,6 +61,9 @@ sqlite3 $ZUNKASRV_FILE_DB ".backup $BACKUP_DIR/sqlite3.zunkasrv.backup"
 
 echo Creating $ALDOWSC_FILE_DB backup...
 sqlite3 $ALDOWSC_FILE_DB ".backup $BACKUP_DIR/sqlite3.aldowsc.backup"
+
+echo Creating $ALLNATIONS_DB backup...
+sqlite3 $ALLNATIONS_DB ".backup $BACKUP_DIR/sqlite3.allnations.backup"
 
 # Mongo backup.
 # mongodump --db zunka -u admin --authenticationDatabase admin --gzip --archive=../dump/db-$(date +%Y-%h-%d@%T).gz    # Tar err if this name format.
