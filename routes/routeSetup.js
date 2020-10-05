@@ -92,7 +92,7 @@ router.post('/product/add', s.basicAuth, [
 		check('dealerName').isLength(4, 20),
 		check('dealerProductId').isLength(1, 20),
 		check('dealerProductTitle').isLength(4, 200),
-		check('dealerProductDesc').isLength(4, 30000),
+		// check('dealerProductDesc').isLength(4, 30000),   // Some products do not have description
 		check('dealerProductCategory').isLength(4, 200),
 		check('dealerProductMaker').isLength(2, 200),
 		check('dealerProductWarrantyDays').isNumeric(),
