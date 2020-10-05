@@ -1,4 +1,4 @@
-## 1.10.2 (02 out 2020)
+## 1.10.2 (05 out 2020)
 ### Melhorias
 * Tabela com frete por fornecedor.
 * Utilizando nova API de fretes.
