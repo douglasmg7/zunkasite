@@ -1,0 +1,89 @@
+extends ../layout/layout_vue
+
+block title
+    title Admin - Produtos V2
+
+block append css
+    link(rel="stylesheet" href="/css/admin/productListV2.css?0002" charset="utf-8")
+    link(rel="stylesheet" href="/css/layout/pagination.css?0002" charset="utf-8")
+
+block content
+    section
+        .filters
+            // Dealer
+            h3 Fornecedor
+            select(id='selected-dealer' v-model='filter.dealer')
+                option(value='stock') 
+                option(value='alpha') Ordem alfabética
+                option(value='best-selling') Mais vendidos
+                option(value='price-low') Menor preço   
+                option(value='price-high') Maior preço 
+
+            // Category
+            h3 Categoria
+            select(id='selected-category' v-model='filter.category')
+                option(value='stock') 
+                option(value='alpha') Ordem alfabética
+                option(value='best-selling') Mais vendidos
+                option(value='price-low') Menor preço   
+                option(value='price-high') Maior preço 
+
+            // Maker
+            h3 Fabricante
+            select(id='selected-maker' v-model='filter.maker')
+                option(value='stock') 
+                option(value='alpha') Ordem alfabética
+                option(value='best-selling') Mais vendidos
+                option(value='price-low') Menor preço   
+                option(value='price-high') Maior preço 
+
+            //- Show commercialize products
+            .filter
+                input(type='checkbox' id='showCommercialize' v-model:checked='filter.showCommercialize')
+                label(for='showCommercialize') Comercializados
+            //- Show not commercialize products
+            .filter
+                input(type='checkbox' id='showNotCommercialize' v-model:checked='filter.showNotCommercialize')
+                label(for='showNotCommercialize') Não comercializados
+            //- Show with stock products
+            .filter
+                input(type='checkbox' id='showInStock' v-model:checked='filter.showInStock')
+                label(for='showInStock') Em estoque
+            //- Show without stock products
+            .filter
+                input(type='checkbox' id='showOutOfStock' v-model:checked='filter.showOutOfStock')
+                label(for='showOutOfStock') Sem estoque
+        //- h2.mt0 Produtos
+        table
+            //- thead
+                tr
+                    th Código
+                    th Título
+                    th.dealer Fornecedor
+                    th.location Local
+                    th Estoque
+                    th Preço
+            tbody
+                tr(
+                v-for='product in products', 
+                @click='goToProductPage(product._id)',
+                :class='{"product-commercialize": product.storeProductCommercialize, "product-active": product.storeProductActive && (product.storeProductQtd > 0) && (product.storeProductPrice > 0)}'
+                )
+                    td {{product.storeProductId}}
+                    td {{product.storeProductTitle}}
+                    //- td {{product.dealerName}}
+                    //- td {{product.storeProductLocation}}
+                    td.hide-on-mobile {{product.storeProductPrice | formatMoney}}    
+                    td {{product.storeProductQtd}}
+        nav.pagination
+            a(v-for='p in pageCount', @click='getProducts(p)', :page='page==p', :p='p', :active='page==p') {{p}}
+
+block footer
+  
+append internal_scripts
+    script.
+        let search = !{JSON.stringify(search)};
+        let page = !{JSON.stringify(page)};
+
+append external_scripts
+    script(src='/js/admin/productListV2.js?0002')

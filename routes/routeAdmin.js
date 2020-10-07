@@ -70,7 +70,7 @@ module.exports = router;
 
 // Get product list.
 router.get('/', checkPermission, function(req, res, next) {
-	res.render('admin/productList', {
+	res.render('admin/productListV2', {
 		page: req.query.page ? req.query.page : 1,
 		search: req.query.search ? req.query.search : '',
 		nav: {
