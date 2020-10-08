@@ -261,15 +261,12 @@ router.post('/product/update', s.basicAuth, [
                 if (req.body.storeProductQtd) {
                     let stock = parseInt(req.body.storeProductQtd);
                     if (stock != NaN) {
-                        if (stock < 0) {
-                            stock = 0;
-                        }
                         if (product.dealerName == "Allnations") {
-                            product.storeProductQtd = stock - allantios.MIN_STOCK_TO_SELL;
+                            // Make stock minus minimum to sell
+                            stock = stock - allnations.MIN_STOCK_TO_SELL;
                         }
-                        else {
-                            product.storeProductQtd = stock;
-                        }
+                        if (stock < 0) { stock = 0; }
+                        product.storeProductQtd = stock;
                     }
                 }
                 let dealerProductPrice = parseFloat(req.body.dealerProductPrice);

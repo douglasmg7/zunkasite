@@ -1,3 +1,8 @@
+Allnatioins
+    Quando acontece um erro na atualização dos produtos (allnations altera produto quantidade a partir do zunka.com.br/setup) a atualização não acontece novamente.
+    O ideal é um serviço para atualizar zunkasite a partir do banco de dados que o allnations service escreve.
+
+
 Email - SMTP
 Máximo de 100 por hora por conta.
 Máximo de 1000 por hora por domínio.
