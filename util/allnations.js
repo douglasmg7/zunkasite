@@ -7,13 +7,13 @@ const jsdom = require('jsdom');
 const emailSender = require('../config/email');
 
 // Min stock quantity in stock dealer to permit sell.
-const STOCK_PRODUCT_QTY_MIN = 1;
+const MIN_STOCK_TO_SELL = 1;
 
 // Check aldo product quantity.
 function checkStock(product, qty, cb) {
     try {
         // Not sell last ones.
-        let checkQty = qty + STOCK_PRODUCT_QTY_MIN;
+        let checkQty = qty + MIN_STOCK_TO_SELL;
 
         // To get the last update.
         let now="2018-01-01T00:00:00-03:00";
@@ -65,7 +65,7 @@ function checkStock(product, qty, cb) {
                 // Have some information.
                 if (receivedProduct) {
                     // Update product.
-                    let update = { storeProductQtd: receivedProduct.stock - STOCK_PRODUCT_QTY_MIN, dealerProductActive: receivedProduct.active };
+                    let update = { storeProductQtd: receivedProduct.stock - MIN_STOCK_TO_SELL, dealerProductActive: receivedProduct.active };
                     if (!receivedProduct.active) {
                         update.storeProductCommercialize = false;
                     }
@@ -266,3 +266,4 @@ module.exports.getBooking = getBooking;
 module.exports.makeBooking = makeBooking;
 module.exports.cancelBooking = cancelBooking;
 module.exports.confirmBooking = confirmBooking;
+module.exports.MIN_STOCK_TO_SELL = MIN_STOCK_TO_SELL;

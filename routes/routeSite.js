@@ -177,7 +177,7 @@ router.get('/api/products', function (req, res) {
             ] },
             { $and: [
                 { 'dealerName': {$eq: 'Allnations'} }, 
-                { 'storeProductQtd': {$gte: 2} }
+                { 'storeProductQtd': {$eq: 0} }
             ] }
         ], 
         'deletedAt': {$exists: false}, 

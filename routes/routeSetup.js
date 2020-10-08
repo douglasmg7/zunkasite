@@ -13,6 +13,7 @@ const categories = require('../util/productCategories');
 const makers = require('../util/productMakers.js');
 const turndown = new require('turndown')();
 const imageUtil = require('../util/image');
+const allnations = require('../util/allnations');
 
 // Get a zunka product information.
 router.get('/product-info', s.basicAuth, function(req, res, next) {
@@ -263,7 +264,12 @@ router.post('/product/update', s.basicAuth, [
                         if (stock < 0) {
                             stock = 0;
                         }
-                        product.storeProductQtd = stock;
+                        if (product.dealerName == "Allnations") {
+                            product.storeProductQtd = stock - allantios.MIN_STOCK_TO_SELL;
+                        }
+                        else {
+                            product.storeProductQtd = stock;
+                        }
                     }
                 }
                 let dealerProductPrice = parseFloat(req.body.dealerProductPrice);

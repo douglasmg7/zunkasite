@@ -1,3 +1,12 @@
+## 1.10.3 (08 out 2020)
+### Melhorias
+* Adicionado fabricante Cooler Master e Epson.
+* Atualiza produto estoque com menos valor mínimo para venda, quando atualizado pela API.
+
+### Bugfix
+* Select para exibir produtos allnations estava com restrição de quantidade de estoque errada.
+
+
 ## 1.10.2 (05 out 2020)
 ### Melhorias
 * Tabela com frete por fornecedor.

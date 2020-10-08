@@ -70,6 +70,18 @@ module.exports = router;
 
 // Get product list.
 router.get('/', checkPermission, function(req, res, next) {
+	res.render('admin/productList', {
+		page: req.query.page ? req.query.page : 1,
+		search: req.query.search ? req.query.search : '',
+		nav: {
+			showAdminLinks: true,
+			showNewProductButton: true
+		}
+	});
+});
+
+// Get product list.
+router.get('/product-list-v2', checkPermission, function(req, res, next) {
 	res.render('admin/productListV2', {
 		page: req.query.page ? req.query.page : 1,
 		search: req.query.search ? req.query.search : '',
