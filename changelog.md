@@ -1,3 +1,9 @@
+## 1.10.5 (12 out 2020)
+### Melhorias
+* Adicionado fabricante Samsung.
+* Test com novo email.
+
+
 ## 1.10.4 (08 out 2020)
 ### Melhorias
 * Adicionado fabricante Cooler Master e Epson.

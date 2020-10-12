@@ -9,29 +9,30 @@ const log = require('../config/log');
 
 // Test page.
 router.get('/', (req, res, next)=>{
-  res.render('test/sendEmail');
+    res.render('test/sendEmail');
 });
 
 // Test.
 router.post('/send-email', (req, res, next)=>{
-  let mailOptions = {
-    from: '',
-    to: 'douglasmg7@gmail.com',
-    subject: 'Test',
-    text: `Teste de envio realizado as ${Date()}.`
-  }
-  emailSender.sendMail(mailOptions, err=>{
-      if (err) { 
-        log.error(err.stack);
-        // res.json({ success: false});            
-        res.send('Erro ao enviar email.');            
-      }
-      else {
-        // res.json({ success: true}); 
-        res.send('Email enviado.');            
-      }
-    }
-  );          
+    emailSender.sendMailToDevV2("Test", `Teste de envio realizado as ${Date()}.`);
+
+    // let mailOptions = {
+        // from: '',
+        // to: 'douglasmg7@gmail.com',
+        // subject: 'Test',
+        // text: `Teste de envio realizado as ${Date()}.`
+    // }
+    // emailSender.sendMail(mailOptions, err=>{
+        // if (err) { 
+            // log.error(err.stack);
+            // // res.json({ success: false});            
+            // res.send('Erro ao enviar email.');            
+        // }
+        // else {
+            // // res.json({ success: true}); 
+            // res.send('Email enviado.');            
+        // }
+    // });          
 });
 
 module.exports = router;

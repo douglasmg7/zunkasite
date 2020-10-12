@@ -61,13 +61,18 @@ const bcrypt = require('bcrypt-nodejs');
 // Send email, system started.
 const emailSender = require('./config/email');
 const moment = require('moment-timezone');
-let devMailOptions = {
-    from: '',
-    to: emailSender.devEmail,
-    subject: 'Zunka site started.',
-    text: moment().tz('America/Sao_Paulo').format()
-};
-emailSender.sendMail(devMailOptions, err=>{})
+
+// todo - remove
+// let devMailOptions = {
+    // from: '',
+    // to: emailSender.devEmail,
+    // subject: 'Zunka site started.',
+    // text: moment().tz('America/Sao_Paulo').format()
+// };
+// emailSender.sendMail(devMailOptions, err=>{});
+// todo -end
+
+emailSender.sendMailToDevV2('Zunka site started.', moment().tz('America/Sao_Paulo').format());
 
 // Cart.
 const Cart = require('./model/cart');
