@@ -10,33 +10,6 @@ block append css
 block content
     section
         .filters
-            // Dealer
-            h3 Fornecedor
-            select(id='selected-dealer' v-model='filter.dealer')
-                option(value='stock') 
-                option(value='alpha') Ordem alfabética
-                option(value='best-selling') Mais vendidos
-                option(value='price-low') Menor preço   
-                option(value='price-high') Maior preço 
-
-            // Category
-            h3 Categoria
-            select(id='selected-category' v-model='filter.category')
-                option(value='stock') 
-                option(value='alpha') Ordem alfabética
-                option(value='best-selling') Mais vendidos
-                option(value='price-low') Menor preço   
-                option(value='price-high') Maior preço 
-
-            // Maker
-            h3 Fabricante
-            select(id='selected-maker' v-model='filter.maker')
-                option(value='stock') 
-                option(value='alpha') Ordem alfabética
-                option(value='best-selling') Mais vendidos
-                option(value='price-low') Menor preço   
-                option(value='price-high') Maior preço 
-
             //- Show commercialize products
             .filter
                 input(type='checkbox' id='showCommercialize' v-model:checked='filter.showCommercialize')
@@ -53,6 +26,34 @@ block content
             .filter
                 input(type='checkbox' id='showOutOfStock' v-model:checked='filter.showOutOfStock')
                 label(for='showOutOfStock') Sem estoque
+            // Dealer
+        .filters
+            .filter
+                h3 Fornecedor
+                select(id='selected-dealer' v-model='filter.dealer')
+                    option(value='stock') 
+                    option(value='alpha') Ordem alfabética
+                    option(value='best-selling') Mais vendidos
+                    option(value='price-low') Menor preço   
+                    option(value='price-high') Maior preço 
+            // Category
+            .filter
+                h3 Categoria
+                select(id='selected-category' v-model='filter.category')
+                    option(value='stock') 
+                    option(value='alpha') Ordem alfabética
+                    option(value='best-selling') Mais vendidos
+                    option(value='price-low') Menor preço   
+                    option(value='price-high') Maior preço 
+            // Maker
+            .filter
+                h3 Fabricante
+                select(id='selected-maker' v-model='filter.maker')
+                    option(value='stock') 
+                    option(value='alpha') Ordem alfabética
+                    option(value='best-selling') Mais vendidos
+                    option(value='price-low') Menor preço   
+                    option(value='price-high') Maior preço 
         //- h2.mt0 Produtos
         table
             //- thead
