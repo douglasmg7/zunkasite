@@ -15,6 +15,7 @@ router.get('/', (req, res, next)=>{
 // Test.
 router.post('/send-email', (req, res, next)=>{
     emailSender.sendMailToDevV2("Test", `Teste de envio realizado as ${Date()}.`);
+    emailSender.sendMailToAdminV2("Test", `Teste de envio realizado as ${Date()}.`);
     res.send('Email enviado.');            
 
     // let mailOptions = {

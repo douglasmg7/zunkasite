@@ -1,3 +1,8 @@
+## 1.10.6 (14 out 2020)
+### Melhorias
+* Teste de email é enviado para admin e dev.
+
+
 ## 1.10.5 (12 out 2020)
 ### Melhorias
 * Adicionado fabricante Samsung.
