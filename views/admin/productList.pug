@@ -1,14 +1,53 @@
 extends ../layout/layout_vue
 
 block title
-    title Admin - Produtos
+    title Admin - Produtos V2
 
 block append css
-    link(rel="stylesheet" href="/css/admin/productList.css?0002" charset="utf-8")
+    link(rel="stylesheet" href="/css/admin/productList.css?0003" charset="utf-8")
     link(rel="stylesheet" href="/css/layout/pagination.css?0002" charset="utf-8")
 
 block content
     section
+        .filters
+            //- Show commercialize products
+            .filter
+                input(type='checkbox' id='showCommercialize' v-model:checked='filter.showCommercialize')
+                label(for='showCommercialize') Comercializar
+            //- Show not commercialize products
+            .filter
+                input(type='checkbox' id='showNotCommercialize' v-model:checked='filter.showNotCommercialize')
+                label(for='showNotCommercialize') Não comercializar
+            //- Show with stock products
+            .filter
+                input(type='checkbox' id='showInStock' v-model:checked='filter.showInStock')
+                label(for='showInStock') Em estoque
+            //- Show without stock products
+            .filter
+                input(type='checkbox' id='showOutOfStock' v-model:checked='filter.showOutOfStock')
+                label(for='showOutOfStock') Sem estoque
+            // Dealer
+        .filters
+            .filter
+                h3 Fornecedor
+                select(id='selected-dealer' v-model='filter.dealer')
+                    option(value='Todos') Todos
+                    option(value='Aldo') Aldo
+                    option(value='Allnations') Allnations   
+            // Category
+            .filter
+                h3 Categoria
+                select(id='selected-category' v-model='filter.category')
+                    option(value='Todas') Todas 
+                    each categorie in categories
+                        option(value=`${categorie}`)= categorie
+            // Maker
+            .filter
+                h3 Fabricante
+                select(id='selected-maker' v-model='filter.maker')
+                    option(value='Todos') Todos 
+                    each maker in makers
+                        option(value=`${maker}`)= maker
         //- h2.mt0 Produtos
         table
             //- thead
@@ -40,6 +79,7 @@ append internal_scripts
     script.
         let search = !{JSON.stringify(search)};
         let page = !{JSON.stringify(page)};
+        let filter = !{JSON.stringify(filter)};
 
 append external_scripts
-    script(src='/js/admin/productList.js?0002')
+    script(src='/js/admin/productList.js?0003')

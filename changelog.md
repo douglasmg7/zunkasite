@@ -1,3 +1,8 @@
+## 1.10.7 (14 out 2020)
+### Melhorias
+* Lista de produtos (admin) com filtros.
+
+
 ## 1.10.6 (14 out 2020)
 ### Melhorias
 * Teste de email é enviado para admin e dev.

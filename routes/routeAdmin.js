@@ -29,6 +29,7 @@ const productCategories = require('../util/productCategories');
 const productMakers = require('../util/productMakers.js');
 // Redis.
 const redis = require('../db/redis');
+const redisUtil = require('../util/redisUtil');
 // Internal.
 const s = require('../config/s');
 const zoom = require('../util/zoom');
@@ -68,39 +69,49 @@ module.exports = router;
 /  PRODUCTS
  ******************************************************************************/
 
-// Get product list.
-router.get('/', checkPermission, function(req, res, next) {
-	res.render('admin/productList', {
-		page: req.query.page ? req.query.page : 1,
-		search: req.query.search ? req.query.search : '',
-		nav: {
-			showAdminLinks: true,
-			showNewProductButton: true
-		}
-	});
-});
+// // Get product list.
+// router.get('/', checkPermission, function(req, res, next) {
+	// res.render('admin/productList', {
+		// page: req.query.page ? req.query.page : 1,
+		// search: req.query.search ? req.query.search : '',
+		// nav: {
+			// showAdminLinks: true,
+			// showNewProductButton: true
+		// }
+	// });
+// });
 
 // Get product list.
-router.get('/product-list-v2', checkPermission, function(req, res, next) {
-	res.render('admin/productListV2', {
-		page: req.query.page ? req.query.page : 1,
-		search: req.query.search ? req.query.search : '',
-		nav: {
-			showAdminLinks: true,
-			showNewProductButton: true
-		},
-        makers: productMakers.makers,
-        categories: productCategories.categories,
-        filter: {
-            dealer: 'Todos',
-            category: 'Todas',
-            maker: 'Todos',
-            showCommercialize: true,
-            showNotCommercialize: false,
-            showInStock: true,
-            showOutOfStock: false
+router.get('/', checkPermission, async function(req, res, next) {
+    try {
+        let filter = await redisUtil.getPorductListFilter(req.user._id);
+        // log.debug(`router-filter: ${JSON.stringify(filter, null, 2)}`);
+        if (!filter) {
+            filter = {
+                dealer: 'Todos',
+                category: 'Todas',
+                maker: 'Todos',
+                showCommercialize: true,
+                showNotCommercialize: false,
+                showInStock: true,
+                showOutOfStock: false
+            }
         }
-	});
+        res.render('admin/productList', {
+            page: req.query.page ? req.query.page : 1,
+            search: req.query.search ? req.query.search : '',
+            nav: {
+                showAdminLinks: true,
+                showNewProductButton: true
+            },
+            makers: productMakers.makers,
+            categories: productCategories.categories,
+            filter,
+        });
+    }
+    catch(err) {
+        log.error(`Getting admin product list. ${err}`);
+    }
 });
 
 // Get products.
@@ -161,6 +172,7 @@ router.get('/products', checkPermission, function(req, res, next) {
     if (!filter.showInStock) {
         search.storeProductQtd = {$eq: 0};
     }
+    redisUtil.setPorductListFilter(req.user._id, filter)
     // log.debug(`search: ${JSON.stringify(search, null, 2)}`);
 	// Promisse.
 	// Find products.
