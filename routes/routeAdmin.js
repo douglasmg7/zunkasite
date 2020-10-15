@@ -88,7 +88,18 @@ router.get('/product-list-v2', checkPermission, function(req, res, next) {
 		nav: {
 			showAdminLinks: true,
 			showNewProductButton: true
-		}
+		},
+        makers: productMakers.makers,
+        categories: productCategories.categories,
+        filter: {
+            dealer: 'Todos',
+            category: 'Todas',
+            maker: 'Todos',
+            showCommercialize: true,
+            showNotCommercialize: false,
+            showInStock: true,
+            showOutOfStock: false
+        }
 	});
 });
 
@@ -96,7 +107,17 @@ router.get('/product-list-v2', checkPermission, function(req, res, next) {
 router.get('/products', checkPermission, function(req, res, next) {
 	const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
 	const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
-	const search = req.query.search
+    let filter = {
+            dealer: req.query.dealer,
+            category: req.query.category,
+            maker: req.query.maker,
+            showCommercialize: req.query.showCommercialize == 'true'? true : false,
+            showNotCommercialize: req.query.showNotCommercialize == 'true'? true : false,
+            showInStock: req.query.showInStock == 'true'? true : false,
+            showOutOfStock: req.query.showOutOfStock == 'true'? true : false,
+    }
+    // log.debug(`filter in: ${JSON.stringify(filter, null, 2)}`);
+	let search = req.query.search
 		? { $or: [
                 {'storeProductTitle': {$regex: req.query.search, $options: 'i'}},
                 {'storeProductId': {$regex: req.query.search, $options: 'i'}}
@@ -104,6 +125,43 @@ router.get('/products', checkPermission, function(req, res, next) {
             'deletedAt': {$exists: false}
         }
 		: {'deletedAt': {$exists: false}};
+    // filters
+    // dealer
+    if (filter.dealer != 'Todos') {
+        search.dealerName = req.query.dealer
+    }
+    // cateogry
+    if (filter.category != 'Todas') {
+        search.storeProductCategory = req.query.category
+    }
+    if (filter.maker != 'Todos') {
+        search.storeProductMaker = req.query.maker
+    }
+    // commercialize
+    // no sense none selected
+    if (!filter.showCommercialize && !filter.showNotCommercialize) {
+        filter.showCommercialize = true;
+        filter.showNotCommercialize = true;
+    }
+    if (!filter.showNotCommercialize) {
+        search.storeProductCommercialize = true;
+    }
+    if (!filter.showCommercialize) {
+        search.storeProductCommercialize = false;
+    }
+    // stock
+    // no sense none selected
+    if (!filter.showInStock && !filter.showOutOfStock) {
+        filter.showInStock = true;
+        filter.showOutOfStock = true;
+    }
+    if (!filter.showOutOfStock) {
+        search.storeProductQtd = {$gt: 0};
+    }
+    if (!filter.showInStock) {
+        search.storeProductQtd = {$eq: 0};
+    }
+    // log.debug(`search: ${JSON.stringify(search, null, 2)}`);
 	// Promisse.
 	// Find products.
 	let productPromise = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
@@ -111,11 +169,37 @@ router.get('/products', checkPermission, function(req, res, next) {
 	let productCountPromise = Product.countDocuments(search).exec();
 	Promise.all([productPromise, productCountPromise])
 		.then(([products, count])=>{
-			res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)});
+            // log.debug(`filter: ${JSON.stringify(filter, null, 2)}`);
+			res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE), filter});
 		}).catch(err=>{
 			return next(err);
 		});
 });
+
+// // Get products.
+// router.get('/products', checkPermission, function(req, res, next) {
+	// const page = (req.query.page && (req.query.page > 0)) ? req.query.page : 1;
+	// const skip = (page - 1) * PRODUCT_QTD_BY_PAGE;
+	// const search = req.query.search
+		// ? { $or: [
+                // {'storeProductTitle': {$regex: req.query.search, $options: 'i'}},
+                // {'storeProductId': {$regex: req.query.search, $options: 'i'}}
+			// ],
+            // 'deletedAt': {$exists: false}
+        // }
+		// : {'deletedAt': {$exists: false}};
+	// // Promisse.
+	// // Find products.
+	// let productPromise = Product.find(search).sort({'storeProductTitle': 1}).skip(skip).limit(PRODUCT_QTD_BY_PAGE).exec();
+	// // Product count.
+	// let productCountPromise = Product.countDocuments(search).exec();
+	// Promise.all([productPromise, productCountPromise])
+		// .then(([products, count])=>{
+			// res.json({products, page, pageCount: Math.ceil(count / PRODUCT_QTD_BY_PAGE)});
+		// }).catch(err=>{
+			// return next(err);
+		// });
+// });
 
 // Get a specific product or create a new one.
 router.get('/product/:product_id', checkPermission, function(req, res, next) {

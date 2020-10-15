@@ -13,11 +13,11 @@ block content
             //- Show commercialize products
             .filter
                 input(type='checkbox' id='showCommercialize' v-model:checked='filter.showCommercialize')
-                label(for='showCommercialize') Comercializados
+                label(for='showCommercialize') Comercializar
             //- Show not commercialize products
             .filter
                 input(type='checkbox' id='showNotCommercialize' v-model:checked='filter.showNotCommercialize')
-                label(for='showNotCommercialize') Não comercializados
+                label(for='showNotCommercialize') Não comercializar
             //- Show with stock products
             .filter
                 input(type='checkbox' id='showInStock' v-model:checked='filter.showInStock')
@@ -31,29 +31,23 @@ block content
             .filter
                 h3 Fornecedor
                 select(id='selected-dealer' v-model='filter.dealer')
-                    option(value='stock') 
-                    option(value='alpha') Ordem alfabética
-                    option(value='best-selling') Mais vendidos
-                    option(value='price-low') Menor preço   
-                    option(value='price-high') Maior preço 
+                    option(value='Todos') Todos
+                    option(value='Aldo') Aldo
+                    option(value='Allnations') Allnations   
             // Category
             .filter
                 h3 Categoria
                 select(id='selected-category' v-model='filter.category')
-                    option(value='stock') 
-                    option(value='alpha') Ordem alfabética
-                    option(value='best-selling') Mais vendidos
-                    option(value='price-low') Menor preço   
-                    option(value='price-high') Maior preço 
+                    option(value='Todas') Todas 
+                    each categorie in categories
+                        option(value=`${categorie}`)= categorie
             // Maker
             .filter
                 h3 Fabricante
                 select(id='selected-maker' v-model='filter.maker')
-                    option(value='stock') 
-                    option(value='alpha') Ordem alfabética
-                    option(value='best-selling') Mais vendidos
-                    option(value='price-low') Menor preço   
-                    option(value='price-high') Maior preço 
+                    option(value='Todos') Todos 
+                    each maker in makers
+                        option(value=`${maker}`)= maker
         //- h2.mt0 Produtos
         table
             //- thead
@@ -85,6 +79,7 @@ append internal_scripts
     script.
         let search = !{JSON.stringify(search)};
         let page = !{JSON.stringify(page)};
+        let filter = !{JSON.stringify(filter)};
 
 append external_scripts
     script(src='/js/admin/productListV2.js?0002')

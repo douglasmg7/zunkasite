@@ -17,37 +17,55 @@ var app = new Vue({
         pageCount: 1,
         // Text for search products.
         search: search,
-        // Filter.
-        filter: {
-            dealer: '',
-            category: '',
-            maker: '',
-            showCommercialize: true,
-            showNotCommercialize: false,
-            showInStock: true,
-            showOutOfStock: false,
-        }
+        filter: filter,
+        dataLoaded: true,
     },
     created() {
         // On reload page use the query string for search, not the input search.
         this.getProducts();
     },
+	watch: {
+		filter: {
+			handler(val){
+                if (this.dataLoaded) {
+                    this.getProducts(page=1);
+                }
+			},
+			deep: true
+		}
+	},
     methods: {
         // Get products.
         getProducts(page=this.page){
+            // console.log(`filter: ${JSON.stringify(this.filter, null, 2)}`);
+            // console.log(`getProducts`);
+			let strFilter = '';
+			for (let prop in this.filter) {
+                strFilter += `&${prop}=${this.filter[prop]}`;
+			}
+
+            // let url = `/admin/products?page=${page}&search=${this.search}${filter}`;
+            // console.log(`url: ${url}`);
+            this.dataLoaded = false;
+            let self = this;
             axios({
                 method: 'get',
-                url: `/admin/products?page=${page}&search=${this.search}`,
+                url: `/admin/products?page=${page}&search=${this.search}&${strFilter}`,
                 headers:{'csrf-token' : csrfToken}
             })
                 .then((res)=>{
+                    this.filter = res.data.filter;
                     this.products = res.data.products;
                     this.page = res.data.page;
                     this.pageCount = res.data.pageCount;
                     // console.log('products count: ', this.products.length);
+                    self.$nextTick(() => { //with this we skip the first change
+                        self.dataLoaded = true
+                    })
                 })
                 .catch((err)=>{
                     console.log(`Error - getProducts(), err: ${err}`);
+                    this.dataLoaded = true
                 });
         },
         // Go to product page.
