@@ -163,7 +163,6 @@ router.post('/product/add', s.basicAuth, [
 				// Create dealer and store data.
 				product.storeProductId = "";
 				product.storeProductTitle = product.dealerProductTitle;
-				// product.storeProductDescription = product.dealerProductDesc;
                 product.storeProductDescription = "";
 				product.storeProductDetail = "";
                 product.storeProductInfoMD = turndown.turndown(product.dealerProductDesc);
@@ -192,7 +191,6 @@ router.post('/product/add', s.basicAuth, [
                 else {
                     product.storeProductQtd = 1;
                 }
-				product.storeProductActive = product.dealerProductActive;
                 product.displayPriority = 200;
 				let newProduct = new Product(product);
 				newProduct.save((err, doc)=>{

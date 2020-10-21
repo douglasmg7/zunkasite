@@ -34,6 +34,8 @@ const redisUtil = require('../util/redisUtil');
 const s = require('../config/s');
 const zoom = require('../util/zoom');
 const allnations = require('../util/allnations');
+// Product util.
+const productUtil = require('../util/productUtil');
 // Max product quantity by Page.
 const PRODUCT_QTD_BY_PAGE = 20;
 // Max order quantity by Page.
@@ -225,7 +227,7 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
 				dealerName: '',
 				storeProductId: '',
 				storeProductTitle: '',
-				storeProductActive: true,
+				storeProductActive: false,
 				storeProductCommercialize: false,
 				storeProductDetail: '',
 				storeProductDescription: '',
@@ -345,6 +347,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 			} else {
 				log.info(`Produto ${newProduct._id} was created.`);
 				res.json({ isNew: true, product: newProduct });
+                productUtil.updateCommercializeStatus();
 			}
 		});
 	}
@@ -358,6 +361,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 			} else {
 				log.info(`Produto ${product._id} updated.`);
 				res.json({});
+                productUtil.updateCommercializeStatus();
 				// Sync upladed images with product.images.
 				// Get list of uploaded images.
 				fse.readdir(path.join(__dirname, '..', 'dist/img/', req.body.product._id), (err, files)=>{
@@ -404,6 +408,7 @@ router.delete('/product/:_id', checkPermission, function(req, res) {
         }).then(product=>{
             res.json({});
             log.info(`Deleted product ${product._id}.`);
+            productUtil.updateCommercializeStatus();
             // Delete mongodb id from zunkasrv.
             // Aldo
             if (product.dealerName = "Aldo") {

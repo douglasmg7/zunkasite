@@ -62,16 +62,10 @@ const bcrypt = require('bcrypt-nodejs');
 const emailSender = require('./config/email');
 const moment = require('moment-timezone');
 
-// todo - remove
-// let devMailOptions = {
-    // from: '',
-    // to: emailSender.devEmail,
-    // subject: 'Zunka site started.',
-    // text: moment().tz('America/Sao_Paulo').format()
-// };
-// emailSender.sendMail(devMailOptions, err=>{});
-// todo -end
+// Dealer activation.
+const dealerUtil = require('./util/dealerUtil');
 
+// Site started email.
 emailSender.sendMailToDevV2('Zunka site started.', moment().tz('America/Sao_Paulo').format());
 
 // Cart.
