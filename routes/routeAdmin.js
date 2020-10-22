@@ -30,6 +30,8 @@ const productMakers = require('../util/productMakers.js');
 // Redis.
 const redis = require('../db/redis');
 const redisUtil = require('../util/redisUtil');
+// Dealers.
+const dealerUtil = require('../util/dealerUtil');
 // Internal.
 const s = require('../config/s');
 const zoom = require('../util/zoom');
@@ -1920,6 +1922,36 @@ router.delete('/dealer-freight/:id', checkPermission, (req, res, next)=>{
 });
 
 
+////////////////////////////////////////////////////////////////////////////////
+//  Dealer configuration
+////////////////////////////////////////////////////////////////////////////////
+router.get('/dealers-config', (req, res, next)=>{
+    let activation = {
+        aldo: dealerUtil.isAldoProductsActive,
+        allnations: dealerUtil.isAllnationsProductsActive,
+    };
+    try {
+        return res.render('admin/dealerConfig', { activation });
+    }
+    catch(err) {
+        log.error(err.stack);
+    }
+});
+
+router.post('/dealers-config', checkPermission, (req, res, next)=>{
+    try {
+        // Aldo.
+        if (req.body.aldoActivation == 'true') {
+            dealerUtil.setAladoActivation(true);
+        } else if (req.body.aldoActivation == 'false') {
+            dealerUtil.setAladoActivation(false);
+        }
+        return res.redirect('admin/dealerConfig');
+    }
+    catch(err) {
+        log.error(err.stack);
+    }
+});
 
 /******************************************************************************
 /   MARKDOWN LIST

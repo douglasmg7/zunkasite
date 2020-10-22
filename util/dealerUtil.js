@@ -32,13 +32,41 @@ async function loadActivation(){
     log.info(`Allnations products ${allnationsActivation ? 'active': 'inactive'}`);
 };
 
+////////////////////////////////////////////////////////////////////////////////
+// Aldo
+////////////////////////////////////////////////////////////////////////////////
+function setAladoActivation(activation) {
+    try {
+        aldoActivation = await redisUtil.setDealerActivation('aldo', activation);
+    } 
+    catch (err) {
+        log.error(err.message);
+    }
+}
+
 function isAldoProductsActive() {
     return aldoActivation;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Allnations
+////////////////////////////////////////////////////////////////////////////////
 function isAllnationsProductsActive() {
     return allnationsActivation;
 }
 
+function setAllnationsActivation(activation) {
+    try {
+        allnationsActivation = await redisUtil.setDealerActivation('allnations', activation);
+    } 
+    catch (err) {
+        log.error(err.message);
+    }
+}
+
+
 module.exports.isAldoProductsActive = isAldoProductsActive;
+module.exports.setAladoActivation = setAladoActivation;
+
 module.exports.isAllnationsProductsActive = isAllnationsProductsActive;
+module.exports.setAllnationsActivation = setAllnationsActivation;

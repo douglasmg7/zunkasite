@@ -44,25 +44,6 @@ function setPorductListFilter(userId, filter) {
 ///////////////////////////////////////////////////////////////////////////////
 // Dealer active
 ///////////////////////////////////////////////////////////////////////////////
-// function getDealerActivation(dealer) {
-    // return new Promise(resolve => {
-        // let key = DEALER_ACTIVATION + dealer;
-        // redis.get(key, (err, activation)=>{
-            // if (err) {
-                // log.error(new error(`Retriving ${delaer} activation from redis db. ${err.stack}`));
-                // resolve(null);
-            // }
-            // // Already have activation on redis db.
-            // if (activation) {
-                // // log.debug(`activation: ${activation}`);
-                // activation = JSON.parse(activation);
-                // resolve(activation);
-            // } 
-            // resolve(null);
-        // });
-    // });
-// }
-
 function getDealerActivation(dealer) {
     return new Promise((resolve, reject) => {
         try {
