@@ -1,3 +1,11 @@
+## 1.10.8 (22 out 2020)
+### Melhorias
+* Adicionado fabricante APC e SMS.
+
+### Bugfix
+* Produto Allantions era atualizado com estoque negativo.
+
+
 ## 1.10.7 (14 out 2020)
 ### Melhorias
 * Lista de produtos (admin) com filtros.

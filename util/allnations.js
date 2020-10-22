@@ -65,7 +65,11 @@ function checkStock(product, qty, cb) {
                 // Have some information.
                 if (receivedProduct) {
                     // Update product.
-                    let update = { storeProductQtd: receivedProduct.stock - MIN_STOCK_TO_SELL, dealerProductActive: receivedProduct.active };
+                    let stockQty = receivedProduct.stock - MIN_STOCK_TO_SELL;
+                    if (stockQty < 0) {
+                        stockQty = 0;
+                    }
+                    let update = { storeProductQtd: stockQty, dealerProductActive: receivedProduct.active };
                     if (!receivedProduct.active) {
                         update.storeProductCommercialize = false;
                     }
