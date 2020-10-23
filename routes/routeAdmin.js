@@ -1925,28 +1925,36 @@ router.delete('/dealer-freight/:id', checkPermission, (req, res, next)=>{
 ////////////////////////////////////////////////////////////////////////////////
 //  Dealer configuration
 ////////////////////////////////////////////////////////////////////////////////
-router.get('/dealers-config', (req, res, next)=>{
+router.get('/dealers', (req, res, next)=>{
     let activation = {
-        aldo: dealerUtil.isAldoProductsActive,
-        allnations: dealerUtil.isAllnationsProductsActive,
+        aldo: dealerUtil.isAldoProductsActive(),
+        allnations: dealerUtil.isAllnationsProductsActive(),
     };
+    // log.debug(`activation: ${JSON.stringify(activation, null, 2)}`);
     try {
-        return res.render('admin/dealerConfig', { activation });
+        return res.render('admin/dealers', { activation });
     }
     catch(err) {
         log.error(err.stack);
     }
 });
 
-router.post('/dealers-config', checkPermission, (req, res, next)=>{
+router.post('/dealers', checkPermission, (req, res, next)=>{
+    // log.debug(`body: ${req.body.aldoActivation}`);
     try {
         // Aldo.
-        if (req.body.aldoActivation == 'true') {
+        if (req.body.aldoActivation == 'active') {
             dealerUtil.setAladoActivation(true);
-        } else if (req.body.aldoActivation == 'false') {
+        } else if (req.body.aldoActivation == 'inactive') {
             dealerUtil.setAladoActivation(false);
         }
-        return res.redirect('admin/dealerConfig');
+        // Allnations.
+        if (req.body.allnationsActivation == 'active') {
+            dealerUtil.setAllnationsActivation(true);
+        } else if (req.body.allnationsActivation == 'inactive') {
+            dealerUtil.setAllnationsActivation(false);
+        }
+        return res.redirect('dealers');
     }
     catch(err) {
         log.error(err.stack);

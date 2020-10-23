@@ -1,0 +1,60 @@
+extends ../layout/layout
+
+block title
+    title Zunka - Fornecedores
+
+block append internal_style
+    style.
+        section > h2:first-child {
+            margin-top: 0;
+        }
+        section label {
+            margin-top: .3em;
+            margin-right: 1em;
+        }
+        section label input[type='radio'] {
+            color: blue;
+            width: auto;
+            height: auto;
+            margin-right: .4em;
+        }
+        section label span {
+            margin-top: .1em;
+            font-weight: bold; 
+        }
+        .dealer > label {
+            display: inline-block;
+        }
+
+block content 
+    section
+        //- title.
+        h2 Fornecedores
+
+        form(method='post')
+            input(type='hidden' name='_csrf' value=csrfToken)
+            //- Aldo
+            .dealer
+                h3 Aldo
+                label
+                    input(type='radio' name='aldoActivation' id='aldoActive' value='active'  checked=activation.aldo==true)
+                    span Ativo
+                label 
+                    input(type='radio' name='aldoActivation' id='aldoInactive' value='inactive' checked=activation.aldo==false)
+                    span Inativo
+            //- Allnations
+            .dealer
+                h3 Allnations
+                label
+                    input(type='radio' name='allnationsActivation' id='allnationsActive' value='active'  checked=activation.allnations==true)
+                    span Ativo
+                label 
+                    input(type='radio' name='allnationsActivation' id='allnationsInactive' value='inactive' checked=activation.allnations==false)
+                    span Inativo
+
+            //- Save button.
+            input.btn-primary(type='submit' value='Salvar') 
+
+append internal_scripts
+    script.
+        //- let activation = !{JSON.stringify(activation)};
