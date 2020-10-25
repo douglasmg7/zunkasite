@@ -25,6 +25,9 @@ block append internal_style
         .dealer > label {
             display: inline-block;
         }
+        .dealer > h3:first-letter {
+            text-transform: uppercase;
+        }
 
 block content 
     section
@@ -33,25 +36,16 @@ block content
 
         form(method='post')
             input(type='hidden' name='_csrf' value=csrfToken)
-            //- Aldo
-            .dealer
-                h3 Aldo
-                label
-                    input(type='radio' name='aldoActivation' id='aldoActive' value='active'  checked=activation.aldo==true)
-                    span Ativo
-                label 
-                    input(type='radio' name='aldoActivation' id='aldoInactive' value='inactive' checked=activation.aldo==false)
-                    span Inativo
-            //- Allnations
-            .dealer
-                h3 Allnations
-                label
-                    input(type='radio' name='allnationsActivation' id='allnationsActive' value='active'  checked=activation.allnations==true)
-                    span Ativo
-                label 
-                    input(type='radio' name='allnationsActivation' id='allnationsInactive' value='inactive' checked=activation.allnations==false)
-                    span Inativo
-
+            //- Dealers.
+            each activation, dealer in dealerActivations
+                .dealer
+                    h3= dealer
+                    label
+                        input(type='radio' name=dealer+'Activation' id=dealer+'Active' value='active'  checked=activation)
+                        span Ativo
+                    label 
+                        input(type='radio' name=dealer+'Activation' id=dealer+'Inactive' value='inactive'  checked=!activation)
+                        span Inativo
             //- Save button.
             input.btn-primary(type='submit' value='Salvar') 
 

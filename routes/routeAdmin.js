@@ -463,49 +463,6 @@ router.delete('/product/:_id', checkPermission, function(req, res) {
         });
 });
 
-// // Delete a product.
-// router.delete('/product/:_id', checkPermission, function(req, res) {
-	// try{	
-		// Product.findByIdAndRemove(req.params._id)
-			// .then(result=>{
-				// // Delete images dir.
-				// fse.remove(path.join(__dirname, '..', 'dist/img/', req.params._id), err=>{
-					// if (err) { log.error(err.stack); }
-					// res.json({});
-					// log.info(`Product ${req.params._id} deleted.`);
-					// // Delete from zunkasrv.
-					// if (result.dealerName = "Aldo") {
-						// // Delete reference product on integration server.
-						// // log.debug(`axios delete: ${s.zunkaServer.host}/${result.dealerName.toLowerCase()}/product/mongodb_id/${result.dealerProductId}`);
-						// axios.delete(`${s.zunkaServer.host}/${result.dealerName.toLowerCase()}/product/mongodb_id/${result.dealerProductId}`, {
-							// headers: {
-								// "Accept": "text/plain", 
-							// },
-							// auth: {
-								// username: s.zunkaServer.user,
-								// password: s.zunkaServer.password
-							// },
-						// })
-						// .then(response => {
-							// if (response.data.err) {
-								// log.err(`Deleting mongodbId from zunkasrv, code: ${result.dealerProductId}. ${response.data.err}`);
-							// } 
-						// })
-						// .catch(err => {
-							// log.error(`Deleting mongodbId from zunkasrv, code: ${result.dealerProductId}. ${err}`);
-						// }); 
-					// }
-				// });
-			// })
-			// .catch(err=>{
-				// log.error(err.stack);
-				// res.json(err);
-			// });
-	// } catch(err) {
-		// log.error(`Deleting product, product _id: ${req.params._id}. ${err}`);
-	// }
-// });
-
 // Upload product pictures.
 router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
 	const form = formidable.IncomingForm();
@@ -553,11 +510,9 @@ router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
 });
 
 
-
 /******************************************************************************
 /   ORDERS
  ******************************************************************************/
-
 // Get orders page.
 router.get('/orders', checkPermission, function(req, res, next) {
 	res.render('admin/orderList', {
@@ -1103,7 +1058,6 @@ router.delete('/invoice/:_id', checkPermission, (req, res, next)=>{
 /******************************************************************************
 /   USERS INFO
  ******************************************************************************/
-
 // User list page.
 router.get('/users', checkPermission, function(req, res, next) {
     // let [err, users, count] = getUsers('');
@@ -1171,7 +1125,6 @@ async function getUsers(search) {
 /******************************************************************************
 /   BANNERS
  ******************************************************************************/
-
 // Get banners page.
 router.get('/banner', (req, res, next)=>{
 	redis.get('banners', (err, banners)=>{
@@ -1343,7 +1296,6 @@ router.put('/image/', checkPermission, (req, res)=>{
 	});
 });
 
-
 /******************************************************************************
 /   MOTOBY DELIVERY
  ******************************************************************************/
@@ -1385,7 +1337,6 @@ router.get('/motoboy-freights', (req, res, next)=>{
         log.error(err.stack);
     }); 
 });
-
 
 // Get motoboy freight.
 router.get('/motoboy-freight/:id', checkPermission, (req, res, next)=>{
@@ -1926,13 +1877,8 @@ router.delete('/dealer-freight/:id', checkPermission, (req, res, next)=>{
 //  Dealer configuration
 ////////////////////////////////////////////////////////////////////////////////
 router.get('/dealers', (req, res, next)=>{
-    let activation = {
-        aldo: dealerUtil.isAldoProductsActive(),
-        allnations: dealerUtil.isAllnationsProductsActive(),
-    };
-    // log.debug(`activation: ${JSON.stringify(activation, null, 2)}`);
     try {
-        return res.render('admin/dealers', { activation });
+        return res.render('admin/dealers', { dealerActivations: dealerUtil.getDealerActivations() });
     }
     catch(err) {
         log.error(err.stack);
@@ -1940,21 +1886,17 @@ router.get('/dealers', (req, res, next)=>{
 });
 
 router.post('/dealers', checkPermission, (req, res, next)=>{
-    // log.debug(`body: ${req.body.aldoActivation}`);
     try {
-        // Aldo.
-        if (req.body.aldoActivation == 'active') {
-            dealerUtil.setAladoActivation(true);
-        } else if (req.body.aldoActivation == 'inactive') {
-            dealerUtil.setAladoActivation(false);
+        for (let dealer in dealerUtil.getDealerActivations()) {
+            if(req.body[dealer+'Activation'] == 'active') {
+                dealerUtil.setDealerActivation(dealer, true);
+            } else {
+                dealerUtil.setDealerActivation(dealer, false);
+            }
         }
-        // Allnations.
-        if (req.body.allnationsActivation == 'active') {
-            dealerUtil.setAllnationsActivation(true);
-        } else if (req.body.allnationsActivation == 'inactive') {
-            dealerUtil.setAllnationsActivation(false);
-        }
-        return res.redirect('dealers');
+        res.redirect('dealers');
+        productUtil.updateCommercializeStatus();
+        return;
     }
     catch(err) {
         log.error(err.stack);

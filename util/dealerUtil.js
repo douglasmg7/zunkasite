@@ -3,69 +3,46 @@ const log = require('../config/log');
 const redisUtil = require('../util/redisUtil');
 const dealerUtil = require('../util/dealerUtil');
 const Product = require('../model/product');
+const productUtil = require('./productUtil.js');
 
-let aldoActivation;
-let allnationsActivation;
+let activations = {
+    aldo: false,
+    allnations: false,
+    dell: false,
+};
 
 loadActivation();
 
 async function loadActivation(){
-    // aldo
-    try {
-        aldoActivation = await redisUtil.getDealerActivation('aldo');
-    } 
-    catch (err) {
-        aldoActivation = false;
-        log.error(err.message);
+    for (let key in activations) {
+        try {
+            activations[key] = await redisUtil.getDealerActivation(key);
+        } 
+        catch (err) {
+            activations[key] = false;
+            log.error(err.message);
+        }
     }
-
-    // allnations
-    try {
-        allnationsActivation = await redisUtil.getDealerActivation('allnations');;
-    } 
-    catch (err) {
-        allnationsActivation = false;
-        log.error(err.message);
-    }
-    // log.info(`Aldo products ${aldoActivation ? 'active': 'inactive'}`);
-    // log.info(`Allnations products ${allnationsActivation ? 'active': 'inactive'}`);
 };
 
-////////////////////////////////////////////////////////////////////////////////
-// Aldo
-////////////////////////////////////////////////////////////////////////////////
-async function setAladoActivation(activation) {
+function isDealerActive(dealer) {
+    return activations[dealer.toLowerCase()];
+}
+
+async function setDealerActivation(dealer, activation) {
+    dealer = dealer.toLowerCase();
     try {
-        aldoActivation = await redisUtil.setDealerActivation('aldo', activation);
+        activations[dealer] = await redisUtil.setDealerActivation(dealer, activation);
     } 
     catch (err) {
         log.error(err.message);
     }
 }
 
-function isAldoProductsActive() {
-    return aldoActivation;
+function getDealerActivations() {
+    return activations;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Allnations
-////////////////////////////////////////////////////////////////////////////////
-function isAllnationsProductsActive() {
-    return allnationsActivation;
-}
-
-async function setAllnationsActivation(activation) {
-    try {
-        allnationsActivation = await redisUtil.setDealerActivation('allnations', activation);
-    } 
-    catch (err) {
-        log.error(err.message);
-    }
-}
-
-
-module.exports.isAldoProductsActive = isAldoProductsActive;
-module.exports.setAladoActivation = setAladoActivation;
-
-module.exports.isAllnationsProductsActive = isAllnationsProductsActive;
-module.exports.setAllnationsActivation = setAllnationsActivation;
+module.exports.isDealerActive = isDealerActive;
+module.exports.setDealerActivation = setDealerActivation;
+module.exports.getDealerActivations = getDealerActivations;

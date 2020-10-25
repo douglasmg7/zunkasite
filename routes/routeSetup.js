@@ -13,6 +13,7 @@ const categories = require('../util/productCategories');
 const makers = require('../util/productMakers.js');
 const turndown = new require('turndown')();
 const imageUtil = require('../util/image');
+const productUtil = require('../util/productUtil');
 const allnations = require('../util/allnations');
 
 // Get a zunka product information.
@@ -175,6 +176,7 @@ router.post('/product/add', s.basicAuth, [
 				product.storeProductWidth = product.dealerProductWidth;
 				product.storeProductWeight = product.dealerProductWeight;
 				product.storeProductPrice = parseFloat(req.body.dealerProductFinalPriceSuggestion) / 100;
+                product.storeProductActive = false;
 				product.storeProductCommercialize = false;
                 product.storeProductMarkup = parseFloat((((product.storeProductPrice / product.dealerProductPrice) -1) * 100).toFixed(2));
 				product.storeProductDiscountEnable = false;
@@ -277,7 +279,7 @@ router.post('/product/update', s.basicAuth, [
                     product.dealerProductPrice = dealerProductPrice;
                 }
                 product.dealerProductActive = req.body.dealerProductActive;
-                // Product inactive.
+                // Product inactive. Not necessary, but avoid one update from productUtil.updateCommercializeStatus().
                 if (!product.dealerProductActive) {
                     product.storeProductCommercialize = false
                 } 
@@ -308,6 +310,7 @@ router.post('/product/update', s.basicAuth, [
                         return res.status(500).send(err);
                     }
                     log.debug(`Product was updated from service, _id: ${product._id}, dealerProductActive: ${product.dealerProductActive}, storeProductPrice: ${product.storeProductPrice}, storeProductQtd: ${product.storeProductQtd}`);
+                    productUtil.updateCommercializeStatus();
                     return res.send(product._id);
                 });
             } 
@@ -349,6 +352,7 @@ router.post('/product/disable', s.basicAuth, [
                         return res.status(500).send(err);
                     }
                     log.debug(`Product was disabled from service, _id: ${product._id}`);
+                    productUtil.updateCommercializeStatus();
                     return res.send(product._id);
                 });
             } 
@@ -390,6 +394,7 @@ router.post('/product/quantity', s.basicAuth, [
                         return res.status(500).send(err);
                     }
                     log.debug(`Product ${req.body._id} was updated to quantity ${req.body.storeProductQtd} by external service}`);
+                    productUtil.updateCommercializeStatus();
                     return res.send();
                 });
             } else {
