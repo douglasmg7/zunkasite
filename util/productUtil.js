@@ -1,6 +1,8 @@
 'use strict';
 
 const log = require('../config/log');
+const path = require('path');
+const fse = require('fs-extra');
 const Product = require('../model/product');
 const dealerUtil = require('./dealerUtil');
 
@@ -104,4 +106,97 @@ function updateCommercializeStatusForSameProducts (products) {
     }
 }
 
+function updateProductsWithSameStoreProductId(changedProduct) {
+    // Update all with the same store product id, but not it self. 
+    Product.updateMany(
+        {storeProductId: changedProduct.storeProductId, _id: {$ne: changedProduct._id}},
+        {
+            storeProductTitle: changedProduct.storeProductTitle,
+            storeProductInfoMD: changedProduct.storeProductInfoMD,
+            storeProductDetail: changedProduct.storeProductDetail,
+            storeProductDescription: changedProduct.storeProductDescription,
+            storeProductTechnicalInformation: changedProduct.storeProductTechnicalInformation,
+            storeProductAdditionalInformation: changedProduct.storeProductAdditionalInformation,
+            storeProductMaker: changedProduct.storeProductMaker,
+            storeProductCategory: changedProduct.storeProductCategory,
+            storeProductLength: changedProduct.storeProductLength,
+            storeProductHeight: changedProduct.storeProductHeight,
+            storeProductWidth: changedProduct.storeProductWidth,
+            storeProductWeight: changedProduct.storeProductWeight,
+            storeProductMarkup: changedProduct.storeProductMarkup,
+            images: changedProduct.images,
+            includeOutletText: changedProduct.includeOutletText,
+            displayPriority: changedProduct.displayPriority,
+            ean: changedProduct.ean,
+            marketZoom: changedProduct.marketZoom
+        }, 
+        (err, result)=>{
+            if (err) {
+                log.error(`Updating product with same store product id ${changedProduct.storeProductId}. ${err.message}`);
+            }
+            // log.debug(`result: ${JSON.stringify(result, null, 2)}`);
+            updateCommercializeStatus();
+            // Update image files.
+            Product.find({storeProductId: changedProduct.storeProductId}, (err, products)=>{
+                if (err) {
+                    log.error(`Find product with same store product id ${changedProduct.storeProductId}. ${err.message}`);
+                }
+                for (let product of products) {
+                    if (product._id.toString() != changedProduct._id.toString()) {
+                        // log.debug(`Product to update image files: ${product._id}`);
+                        updateImageFiles(changedProduct, product);
+                    }
+                }
+            });
+        });
+}
+
+function updateImageFiles(productBase, productToUpdate) {
+    let basePath = path.join(__dirname, '..', 'dist/img/', productBase._id.toString())
+    let updatePath = path.join(__dirname, '..', 'dist/img/', productToUpdate._id.toString())
+    let allImagesMustHave = [];
+
+    // All necessary images.
+    for (let image of productToUpdate.images) {
+        let pathObj = path.parse(image);
+        allImagesMustHave.push(image);
+        allImagesMustHave.push(pathObj.name + '_0080px' + pathObj.ext);
+        allImagesMustHave.push(pathObj.name + '_0500px' + pathObj.ext);
+    }
+
+    // log.debug(`basePath: ${basePath}`);
+    // log.debug(`updatePath: ${updatePath}`);
+    // log.debug(`allImagesMustHave: ${JSON.stringify(allImagesMustHave, null, 2)}}`);
+
+    // Remove no necessary images.
+    fse.readdir(updatePath, (err, files)=>{
+        if (err) {
+            log.error(err.stack);
+        }
+        else {
+            // log.debug(`files: ${JSON.stringify(files, null, 2)}}`);
+            // Remove images not in product images.
+            for (let file of files) {
+                if (!allImagesMustHave.includes(file)) {
+                    log.debug(`Removing image: ${path.join(updatePath, file)}`);
+                    fse.remove(path.join(updatePath, file), err=>{
+                        if (err) { log.error(err.stack); }
+                    });
+                }
+            };
+            // Copy missing images.
+            for (let imageMustHave of allImagesMustHave) {
+                if (!files.includes(imageMustHave)) {
+                    log.debug(`Copying image\n\tfrom: ${path.join(basePath, imageMustHave)}\n\tto: ${path.join(updatePath, imageMustHave)}`);
+                    fse.copy(path.join(basePath, imageMustHave), path.join(updatePath, imageMustHave), err => {
+                        if (err) { log.error(err.stack); }
+                    });
+                }
+
+            }
+        }
+    });
+}
+
 module.exports.updateCommercializeStatus = updateCommercializeStatus;
+module.exports.updateProductsWithSameStoreProductId = updateProductsWithSameStoreProductId;

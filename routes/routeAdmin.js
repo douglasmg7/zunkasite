@@ -342,12 +342,14 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 	// New product.
 	if (req.params.productId === 'new') {
 		let product = new Product(req.body.product);
+        // Manual created product, no dealer information.
+        product.dealerProductActive = true;
 		product.save((err, newProduct) => {
 			if (err) {
 				res.json({err});
 				return next(err);
 			} else {
-				log.info(`Produto ${newProduct._id} was created.`);
+				log.info(`Product ${newProduct._id} created`);
 				res.json({ isNew: true, product: newProduct });
                 productUtil.updateCommercializeStatus();
 			}
@@ -356,14 +358,15 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 	// Existing product.
 	else {
 		// Save product.
-		Product.findOneAndUpdate({_id: req.body.product._id}, req.body.product, function(err, product){
+		Product.findOneAndUpdate({_id: req.body.product._id}, req.body.product, { new: true },  function(err, product){
 			if (err) {
 				res.json({err});
 				return next(err);
 			} else {
-				log.info(`Produto ${product._id} updated.`);
 				res.json({});
-                productUtil.updateCommercializeStatus();
+				log.info(`Product ${product._id} updated`);
+				log.info(`Product title ${product.storeProductTitle} updated`);
+                productUtil.updateProductsWithSameStoreProductId(product);
 				// Sync upladed images with product.images.
 				// Get list of uploaded images.
 				fse.readdir(path.join(__dirname, '..', 'dist/img/', req.body.product._id), (err, files)=>{
@@ -388,6 +391,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 							if (!exist) {
 								// Remove uploaded image.
 								let fileToRemove = file;
+                                log.debug(`Removing image: ${path.join(__dirname, '..', 'dist/img/', req.body.product._id, fileToRemove)}`);
 								fse.remove(path.join(__dirname, '..', 'dist/img/', req.body.product._id, fileToRemove), err=>{
 									if (err) { log.error(err.stack); }
 								});
