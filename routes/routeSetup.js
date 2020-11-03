@@ -89,6 +89,30 @@ router.get('/products/:dealer', s.basicAuth, function(req, res, next) {
     }
 });
 
+// Get products by EAN.
+router.get('/products-ean/:ean', s.basicAuth, async function(req, res, next) {
+    try {
+        let products = await productUtil.getProductByEAN(req.params.ean);
+        // log.debug(`router products: ${products}`);
+        return res.json(products);
+    } catch(err) {
+        log.error(`[catch] Getting products by EAN: ${err.stack}`);
+        return res.status(500).send(err);
+    }
+});
+
+// Get similar products.
+router.get('/products-title-similar/:title', s.basicAuth, function(req, res, next) {
+    try {
+        let products = productUtil.getSimilarProduct(req.params.title);
+        log.debug(`router products: ${products.length}`);
+        return res.json(products);
+    } catch(err) {
+        log.error(`[catch] Getting products with similiar titles: ${err.stack}`);
+        return res.status(500).send(err);
+    }
+});
+
 // Add product.
 router.post('/product/add', s.basicAuth, [
 		check('dealerName').isLength(4, 20),

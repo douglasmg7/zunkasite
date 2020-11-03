@@ -95,8 +95,8 @@ const log = createLogger({
 });
 
 // Console (dev).
-// if(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test'){
-if(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production'){
+if(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test'){
+// if(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production'){
     log.add(new transports.Console({
         level: 'debug',
         format: _format

@@ -6,11 +6,67 @@ const fse = require('fs-extra');
 const Product = require('../model/product');
 const dealerUtil = require('./dealerUtil');
 
+const Fuse = require('fuse.js');
+const fuseOptions = {
+  // isCaseSensitive: false,
+  // includeScore: false,
+  // shouldSort: true,
+  // includeMatches: false,
+  // findAllMatches: false,
+  // minMatchCharLength: 1,
+  // location: 0,
+  // threshold: 0.6,
+  // distance: 100,
+  // useExtendedSearch: false,
+  // ignoreLocation: false,
+  // ignoreFieldNorm: false,
+  keys: [
+    "storeProductTitle",
+    // "author.firstName"
+  ]
+};
+let productsFuse;
+// Init fuse.
+function initFuse() {
+    try {
+        // Get all products not deleted.
+        Product.find({deletedAt: {$exists: false}})
+        .then(products=>{
+            productsFuse = new Fuse(products, fuseOptions);
+        })
+        .catch(err=>{
+            log.error(err.stack);
+        });
+    } catch(err) {
+        log.error(new Error(`Initializing products fuse. catch: ${err}`));
+    }
+};
+initFuse();
+
+// Get similar product.
+function getSimilarProduct(searchText) {
+    return productsFuse.search(searchText);
+}
+
+// Get products with same EAN.
+async function getProductByEAN(ean) {
+    try {
+        const products = await Product.find({ean: ean.trim(), storeProductId: {$regex: /\S/}}).exec();
+        return products;
+    } catch (err) {
+        log.error(`Getting products with same EAN. catch: ${err.message}`);
+        return([]);
+    }
+}
+
+// Update commercialize status.
 function updateCommercializeStatus() {
     try {
         // Get all products not deleted.
         Product.find({deletedAt: {$exists: false}})
         .then(products=>{
+            // Update fuse search.
+            productsFuse = new Fuse(products, fuseOptions);
             let productsByzunkaId = new Map();
             for (let product of products) {
                 // Have store product id, include zunka id map.
@@ -200,3 +256,7 @@ function updateImageFiles(productBase, productToUpdate) {
 
 module.exports.updateCommercializeStatus = updateCommercializeStatus;
 module.exports.updateProductsWithSameStoreProductId = updateProductsWithSameStoreProductId;
+
+module.exports.getProductByEAN = getProductByEAN;
+module.exports.getSimilarProduct = getSimilarProduct;
+

@@ -138,6 +138,51 @@ describe('Zunka', function () {
         });
     });
 
+    describe("Zunkasrv", ()=>{
+        // Get product ean.
+        it('/setup/products-ean/ean', done=>{
+            let ean = '7899864928406'
+            request(server)
+                .get(`/setup/products-ean/${ean}`)
+                .auth(s.zunkaSite.user, s.zunkaSite.password)
+                .end((err, res)=>{
+                    expect(res.status).to.be.equal(200);
+                    // console.log(`res.status: ${res.status}`);
+                    // console.log(`res.text: ${res.text}`);
+                    let products = JSON.parse(res.text);
+                    expect(products).to.have.length.above(0);
+                    products.forEach(product=>{
+                        console.log(`product title: ${product.storeProductTitle}`);
+                        console.log(`product _id: ${product._id}`);
+                        expect(product.ean).length.be.equal(ean);
+                    });
+                    done();
+                });
+        });
+        // Get similar product title.
+        it.only('/setup/products-title-similar/title', done=>{
+            let title = '5490-M30S2';
+            request(server)
+                .get(`/setup/products-title-similar/${title}`)
+                .auth(s.zunkaSite.user, s.zunkaSite.password)
+                .end((err, res)=>{
+                    expect(res.status).to.be.equal(200);
+                    // console.log(res.text);
+                    let products = JSON.parse(res.text);
+                    // console.log(`product: ${JSON.stringify(products[0], null, 2)}`);
+                    console.log(`product: ${products[0]}`);
+                    console.log(`product title: ${products[0].storeProductTitle}`);
+                    expect(products).to.have.length.above(0);
+                    // products.forEach(product=>{
+                        // console.log(`product title: ${JSON.stringify(product, null, 2)}`);
+                        // console.log(`product title: ${JSON.stringify(product.storeProductTitle, null, 2)}`);
+                        // expect(product.storeProductTitle).length.be.above(0);
+                    // });
+                    done();
+                });
+            });
+    });
+
     // Aldo.
     describe("Aldo", ()=>{
         // Get aldo products.
