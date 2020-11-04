@@ -105,7 +105,7 @@ router.get('/products-ean/:ean', s.basicAuth, async function(req, res, next) {
 router.get('/products-title-similar/:title', s.basicAuth, function(req, res, next) {
     try {
         let products = productUtil.getSimilarProduct(req.params.title);
-        log.debug(`router products: ${products.length}`);
+        // log.debug(`router products: ${products.length}`);
         return res.json(products);
     } catch(err) {
         log.error(`[catch] Getting products with similiar titles: ${err.stack}`);

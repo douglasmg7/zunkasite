@@ -9,16 +9,16 @@ const dealerUtil = require('./dealerUtil');
 const Fuse = require('fuse.js');
 const fuseOptions = {
   // isCaseSensitive: false,
-  // includeScore: false,
-  // shouldSort: true,
+  // includeScore: true,
+  shouldSort: true,
   // includeMatches: false,
   // findAllMatches: false,
-  // minMatchCharLength: 1,
+  minMatchCharLength: 2,
   // location: 0,
   // threshold: 0.6,
   // distance: 100,
   // useExtendedSearch: false,
-  // ignoreLocation: false,
+  ignoreLocation: true,
   // ignoreFieldNorm: false,
   keys: [
     "storeProductTitle",
@@ -45,7 +45,21 @@ initFuse();
 
 // Get similar product.
 function getSimilarProduct(searchText) {
-    return productsFuse.search(searchText);
+    // return productsFuse.search(searchText);
+    let products = productsFuse.search(searchText);
+    // log.debug(`getSimilarProduct: ${JSON.stringify(products[0], null, 8)}`);
+
+    log.debug(`searchText: ${searchText}`);
+    for (let product of products) {
+        // log.debug(`refIndex: ${JSON.stringify(product.refIndex, null, 2)}`);
+        // log.debug(`score: ${JSON.stringify(product.score, null, 2)}`);
+        log.debug(`title: ${JSON.stringify(product.item.storeProductTitle, null, 2)}`);
+    }
+
+    // log.debug(`getSimilarProduct: ${JSON.stringify(products[0].refIndex, null, 2)}`);
+    // // log.debug(`getSimilarProduct: ${JSON.stringify(products[0].item, null, 2)}`);
+    // log.debug(`getSimilarProduct: ${JSON.stringify(products[0].item._id, null, 2)}`);
+    return products;
 }
 
 // Get products with same EAN.

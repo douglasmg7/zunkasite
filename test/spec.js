@@ -161,7 +161,8 @@ describe('Zunka', function () {
         });
         // Get similar product title.
         it.only('/setup/products-title-similar/title', done=>{
-            let title = '5490-M30S2';
+            // let title = '5490-M30S2';
+            let title = 'Computador All In One Dell Inspiron 5490-M30S2';
             request(server)
                 .get(`/setup/products-title-similar/${title}`)
                 .auth(s.zunkaSite.user, s.zunkaSite.password)
