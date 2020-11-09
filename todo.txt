@@ -1,6 +1,12 @@
 Updage dell products quando colocar branch min_price para rodar.
     db.products.updateMany({dealerName: 'Dell'}, {$set: {dealerProductActive: true}})
 
+
+Usuário consegue comprar produto fora de estoque
+    Corrigir routeCheckout.checkOrderProductsInStock   para produtos dell.
+    Chamar routeCheckout.checkOrderProductsInStock ao fechar a ordem (router.post('/close/order/:order_id', (req, res, next)=>{)
+    Corrigir a data da pedido na lista de pedidos diferente da data do pedido no detalhe do pedido. 
+
 Edit
     routeCheckout - 1098    
     app.js  - 65
