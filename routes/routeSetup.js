@@ -90,9 +90,9 @@ router.get('/products/:dealer', s.basicAuth, function(req, res, next) {
 });
 
 // Get products by EAN.
-router.get('/products-ean/:ean', s.basicAuth, async function(req, res, next) {
+router.get('/products-same-ean', s.basicAuth, async function(req, res, next) {
     try {
-        let products = await productUtil.getProductByEAN(req.params.ean);
+        let products = await productUtil.getSameEanProducts(req.query.ean);
         // log.debug(`router products: ${products}`);
         return res.json(products);
     } catch(err) {
@@ -102,9 +102,9 @@ router.get('/products-ean/:ean', s.basicAuth, async function(req, res, next) {
 });
 
 // Get similar products.
-router.get('/products-title-similar/:title', s.basicAuth, function(req, res, next) {
+router.get('/products-similar-title', s.basicAuth, function(req, res, next) {
     try {
-        let products = productUtil.getSimilarProduct(req.params.title);
+        let products = productUtil.getSimilarTitlesProducts(req.query.title);
         // log.debug(`router products: ${products.length}`);
         return res.json(products);
     } catch(err) {

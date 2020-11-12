@@ -44,26 +44,25 @@ function initFuse() {
 initFuse();
 
 // Get similar product.
-function getSimilarProduct(searchText) {
-    // return productsFuse.search(searchText);
+function getSimilarTitlesProducts(searchText) {
     let products = productsFuse.search(searchText);
-    // log.debug(`getSimilarProduct: ${JSON.stringify(products[0], null, 8)}`);
 
-    log.debug(`searchText: ${searchText}`);
-    for (let product of products) {
-        // log.debug(`refIndex: ${JSON.stringify(product.refIndex, null, 2)}`);
-        // log.debug(`score: ${JSON.stringify(product.score, null, 2)}`);
-        log.debug(`title: ${JSON.stringify(product.item.storeProductTitle, null, 2)}`);
+    // log.debug(`searchText: ${searchText}`);
+    let justProducts = [];
+    // for (let product of products) {
+        // // log.debug(`refIndex: ${JSON.stringify(product.refIndex, null, 2)}`);
+        // // log.debug(`score: ${JSON.stringify(product.score, null, 2)}`);
+        // log.debug(`title: ${JSON.stringify(product.item.storeProductTitle, null, 2)}`);
+        // justProducts.push(product.item);
+    // }
+    for (let i=0; i<10 && products.length > i; i++) {
+        justProducts.push(products[i].item);
     }
-
-    // log.debug(`getSimilarProduct: ${JSON.stringify(products[0].refIndex, null, 2)}`);
-    // // log.debug(`getSimilarProduct: ${JSON.stringify(products[0].item, null, 2)}`);
-    // log.debug(`getSimilarProduct: ${JSON.stringify(products[0].item._id, null, 2)}`);
-    return products;
+    return justProducts;
 }
 
 // Get products with same EAN.
-async function getProductByEAN(ean) {
+async function getSameEanProducts(ean) {
     try {
         const products = await Product.find({ean: ean.trim(), storeProductId: {$regex: /\S/}}).exec();
         return products;
@@ -271,6 +270,6 @@ function updateImageFiles(productBase, productToUpdate) {
 module.exports.updateCommercializeStatus = updateCommercializeStatus;
 module.exports.updateProductsWithSameStoreProductId = updateProductsWithSameStoreProductId;
 
-module.exports.getProductByEAN = getProductByEAN;
-module.exports.getSimilarProduct = getSimilarProduct;
+module.exports.getSameEanProducts = getSameEanProducts;
+module.exports.getSimilarTitlesProducts = getSimilarTitlesProducts;
 

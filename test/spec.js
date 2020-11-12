@@ -140,10 +140,11 @@ describe('Zunka', function () {
 
     describe("Zunkasrv", ()=>{
         // Get product ean.
-        it('/setup/products-ean/ean', done=>{
+        it.only('/setup/products-same-ean', done=>{
             let ean = '7899864928406'
             request(server)
-                .get(`/setup/products-ean/${ean}`)
+                .get(`/setup/products-same-ean`)
+                .query({ean: ean})
                 .auth(s.zunkaSite.user, s.zunkaSite.password)
                 .end((err, res)=>{
                     expect(res.status).to.be.equal(200);
@@ -159,26 +160,24 @@ describe('Zunka', function () {
                     done();
                 });
         });
-        // Get similar product title.
-        it.only('/setup/products-title-similar/title', done=>{
+        // Get products similar titles.
+        it('/setup/products-similar-title', done=>{
             // let title = '5490-M30S2';
-            let title = 'Computador All In One Dell Inspiron 5490-M30S2';
+            // let title = 'Computador All In One Dell Inspiron 5490-M30S2';
+            let title = 'GABINETE COOLER MASTER MASTERBOX LITE 3.1 TG LATERAL EM VIDRO TEMPERADO ATX/E-ATX/MINI-ITX/MICRO-AT';
             request(server)
-                .get(`/setup/products-title-similar/${title}`)
+                .get(`/setup/products-similar-title`)
+                .query({title: title})
                 .auth(s.zunkaSite.user, s.zunkaSite.password)
                 .end((err, res)=>{
                     expect(res.status).to.be.equal(200);
                     // console.log(res.text);
                     let products = JSON.parse(res.text);
-                    // console.log(`product: ${JSON.stringify(products[0], null, 2)}`);
-                    console.log(`product: ${products[0]}`);
-                    console.log(`product title: ${products[0].storeProductTitle}`);
                     expect(products).to.have.length.above(0);
-                    // products.forEach(product=>{
-                        // console.log(`product title: ${JSON.stringify(product, null, 2)}`);
-                        // console.log(`product title: ${JSON.stringify(product.storeProductTitle, null, 2)}`);
-                        // expect(product.storeProductTitle).length.be.above(0);
-                    // });
+                    products.forEach(product=>{
+                        console.log(`product title: ${JSON.stringify(product.storeProductTitle, null, 2)}`);
+                        expect(product.storeProductTitle).length.be.above(0);
+                    });
                     done();
                 });
             });
