@@ -225,6 +225,11 @@ function updateImageFiles(productBase, productToUpdate) {
     let updatePath = path.join(__dirname, '..', 'dist/img/', productToUpdate._id.toString())
     let allImagesMustHave = [];
 
+    // Create if not exist.
+    if (!fse.existsSync(updatePath)){
+        fse.mkdirSync(updatePath);
+    }
+
     // All necessary images.
     for (let image of productToUpdate.images) {
         let pathObj = path.parse(image);
@@ -269,6 +274,8 @@ function updateImageFiles(productBase, productToUpdate) {
 
 module.exports.updateCommercializeStatus = updateCommercializeStatus;
 module.exports.updateProductsWithSameStoreProductId = updateProductsWithSameStoreProductId;
+
+module.exports.updateImageFiles = updateImageFiles;
 
 module.exports.getSameEanProducts = getSameEanProducts;
 module.exports.getSimilarTitlesProducts = getSimilarTitlesProducts;

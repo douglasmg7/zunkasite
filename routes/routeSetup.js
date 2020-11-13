@@ -168,7 +168,7 @@ router.post('/product/add', s.basicAuth, [
 		// Verify if product exist.
 		Product.findOne({dealerName: product.dealerName, dealerProductId: product.dealerProductId}, (err, doc)=>{
 			if (err) {
-				log.error(`Finding Aldo product: ${err.message}`);
+				log.error(`Finding product: ${err.message}`);
 				return res.status(500).send(err);
 			}
 			// Product exist and not marked as deleted.
@@ -219,32 +219,74 @@ router.post('/product/add', s.basicAuth, [
                 }
                 product.displayPriority = 200;
 				let newProduct = new Product(product);
-				newProduct.save((err, doc)=>{
+				newProduct.save((err, savedProduct)=>{
 					if (err) {
 						log.error(`Creating ${product.dealerName} product from zunkasrv: ${err.message}`);
 						return res.status(500).send(err);
 					}
-                    // Import aldo images.
-                    if (doc.dealerName.toLowerCase() == "aldo") {
-                        // log.debug(`req.body.dealerProductImagesLink: ${req.body.dealerProductImagesLink}`);
-                        if (req.body.dealerProductImagesLink) {
-                            let imagesLink = req.body.dealerProductImagesLink.split('__,__');
-                            imageUtil.downloadAldoImagesAndUpdateProduct(imagesLink, doc); 
-                        }
-                    } 
-                    // Import allnations images.
-                    else if (doc.dealerName.toLowerCase() == "allnations") {
-                        if (req.body.dealerProductImagesLink) {
-                            // Set correct image size.
-                            let imageLink = req.body.dealerProductImagesLink.replace("h=196", "h=1000");
-                            imageLink = imageLink.replace("l=246", "l=1000");
-                            imageUtil.downloadAllnationsImagesAndUpdateProduct(imageLink, 1, doc); 
+                    // Only import images from dealer if not using template.
+                    if (!req.body.productIdTemplate) {
+                        // Import aldo images.
+                        if (savedProduct.dealerName.toLowerCase() == "aldo") {
+                            // log.debug(`req.body.dealerProductImagesLink: ${req.body.dealerProductImagesLink}`);
+                            if (req.body.dealerProductImagesLink) {
+                                let imagesLink = req.body.dealerProductImagesLink.split('__,__');
+                                imageUtil.downloadAldoImagesAndUpdateProduct(imagesLink, savedProduct); 
+                            }
+                        } 
+                        // Import allnations images.
+                        else if (savedProduct.dealerName.toLowerCase() == "allnations") {
+                            if (req.body.dealerProductImagesLink) {
+                                // Set correct image size.
+                                let imageLink = req.body.dealerProductImagesLink.replace("h=196", "h=1000");
+                                imageLink = imageLink.replace("l=246", "l=1000");
+                                imageUtil.downloadAllnationsImagesAndUpdateProduct(imageLink, 1, savedProduct); 
+                            }
                         }
                     }
-					log.debug(`Product ${product.dealerName} ${doc._id} was created by zunkasrv.`, doc._id);
-					return res.send(doc._id);
-				});
-			}
+					log.debug(`Product ${product.dealerName} ${savedProduct._id} was created by zunkasrv.`, savedProduct._id);
+					res.send(savedProduct._id);
+                    // Update product with template information.
+                    if (req.body.productIdTemplate) {
+                        // Find template product.
+                        Product.findById(req.body.productIdTemplate, (err, productTpl)=>{
+                            if (err) {
+                                log.error(`Finding product template: ${err.message}`);
+                            }
+                            // Product exist and not marked as deleted.
+                            if (productTpl) {
+                                savedProduct.storeProductId = productTpl.storeProductId;
+                                savedProduct.storeProductTitle = productTpl.storeProductTitle;
+                                savedProduct.storeProductInfoMD = productTpl.storeProductInfoMD;
+                                savedProduct.storeProductDetail = productTpl.storeProductDetail;
+                                savedProduct.storeProductDescription = productTpl.storeProductDescription;
+                                savedProduct.storeProductTechnicalInformation = productTpl.storeProductTechnicalInformation;
+                                savedProduct.storeProductAdditionalInformation = productTpl.storeProductAdditionalInformation;
+                                savedProduct.storeProductMaker = productTpl.storeProductMaker;
+                                savedProduct.storeProductCategory = productTpl.storeProductCategory;
+                                savedProduct.storeProductLength = productTpl.storeProductLength;
+                                savedProduct.storeProductHeight = productTpl.storeProductHeight;
+                                savedProduct.storeProductWidth = productTpl.storeProductWidth;
+                                savedProduct.storeProductWeight = productTpl.storeProductWeight;
+                                savedProduct.storeProductMarkup = productTpl.storeProductMarkup;
+                                savedProduct.images = productTpl.images;
+                                savedProduct.includeOutletText = productTpl.includeOutletText;
+                                savedProduct.displayPriority = productTpl.displayPriority;
+                                savedProduct.ean = productTpl.ean;
+                                savedProduct.marketZoom = productTpl.marketZoom;
+                                savedProduct.save((err)=>{
+                                    if (err) {
+                                        log.error(`Updating created product ${savedProduct._id} with information from template product ${productTpl._id}: ${err.message}`);
+                                        return res.status(500).send(err);
+                                    }
+                                    productUtil.updateImageFiles(productTpl, savedProduct)
+                                    log.debug(`product ${savedProduct._id} updated with information from template product ${productTpl._id}`);
+                                });
+                            } 
+                        });
+                    }
+                });
+            }
 		});
 	} catch(err) {
 		log.error(`Adding Aldo product: ${err.message}`);
