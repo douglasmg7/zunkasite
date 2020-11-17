@@ -6,6 +6,7 @@ Produtos com o mesmo código zunka são tratados como produtos iguais.
 * Quando um produto é salvo todos os outros produtos com o mesmo código zunka são atualizados.
 
 Opção de habilitar ou desabilitar produtos por fornecedor.
+Adicionado fabricante PowerColor.
 
 
 ## 1.10.7 (14 out 2020)
