@@ -176,6 +176,10 @@ function updateCommercializeStatusForSameProducts (products) {
 }
 
 function updateProductsWithSameStoreProductId(changedProduct) {
+    // Not update product without store product id.
+    if (changedProduct.storeProductId.trim() == "") {
+        return;
+    }
     // Update all with the same store product id, but not it self. 
     Product.updateMany(
         {storeProductId: changedProduct.storeProductId, _id: {$ne: changedProduct._id}},
