@@ -138,6 +138,51 @@ describe('Zunka', function () {
         });
     });
 
+    describe("Zunkasrv", ()=>{
+        // Get product ean.
+        it.only('/setup/products-same-ean', done=>{
+            let ean = '7899864928406'
+            request(server)
+                .get(`/setup/products-same-ean`)
+                .query({ean: ean})
+                .auth(s.zunkaSite.user, s.zunkaSite.password)
+                .end((err, res)=>{
+                    expect(res.status).to.be.equal(200);
+                    // console.log(`res.status: ${res.status}`);
+                    // console.log(`res.text: ${res.text}`);
+                    let products = JSON.parse(res.text);
+                    expect(products).to.have.length.above(0);
+                    products.forEach(product=>{
+                        console.log(`product title: ${product.storeProductTitle}`);
+                        console.log(`product _id: ${product._id}`);
+                        expect(product.ean).length.be.equal(ean);
+                    });
+                    done();
+                });
+        });
+        // Get products similar titles.
+        it('/setup/products-similar-title', done=>{
+            // let title = '5490-M30S2';
+            // let title = 'Computador All In One Dell Inspiron 5490-M30S2';
+            let title = 'GABINETE COOLER MASTER MASTERBOX LITE 3.1 TG LATERAL EM VIDRO TEMPERADO ATX/E-ATX/MINI-ITX/MICRO-AT';
+            request(server)
+                .get(`/setup/products-similar-title`)
+                .query({title: title})
+                .auth(s.zunkaSite.user, s.zunkaSite.password)
+                .end((err, res)=>{
+                    expect(res.status).to.be.equal(200);
+                    // console.log(res.text);
+                    let products = JSON.parse(res.text);
+                    expect(products).to.have.length.above(0);
+                    products.forEach(product=>{
+                        console.log(`product title: ${JSON.stringify(product.storeProductTitle, null, 2)}`);
+                        expect(product.storeProductTitle).length.be.above(0);
+                    });
+                    done();
+                });
+            });
+    });
+
     // Aldo.
     describe("Aldo", ()=>{
         // Get aldo products.

@@ -1,10 +1,17 @@
+## 1.11.0 (17 Nov 2020)
+### Melhorias
+Produtos com o mesmo código zunka são tratados como produtos iguais.
+* Apenas o mais barato é exibido no site.
+* Quando um produto é salvo todos os outros produtos com o mesmo código zunka são atualizados.
+Opção de habilitar ou desabilitar produtos por fornecedor.
+Adicionado fabricante PowerColor.
+
 ## 1.10.8 (22 out 2020)
 ### Melhorias
 * Adicionado fabricante APC e SMS.
 
 ### Bugfix
 * Produto Allantions era atualizado com estoque negativo.
-
 
 ## 1.10.7 (14 out 2020)
 ### Melhorias

@@ -13,6 +13,7 @@ const categories = require('../util/productCategories');
 const makers = require('../util/productMakers.js');
 const turndown = new require('turndown')();
 const imageUtil = require('../util/image');
+const productUtil = require('../util/productUtil');
 const allnations = require('../util/allnations');
 
 // Get a zunka product information.
@@ -88,6 +89,30 @@ router.get('/products/:dealer', s.basicAuth, function(req, res, next) {
     }
 });
 
+// Get products by EAN.
+router.get('/products-same-ean', s.basicAuth, async function(req, res, next) {
+    try {
+        let products = await productUtil.getSameEanProducts(req.query.ean);
+        // log.debug(`router products: ${products}`);
+        return res.json(products);
+    } catch(err) {
+        log.error(`[catch] Getting products by EAN: ${err.stack}`);
+        return res.status(500).send(err);
+    }
+});
+
+// Get similar products.
+router.get('/products-similar-title', s.basicAuth, function(req, res, next) {
+    try {
+        let products = productUtil.getSimilarTitlesProducts(req.query.title);
+        // log.debug(`router products: ${products.length}`);
+        return res.json(products);
+    } catch(err) {
+        log.error(`[catch] Getting products with similiar titles: ${err.stack}`);
+        return res.status(500).send(err);
+    }
+});
+
 // Add product.
 router.post('/product/add', s.basicAuth, [
 		check('dealerName').isLength(4, 20),
@@ -143,7 +168,7 @@ router.post('/product/add', s.basicAuth, [
 		// Verify if product exist.
 		Product.findOne({dealerName: product.dealerName, dealerProductId: product.dealerProductId}, (err, doc)=>{
 			if (err) {
-				log.error(`Finding Aldo product: ${err.message}`);
+				log.error(`Finding product: ${err.message}`);
 				return res.status(500).send(err);
 			}
 			// Product exist and not marked as deleted.
@@ -163,7 +188,6 @@ router.post('/product/add', s.basicAuth, [
 				// Create dealer and store data.
 				product.storeProductId = "";
 				product.storeProductTitle = product.dealerProductTitle;
-				// product.storeProductDescription = product.dealerProductDesc;
                 product.storeProductDescription = "";
 				product.storeProductDetail = "";
                 product.storeProductInfoMD = turndown.turndown(product.dealerProductDesc);
@@ -176,6 +200,7 @@ router.post('/product/add', s.basicAuth, [
 				product.storeProductWidth = product.dealerProductWidth;
 				product.storeProductWeight = product.dealerProductWeight;
 				product.storeProductPrice = parseFloat(req.body.dealerProductFinalPriceSuggestion) / 100;
+                product.storeProductActive = false;
 				product.storeProductCommercialize = false;
                 product.storeProductMarkup = parseFloat((((product.storeProductPrice / product.dealerProductPrice) -1) * 100).toFixed(2));
 				product.storeProductDiscountEnable = false;
@@ -192,35 +217,76 @@ router.post('/product/add', s.basicAuth, [
                 else {
                     product.storeProductQtd = 1;
                 }
-				product.storeProductActive = product.dealerProductActive;
                 product.displayPriority = 200;
 				let newProduct = new Product(product);
-				newProduct.save((err, doc)=>{
+				newProduct.save((err, savedProduct)=>{
 					if (err) {
 						log.error(`Creating ${product.dealerName} product from zunkasrv: ${err.message}`);
 						return res.status(500).send(err);
 					}
-                    // Import aldo images.
-                    if (doc.dealerName.toLowerCase() == "aldo") {
-                        // log.debug(`req.body.dealerProductImagesLink: ${req.body.dealerProductImagesLink}`);
-                        if (req.body.dealerProductImagesLink) {
-                            let imagesLink = req.body.dealerProductImagesLink.split('__,__');
-                            imageUtil.downloadAldoImagesAndUpdateProduct(imagesLink, doc); 
-                        }
-                    } 
-                    // Import allnations images.
-                    else if (doc.dealerName.toLowerCase() == "allnations") {
-                        if (req.body.dealerProductImagesLink) {
-                            // Set correct image size.
-                            let imageLink = req.body.dealerProductImagesLink.replace("h=196", "h=1000");
-                            imageLink = imageLink.replace("l=246", "l=1000");
-                            imageUtil.downloadAllnationsImagesAndUpdateProduct(imageLink, 1, doc); 
+                    // Only import images from dealer if not using template.
+                    if (!req.body.productIdTemplate) {
+                        // Import aldo images.
+                        if (savedProduct.dealerName.toLowerCase() == "aldo") {
+                            // log.debug(`req.body.dealerProductImagesLink: ${req.body.dealerProductImagesLink}`);
+                            if (req.body.dealerProductImagesLink) {
+                                let imagesLink = req.body.dealerProductImagesLink.split('__,__');
+                                imageUtil.downloadAldoImagesAndUpdateProduct(imagesLink, savedProduct); 
+                            }
+                        } 
+                        // Import allnations images.
+                        else if (savedProduct.dealerName.toLowerCase() == "allnations") {
+                            if (req.body.dealerProductImagesLink) {
+                                // Set correct image size.
+                                let imageLink = req.body.dealerProductImagesLink.replace("h=196", "h=1000");
+                                imageLink = imageLink.replace("l=246", "l=1000");
+                                imageUtil.downloadAllnationsImagesAndUpdateProduct(imageLink, 1, savedProduct); 
+                            }
                         }
                     }
-					log.debug(`Product ${product.dealerName} ${doc._id} was created by zunkasrv.`, doc._id);
-					return res.send(doc._id);
-				});
-			}
+					log.debug(`Product ${product.dealerName} ${savedProduct._id} was created by zunkasrv.`, savedProduct._id);
+					res.send(savedProduct._id);
+                    // Update product with template information.
+                    if (req.body.productIdTemplate) {
+                        // Find template product.
+                        Product.findById(req.body.productIdTemplate, (err, productTpl)=>{
+                            if (err) {
+                                log.error(`Finding product template: ${err.message}`);
+                            }
+                            // Product exist and not marked as deleted.
+                            if (productTpl) {
+                                savedProduct.storeProductId = productTpl.storeProductId;
+                                savedProduct.storeProductTitle = productTpl.storeProductTitle;
+                                savedProduct.storeProductInfoMD = productTpl.storeProductInfoMD;
+                                savedProduct.storeProductDetail = productTpl.storeProductDetail;
+                                savedProduct.storeProductDescription = productTpl.storeProductDescription;
+                                savedProduct.storeProductTechnicalInformation = productTpl.storeProductTechnicalInformation;
+                                savedProduct.storeProductAdditionalInformation = productTpl.storeProductAdditionalInformation;
+                                savedProduct.storeProductMaker = productTpl.storeProductMaker;
+                                savedProduct.storeProductCategory = productTpl.storeProductCategory;
+                                savedProduct.storeProductLength = productTpl.storeProductLength;
+                                savedProduct.storeProductHeight = productTpl.storeProductHeight;
+                                savedProduct.storeProductWidth = productTpl.storeProductWidth;
+                                savedProduct.storeProductWeight = productTpl.storeProductWeight;
+                                savedProduct.storeProductMarkup = productTpl.storeProductMarkup;
+                                savedProduct.images = productTpl.images;
+                                savedProduct.includeOutletText = productTpl.includeOutletText;
+                                savedProduct.displayPriority = productTpl.displayPriority;
+                                savedProduct.ean = productTpl.ean;
+                                savedProduct.marketZoom = productTpl.marketZoom;
+                                savedProduct.save((err)=>{
+                                    if (err) {
+                                        log.error(`Updating created product ${savedProduct._id} with information from template product ${productTpl._id}: ${err.message}`);
+                                        return res.status(500).send(err);
+                                    }
+                                    productUtil.updateImageFiles(productTpl, savedProduct)
+                                    log.debug(`product ${savedProduct._id} updated with information from template product ${productTpl._id}`);
+                                });
+                            } 
+                        });
+                    }
+                });
+            }
 		});
 	} catch(err) {
 		log.error(`Adding Aldo product: ${err.message}`);
@@ -279,7 +345,7 @@ router.post('/product/update', s.basicAuth, [
                     product.dealerProductPrice = dealerProductPrice;
                 }
                 product.dealerProductActive = req.body.dealerProductActive;
-                // Product inactive.
+                // Product inactive. Not necessary, but avoid one update from productUtil.updateCommercializeStatus().
                 if (!product.dealerProductActive) {
                     product.storeProductCommercialize = false
                 } 
@@ -310,6 +376,7 @@ router.post('/product/update', s.basicAuth, [
                         return res.status(500).send(err);
                     }
                     log.debug(`Product was updated from service, _id: ${product._id}, dealerProductActive: ${product.dealerProductActive}, storeProductPrice: ${product.storeProductPrice}, storeProductQtd: ${product.storeProductQtd}`);
+                    productUtil.updateCommercializeStatus();
                     return res.send(product._id);
                 });
             } 
@@ -351,6 +418,7 @@ router.post('/product/disable', s.basicAuth, [
                         return res.status(500).send(err);
                     }
                     log.debug(`Product was disabled from service, _id: ${product._id}`);
+                    productUtil.updateCommercializeStatus();
                     return res.send(product._id);
                 });
             } 
@@ -392,6 +460,7 @@ router.post('/product/quantity', s.basicAuth, [
                         return res.status(500).send(err);
                     }
                     log.debug(`Product ${req.body._id} was updated to quantity ${req.body.storeProductQtd} by external service}`);
+                    productUtil.updateCommercializeStatus();
                     return res.send();
                 });
             } else {

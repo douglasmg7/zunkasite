@@ -30,10 +30,14 @@ const productMakers = require('../util/productMakers.js');
 // Redis.
 const redis = require('../db/redis');
 const redisUtil = require('../util/redisUtil');
+// Dealers.
+const dealerUtil = require('../util/dealerUtil');
 // Internal.
 const s = require('../config/s');
 const zoom = require('../util/zoom');
 const allnations = require('../util/allnations');
+// Product util.
+const productUtil = require('../util/productUtil');
 // Max product quantity by Page.
 const PRODUCT_QTD_BY_PAGE = 20;
 // Max order quantity by Page.
@@ -225,7 +229,7 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
 				dealerName: '',
 				storeProductId: '',
 				storeProductTitle: '',
-				storeProductActive: true,
+				storeProductActive: false,
 				storeProductCommercialize: false,
 				storeProductDetail: '',
 				storeProductDescription: '',
@@ -338,26 +342,31 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 	// New product.
 	if (req.params.productId === 'new') {
 		let product = new Product(req.body.product);
+        // Manual created product, no dealer information.
+        product.dealerProductActive = true;
 		product.save((err, newProduct) => {
 			if (err) {
 				res.json({err});
 				return next(err);
 			} else {
-				log.info(`Produto ${newProduct._id} was created.`);
+				log.info(`Product ${newProduct._id} created`);
 				res.json({ isNew: true, product: newProduct });
+                productUtil.updateCommercializeStatus();
 			}
 		});
 	}
 	// Existing product.
 	else {
 		// Save product.
-		Product.findOneAndUpdate({_id: req.body.product._id}, req.body.product, function(err, product){
+		Product.findOneAndUpdate({_id: req.body.product._id}, req.body.product, { new: true },  function(err, product){
 			if (err) {
 				res.json({err});
 				return next(err);
 			} else {
-				log.info(`Produto ${product._id} updated.`);
 				res.json({});
+				log.info(`Product ${product._id} updated`);
+				log.info(`Product title ${product.storeProductTitle} updated`);
+                productUtil.updateProductsWithSameStoreProductId(product);
 				// Sync upladed images with product.images.
 				// Get list of uploaded images.
 				fse.readdir(path.join(__dirname, '..', 'dist/img/', req.body.product._id), (err, files)=>{
@@ -382,6 +391,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 							if (!exist) {
 								// Remove uploaded image.
 								let fileToRemove = file;
+                                log.debug(`Removing image: ${path.join(__dirname, '..', 'dist/img/', req.body.product._id, fileToRemove)}`);
 								fse.remove(path.join(__dirname, '..', 'dist/img/', req.body.product._id, fileToRemove), err=>{
 									if (err) { log.error(err.stack); }
 								});
@@ -404,6 +414,7 @@ router.delete('/product/:_id', checkPermission, function(req, res) {
         }).then(product=>{
             res.json({});
             log.info(`Deleted product ${product._id}.`);
+            productUtil.updateCommercializeStatus();
             // Delete mongodb id from zunkasrv.
             // Aldo
             if (product.dealerName = "Aldo") {
@@ -456,49 +467,6 @@ router.delete('/product/:_id', checkPermission, function(req, res) {
         });
 });
 
-// // Delete a product.
-// router.delete('/product/:_id', checkPermission, function(req, res) {
-	// try{	
-		// Product.findByIdAndRemove(req.params._id)
-			// .then(result=>{
-				// // Delete images dir.
-				// fse.remove(path.join(__dirname, '..', 'dist/img/', req.params._id), err=>{
-					// if (err) { log.error(err.stack); }
-					// res.json({});
-					// log.info(`Product ${req.params._id} deleted.`);
-					// // Delete from zunkasrv.
-					// if (result.dealerName = "Aldo") {
-						// // Delete reference product on integration server.
-						// // log.debug(`axios delete: ${s.zunkaServer.host}/${result.dealerName.toLowerCase()}/product/mongodb_id/${result.dealerProductId}`);
-						// axios.delete(`${s.zunkaServer.host}/${result.dealerName.toLowerCase()}/product/mongodb_id/${result.dealerProductId}`, {
-							// headers: {
-								// "Accept": "text/plain", 
-							// },
-							// auth: {
-								// username: s.zunkaServer.user,
-								// password: s.zunkaServer.password
-							// },
-						// })
-						// .then(response => {
-							// if (response.data.err) {
-								// log.err(`Deleting mongodbId from zunkasrv, code: ${result.dealerProductId}. ${response.data.err}`);
-							// } 
-						// })
-						// .catch(err => {
-							// log.error(`Deleting mongodbId from zunkasrv, code: ${result.dealerProductId}. ${err}`);
-						// }); 
-					// }
-				// });
-			// })
-			// .catch(err=>{
-				// log.error(err.stack);
-				// res.json(err);
-			// });
-	// } catch(err) {
-		// log.error(`Deleting product, product _id: ${req.params._id}. ${err}`);
-	// }
-// });
-
 // Upload product pictures.
 router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
 	const form = formidable.IncomingForm();
@@ -546,11 +514,9 @@ router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
 });
 
 
-
 /******************************************************************************
 /   ORDERS
  ******************************************************************************/
-
 // Get orders page.
 router.get('/orders', checkPermission, function(req, res, next) {
 	res.render('admin/orderList', {
@@ -1096,7 +1062,6 @@ router.delete('/invoice/:_id', checkPermission, (req, res, next)=>{
 /******************************************************************************
 /   USERS INFO
  ******************************************************************************/
-
 // User list page.
 router.get('/users', checkPermission, function(req, res, next) {
     // let [err, users, count] = getUsers('');
@@ -1164,7 +1129,6 @@ async function getUsers(search) {
 /******************************************************************************
 /   BANNERS
  ******************************************************************************/
-
 // Get banners page.
 router.get('/banner', (req, res, next)=>{
 	redis.get('banners', (err, banners)=>{
@@ -1336,7 +1300,6 @@ router.put('/image/', checkPermission, (req, res)=>{
 	});
 });
 
-
 /******************************************************************************
 /   MOTOBY DELIVERY
  ******************************************************************************/
@@ -1378,7 +1341,6 @@ router.get('/motoboy-freights', (req, res, next)=>{
         log.error(err.stack);
     }); 
 });
-
 
 // Get motoboy freight.
 router.get('/motoboy-freight/:id', checkPermission, (req, res, next)=>{
@@ -1915,6 +1877,35 @@ router.delete('/dealer-freight/:id', checkPermission, (req, res, next)=>{
 });
 
 
+////////////////////////////////////////////////////////////////////////////////
+//  Dealer configuration
+////////////////////////////////////////////////////////////////////////////////
+router.get('/dealers', (req, res, next)=>{
+    try {
+        return res.render('admin/dealers', { dealerActivations: dealerUtil.getDealerActivations() });
+    }
+    catch(err) {
+        log.error(err.stack);
+    }
+});
+
+router.post('/dealers', checkPermission, (req, res, next)=>{
+    try {
+        for (let dealer in dealerUtil.getDealerActivations()) {
+            if(req.body[dealer+'Activation'] == 'active') {
+                dealerUtil.setDealerActivation(dealer, true);
+            } else {
+                dealerUtil.setDealerActivation(dealer, false);
+            }
+        }
+        res.redirect('dealers');
+        productUtil.updateCommercializeStatus();
+        return;
+    }
+    catch(err) {
+        log.error(err.stack);
+    }
+});
 
 /******************************************************************************
 /   MARKDOWN LIST
