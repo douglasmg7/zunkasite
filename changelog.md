@@ -1,4 +1,4 @@
-## 1.11.0 (17 Nov 2020)
+## 1.11.1 (17 Nov 2020)
 ### Melhorias
 Produtos com o mesmo código zunka são tratados como produtos iguais.
 * Apenas o mais barato é exibido no site.
