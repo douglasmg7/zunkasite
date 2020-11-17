@@ -1,3 +1,13 @@
+## 1.11.0 (17 Nov 2020)
+### Melhorias
+
+Produtos com o mesmo código zunka são tratados como produtos iguais.
+* Apenas o mais barato é exibido no site.
+* Quando um produto é salvo todos os outros produtos com o mesmo código zunka são atualizados.
+
+Opção de habilitar ou desabilitar produtos por fornecedor.
+
+
 ## 1.10.7 (14 out 2020)
 ### Melhorias
 * Lista de produtos (admin) com filtros.
