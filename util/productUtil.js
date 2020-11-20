@@ -224,6 +224,17 @@ function updateProductsWithSameStoreProductId(changedProduct) {
         });
 }
 
+// Copy images from product source to product destiny.
+function copyImageFiles(srcId, dstId) {
+    try {
+        let srcPath = path.join(__dirname, '..', 'dist/img/', srcId.toString())
+        let dstPath = path.join(__dirname, '..', 'dist/img/', dstId.toString())
+        fse.copySync(srcPath, dstPath);
+    } catch(err) {
+        log.error(err.stack);
+    }
+}
+
 function updateImageFiles(productBase, productToUpdate) {
     let basePath = path.join(__dirname, '..', 'dist/img/', productBase._id.toString())
     let updatePath = path.join(__dirname, '..', 'dist/img/', productToUpdate._id.toString())
@@ -283,4 +294,6 @@ module.exports.updateImageFiles = updateImageFiles;
 
 module.exports.getSameEanProducts = getSameEanProducts;
 module.exports.getSimilarTitlesProducts = getSimilarTitlesProducts;
+
+module.exports.copyImageFiles = copyImageFiles;
 

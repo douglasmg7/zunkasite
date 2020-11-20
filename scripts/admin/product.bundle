@@ -38,6 +38,80 @@ var app = new Vue({
         this.storeProductDiscountValue = this.toBRCurrencyString(product.storeProductDiscountValue.toFixed(2));
         this.dealerProductPrice = this.toBRCurrencyString(product.dealerProductPrice.toFixed(2));
     },
+    watch: {
+        'product.storeProductId': function(val) {
+            // Cep is valid if 00000-000 or 00000000.
+            if (val) {
+                // console.log(`Getting product by storeProductId: ${val}`);
+                axios.get(`/admin/product-by-store-product-id/${val}`, {
+                    headers: {
+                        "Accept": "application/json", 
+                    },
+                })
+                .then((response)=>{
+                    // Error.
+                    if (response.data.error) {
+                        prompt(`Não foi possível verificar código Zunka ${val}`);
+                        this.product.storeProductId = "";
+                        console.error(response.data.error);
+                    }
+                    // Product found.
+                    else if (response.data.product){
+                        // Confirm load data from other product.
+                        if(confirm(`Produto com código zunka ${response.data.product.storeProductId} já existe.\nDeseja carregar informações do produto existente?`)) 
+                            axios.post(`/admin/product-copy-images/`, { srcId: response.data.product._id, dstId: this.product._id }, {
+                                headers: {
+                                    "Accept": "application/json", 
+                                    'csrf-token' : csrfToken,
+                                }
+                            })
+                            .then((response)=>{
+                                console.log("*** 1 ***");
+                                // Error.
+                                if (response.data.error) {
+                                    prompt(`Ocorreu um erro ao tentar carregar as informações do produto ${val}`);
+                                    this.product.storeProductId = "";
+                                    console.error(response.data.error);
+                                } else {
+                                    console.log("*** 2 ***");
+                                    this.product.dealerName = "Dell";
+                                    this.product.dealerProductWarrantyDays = response.data.product.dealerProductWarrantyDays;
+                                    this.product.storeProductTitle = response.data.product.storeProductTitle;
+                                    this.product.storeProductInfoMD = response.data.product.storeProductInfoMD;
+                                    this.product.storeProductDetail = response.data.product.storeProductDetail;
+                                    this.product.storeProductDescription = response.data.product.storeProductDescription;
+                                    this.product.storeProductTechnicalInformation = response.data.product.storeProductTechnicalInformation;
+                                    this.product.storeProductAdditionalInformation = response.data.product.storeProductAdditionalInformation;
+                                    this.product.storeProductMaker = response.data.product.storeProductMaker;
+                                    this.product.storeProductCategory = response.data.product.storeProductCategory;
+                                    this.product.storeProductLength = response.data.product.storeProductLength;
+                                    this.product.storeProductHeight = response.data.product.storeProductHeight;
+                                    this.product.storeProductWidth = response.data.product.storeProductWidth;
+                                    this.product.storeProductWeight = response.data.product.storeProductWeight;
+                                    this.product.storeProductMarkup = response.data.product.storeProductMarkup;
+                                    this.product.storeProductWarrantyDays = response.data.product.storeProductWarrantyDays;
+                                    this.product.storeProductWarrantyDetail = response.data.product.storeProductWarrantyDetail;
+                                    this.product.images = response.data.product.images;
+                                    this.product.includeOutletText = response.data.product.includeOutletText;
+                                    this.product.displayPriority = response.data.product.displayPriority;
+                                    this.product.ean = response.data.product.ean;
+                                    this.product.marketZoom = response.data.product.marketZoom;
+                                }
+                            }) 
+                            .catch((err)=>{
+                                console.log("oi");
+                            });
+                        }
+                    }
+                )
+                .catch((err)=>{
+                    console.error(err);
+                    alert(`Não foi possível verificar código Zunka ${val}`);
+                    this.product.storeProductId = "";
+                });        
+            }
+        }
+    }, 
     computed: {
         // Only external products can be active or unactive, internal products use only the flag commercialize.
         // So internal products always active.

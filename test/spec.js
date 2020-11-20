@@ -10,6 +10,10 @@ const User = require('../model/user');
 const routeCheckout = require('../routes/routeCheckout');
 const mobileNumber = require('../util/mobileNumber');
 
+const path = require('path');
+const fse = require('fs-extra');
+const productUtil = require('../util/productUtil');
+
 // Array with newest products.
 let newestProducts;
 
@@ -138,9 +142,45 @@ describe('Zunka', function () {
         });
     });
 
+    describe("productUtil", ()=>{
+        it('copyImageFiles', done=>{
+            let src = "test_src";
+            let dst = "test_dst";
+            let srcPath = path.join(__dirname, '..', 'dist/img/', src)
+            let dstPath = path.join(__dirname, '..', 'dist/img/', dst)
+
+            // console.log(`__dirname: ${__dirname}`);
+
+            // Get file names from source.
+            let srcFiles = fse.readdirSync(srcPath);
+
+            // Get file names from destiny.
+            let dstFiles = fse.readdirSync(dstPath);
+            // Clean destiny dir.
+            for (let file of dstFiles) {
+                // console.log(`destiny file: ${file}`);
+                let rmFile = path.join(dstPath, file);
+                // console.log(`file to remove: ${rmFile}`);
+                fse.removeSync(rmFile);
+            };
+
+            productUtil.copyImageFiles("test_src","test_dst");
+            dstFiles = fse.readdirSync(dstPath);
+            // console.log(`dstFiles: ${dstFiles}`);
+
+            for (let file of srcFiles) {
+                // expect(dstFiles).to.includes(srcFiles);
+                expect(dstFiles).to.deep.equal(srcFiles);
+                // console.log(`source files: ${file}`);
+            };
+            // expect(products).to.have.length.above(0);
+            done();
+        });
+    });
+
     describe("Zunkasrv", ()=>{
         // Get product ean.
-        it.only('/setup/products-same-ean', done=>{
+        it('/setup/products-same-ean', done=>{
             let ean = '7899864928406'
             request(server)
                 .get(`/setup/products-same-ean`)

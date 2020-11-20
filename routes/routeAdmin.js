@@ -467,6 +467,41 @@ router.delete('/product/:_id', checkPermission, function(req, res) {
         });
 });
 
+// Get product by zunka code.
+router.get('/product-by-store-product-id/:storeProductId', checkPermission, function(req, res, next) {
+	// Product promisse.
+	let productPromise = {};
+    productPromise = Product.findOne({storeProductId: req.params.storeProductId});
+	Promise.all([productPromise])
+	.then(([product])=>{
+        if (!product) {
+            res.json();
+        }
+        else if (product.deletedAt) {
+            res.json();
+        } else {
+            res.json({product});
+        }
+	}).catch(err=>{
+		return next(err);
+	});
+});
+
+// Get product by zunka code.
+router.post('/product-copy-images/', checkPermission, function(req, res, next) {
+    try {
+        // productUtil.copyImageFiles(req.body.srcId, req.body.dstId);
+        // log.debug(`req.body: ${JSON.stringify(req.body, null, 4)}`);
+        log.debug(`srcId: ${req.body.srcId}`);
+        log.debug(`dstId: ${req.body.dstId}`);
+        res.send();
+    } catch(err) {
+        return next(err);
+        // res.status(500).send();
+    }
+});
+
+
 // Upload product pictures.
 router.put('/upload-product-images/:_id', checkPermission, (req, res)=>{
 	const form = formidable.IncomingForm();
