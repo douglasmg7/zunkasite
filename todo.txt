@@ -1,5 +1,3 @@
-Copiar imagens de produtos de mesmo zunka id.
-
 Updage dell products quando colocar branch min_price para rodar.
     db.products.updateMany({dealerName: 'Dell'}, {$set: {dealerProductActive: true}})
 

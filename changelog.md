@@ -1,3 +1,7 @@
+## 1.12.0 (22 Nov 2020)
+### Melhorias
+Ao inserir um código que já existe o sistema dá a opção de carregar as informações ou sobre escrever
+
 ## 1.11.1 (17 Nov 2020)
 ### Melhorias
 Produtos com o mesmo código zunka são tratados como produtos iguais.

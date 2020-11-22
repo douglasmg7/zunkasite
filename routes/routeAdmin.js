@@ -490,10 +490,11 @@ router.get('/product-by-store-product-id/:storeProductId', checkPermission, func
 // Get product by zunka code.
 router.post('/product-copy-images/', checkPermission, function(req, res, next) {
     try {
-        // productUtil.copyImageFiles(req.body.srcId, req.body.dstId);
-        // log.debug(`req.body: ${JSON.stringify(req.body, null, 4)}`);
         log.debug(`srcId: ${req.body.srcId}`);
         log.debug(`dstId: ${req.body.dstId}`);
+        productUtil.copyImageFiles(req.body.srcId, req.body.dstId);
+        // log.debug(`req.body: ${JSON.stringify(req.body, null, 4)}`);
+        console.log("res.send");
         res.send();
     } catch(err) {
         return next(err);

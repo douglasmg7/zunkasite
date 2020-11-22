@@ -230,6 +230,7 @@ function copyImageFiles(srcId, dstId) {
         let srcPath = path.join(__dirname, '..', 'dist/img/', srcId.toString())
         let dstPath = path.join(__dirname, '..', 'dist/img/', dstId.toString())
         fse.copySync(srcPath, dstPath);
+        console.log("copy end");
     } catch(err) {
         log.error(err.stack);
     }
