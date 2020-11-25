@@ -358,6 +358,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 	// Existing product.
 	else {
 		// Save product.
+        log.debug(`Saving product ${req.body.product._id}, dealerProductActive: ${req.body.product.dealerProductActive}`);
 		Product.findOneAndUpdate({_id: req.body.product._id}, req.body.product, { new: true },  function(err, product){
 			if (err) {
 				res.json({err});

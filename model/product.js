@@ -22,7 +22,6 @@ let product = new mongoose.Schema({
 	dealerProductWidth: { type: Number },   // Width in cm.
 	dealerProductWeight: { type: Number },   // Weight in grams.
 	dealerProductActive: { type: Boolean },
-	dealerProductCommercialize: { type: Boolean },
 	dealerProductPrice: { type: Number },
 	// New items. todo - test. 
 	dealerProductMaker: { type: String },

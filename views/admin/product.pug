@@ -142,15 +142,23 @@ block content
         .status
             h2 Status
             hr
-            p(v-if='!isProductActive') Produto inativo no fornecedor
+            //- Dealer product activation.
+            p.success-message(v-if='this.product.dealerProductActive') Ativo no fornecedor
+            p.warn-message(v-if='!this.product.dealerProductActive')  Inativo no fornecedor
+
             //- input(type='checkbox' id='commercialize' v-model:checked='product.storeProductCommercialize' :disabled='!isProductActive')
             //- label(for='commercialize') Comercializar produto
-            input(type='checkbox' id='active' v-model:checked='product.storeProductActive' :disabled='!isProductActive')
+            //- input(type='checkbox' id='active' v-model:checked='product.storeProductActive' :disabled='!isProductActive')
+            input(type='checkbox' id='active' v-model:checked='product.storeProductActive')
             label(for='active') Produto ativo
             br
-            input(type='checkbox' id='marketZoom' v-model:checked='product.marketZoom' :disabled='!product.storeProductCommercialize')
+            //- input(type='checkbox' id='marketZoom' v-model:checked='product.marketZoom' :disabled='!product.storeProductCommercialize')
+            input(type='checkbox' id='marketZoom' v-model:checked='product.marketZoom')
             label(for='marketZoom') Incluir na ZOOM 
-            br
+            //- Store product commercialize.
+            p.mt0.success-message(v-if='this.product.storeProudctCommercialize') Selecionado para venda (automático)
+            p.mt0.warn-message(v-if='!this.product.storeProudctCommercialize') Não selecionado para venda (automático)
+
             //- Stock quantity.
             label(for='stock') Estoque (Unidade)
             //- input(type='text' id='stock' v-model='product.storeProductQtd')

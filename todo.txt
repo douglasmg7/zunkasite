@@ -1,3 +1,8 @@
+Verificar
+    routeSetup.js 412
+    Não selecionado para venda (automático)
+        Mostrando errado (http://localhost:3080/admin/product/5f7ba01a0a17710aceb36657)
+
 Updage dell products quando colocar branch min_price para rodar.
     db.products.updateMany({dealerName: 'Dell'}, {$set: {dealerProductActive: true}})
 
