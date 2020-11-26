@@ -110,6 +110,83 @@ var app = new Vue({
                     this.product.storeProductId = "";
                 });        
             }
+        },
+        'product.ean': function(val) {
+            if (val) {
+                // console.log(`Getting product by storeProductId: ${val}`);
+                axios.get(`/admin/products-same-ean`, {
+                    headers: {
+                        "Accept": "application/json", 
+                    },
+                    params: {
+                        ean: val
+                    },
+                })
+                .then((response)=>{
+                    // console.log(`ean products: ${JSON.stringify(response.data.products, null, 4)}`);
+                    // Error.
+                    if (response.data.error) {
+                        prompt(`Não foi possível verificar o código ean ${val}`);
+                        this.product.ean = "";
+                        console.error(response.data.error);
+                    }
+                    // Product found.
+                    else if (response.data.products){
+                        let tplProduct;
+                        // Confirm load data from other product.
+                        console.log(`ean products: ${JSON.stringify(response.data.products, null, 4)}`);
+                        if(window.confirm(`Produto com código zunka ${response.data.product.storeProductId} já existe.\nDeseja carregar informações do produto existente?`)) {
+                            tplProduct = response.data.product;
+                            axios.post(`/admin/product-copy-images/`, { srcId: response.data.product._id, dstId: this.product._id }, {
+                                headers: {
+                                    "Accept": "application/json", 
+                                    'csrf-token' : csrfToken,
+                                }
+                            })
+                            .then((response)=>{
+                                // console.log(`this.product._id: ${this.product._id}`);
+                                // Error.
+                                if (response.data.error) {
+                                    prompt(`Ocorreu um erro ao tentar carregar as informações do produto ${val}`);
+                                    this.product.storeProductId = "";
+                                    console.error(response.data.error);
+                                } else {
+                                    this.product.dealerName = "Dell";
+                                    this.product.dealerProductWarrantyDays = tplProduct.dealerProductWarrantyDays;
+                                    this.product.storeProductTitle = tplProduct.storeProductTitle;
+                                    this.product.storeProductInfoMD = tplProduct.storeProductInfoMD;
+                                    this.product.storeProductDetail = tplProduct.storeProductDetail;
+                                    this.product.storeProductDescription = tplProduct.storeProductDescription;
+                                    this.product.storeProductTechnicalInformation = tplProduct.storeProductTechnicalInformation;
+                                    this.product.storeProductAdditionalInformation = tplProduct.storeProductAdditionalInformation;
+                                    this.product.storeProductMaker = tplProduct.storeProductMaker;
+                                    this.product.storeProductCategory = tplProduct.storeProductCategory;
+                                    this.product.storeProductLength = tplProduct.storeProductLength;
+                                    this.product.storeProductHeight = tplProduct.storeProductHeight;
+                                    this.product.storeProductWidth = tplProduct.storeProductWidth;
+                                    this.product.storeProductWeight = tplProduct.storeProductWeight;
+                                    this.product.storeProductMarkup = tplProduct.storeProductMarkup;
+                                    this.product.storeProductWarrantyDays = tplProduct.storeProductWarrantyDays;
+                                    this.product.storeProductWarrantyDetail = tplProduct.storeProductWarrantyDetail;
+                                    this.product.images = tplProduct.images;
+                                    this.product.includeOutletText = tplProduct.includeOutletText;
+                                    this.product.displayPriority = tplProduct.displayPriority;
+                                    this.product.ean = tplProduct.ean;
+                                    this.product.marketZoom = tplProduct.marketZoom;
+                                }
+                            }) 
+                            .catch((err)=>{
+                                console.log(err.stack);
+                            });
+                        }
+                    }
+                })
+                .catch((err)=>{
+                    console.error(err);
+                    alert(`Não foi possível verificar código ean ${val}`);
+                    this.product.ean = "";
+                });        
+            }
         }
     }, 
     computed: {

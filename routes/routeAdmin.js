@@ -488,6 +488,20 @@ router.get('/product-by-store-product-id/:storeProductId', checkPermission, func
 	});
 });
 
+// Get products by EAN.
+router.get('/products-same-ean', async function(req, res, next) {
+    try {
+        let products = await productUtil.getSameEanProducts(req.query.ean);
+        log.debug(`router products: ${products}`);
+        log.debug(`router products count: ${products.length}`);
+        return res.json({products: products});
+    } catch(err) {
+        log.error(`[catch] Getting products by EAN: ${err.stack}`);
+        return res.status(500).send(err);
+    }
+});
+
+
 // Get product by zunka code.
 router.post('/product-copy-images/', checkPermission, function(req, res, next) {
     try {

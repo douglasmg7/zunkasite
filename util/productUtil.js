@@ -64,7 +64,10 @@ function getSimilarTitlesProducts(searchText) {
 // Get products with same EAN.
 async function getSameEanProducts(ean) {
     try {
+        // console.log(`getSameEanProducts ean: ${ean}`);
         const products = await Product.find({ean: ean.trim(), storeProductId: {$regex: /\S/}}).exec();
+        // const products = await Product.find({ean: ean.trim()}).exec();
+        // console.log(`products: ${products}`);
         return products;
     } catch (err) {
         log.error(`Getting products with same EAN. catch: ${err.message}`);
