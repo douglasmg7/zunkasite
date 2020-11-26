@@ -1,6 +1,10 @@
+## 1.12.1 (26 Nov 2020)
+### Melhorias
+Exibe se o produto está ativo no fornecedor e se foi selecionado para comercializar no cadastramento do produto.
+
 ## 1.12.0 (22 Nov 2020)
 ### Melhorias
-Ao inserir um código que já existe o sistema dá a opção de carregar as informações ou sobre escrever
+Ao inserir um código que já existe o sistema dá a opção de carregar as informações ou sobre escrever.
 
 ## 1.11.1 (17 Nov 2020)
 ### Melhorias

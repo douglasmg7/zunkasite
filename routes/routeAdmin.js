@@ -366,7 +366,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 			} else {
 				res.json({});
 				log.info(`Product ${product._id} updated`);
-				log.info(`Product title ${product.storeProductTitle} updated`);
+				// log.info(`Product title ${product.storeProductTitle} updated`);
                 productUtil.updateProductsWithSameStoreProductId(product);
 				// Sync upladed images with product.images.
 				// Get list of uploaded images.

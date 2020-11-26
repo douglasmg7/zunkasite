@@ -156,8 +156,8 @@ block content
             input(type='checkbox' id='marketZoom' v-model:checked='product.marketZoom')
             label(for='marketZoom') Incluir na ZOOM 
             //- Store product commercialize.
-            p.mt0.success-message(v-if='this.product.storeProudctCommercialize') Selecionado para venda (automático)
-            p.mt0.warn-message(v-if='!this.product.storeProudctCommercialize') Não selecionado para venda (automático)
+            p.mt0.success-message(v-if='this.product.storeProductCommercialize') Selecionado para venda (automático)
+            p.mt0.warn-message(v-if='!this.product.storeProductCommercialize') Não selecionado para venda (automático)
 
             //- Stock quantity.
             label(for='stock') Estoque (Unidade)
