@@ -1,3 +1,8 @@
+## 1.13.0 (27 Nov 2020)
+### Melhorias
+Carrega produtos com o mesmo EAN no cadastramento do produto.
+Usando novo servidor de email.
+
 ## 1.12.1 (26 Nov 2020)
 ### Melhorias
 Exibe se o produto está ativo no fornecedor e se foi selecionado para comercializar no cadastramento do produto.
