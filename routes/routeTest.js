@@ -14,27 +14,9 @@ router.get('/', (req, res, next)=>{
 
 // Test.
 router.post('/send-email', (req, res, next)=>{
-    emailSender.sendMailToDevV2("Test", `Teste de envio realizado as ${Date()}.`);
-    emailSender.sendMailToAdminV2("Test", `Teste de envio realizado as ${Date()}.`);
+    emailSender.sendMailToDev("Test", `Teste de envio realizado as ${Date()}.`);
+    emailSender.sendMailToAdmin("Test", `Teste de envio realizado as ${Date()}.`);
     res.send('Email enviado.');            
-
-    // let mailOptions = {
-        // from: '',
-        // to: 'douglasmg7@gmail.com',
-        // subject: 'Test',
-        // text: `Teste de envio realizado as ${Date()}.`
-    // }
-    // emailSender.sendMail(mailOptions, err=>{
-        // if (err) { 
-            // log.error(err.stack);
-            // // res.json({ success: false});            
-            // res.send('Erro ao enviar email.');            
-        // }
-        // else {
-            // // res.json({ success: true}); 
-            // res.send('Email enviado.');            
-        // }
-    // });          
 });
 
 module.exports = router;

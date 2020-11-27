@@ -65,7 +65,7 @@ function getSimilarTitlesProducts(searchText) {
 async function getSameEanProducts(ean) {
     try {
         // console.log(`getSameEanProducts ean: ${ean}`);
-        const products = await Product.find({ean: ean.trim(), storeProductId: {$regex: /\S/}}).exec();
+        const products = await Product.find({ean: ean.trim(), deletedAt: {$exists: false}, storeProductId: {$regex: /\S/}}).exec();
         // const products = await Product.find({ean: ean.trim()}).exec();
         // console.log(`products: ${products}`);
         return products;
@@ -233,7 +233,6 @@ function copyImageFiles(srcId, dstId) {
         let srcPath = path.join(__dirname, '..', 'dist/img/', srcId.toString())
         let dstPath = path.join(__dirname, '..', 'dist/img/', dstId.toString())
         fse.copySync(srcPath, dstPath);
-        console.log("copy end");
     } catch(err) {
         log.error(err.stack);
     }

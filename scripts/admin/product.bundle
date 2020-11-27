@@ -31,6 +31,8 @@ var app = new Vue({
         dealerProductPrice: '',
         // Button save animation.
         buttonSaveValue: 'Salvar',
+        enableWatchStoreProductId: true,
+        enableWatchEan: true,
     },
     created: function() {
         this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice.toFixed(2));
@@ -40,7 +42,7 @@ var app = new Vue({
     },
     watch: {
         'product.storeProductId': function(val) {
-            if (val) {
+            if (this.enableWatchStoreProductId && val) {
                 // console.log(`Getting product by storeProductId: ${val}`);
                 axios.get(`/admin/product-by-store-product-id/${val}`, {
                     headers: {
@@ -74,7 +76,7 @@ var app = new Vue({
                                     this.product.storeProductId = "";
                                     console.error(response.data.error);
                                 } else {
-                                    this.product.dealerName = "Dell";
+                                    // this.product.dealerName = "Dell";
                                     this.product.dealerProductWarrantyDays = tplProduct.dealerProductWarrantyDays;
                                     this.product.storeProductTitle = tplProduct.storeProductTitle;
                                     this.product.storeProductInfoMD = tplProduct.storeProductInfoMD;
@@ -94,12 +96,15 @@ var app = new Vue({
                                     this.product.images = tplProduct.images;
                                     this.product.includeOutletText = tplProduct.includeOutletText;
                                     this.product.displayPriority = tplProduct.displayPriority;
+                                    this.enableWatchEan = false;
                                     this.product.ean = tplProduct.ean;
+                                    let v = this;
+                                    setTimeout(function(){ v.enableWatchEan = true; },100);
                                     this.product.marketZoom = tplProduct.marketZoom;
                                 }
                             }) 
                             .catch((err)=>{
-                                console.log(err.stack);
+                                console.error(err.stack);
                             });
                         }
                     }
@@ -112,7 +117,7 @@ var app = new Vue({
             }
         },
         'product.ean': function(val) {
-            if (val) {
+            if (this.enableWatchEan && val) {
                 // console.log(`Getting product by storeProductId: ${val}`);
                 axios.get(`/admin/products-same-ean`, {
                     headers: {
@@ -132,12 +137,38 @@ var app = new Vue({
                     }
                     // Product found.
                     else if (response.data.products){
+                        // No same ean products found.
+                        if (!response.data.products.length) {
+                            return;
+                        }
                         let tplProduct;
+                        let msg = "";
+                        let zunkaCodes = [];
+                        for (let resProduct of response.data.products) {
+                            // console.log(`_id: ${resProduct._id}, storeProductId: ${resProduct.storeProductId}`);
+                            if (!zunkaCodes.includes(resProduct.storeProductId)
+                                && this.product._id != resProduct._id 
+                                && this.product.storeProductId != resProduct.storeProductId) 
+                            {
+                                // console.log(`pushed ->_id: ${resProduct._id}, storeProductId: ${resProduct.storeProductId}`);
+                                zunkaCodes.push(resProduct.storeProductId);
+                                msg += `\n    ${resProduct._id}`;
+                            }
+                        }
+                        // Same ean product found was it self.
+                        if (!zunkaCodes.length) {
+                            return;
+                        }
+                        // Usally products with same EAN must have the same storeProductId.
+                        if (zunkaCodes.length > 1) {
+                            window.alert(`Os seguintes produtos com o mesmo EAN mas com código Zunka diferentes foram encontrados:${msg}`);
+                            return;
+                        }
                         // Confirm load data from other product.
-                        console.log(`ean products: ${JSON.stringify(response.data.products, null, 4)}`);
-                        if(window.confirm(`Produto com código zunka ${response.data.product.storeProductId} já existe.\nDeseja carregar informações do produto existente?`)) {
-                            tplProduct = response.data.product;
-                            axios.post(`/admin/product-copy-images/`, { srcId: response.data.product._id, dstId: this.product._id }, {
+                        // console.log(`ean products: ${JSON.stringify(response.data.products, null, 4)}`);
+                        if(window.confirm(`Produto com EAN ${val} já existe.\nDeseja carregar informações do produto existente?`)) {
+                            tplProduct = response.data.products[0];
+                            axios.post(`/admin/product-copy-images/`, { srcId: tplProduct._id, dstId: this.product._id }, {
                                 headers: {
                                     "Accept": "application/json", 
                                     'csrf-token' : csrfToken,
@@ -151,8 +182,12 @@ var app = new Vue({
                                     this.product.storeProductId = "";
                                     console.error(response.data.error);
                                 } else {
-                                    this.product.dealerName = "Dell";
+                                    // this.product.dealerName = "Dell";
                                     this.product.dealerProductWarrantyDays = tplProduct.dealerProductWarrantyDays;
+                                    this.enableWatchStoreProductId = false;
+                                    this.product.storeProductId = tplProduct.storeProductId;
+                                    let v = this;
+                                    setTimeout(function(){ v.enableWatchStoreProductId = true; },100);
                                     this.product.storeProductTitle = tplProduct.storeProductTitle;
                                     this.product.storeProductInfoMD = tplProduct.storeProductInfoMD;
                                     this.product.storeProductDetail = tplProduct.storeProductDetail;
@@ -171,7 +206,6 @@ var app = new Vue({
                                     this.product.images = tplProduct.images;
                                     this.product.includeOutletText = tplProduct.includeOutletText;
                                     this.product.displayPriority = tplProduct.displayPriority;
-                                    this.product.ean = tplProduct.ean;
                                     this.product.marketZoom = tplProduct.marketZoom;
                                 }
                             }) 
@@ -233,7 +267,7 @@ var app = new Vue({
             product.storeProductPrice = this.toNumberFormatString(this.storeProductPriceBr);
             // Diasable discount.
             product.storeProductDiscountEnable = false;
-            console.log(`calcMarkup: ${product.storeProductPrice} - ${typeof product.storeProductPrice}`);
+            // console.log(`calcMarkup: ${product.storeProductPrice} - ${typeof product.storeProductPrice}`);
             //  Markup.
             product.storeProductMarkup = (((product.storeProductPrice / product.dealerProductPrice) - 1) * 100).toFixed(2);
             this.storeProductMarkupeBr = this.toBRCurrencyString(product.storeProductMarkup);

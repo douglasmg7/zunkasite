@@ -1,27 +1,15 @@
-remove debug
-    routeAmdin.js 361
-
 Verificar
     routeSetup.js 412
-    Não selecionado para venda (automático)
-        Mostrando errado (http://localhost:3080/admin/product/5f7ba01a0a17710aceb36657)
 
 Updage dell products quando colocar branch min_price para rodar.
     db.products.updateMany({dealerName: 'Dell'}, {$set: {dealerProductActive: true}})
-
 
 Usuário consegue comprar produto fora de estoque
     Corrigir routeCheckout.checkOrderProductsInStock   para produtos dell.
     Chamar routeCheckout.checkOrderProductsInStock ao fechar a ordem (router.post('/close/order/:order_id', (req, res, next)=>{)
     Corrigir a data da pedido na lista de pedidos diferente da data do pedido no detalhe do pedido. 
 
-Edit
-    routeCheckout - 1098    
-    app.js  - 65
-    routeTest - 16
-
-
-Allnatioins
+Allnations
     Quando acontece um erro na atualização dos produtos (allnations altera produto quantidade a partir do zunka.com.br/setup) a atualização não acontece novamente.
     O ideal é um serviço para atualizar zunkasite a partir do banco de dados que o allnations service escreve.
 

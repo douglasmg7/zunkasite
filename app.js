@@ -66,7 +66,7 @@ const moment = require('moment-timezone');
 const dealerUtil = require('./util/dealerUtil');
 
 // Site started email.
-emailSender.sendMailToDevV2('Zunka site started.', moment().tz('America/Sao_Paulo').format());
+emailSender.sendMailToDev('Zunka site started.', moment().tz('America/Sao_Paulo').format());
 
 // Cart.
 const Cart = require('./model/cart');

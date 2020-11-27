@@ -226,7 +226,9 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
 		productPromise = new Promise(function(resolve, reject){
 			// Create a new product.
 			let product = new Product({
-				dealerName: '',
+				dealerName: 'Dell',
+                dealerProductActive: true,
+                dealerProductPrice: 0,
 				storeProductId: '',
 				storeProductTitle: '',
 				storeProductActive: false,
@@ -359,6 +361,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 	else {
 		// Save product.
         log.debug(`Saving product ${req.body.product._id}, dealerProductActive: ${req.body.product.dealerProductActive}`);
+        log.debug(`Saving product ${req.body.product._id}, storeProductId: ${req.body.product.storeProductId}`);
 		Product.findOneAndUpdate({_id: req.body.product._id}, req.body.product, { new: true },  function(err, product){
 			if (err) {
 				res.json({err});
@@ -492,8 +495,8 @@ router.get('/product-by-store-product-id/:storeProductId', checkPermission, func
 router.get('/products-same-ean', async function(req, res, next) {
     try {
         let products = await productUtil.getSameEanProducts(req.query.ean);
-        log.debug(`router products: ${products}`);
-        log.debug(`router products count: ${products.length}`);
+        // log.debug(`router products: ${products}`);
+        // log.debug(`router products count: ${products.length}`);
         return res.json({products: products});
     } catch(err) {
         log.error(`[catch] Getting products by EAN: ${err.stack}`);
@@ -509,7 +512,6 @@ router.post('/product-copy-images/', checkPermission, function(req, res, next) {
         log.debug(`dstId: ${req.body.dstId}`);
         productUtil.copyImageFiles(req.body.srcId, req.body.dstId);
         // log.debug(`req.body: ${JSON.stringify(req.body, null, 4)}`);
-        console.log("res.send");
         res.send();
     } catch(err) {
         return next(err);

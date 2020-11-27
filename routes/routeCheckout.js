@@ -1095,16 +1095,6 @@ function closeOrder(order, req, res) {
 						// log.info(`Email with alert of new order sent to ${emailSender.adminEmail}`);
 					}
 				})
-                // todo - test
-                toAdminMailOptions.to = sendMail.adminEmailV2
-				emailSender.sendMail(toAdminMailOptions, err=>{
-					if (err) {
-						log.error(err.stack);
-					} else {
-						// log.info(`Email with alert of new order sent to ${emailSender.adminEmail}`);
-					}
-				})
-                // todo - end
 			})
 		}
 	})
