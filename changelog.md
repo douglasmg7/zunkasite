@@ -1,4 +1,4 @@
-## 1.14.0 (07 Dez 2020)
+## 1.14.1 (07 Dez 2020)
 ### Melhorias
 Log natalino.  
 Ao carregar dados de um produto a partir de código zunka ou ean, carrega informações de garantia também.  

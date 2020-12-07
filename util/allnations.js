@@ -95,7 +95,6 @@ function checkStock(product, qty, cb) {
                 } 
                 // Could not get product stock.
                 else {
-                    return cb(null, false);
                     // return cb(new Error(`Checking aldo product quantity. Aldo webservice response.data: ${response.data.err}`));
                     let update = { storeProductQtd: 0, dealerProductActive: false, storeProductCommercialize: false };
                     Product.updateOne({ _id: product._id }, update, err=>{
@@ -105,6 +104,7 @@ function checkStock(product, qty, cb) {
                             log.debug(`Allnations product ${product._id} was disabled, response.data: ${JSON.stringify(response.data, null, 4)}.`);
                         }
                     });
+                    return cb(null, false);
                 }
             })
             .catch(err => {
