@@ -1,8 +1,8 @@
 ## 1.14.0 (07 Dez 2020)
 ### Melhorias
-Log natalino.
-Ao carregar dados de um produto a partir de código zunka ou ean, carrega informações de garantia também.
-Desabilita produto Allnations quando recebe resposta vazia.
+Log natalino.  
+Ao carregar dados de um produto a partir de código zunka ou ean, carrega informações de garantia também.  
+Desabilita produto Allnations quando recebe resposta vazia.  
 
 ## 1.13.0 (27 Nov 2020)
 ### Melhorias
