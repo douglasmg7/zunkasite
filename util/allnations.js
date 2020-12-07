@@ -35,8 +35,11 @@ function checkStock(product, qty, cb) {
 
                 // Get information from xml.
                 let result = [];
+                // log.debug(`response.data: ${JSON.stringify(response.data, null, 4)}`);
                 const dom = new jsdom.JSDOM(response.data);
+                // log.debug(`dom: ${JSON.stringify(dom, null, 4)}`);
                 let stocks = dom.window.document.querySelectorAll("Estoques");
+                // log.debug(`stocks: ${JSON.stringify(stocks, null, 4)}`);
                 stocks.forEach(estoque=>{
                     let stockProduct = {};
                     stockProduct.code = estoque.querySelector("CODIGO").textContent;
@@ -46,6 +49,7 @@ function checkStock(product, qty, cb) {
                     stockProduct.stockQty = estoque.querySelector("ESTOQUEDISPONIVEL").textContent;
                     result.push(stockProduct);
                 });
+                // log.debug(`result: ${JSON.stringify(result, null, 4)}`);
 
                 // Get correct product.
                 let receivedProduct;
@@ -91,7 +95,16 @@ function checkStock(product, qty, cb) {
                 } 
                 // Could not get product stock.
                 else {
-                    return cb(new Error(`Checking aldo product quantity. Aldo webservice response.data: ${response.data.err}`));
+                    return cb(null, false);
+                    // return cb(new Error(`Checking aldo product quantity. Aldo webservice response.data: ${response.data.err}`));
+                    let update = { storeProductQtd: 0, dealerProductActive: false, storeProductCommercialize: false };
+                    Product.updateOne({ _id: product._id }, update, err=>{
+                        if (err) {
+                            log.error(`Disabling Allnations product with no data received: ${err.stack}`);
+                        } else {
+                            log.debug(`Allnations product ${product._id} was disabled, response.data: ${JSON.stringify(response.data, null, 4)}.`);
+                        }
+                    });
                 }
             })
             .catch(err => {
