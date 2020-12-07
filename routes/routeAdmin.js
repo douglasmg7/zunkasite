@@ -485,6 +485,7 @@ router.get('/product-by-store-product-id/:storeProductId', checkPermission, func
             res.json();
         } else {
             res.json({product});
+            // log.debug(`Product: ${JSON.stringify(product, null, 4)}`);
         }
 	}).catch(err=>{
 		return next(err);
@@ -508,8 +509,8 @@ router.get('/products-same-ean', async function(req, res, next) {
 // Get product by zunka code.
 router.post('/product-copy-images/', checkPermission, function(req, res, next) {
     try {
-        log.debug(`srcId: ${req.body.srcId}`);
-        log.debug(`dstId: ${req.body.dstId}`);
+        // log.debug(`srcId: ${req.body.srcId}`);
+        // log.debug(`dstId: ${req.body.dstId}`);
         productUtil.copyImageFiles(req.body.srcId, req.body.dstId);
         // log.debug(`req.body: ${JSON.stringify(req.body, null, 4)}`);
         res.send();

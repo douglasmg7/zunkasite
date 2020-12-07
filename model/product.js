@@ -58,7 +58,7 @@ let product = new mongoose.Schema({
     includeWarrantyText: { type: Boolean, default: false },
     // Deprecatade - end.
     includeOutletText: { type: Boolean, default: false },
-    warrantyMarkdownName: { type: String },
+    warrantyMarkdownName: { type: String, default: "" },
     displayPriority: { type: Number, default: 100 },
     // The International Article Number (also known as European Article Number or EAN) is a standard describing a barcode symbology and numbering system used in global trade to identify a specific retail product type, in a specific packaging configuration, from a specific manufacturer.
     ean: { type: String, default: '' },     // EAN/GTIN can be from several sizes

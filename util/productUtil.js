@@ -200,6 +200,12 @@ function updateProductsWithSameStoreProductId(changedProduct) {
             storeProductWidth: changedProduct.storeProductWidth,
             storeProductWeight: changedProduct.storeProductWeight,
             storeProductMarkup: changedProduct.storeProductMarkup,
+            storeProductWarrantyDays: changedProduct.storeProductWarrantyDays,
+            storeProductWarrantyDetail: changedProduct.storeProductWarrantyDetail,
+            warrantyMarkdownName: changedProduct.warrantyMarkdownName,
+            // Deprecatade - begin.
+            includeWarrantyText: changedProduct.includeWarrantyText,
+            // Deprecatade - end.
             images: changedProduct.images,
             includeOutletText: changedProduct.includeOutletText,
             displayPriority: changedProduct.displayPriority,
