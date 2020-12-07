@@ -18,9 +18,9 @@ if [ -z "$ZUNKA_SRV_DB" ]; then
 	exit 1 
 fi
 
-# ZUNKA_FREIGHT_DB not defined.
-if [ -z "$ZUNKA_FREIGHT_DB" ]; then
-	printf "error: ZUNKA_FREIGHT_DB not defined.\n" >&2
+# ALLNATIONS_DB not defined.
+if [ -z "$ALLNATIONS_DB" ]; then
+	printf "error: ALLNATIONS_DB not defined.\n" >&2
 	exit 1 
 fi
 
@@ -57,6 +57,11 @@ ZUNKASRV_DB_BACKUP=$BACKUP_DIR/sqlite3.zunkasrv.backup
 ALDOWSC_FILE_DB=$ZUNKAPATH/db/$ZUNKA_ALDOWSC_DB
 ALDOWSC_FILE_DB_OLD=$ZUNKAPATH/db/aldowsc-$(date +%Y_%m_%d).db
 ALDOWSC_DB_BACKUP=$BACKUP_DIR/sqlite3.aldowsc.backup
+
+# Allnations db.
+ALLNATIONS_FILE_DB=$ALLNATIONS_DB
+ALLNATIONS_FILE_DB_OLD=$ZUNKAPATH/db/allnations-$(date +%Y_%m_%d).db
+ALLNATIONS_DB_BACKUP=$BACKUP_DIR/sqlite3.allnations.backup
 
 # Warn freight db exist.
 if [[ -f $FREIGHT_FILE_DB ]]; then
@@ -118,6 +123,23 @@ while true; do
         break
     elif [[ $ANSWER == n ]]; then
         echo "Aldowsc db will not be imported"
+        break
+    else
+        echo "Invalid option: $ANSWER"
+    fi
+done
+
+# Allnations sqlite3 db.
+while true; do
+    echo
+    read -p "Import allnations from $ALLNATIONS_DB_BACKUP to $ALLNATIONS_FILE_DB? (y/n):" ANSWER
+    if [[ $ANSWER == y ]]; then
+        echo "Importing allnations db..."
+        mv $ALLNATIONS_FILE_DB $ALLNATIONS_FILE_DB_OLD
+        sqlite3 $ALLNATIONS_FILE_DB ".restore $ALLNATIONS_DB_BACKUP"
+        break
+    elif [[ $ANSWER == n ]]; then
+        echo "Allanations db will not be imported"
         break
     else
         echo "Invalid option: $ANSWER"
