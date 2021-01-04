@@ -1,3 +1,8 @@
+## 1.14.2 (04 Jan 2021)
+### Melhorias
+Inclusão do nome do fornecedor e código do produto no fornecedor na página de detalhes do pedido.
+Os ítens na página de lista de pedidos são links que podem ser abertos em outra aba.
+
 ## 1.14.1 (07 Dez 2020)
 ### Melhorias
 Log natalino.  

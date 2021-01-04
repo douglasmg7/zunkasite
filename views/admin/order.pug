@@ -79,6 +79,8 @@ block content
                 p {{item.price | formatMoney}}
                 //- p {{item.name}}
                 p {{item.quantity}} unidade{{ item.quantity | addS }}
+                p {{item.dealerName}} &nbsp [Fornecedor]
+                p(v-if='item.dealerProductId!=""') -{{item.dealerProductId}}- &nbsp [Código do produto no fornecedor]
                 .booking-info(v-if='item.dealerName=="Allnations"')
                     p(:class='bookingWarn(index)') {{ bookingStatus(index) }} - {{item.bookingId}}
                     p.warn {{ checkBookingProductQty(index) }} 

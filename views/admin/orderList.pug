@@ -35,7 +35,8 @@ block content
                 input(type='checkbox' id='showCanceled' v-model:checked='filter.canceled')
                 label(for='showCanceled') Cancelados
         .orders
-            a.order(v-for='order, index in orders' v-bind:class='[ order.status ]' @click='showOrderDetail(index, $event)')
+            //- a.order(v-for='order, index in orders' v-bind:class='[ order.status ]' @click='showOrderDetail(index, $event)')
+            a.order(:href='`/admin/order/${order._id}`' v-for='order, index in orders' v-bind:class='[ order.status ]')
                 p {{order.timestamps.shippingAddressSelectedAt | formatDate}} &nbsp&nbsp&nbsp {{order.name}} &nbsp&nbsp&nbsp {{order.totalPrice | formatMoney}} &nbsp&nbsp&nbsp
                 p {{actionStatus(order)}}
         nav.pagination
