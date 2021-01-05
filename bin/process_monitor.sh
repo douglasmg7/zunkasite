@@ -74,6 +74,6 @@ do
         printf "%s [PM] All processes running\n" "$(date +"%Y/%m/%d %T.%6N")" | tee -a $ZUNKAPATH/log/process_monitor.log
     fi
 
-    sleep 5
+    sleep 30
 done
 
