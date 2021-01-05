@@ -63,7 +63,7 @@ do
     fi
 
     # zoomproducts
-    if [[ -z $(pgrep www) ]]; then
+    if [[ -z $(pgrep zoomproducts) ]]; then
         ALL_PROCESS_RUNNING=false
         printf "%s [PM] Starting zoomproducts\n" "$(date +"%Y/%m/%d %T.%6N")" | tee -a $ZUNKAPATH/log/process_monitor.log
         RUN_MODE=production zoomproducts &
