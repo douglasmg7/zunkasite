@@ -1,3 +1,7 @@
+## 1.15.0 (20 Jan 2021)
+### Melhorias
+Alteração do banco Santander para INTER
+
 ## 1.14.2 (04 Jan 2021)
 ### Melhorias
 Inclusão do nome do fornecedor e código do produto no fornecedor na página de detalhes do pedido.

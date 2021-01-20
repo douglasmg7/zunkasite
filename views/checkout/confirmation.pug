@@ -17,7 +17,7 @@ block content
             hr
         .important-info(v-if='order.payment.method === "transfer"')
             h2.sub-title Informações importantes
-            p As vantagens de realizar o pagamento por transferência bancária são os valores dos produtos com descontos e o envio mais rápido caso a modalidade da transferência seja TED ou transferência entre contas do banco Santander, caso opte pela modalidade DOC, o envio do produto só ocorrerá no próximo dia útil em função da compensação bancária.
+            p As vantagens de realizar o pagamento por transferência bancária são os valores dos produtos com descontos e o envio mais rápido caso a modalidade da transferência seja TED ou transferência entre contas do banco INTER, caso opte pela modalidade DOC, o envio do produto só ocorrerá no próximo dia útil em função da compensação bancária.
             p Após a realização da transferência bancária, recomenda-se que o cliente envie o comprovante para o e-mail <span>zunka@outlook.com.br</span> ou pelo WhatsApp <span>(31) 99841-8491</span> para que o equipamento seja reservado caso este seja a última unidade em estoque.
             hr
         .bank-info(v-if='order.payment.method === "transfer"')
@@ -27,11 +27,11 @@ block content
             h3 CNPJ
             p 15.178.404/0001-47
             h3 Banco
-            p SANTANDER (033)
+            p INTER - 077
             h3 Agencia
-            p 0944
+            p 0001
             h3 Conta
-            p 13001412-1
+            p 1046929-0
             h3 Valor a ser depositado
             p {{ order.totalPrice | formatMoney }}
             hr

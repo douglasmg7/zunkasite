@@ -975,9 +975,9 @@ function closeOrder(order, req, res) {
 						'Dados bancários\n' +
 						'   Titular: ZUNKA COM E SERV EM INF EIRELI\n' +
 						'   CNPJ: 15.178.404/0001-47\n' +
-						'   Banco: Santander (033)\n' +
-						'   Agencia: 0944\n' +
-						'   Conta: 13001412-1\n' +
+						'   Banco: INTER (077)\n' +
+						'   Agencia: 0001\n' +
+						'   Conta: 1046929-0\n' +
 						'   Valor a ser depositado: R$ ' + order.totalPrice.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".") + '\n\n' +
 						'Número de pedido: ' + order._id + '\n\n' +
 						'Para acessor as informações do pedido acesse utilize o link abaixo.\n\n' +
