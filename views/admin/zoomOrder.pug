@@ -87,6 +87,9 @@ block content
         //- Delivery.
         h3 Envio - #{zoomOrder.shipping.shipping_method_name} - #{zoomOrder.shipping.shipping_method_id}
         p #{zoomOrder.shipping.estimate_shipping} dia(s) &nbsp - &nbsp #{formatMoney(zoomOrder.shipping.freight_price)} &nbsp&nbsp  
+        if (zoomOrder.shipments.length > 0) && zoomOrder.shipments[0].tracking_number
+            //- p #{zoomOrder.shipments[0].tracking_number} &nbsp [Rastreamento]
+            a(href=`https://www.linkcorreios.com.br/?id=${zoomOrder.shipments[0].tracking_number}`) #{zoomOrder.shipments[0].tracking_number} &nbsp [Rastreamento]
 
         // Products price.
         if zoomOrder.items
