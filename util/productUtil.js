@@ -136,7 +136,7 @@ function updateCommercializeStatusForSameProducts (products) {
             product.storeProductTitle != "" &&
             product.dealerProductActive &&
             product.storeProductActive &&
-            product.storeProductPrice > 100 &&
+            product.storeProductPrice > 1 &&
             product.storeProductQtd > 0 &&
             !product.deletedAt) 
         {

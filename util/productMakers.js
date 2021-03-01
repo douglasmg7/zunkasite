@@ -25,6 +25,7 @@ let regexMakers = [
 	{ name: 'PNY', regex: /\bpny\b/i},
 	{ name: 'Samsung', regex: /\bsamsung\b/i},
 	{ name: 'Seagate', regex: /\bseagate\b/i},
+	{ name: 'Smart', regex: /\bsmart\b/i},
 	{ name: 'SMS', regex: /\bsms\b/i},
 	{ name: 'TP-Link', regex: /\btp-?link\b/i},
 	{ name: 'Vaio', regex: /\bvaio\b/i},
