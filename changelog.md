@@ -1,3 +1,8 @@
+## 1.15.1 (01 Mar 2021)
+### Melhorias
+Inclusão do fabricante Smart
+Alteração do filtro de preço do produto para exibição no site, de $100,00 para R$1,00
+
 ## 1.15.0 (20 Jan 2021)
 ### Melhorias
 Alteração do banco Santander para INTER
