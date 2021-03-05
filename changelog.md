@@ -1,3 +1,7 @@
+## 1.15.2 (05 Mar 2021)
+### Melhorias
+Inclusão do fabricante Afox e Brother
+
 ## 1.15.1 (01 Mar 2021)
 ### Melhorias
 Inclusão do fabricante Smart

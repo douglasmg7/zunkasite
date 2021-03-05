@@ -4,10 +4,12 @@
 let regexMakers = [
 	{ name: 'Acer', regex: /\bacer\b/i},
 	{ name: 'ADATA', regex: /\badata\b/i},
+	{ name: 'Afox', regex: /\bafox\b/i},
 	{ name: 'AMD', regex: /\bamd\b/i},
 	{ name: 'AOC', regex: /\baoc\b/i},
 	{ name: 'APC', regex: /\bapc\b/i},
 	{ name: 'Asus', regex: /\basus\b/i},
+	{ name: 'Brother', regex: /\bbrother\b/i},
 	{ name: 'Cooler Master', regex: /\bcooler\s*master\b/i},
 	{ name: 'Corsair', regex: /\bcorsair\b/i},
 	{ name: 'D-Link', regex: /\bd-?link\b/i},
