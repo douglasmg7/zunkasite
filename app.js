@@ -11,7 +11,11 @@ const checkEnvs = require('./util/checkEnvs.js').check([
     "ZUNKAPATH",
     "ALLNATIONS_HOST",
     "ALLNATIONS_USER",
-    "ALLNATIONS_PASS"
+    "ALLNATIONS_PASS",
+    "MERCADO_LIVRE_APP_ID",
+    "MERCADO_LIVRE_SECRET_KEY",
+    "MERCADO_LIVRE_REDIRECT_URL",
+    "MERCADO_LIVRE_USER_ID"
 ]);
 
 // Run mode.

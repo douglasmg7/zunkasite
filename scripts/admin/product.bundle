@@ -430,5 +430,57 @@ var app = new Vue({
             // console.log(`toBRCurrencyString - ${val} - ${typeof val}`);
             return val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         },
+        // Create product into mercado livre
+        createProductIntoMercadoLivre(){
+            console.log('createProductIntoMercadoLivre');
+            return;
+            // console.log(`link-a: ${link}`);
+            // console.debug(product.storeProductCategory);
+            axios({
+                method: 'post',
+                url: window.location.pathname,
+                headers:{'csrf-token' : csrfToken},
+                data: { product: product }
+            })
+            .then(response => {
+                // Validation error.
+                // console.log(JSON.stringify(response.data, null, 2));
+                if (response.data.validation) {
+                    for (let key in this.validation){
+                        this.validation[key] = response.data.validation[key];
+                    }
+                    alert('Não foi possível salvar.\nConfira as mensagens de erro nos campos.');
+                    return;
+                    // No error validation.
+                } else {
+                    // Clean error validation.
+                    for (let key in this.validation){
+                        this.validation[key] = '';
+                    }
+                }
+                // Server side error.
+                if (response.data.err) {
+                    alert('Não foi possível salvar.');
+                // Saved.
+                } 
+                else {
+                    // console.log(`link: ${link}`);
+                    if (!link) {
+                        window.location.href = '/admin/';
+                    } else if (link != 'stay') {
+                        window.location.href = link;
+                    } else {
+                        this.buttonSaveValue = 'Ok';
+                        setTimeout(()=>{
+                            this.buttonSaveValue = 'Salvar';
+                        }, 300);
+                    }
+                }
+            })
+            .catch(err => {
+                alert('Não foi possível salvar.');
+                console.error(err);
+            })
+        },
     },
 });

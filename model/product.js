@@ -65,6 +65,7 @@ let product = new mongoose.Schema({
     // ean: { type: String, match: /^\d{13}$/ },
 	deletedAt: { type: Date }, // When the product was deleted.
     marketZoom: { type: Boolean, default: false },  // If to be market in the zoom market place.
+    mercadoLivreId: { type: String },
 },
 {
 	timestamps: true

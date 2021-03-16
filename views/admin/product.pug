@@ -140,6 +140,18 @@ block content
             label(for='finalPrice') Valor final (R$)
             //- input(type='text' id='finalPrice', v-model='product.storeProductPrice', v-on:input='calcMarkup')
             input(type='text' id='finalPrice', v-model='storeProductPriceBr', v-on:input='calcMarkup')
+        // Only valid for notebooks
+        .mercado-livre(v-if='product.storeProductCategory=="Notebooks"')
+            h2 Mercado Livre
+            hr
+            // Not have product on mercado livre
+            .no-have-ml-id(v-if='!this.product.mercadoLivreId')
+                input.btn-success(type='button' v-on:click='createProductIntoMercadoLivre()' value='Criar produto no Mercado Livre')
+            // Have product on mercado livre
+            .have-ml-id(v-if='this.product.mercadoLivreId')
+                p {{ product.mercadoLivreId }}
+                input.btn-success(type='button' v-on:click='saveProduct()' value='Desablitar produto no Mercado Livre')
+                input.btn-success(type='button' v-on:click='saveProduct()' value='Remover produto do Mercado Livre')
         .status
             h2 Status
             hr
@@ -174,7 +186,6 @@ block content
             label(for='display-priority' :class='{ error: validation.displayPriority }') Prioridade de exibição {{ validation.displayPriority }}
             input(type='text' id='display-priority' v-model='product.displayPriority')
         .buttons
-
             if user.email!='douglasmg7@gmail.com'
                 input.btn-success(type='button' v-on:click='saveProduct()' value='Salvar e voltar')
                 input.btn-success(type='button' v-on:click='saveProduct(`/product/${product._id}`)' value='Salvar e ver produto')
