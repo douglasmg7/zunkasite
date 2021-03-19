@@ -2089,3 +2089,15 @@ router.delete('/markdown/:_id', checkPermission, (req, res, next)=>{
         return res.status(500).send();
      });
 });
+
+/******************************************************************************
+/  MERCADO LIVRE
+ ******************************************************************************/
+// Authorization code
+router.get('/meli/auth-code/:ok', checkPermission, (req, res, next)=>{
+    let message = "Código de autorização do Mercado Livre não foi recebido";
+    if (req.params.ok === 'true') {
+        message = "Código de autorização do Mercado Livre foi atualizado";
+    } 
+    res.render('meli/authCode', { message: message });
+});

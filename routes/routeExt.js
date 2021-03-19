@@ -21,6 +21,9 @@ const allnations = require('../util/allnations');
 const zoom = require('../util/zoom');
 const routeCheckout = require('./routeCheckout');
 
+// Mercado Livre
+const meli = require('../util/mercadoLivre.js');
+
 module.exports = router;
 
 // Convert to brazilian currency.
@@ -566,5 +569,21 @@ router.post('/ppp/webhook-listener', (req, res, next)=>{
         });
     } catch(err) {
         log.error(`Checking payment complete (webhook event). ${err.message}`);
+    }
+});
+
+/******************************************************************************
+/ Mercado Livre
+ ******************************************************************************/
+router.get('/meli/auth-code', function(req, res, next) {
+    log.debug(`Mercado livre auth code url: ${req.url}`);
+
+    let authCode = req.query.code;
+    if (authCode) {
+        meli.setMeliAuthCode(authCode);
+        log.debug(`Mercado livre auth code: ${authCode}`);
+        res.redirect('/admin/meli/auth-code/true');
+    } else { 
+        res.redirect('/admin/meli/auth-code/false');
     }
 });

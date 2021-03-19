@@ -9,6 +9,36 @@ const emailSender = require('../config/email');
 // Min stock quantity in stock dealer to permit sell.
 const MIN_STOCK_TO_SELL = 1;
 
+const MERCADO_LIVRE_AUTH_URL = "http://auth.mercadolivre.com.br/authorization" ;
+
+// Mercado livre authorization code
+let meliAuthCode = "";
+function getMeliAuthCode() {
+    return meliAuthCode;
+}
+function setMeliAuthCode(authCode) {
+    meliAuthCode = authCode;
+}
+
+// Get authorization
+async function getAuthorization() {
+    try{
+        let url = MERCADO_LIVRE_AUTH_URL + 
+            "?response_type=code&" +
+            `client_id=${process.env.MERCADO_LIVRE_USER_ID}&` + 
+            `redirect_uri=${process.env.MERCADO_LIVRE_REDIRECT_URL_ZUNKASITE}`;
+
+        let response = await axios.get(url);
+        if (response.data.err) {
+            log.error(response.data.err);
+			return next(response.data.err);
+        } 
+    } catch(err) {
+        log.error(`catch - Getting allnations booking information. ${err.stack}`);
+        return null;
+    }
+}
+
 // Check aldo product quantity.
 function checkStock(product, qty, cb) {
     try {
@@ -277,6 +307,9 @@ async function confirmBooking(item) {
         log.error(`catch - Confirming allnations booking ${item.bookingId}. ${err.stack}`);
     }
 }
+
+module.exports.getMeliAuthCode = getMeliAuthCode;
+module.exports.setMeliAuthCode = setMeliAuthCode;
 
 module.exports.checkStock = checkStock;
 module.exports.getBooking = getBooking;
