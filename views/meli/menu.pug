@@ -1,0 +1,23 @@
+extends ../layout/layout
+
+block title
+    title Mercado Livre - Menu
+
+block append internal_style
+    style.
+        section a {
+            font-size: 1.6em;
+            margin-top: .7em;
+            display: block;
+            display: flex;
+            flex-flow: row wrap;
+            cursor: pointer;
+        }
+        section a:hover {
+            text-decoration: underline;
+        }
+
+block content
+    section
+        a(href='https://www.zunka.com.br/admin/meli/auth-code/import') Importar código de autorização
+        a(href='/admin/meli/active-products') Produtos ativos

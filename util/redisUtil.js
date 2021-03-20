@@ -7,6 +7,8 @@ const redis = require('../db/redis');
 const PRODUCT_LIST_FILTER_USER = 'product_list_filter_user_';
 const DEALER_ACTIVATION = 'dealer_activation_';
 
+const MELI_AUTH_CODE = 'meli_auth_code';
+
 ///////////////////////////////////////////////////////////////////////////////
 // Product list filter
 ///////////////////////////////////////////////////////////////////////////////
@@ -78,8 +80,45 @@ function setDealerActivation(dealer, activation) {
     });
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// Mercado Livre authorization code
+///////////////////////////////////////////////////////////////////////////////
+function getMeliAuthCode(dealer) {
+    return new Promise((resolve, reject) => {
+        try {
+            redis.get(MELI_AUTH_CODE, (err, meliAuthCode)=>{
+                if (err) {
+                    reject(new Error(`Retriving Mercado Livre authorization code from redis db. ${err.message}`));
+                }
+                if (meliAuthCode == null) {
+                    return resolve("");
+                }
+                return resolve(meliAuthCode);
+            });
+        } 
+        catch (err) {
+            reject(err);
+        }
+    });
+}
+
+function setMeliAuthCode(meliAuthCode) {
+    return new Promise(resolve => {
+        redis.set(MELI_AUTH_CODE, meliAuthCode, err=>{
+            if (err) {
+                reject(new Error(`Setting Mercado Livre authorization code on redis db. ${err.message}`));
+            } else {
+                resolve(meliAuthCode);
+            }
+        });
+    });
+}
+
 module.exports.getPorductListFilter = getPorductListFilter;
 module.exports.setPorductListFilter = setPorductListFilter;
 
 module.exports.getDealerActivation = getDealerActivation;
 module.exports.setDealerActivation = setDealerActivation;
+
+module.exports.getMeliAuthCode = getMeliAuthCode;
+module.exports.setMeliAuthCode = setMeliAuthCode;

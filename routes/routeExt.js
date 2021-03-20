@@ -575,15 +575,17 @@ router.post('/ppp/webhook-listener', (req, res, next)=>{
 /******************************************************************************
 / Mercado Livre
  ******************************************************************************/
-router.get('/meli/auth-code', function(req, res, next) {
+router.get('/meli/auth-code/receive', function(req, res, next) {
+    // todo - remove debug
     log.debug(`Mercado livre auth code url: ${req.url}`);
 
     let authCode = req.query.code;
     if (authCode) {
         meli.setMeliAuthCode(authCode);
+        // todo - remove debug
         log.debug(`Mercado livre auth code: ${authCode}`);
-        res.redirect('/admin/meli/auth-code/true');
+        res.redirect('/admin/meli/auth-code/receive/true');
     } else { 
-        res.redirect('/admin/meli/auth-code/false');
+        res.redirect('/admin/meli/auth-code/receive/false');
     }
 });
