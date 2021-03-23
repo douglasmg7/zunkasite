@@ -2097,7 +2097,13 @@ router.delete('/markdown/:_id', checkPermission, (req, res, next)=>{
  ******************************************************************************/
 // Menu
 router.get('/meli/menu', checkPermission, (req, res, next)=>{
-    res.render('meli/menu');
+    // log.debug(`Run mode: ${process.env.NODE_ENV == 'development'}`);
+    res.render('meli/menu', {devMode: process.env.NODE_ENV == 'development'});
+});
+
+// Get meli authorization code from meli
+router.get('/meli/auth-code/authenticate', checkPermission, async (req, res, next)=>{
+    await meli.getAuthorization();
 });
 
 // Receive authorization code from mercado livre

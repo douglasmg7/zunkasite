@@ -2,21 +2,12 @@
 
 const log = require('../config/log');
 const axios = require('axios');
-const Product = require('../model/product');
-const jsdom = require('jsdom');
-const emailSender = require('../config/email');
 
 // Redis
 const redisUtil = require('../util/redisUtil.js');
 
-
-// Min stock quantity in stock dealer to permit sell.
-const MIN_STOCK_TO_SELL = 1;
-
-
-
-
 const MERCADO_LIVRE_AUTH_URL = "http://auth.mercadolivre.com.br/authorization" ;
+// const MERCADO_LIVRE_AUTH_URL = "http://auth.mercadolibre.com.ar/authorization" ;
 
 let meliAuthCode;
 
@@ -43,6 +34,8 @@ async function getAuthorization() {
             "?response_type=code&" +
             `client_id=${process.env.MERCADO_LIVRE_USER_ID}&` + 
             `redirect_uri=${process.env.MERCADO_LIVRE_REDIRECT_URL_ZUNKASITE}`;
+        // todo - comment
+        log.debug(`URL to get meli authorization code: ${url}`);
 
         let response = await axios.get(url);
         if (response.data.err) {
@@ -54,6 +47,8 @@ async function getAuthorization() {
         return null;
     }
 }
+
+module.exports.getAuthorization = getAuthorization;
 
 module.exports.getMeliAuthCode = getMeliAuthCode;
 module.exports.setMeliAuthCode = setMeliAuthCode;

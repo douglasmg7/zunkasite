@@ -5,19 +5,27 @@ block title
 
 block append internal_style
     style.
+        section > h2:first-child {
+            margin-top: 0;
+            margin-bottom: .6em;
+        }
         section a {
-            font-size: 1.6em;
-            margin-top: .7em;
             display: block;
             display: flex;
             flex-flow: row wrap;
+            color: var(--green);
             cursor: pointer;
+            margin-bottom: .6em;
         }
         section a:hover {
+            color: var(--green);
             text-decoration: underline;
         }
 
 block content
     section
-        a(href='https://www.zunka.com.br/admin/meli/auth-code/import') Importar código de autorização
+        h2 Mercado Livre
+        a(href='/admin/meli/auth-code/authenticate') Autenticar
+        if devMode
+            a(href='https://www.zunka.com.br/admin/meli/auth-code/import') Importar código de autorização
         a(href='/admin/meli/active-products') Produtos ativos
