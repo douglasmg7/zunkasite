@@ -6,7 +6,7 @@ const axios = require('axios');
 // Redis
 const redisUtil = require('../util/redisUtil.js');
 
-const MERCADO_LIVRE_AUTH_URL = "http://auth.mercadolivre.com.br/authorization" ;
+const MERCADO_LIVRE_AUTH_URL = "https://auth.mercadolivre.com.br/authorization" ;
 // const MERCADO_LIVRE_AUTH_URL = "http://auth.mercadolibre.com.ar/authorization" ;
 
 let meliAuthCode;
@@ -28,27 +28,39 @@ async function loadMeliAuthCode() {
 }
 
 // Get authorization
-async function getAuthorization() {
-    try{
-        let url = MERCADO_LIVRE_AUTH_URL + 
-            "?response_type=code&" +
-            `client_id=${process.env.MERCADO_LIVRE_USER_ID}&` + 
-            `redirect_uri=${process.env.MERCADO_LIVRE_REDIRECT_URL_ZUNKASITE}`;
-        // todo - comment
-        log.debug(`URL to get meli authorization code: ${url}`);
-
-        let response = await axios.get(url);
-        if (response.data.err) {
-            log.error(response.data.err);
-			return next(response.data.err);
-        } 
-    } catch(err) {
-        log.error(`catch - Getting allnations booking information. ${err.stack}`);
-        return null;
-    }
+function getAuthorizationURL() {
+    let url = MERCADO_LIVRE_AUTH_URL + 
+        "?response_type=code&" +
+        `client_id=${process.env.MERCADO_LIVRE_APP_ID}&` + 
+        `redirect_uri=${process.env.MERCADO_LIVRE_REDIRECT_URL_ZUNKASITE}`;
+    // todo - comment
+    log.debug(`URL to get meli authorization code: ${url}`);
+    return url;
 }
 
-module.exports.getAuthorization = getAuthorization;
+// // Get authorization
+// async function getAuthorization() {
+    // try{
+        // let url = MERCADO_LIVRE_AUTH_URL + 
+            // "?response_type=code&" +
+            // `client_id=${process.env.MERCADO_LIVRE_APP_ID}&` + 
+            // `redirect_uri=${process.env.MERCADO_LIVRE_REDIRECT_URL_ZUNKASITE}`;
+        // // todo - comment
+        // log.debug(`URL to get meli authorization code: ${url}`);
+
+        // let response = await axios.get(url);
+        // if (response.data.err) {
+            // log.error(response.data.err);
+			// return next(response.data.err);
+        // } 
+        // log.debug(`response: ${JSON.stringify(response.data, null, 2)}`);
+    // } catch(err) {
+        // log.error(`catch - Getting allnations booking information. ${err.stack}`);
+        // return null;
+    // }
+// }
+
+module.exports.getAuthorizationURL = getAuthorizationURL;
 
 module.exports.getMeliAuthCode = getMeliAuthCode;
 module.exports.setMeliAuthCode = setMeliAuthCode;

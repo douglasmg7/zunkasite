@@ -2102,8 +2102,8 @@ router.get('/meli/menu', checkPermission, (req, res, next)=>{
 });
 
 // Get meli authorization code from meli
-router.get('/meli/auth-code/authenticate', checkPermission, async (req, res, next)=>{
-    await meli.getAuthorization();
+router.get('/meli/auth-code/authenticate', checkPermission, (req, res, next)=>{
+    res.redirect(meli.getAuthorizationURL());
 });
 
 // Receive authorization code from mercado livre
