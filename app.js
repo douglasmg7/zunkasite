@@ -89,6 +89,7 @@ const routeCheckout = require('./routes/routeCheckout');
 const routeSetup = require('./routes/routeSetup.js');
 const routeTest = require('./routes/routeTest');
 const routeAdmin = require('./routes/routeAdmin');
+const routeMeli = require('./routes/routeMeli');
 const routeExt = require('./routes/routeExt');
 
 // Product categories init.
@@ -312,6 +313,7 @@ app.use('/', routeSite);
 app.use('/info', routeInfo);
 app.use('/checkout', routeCheckout);
 app.use('/admin', routeAdmin);
+app.use('/meli', routeMeli);
 // CSRF error handler.
 app.use(function (err, req, res, next) {
     if (err.code !== 'EBADCSRFTOKEN') return next(err);

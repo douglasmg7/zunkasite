@@ -6,8 +6,11 @@ const axios = require('axios');
 // Redis
 const redisUtil = require('../util/redisUtil.js');
 
-const MERCADO_LIVRE_AUTH_URL = "https://auth.mercadolivre.com.br/authorization" ;
-// const MERCADO_LIVRE_AUTH_URL = "http://auth.mercadolibre.com.ar/authorization" ;
+const MELI_AUTH_URL = "https://auth.mercadolivre.com.br/authorization" ;
+// const MELI_AUTH_URL = "http://auth.mercadolibre.com.ar/authorization" ;
+
+const MELI_API_URL = 'https://api.mercadolibre.com';
+
 
 let meliAuthCode;
 
@@ -29,7 +32,7 @@ async function loadMeliAuthCode() {
 
 // Get authorization
 function getAuthorizationURL() {
-    let url = MERCADO_LIVRE_AUTH_URL + 
+    let url = MELI_AUTH_URL + 
         "?response_type=code&" +
         `client_id=${process.env.MERCADO_LIVRE_APP_ID}&` + 
         `redirect_uri=${process.env.MERCADO_LIVRE_REDIRECT_URL_ZUNKASITE}`;
@@ -41,7 +44,7 @@ function getAuthorizationURL() {
 // // Get authorization
 // async function getAuthorization() {
     // try{
-        // let url = MERCADO_LIVRE_AUTH_URL + 
+        // let url = MELI_AUTH_URL + 
             // "?response_type=code&" +
             // `client_id=${process.env.MERCADO_LIVRE_APP_ID}&` + 
             // `redirect_uri=${process.env.MERCADO_LIVRE_REDIRECT_URL_ZUNKASITE}`;
@@ -64,3 +67,5 @@ module.exports.getAuthorizationURL = getAuthorizationURL;
 
 module.exports.getMeliAuthCode = getMeliAuthCode;
 module.exports.setMeliAuthCode = setMeliAuthCode;
+
+module.exports.MELI_API_URL = MELI_API_URL;

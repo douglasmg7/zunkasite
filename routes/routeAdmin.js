@@ -42,8 +42,6 @@ const productUtil = require('../util/productUtil');
 const PRODUCT_QTD_BY_PAGE = 20;
 // Max order quantity by Page.
 const ORDER_QTD_BY_PAGE = 20;
-// Mercado Livre
-const meli = require('../util/mercadoLivre.js');
 
 // Check permission.
 function checkPermission (req, res, next) {
@@ -69,7 +67,6 @@ function formatMoney(val){
     return 'R$ ' + val.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
-module.exports = router;
 
 /******************************************************************************
 /  PRODUCTS
@@ -2092,62 +2089,4 @@ router.delete('/markdown/:_id', checkPermission, (req, res, next)=>{
      });
 });
 
-/******************************************************************************
-/  MERCADO LIVRE
- ******************************************************************************/
-// Menu
-router.get('/meli/menu', checkPermission, (req, res, next)=>{
-    // log.debug(`Run mode: ${process.env.NODE_ENV == 'development'}`);
-    res.render('meli/menu', {devMode: process.env.NODE_ENV == 'development'});
-});
-
-// Get meli authorization code from meli
-router.get('/meli/auth-code/authenticate', checkPermission, (req, res, next)=>{
-    res.redirect(meli.getAuthorizationURL());
-});
-
-// Receive authorization code from mercado livre
-router.get('/meli/auth-code/receive/:ok', checkPermission, (req, res, next)=>{
-    let message = "Código de autorização do Mercado Livre não foi recebido";
-    if (req.params.ok === 'true') {
-        message = "Código de autorização do Mercado Livre foi atualizado";
-    } 
-    res.render('meli/authCode', { message: message });
-});
-
-// Export authorization code
-router.get('/meli/auth-code/export', s.basicAuth, (req, res, next)=>{
-    log.debug(`sending auth code: ${meli.getMeliAuthCode()}`);
-    res.send(meli.getMeliAuthCode());
-});
-
-// Import authorization code
-router.get('/meli/auth-code/import', checkPermission, (req, res, next)=>{
-    try {
-        axios.get('https://www.zunka.com.br/admin/meli/auth-code/export', {
-            headers: {
-                "Accept": "application/json", 
-            },
-            auth: { 
-                username: s.zunkaSiteProduction.user, 
-                password: s.zunkaSiteProduction.password
-            },
-        })
-            .then(response => {
-                if (response.data.err) {
-                    log.error(new Error(`Importing mercado livre authorization code. ${response.data.err}`));
-                } else {
-                    log.debug(`response.data: ${response.data}`);
-                    meli.setMeliAuthCode(response.data);
-                    return res.render('meli/authCode', { message: 'Código de autorização do Mercado Livre importado' });
-                }
-            })
-            .catch(err => {
-                log.error(err.stack);
-                return res.status(500).send();
-            }); 
-    } catch(err) {
-        log.error(`Importing mercado livre authorization code. ${err}`);
-        return res.status(500).send();
-    }
-});
+module.exports = router;

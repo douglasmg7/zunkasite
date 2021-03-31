@@ -1,0 +1,57 @@
+extends ../layout/layout
+
+block title
+    title Zunka - Mercado Livre
+
+block append internal_style
+    style.
+        section {
+            margin-bottom: 1em;
+        }
+        section > h2:first-child {
+            margin-top: 0;
+            margin-bottom: .5em;
+        }
+        section h3 {
+            margin-top: .5em;
+        }
+        section a {
+            display: block;
+            display: flex;
+            flex-flow: row wrap;
+            // font-size: 1.2em;
+            margin-top: .8em;
+            color: var(--green);
+            cursor: pointer;
+        }
+        section a:hover {
+            color: var(--green);
+            text-decoration: underline;
+        }
+        section a span.title {
+            // min-width: 4em;
+            text-align: right;
+            // margin-right: 3em;
+        }
+        section a span.price {
+            // min-width: 5em;
+            text-align: right;
+            // margin-right: 3em;
+        }
+
+block content 
+    section
+        //- Title
+        h2 Produtos ativos no Mercado Livre
+
+        //- Products
+        each product in products
+            a(href=`/meli/products/${product.id}`) 
+                span !{product.id} &nbsp - &nbsp 
+                span.title !{product.title}  &nbsp - &nbsp
+                span.price R$ !{product.price}
+                //- span.price R$ !{brCurrency(fr.price)}
+
+//- append internal_scripts
+    //- script.
+        //- let freights = !{JSON.stringify(freights)};

@@ -22,7 +22,7 @@ const zoom = require('../util/zoom');
 const routeCheckout = require('./routeCheckout');
 
 // Mercado Livre
-const meli = require('../util/mercadoLivre.js');
+const meli = require('../util/meli.js');
 
 module.exports = router;
 
@@ -584,8 +584,8 @@ router.get('/meli/auth-code/receive', function(req, res, next) {
         meli.setMeliAuthCode(authCode);
         // todo - remove debug
         log.debug(`Mercado livre auth code: ${authCode}`);
-        res.redirect('/admin/meli/auth-code/receive/true');
+        res.redirect('/meli/auth-code/receive/true');
     } else { 
-        res.redirect('/admin/meli/auth-code/receive/false');
+        res.redirect('/meli/auth-code/receive/false');
     }
 });
