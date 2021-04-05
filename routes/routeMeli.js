@@ -86,8 +86,28 @@ router.get('/auth-code/import', checkPermission, (req, res, next)=>{
 router.get('/products', checkPermission, async (req, res, next)=>{
     try{
         let url = `${meli.MELI_API_URL}/sites/MLB/search?seller_id=${process.env.MERCADO_LIVRE_USER_ID}`
+        // log.debug(`get meli products: ${url}`);
+
+        let response = await axios.get(url);
+        if (response.data.err) {
+            log.error(response.data.err);
+            return next(response.data.err);
+        } 
+        // log.debug(`response: ${JSON.stringify(response.data, null, 2)}`);
+        return res.render('meli/products', { products: response.data.results });
+    } catch(err) {
+        // log.error(`catch - Getting meli products. ${err.stack}`);
+        return next(err)
+    }
+});
+
+// Render product
+router.get('/product/:id', checkPermission, async (req, res, next)=>{
+    try{
+        // let url = `${meli.MELI_API_URL}/sites/MLB/search?seller_id=${process.env.MERCADO_LIVRE_USER_ID}`
+        let url = `${meli.MELI_API_URL}/items/${req.params.id}`
         // todo - comment
-        log.debug(`get meli products: ${url}`);
+        log.debug(`get meli product: ${url}`);
 
         let response = await axios.get(url);
         if (response.data.err) {
@@ -95,7 +115,7 @@ router.get('/products', checkPermission, async (req, res, next)=>{
             return next(response.data.err);
         } 
         log.debug(`response: ${JSON.stringify(response.data, null, 2)}`);
-        return res.render('meli/products', { products: response.data.results });
+        return res.render('meli/product', { product: response.data });
     } catch(err) {
         // log.error(`catch - Getting meli products. ${err.stack}`);
         return next(err)

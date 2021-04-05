@@ -46,12 +46,7 @@ block content
 
         //- Products
         each product in products
-            a(href=`/meli/products/${product.id}`) 
+            a(href=`/meli/product/${product.id}`) 
                 span !{product.id} &nbsp - &nbsp 
                 span.title !{product.title}  &nbsp - &nbsp
                 span.price R$ !{product.price}
-                //- span.price R$ !{brCurrency(fr.price)}
-
-//- append internal_scripts
-    //- script.
-        //- let freights = !{JSON.stringify(freights)};

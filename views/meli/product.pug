@@ -1,0 +1,81 @@
+extends ../layout/layout
+
+block title
+    title Zunka - Mercado Livre produto
+
+block append internal_style
+    style.
+        section {
+            margin-bottom: 1em;
+        }
+        section > h2:first-child {
+            margin-top: 0;
+            margin-bottom: .5em;
+            color: var(--green);
+        }
+        section .group h3 {
+            margin: 0
+            color: var(--black-darkest);
+        }
+        section .group p {
+            margin: 0 0 0.7em 0;
+            color: var(--black-dark);
+        }
+        section .group a {
+            display: block;
+            display: flex;
+            flex-flow: row wrap;
+            margin-top: .0em;
+            margin-bottom: .7em;
+            color: var(--green);
+            cursor: pointer;
+        }
+        section .group a:hover {
+            color: var(--green);
+            text-decoration: underline;
+        }
+
+block content 
+    section
+        //- title
+        h2= product.title
+
+        //- id
+        .group
+            h3 Id
+            p= product.id
+
+        //- category
+        .group
+            h3 Categoria
+            p= product.category_id
+
+        //- price
+        .group
+            h3 Preço
+            p R$ !{product.price}
+
+        //- stock
+        .group
+            h3 Estoque
+            p= product.available_quantity
+
+        //- start time
+        .group
+            h3 Momento de Inicio
+            p= product.start_time
+
+        //- stop time
+        .group
+            h3 Momento de paralização
+            p= product.stop_time
+
+        //- link site
+        .group
+            h3 Link site
+            a(href=`${product.permalink}`) !{product.permalink}
+
+        //- link info
+        .group
+            h3 Link api
+            a(href=`https://api.mercadolibre.com/items/${product.id}`) https://api.mercadolibre.com/items/!{product.id}
