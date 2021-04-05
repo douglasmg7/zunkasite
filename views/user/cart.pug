@@ -9,6 +9,7 @@ block append css
 block content 
     section
         .cart-empty(v-if='!cart.products.length')
+            h1 Carrinho vazio
             h2.title Ainda não existem produtos no seu carrinho de compras
         .cart(v-if='cart.products.length')
             h2.title Carrinho de compras    

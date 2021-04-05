@@ -1,3 +1,8 @@
+## 1.15.3 (05 Abril 2021)
+### Melhorias
+Inclusão do fabricante Intelbras
+Formatação da tela do carrinho vazio
+
 ## 1.15.2 (05 Mar 2021)
 ### Melhorias
 Inclusão do fabricante Afox e Brother
