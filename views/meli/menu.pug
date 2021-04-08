@@ -25,7 +25,15 @@ block append internal_style
 block content
     section
         h2 Mercado Livre
-        a(href='/meli/auth-code/authenticate') Autenticar
+        //- authenticate
+        a(href='/meli/auth-code/authenticate') Autenticar no ML para obter código de autorização
+
+        //- import authorization code
         if devMode
-            a(href='/meli/auth-code/import') Importar código de autorização
+            a(href='/meli/auth-code/import') Importar código de autorização do servidor de produção
+
+        //- get access token
+        a(href='/meli/access-token') Obter chave de acesso
+
+        //- active products
         a(href='/meli/products') Produtos ativos

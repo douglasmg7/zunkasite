@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const log = require('../config/log');
 const axios = require('axios');
+const FormData = require('form-data');
 // Internal.
 const s = require('../config/s');
 // Mercado Livre
@@ -73,6 +74,76 @@ router.get('/auth-code/import', checkPermission, (req, res, next)=>{
                 log.error(err.stack);
                 return res.status(500).send();
             }); 
+    } catch(err) {
+        log.error(`Importing mercado livre authorization code. ${err}`);
+        return res.status(500).send();
+    }
+});
+
+// get access code
+router.get('/access-token', checkPermission, (req, res, next)=>{
+    try 
+    {
+        let authCode = meli.getMeliAuthCode();
+        if (!authCode) {
+            return res.render('misc/message', { title: 'Chave de acesso', message: 'Não existe código de autorização para obter a chave de acesso'});
+        }
+
+        let data = {
+            grant_type: 'authorization_code',
+            client_id: process.env.MERCADO_LIVRE_APP_ID,
+            client_secret: process.env.MERCADO_LIVRE_SECRET_KEY,
+            code: authCode,
+            redirect_uri: process.env.MERCADO_LIVRE_REDIRECT_URL_ZUNKASITE,
+        };
+
+        // let formData = new FormData()
+        // formData.append('grant_type', 'authorization_code')
+        // formData.append('client_id', process.env.MERCADO_LIVRE_APP_ID)
+        // formData.append('client_secret', process.env.MERCADO_LIVRE_SECRET_KEY)
+        // formData.append('code', authCode)
+        // formData.append('redirect_uri', process.env.MERCADO_LIVRE_REDIRECT_URL_ZUNKASITE)
+
+        // log.debug(`data: ${JSON.stringify(data, null, 4)}`);
+        axios.post(meli.MELI_TOKEN_URL, 
+            data,
+            {
+                headers: {
+                    'Accept': 'application/json', 
+                    'content-type': 'application/x-www-form-urlencoded',
+                },
+                // auth: { 
+                    // username: s.zunkaSiteProduction.user, 
+                    // password: s.zunkaSiteProduction.password
+                // }, 
+            }
+        )
+        .then(response => {
+            log.debug('*** 0 ***');
+            log.debug(`response: ${JSON.stringify(response, null, 4)}`);
+            // log.debug(`response data: ${response.data}`);
+            // log.debug(`response data: ${response.status}`);
+            if (response.data.err) {
+                log.error(new Error(`Importing mercado livre authorization code. ${response.data.err}`));
+            } else {
+                log.debug(`response.data: ${response.data}`);
+                meli.setMeliAuthCode(response.data);
+                return res.send(response.data);
+            }
+        })
+        .catch(err => {
+            res.status(500).send();
+            // log.debug(`err.response: ${JSON.stringify(err, null, 4)}`);
+            if (err.response) {
+                // log.debug(`err response status: ${err.response.status}`);
+                // log.debug(`err response headers: ${JSON.stringify(err.response.headers, null, 4)}`);
+                log.error(`requesting meli access token: ${JSON.stringify(err.response.data, null, 4)}`);
+            } else if (err.request) {
+                log.error(`requesting meli access token: ${JSON.stringify(err.request, null, 4)}`);
+            } else {
+                log.error(err.stack);
+            }
+        }); 
     } catch(err) {
         log.error(`Importing mercado livre authorization code. ${err}`);
         return res.status(500).send();

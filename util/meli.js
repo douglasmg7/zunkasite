@@ -6,10 +6,15 @@ const axios = require('axios');
 // Redis
 const redisUtil = require('../util/redisUtil.js');
 
-const MELI_AUTH_URL = "https://auth.mercadolivre.com.br/authorization" ;
+// meli api
+const MELI_API_URL = 'https://api.mercadolibre.com';
+
+// meli auth
+const MELI_AUTH_URL = 'https://auth.mercadolivre.com.br/authorization' ;
 // const MELI_AUTH_URL = "http://auth.mercadolibre.com.ar/authorization" ;
 
-const MELI_API_URL = 'https://api.mercadolibre.com';
+// meli token
+const MELI_TOKEN_URL = `${MELI_API_URL}/oauth/token` ;
 
 
 let meliAuthCode;
@@ -69,3 +74,4 @@ module.exports.getMeliAuthCode = getMeliAuthCode;
 module.exports.setMeliAuthCode = setMeliAuthCode;
 
 module.exports.MELI_API_URL = MELI_API_URL;
+module.exports.MELI_TOKEN_URL = MELI_TOKEN_URL;
