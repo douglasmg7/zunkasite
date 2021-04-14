@@ -4,6 +4,7 @@ const router = express.Router();
 const log = require('../config/log');
 const axios = require('axios');
 const FormData = require('form-data');
+const util = require('util');
 // Internal.
 const s = require('../config/s');
 // Mercado Livre
@@ -65,7 +66,7 @@ router.get('/auth-code/import', checkPermission, (req, res, next)=>{
                 if (response.data.err) {
                     log.error(new Error(`Importing mercado livre authorization code. ${response.data.err}`));
                 } else {
-                    log.debug(`response.data: ${response.data}`);
+                    log.debug(`Meli authorization code imported from production server: ${response.data}`);
                     meli.setMeliAuthCode(response.data);
                     return res.render('meli/authCode', { message: 'Código de autorização do Mercado Livre importado' });
                 }
@@ -97,13 +98,6 @@ router.get('/access-token', checkPermission, (req, res, next)=>{
             redirect_uri: process.env.MERCADO_LIVRE_REDIRECT_URL_ZUNKASITE,
         };
 
-        // let formData = new FormData()
-        // formData.append('grant_type', 'authorization_code')
-        // formData.append('client_id', process.env.MERCADO_LIVRE_APP_ID)
-        // formData.append('client_secret', process.env.MERCADO_LIVRE_SECRET_KEY)
-        // formData.append('code', authCode)
-        // formData.append('redirect_uri', process.env.MERCADO_LIVRE_REDIRECT_URL_ZUNKASITE)
-
         // log.debug(`data: ${JSON.stringify(data, null, 4)}`);
         axios.post(meli.MELI_TOKEN_URL, 
             data,
@@ -112,22 +106,16 @@ router.get('/access-token', checkPermission, (req, res, next)=>{
                     'Accept': 'application/json', 
                     'content-type': 'application/x-www-form-urlencoded',
                 },
-                // auth: { 
-                    // username: s.zunkaSiteProduction.user, 
-                    // password: s.zunkaSiteProduction.password
-                // }, 
             }
         )
         .then(response => {
-            log.debug('*** 0 ***');
-            log.debug(`response: ${JSON.stringify(response, null, 4)}`);
-            // log.debug(`response data: ${response.data}`);
-            // log.debug(`response data: ${response.status}`);
+            // log.debug(`response.data: ${util.inspect(response.data)}`);
             if (response.data.err) {
                 log.error(new Error(`Importing mercado livre authorization code. ${response.data.err}`));
             } else {
-                log.debug(`response.data: ${response.data}`);
-                meli.setMeliAuthCode(response.data);
+                response.data.created_at = Date();
+                log.debug(`response.data: ${util.inspect(response.data)}`);
+                meli.setMeliTokenAccess(response.data);
                 return res.send(response.data);
             }
         })

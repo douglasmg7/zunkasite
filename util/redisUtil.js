@@ -8,6 +8,7 @@ const PRODUCT_LIST_FILTER_USER = 'product_list_filter_user_';
 const DEALER_ACTIVATION = 'dealer_activation_';
 
 const MELI_AUTH_CODE = 'meli_auth_code';
+const MELI_TOKEN_ACCESS = 'meli_token_access';
 
 ///////////////////////////////////////////////////////////////////////////////
 // Product list filter
@@ -81,8 +82,9 @@ function setDealerActivation(dealer, activation) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Mercado Livre authorization code
+// Mercado Livre authorization
 ///////////////////////////////////////////////////////////////////////////////
+// Get meli auth code.
 function getMeliAuthCode(dealer) {
     return new Promise((resolve, reject) => {
         try {
@@ -102,6 +104,7 @@ function getMeliAuthCode(dealer) {
     });
 }
 
+// Set meli auth code.
 function setMeliAuthCode(meliAuthCode) {
     return new Promise(resolve => {
         redis.set(MELI_AUTH_CODE, meliAuthCode, err=>{
@@ -114,6 +117,36 @@ function setMeliAuthCode(meliAuthCode) {
     });
 }
 
+// Get meli token access.
+function getMeliTokenAccess(dealer) {
+    return new Promise((resolve, reject) => {
+        try {
+            redis.get(MELI_TOKEN_ACCESS, (err, tokenAccess)=>{
+                if (err) {
+                    reject(new Error(`Retriving Mercado Livre token access from redis db. ${err.message}`));
+                }
+                if (tokenAccess == null) {
+                    return resolve(null);
+                }
+                return resolve(JSON.parse(tokenAccess));
+            });
+        } 
+        catch (err) {
+            reject(err);
+        }
+    });
+}
+
+// Set meli token access.
+function setMeliTokenAccess(tokenAccess) {
+    let strTokenAccess = JSON.stringify(tokenAccess);
+    redis.set(MELI_TOKEN_ACCESS, strTokenAccess, err=>{
+        if (err) {
+            log.error(new Error(`Setting Mercado Livre token access on redis db. ${err.message}`));
+        }
+    });
+}
+
 module.exports.getPorductListFilter = getPorductListFilter;
 module.exports.setPorductListFilter = setPorductListFilter;
 
@@ -122,3 +155,6 @@ module.exports.setDealerActivation = setDealerActivation;
 
 module.exports.getMeliAuthCode = getMeliAuthCode;
 module.exports.setMeliAuthCode = setMeliAuthCode;
+
+module.exports.getMeliTokenAccess = getMeliTokenAccess;
+module.exports.setMeliTokenAccess = setMeliTokenAccess;

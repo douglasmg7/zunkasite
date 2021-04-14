@@ -16,12 +16,17 @@ const MELI_AUTH_URL = 'https://auth.mercadolivre.com.br/authorization' ;
 // meli token
 const MELI_TOKEN_URL = `${MELI_API_URL}/oauth/token` ;
 
+// Util.
+const util = require('util');
+
 
 let meliAuthCode;
-
 loadMeliAuthCode();
 
-// Mercado livre authorization code
+let meliTokenAccess;
+loadMeliTokenAccess();
+
+// Mercado livre authorization code.
 function getMeliAuthCode() {
     return meliAuthCode;
 }
@@ -35,6 +40,20 @@ async function loadMeliAuthCode() {
     log.debug(`Mercado Livre authorization code: ${meliAuthCode}`);
 }
 
+// Mercado livre token access.
+function getMeliTokenAccess() {
+    return meliTokenAccess;
+}
+function setMeliTokenAccess(tokenAccess) {
+    meliTokenAccess = tokenAccess;
+    redisUtil.setMeliTokenAccess(meliTokenAccess);
+}
+async function loadMeliTokenAccess() {
+    meliTokenAccess = await redisUtil.getMeliTokenAccess();
+    // todo - remove debug
+    log.debug(`Mercado Livre token access: ${util.inspect(meliTokenAccess)}`);
+}
+
 // Get authorization
 function getAuthorizationURL() {
     let url = MELI_AUTH_URL + 
@@ -46,32 +65,13 @@ function getAuthorizationURL() {
     return url;
 }
 
-// // Get authorization
-// async function getAuthorization() {
-    // try{
-        // let url = MELI_AUTH_URL + 
-            // "?response_type=code&" +
-            // `client_id=${process.env.MERCADO_LIVRE_APP_ID}&` + 
-            // `redirect_uri=${process.env.MERCADO_LIVRE_REDIRECT_URL_ZUNKASITE}`;
-        // // todo - comment
-        // log.debug(`URL to get meli authorization code: ${url}`);
-
-        // let response = await axios.get(url);
-        // if (response.data.err) {
-            // log.error(response.data.err);
-			// return next(response.data.err);
-        // } 
-        // log.debug(`response: ${JSON.stringify(response.data, null, 2)}`);
-    // } catch(err) {
-        // log.error(`catch - Getting allnations booking information. ${err.stack}`);
-        // return null;
-    // }
-// }
-
 module.exports.getAuthorizationURL = getAuthorizationURL;
 
 module.exports.getMeliAuthCode = getMeliAuthCode;
 module.exports.setMeliAuthCode = setMeliAuthCode;
+
+module.exports.getMeliTokenAccess = getMeliTokenAccess;
+module.exports.setMeliTokenAccess = setMeliTokenAccess;
 
 module.exports.MELI_API_URL = MELI_API_URL;
 module.exports.MELI_TOKEN_URL = MELI_TOKEN_URL;
