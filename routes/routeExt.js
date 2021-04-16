@@ -581,11 +581,23 @@ router.get('/meli/auth-code/receive', function(req, res, next) {
 
     let authCode = req.query.code;
     if (authCode) {
-        meli.setMeliAuthCode(authCode);
         // todo - remove debug
         log.debug(`Mercado livre auth code: ${authCode}`);
-        res.redirect('/meli/auth-code/receive/true');
+        // Save auth code to export to dev.
+        meli.setMeliAuthCode(authCode);
+        // Get token access from meli.
+        // Set to false to let dev import the code and request the token access.
+        if (meli.getMeliTokenAccessFromMeli(authCode) && false) {
+            return res.render('misc/message', { title: '', message: 'Chave de acesso do Mercado Livre foi atualizada' });
+            // res.redirect('/meli/auth-code/receive/true');
+        }
+        // Not could take token access from meli.
+        else {
+            return res.render('misc/message', { title: '', message: 'Não foi possível obter a chave de acesso do Mercado Livre' });
+            // res.redirect('/meli/auth-code/receive/false');
+        }
     } else { 
-        res.redirect('/meli/auth-code/receive/false');
+        return res.render('misc/message', { title: '', message: 'Não recebeu um código de usuário válido do Mercado Livre' });
+        // res.redirect('/meli/auth-code/receive/false');
     }
 });

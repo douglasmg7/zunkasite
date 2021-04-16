@@ -41,12 +41,20 @@ block append internal_style
 
 block content 
     section
-        //- Title
-        h2 Produtos ativos no Mercado Livre
+        if privateApi
+            //- Title
+            h2 Produtos no Mercado Livre
 
-        //- Products
-        each product in products
-            a(href=`/meli/product/${product.id}`) 
-                span !{product.id} &nbsp - &nbsp 
-                span.title !{product.title}  &nbsp - &nbsp
-                span.price R$ !{product.price}
+            //- Products
+            each product in products
+                p= product
+        else
+            //- Title
+            h2 Produtos ativos no Mercado Livre
+
+            //- Products
+            each product in products
+                a(href=`/meli/product/${product.id}`) 
+                    span !{product.id} &nbsp - &nbsp 
+                    span.title !{product.title}  &nbsp - &nbsp
+                    span.price R$ !{product.price}
