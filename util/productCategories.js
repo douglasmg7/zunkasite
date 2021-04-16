@@ -12,6 +12,7 @@ let regexCategories = [
 	{ name: 'HDs externos', regex: /\bhds?\s+externos?\b/i},
 	{ name: 'Memórias notebook', regex: /\bmem[oó]rias?\s*(de\s*)?notebooks?\b/i},
 	{ name: 'Memórias', regex: /\bmem[oÓ]rias?\b/i},
+	{ name: 'Mochilas', regex: /\bmochilas?\b/i},
 	{ name: 'Monitores', regex: /\bmonitor(es)?\b/i},
 	{ name: 'Mouses', regex: /\bmouses?\b/i},
 	{ name: 'Notebooks', regex: /\bnotebooks?\b/i},
