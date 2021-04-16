@@ -575,7 +575,7 @@ router.post('/ppp/webhook-listener', (req, res, next)=>{
 /******************************************************************************
 / Mercado Livre
  ******************************************************************************/
-router.get('/meli/auth-code/receive', function(req, res, next) {
+router.get('/meli/auth-code/receive', async function(req, res, next) {
     // todo - remove debug
     log.debug(`Mercado livre auth code url: ${req.url}`);
 
@@ -586,8 +586,9 @@ router.get('/meli/auth-code/receive', function(req, res, next) {
         // Save auth code to export to dev.
         meli.setMeliAuthCode(authCode);
         // Get token access from meli.
+        let accessToken = await meli.getMeliTokenAccessFromMeli(authCode)
         // Set to false to let dev import the code and request the token access.
-        if (meli.getMeliTokenAccessFromMeli(authCode) && false) {
+        if (accessToken && false) {
             return res.render('misc/message', { title: '', message: 'Chave de acesso do Mercado Livre foi atualizada' });
             // res.redirect('/meli/auth-code/receive/true');
         }

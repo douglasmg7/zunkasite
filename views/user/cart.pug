@@ -7,10 +7,10 @@ block append css
     link(rel="stylesheet" href="/css/user/cart.css?0002" charset="utf-8")
 
 block content 
-    section
+    section.shadow
         .cart-empty(v-if='!cart.products.length')
-            h1 Carrinho vazio
-            h2.title Ainda não existem produtos no seu carrinho de compras
+            h2.title Carrinho vazio
+            h3 Ainda não existem produtos no seu carrinho de compras
         .cart(v-if='cart.products.length')
             h2.title Carrinho de compras    
             .products

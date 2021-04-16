@@ -22,6 +22,7 @@ let regexMakers = [
 	{ name: 'Intel', regex: /\bintel\b/i},
 	{ name: 'Intelbras', regex: /\bintelbras\b/i},
 	{ name: 'Kingston', regex: /\bkingston\b/i},
+	{ name: 'Lacerda', regex: /\blacerda\b/i},
 	{ name: 'LG', regex: /\blg\b/i},
 	{ name: 'Nvidia', regex: /\bnvidia\b/i},
 	{ name: 'PowerColor', regex: /\bpowercolor\b/i},
