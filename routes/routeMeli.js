@@ -5,6 +5,7 @@ const log = require('../config/log');
 const axios = require('axios');
 const FormData = require('form-data');
 const util = require('util');
+const redis = require('../util/redisUtil');
 // Internal.
 const s = require('../config/s');
 // Mercado Livre
@@ -91,9 +92,10 @@ async function checkTokenAccess (req, res, next) {
 };
 
 // Menu
-router.get('/menu', checkPermission, (req, res, next)=>{
+router.get('/menu', checkPermission, async (req, res, next)=>{
     // log.debug(`Run mode: ${process.env.NODE_ENV == 'development'}`);
-    res.render('meli/menu', {devMode: process.env.NODE_ENV == 'development'});
+    let autoLoadTokenAccess = await redis.getMeliAutoLoadTokenAccess();
+    res.render('meli/menu', {devMode: process.env.NODE_ENV == 'development', autoLoadTokenAccess});
 });
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -143,6 +145,18 @@ router.get('/auth-code/import', checkPermission, async (req, res, next)=>{
     } catch(err) {
         log.error(`Importing mercado livre authorization code. ${err.stack}`);
         return res.status(500).send();
+    }
+});
+
+// Set auto load token access.
+router.post('/access-token/auto-load-token-access', checkPermission, (req, res, next)=>{
+    try {
+        // log.debug(`req: ${util.inspect(req.body)}`);
+        redis.setMeliAutoLoadTokenAccess(req.body.autoLoadTokenAccess);
+        res.json({success: true}); 
+    } catch(err) {
+        log.error(`Saving auto load token access configuration. ${err.stack}`);
+        res.json({success: false}); 
     }
 });
 

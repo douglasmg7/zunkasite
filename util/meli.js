@@ -36,8 +36,7 @@ function setMeliAuthCode(authCode) {
 }
 async function loadMeliAuthCode() {
     meliAuthCode = await redisUtil.getMeliAuthCode();
-    // todo - remove debug
-    log.debug(`Mercado Livre authorization code: ${meliAuthCode}`);
+    // log.debug(`Mercado Livre authorization code: ${meliAuthCode}`);
 }
 
 // Mercado livre token access.
@@ -50,8 +49,7 @@ function setMeliTokenAccess(tokenAccess) {
 }
 async function loadMeliTokenAccess() {
     meliTokenAccess = await redisUtil.getMeliTokenAccess();
-    // todo - remove debug
-    log.debug(`Mercado Livre token access: ${util.inspect(meliTokenAccess)}`);
+    // log.debug(`Mercado Livre token access: ${util.inspect(meliTokenAccess)}`);
 }
 
 // Get access code from meli.

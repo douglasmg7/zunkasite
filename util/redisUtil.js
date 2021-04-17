@@ -9,6 +9,7 @@ const DEALER_ACTIVATION = 'dealer_activation_';
 
 const MELI_AUTH_CODE = 'meli_auth_code';
 const MELI_TOKEN_ACCESS = 'meli_token_access';
+const MELI_AUTO_LOAD_TOKEN_ACCESS = 'meli_auto_load_token_access';
 
 ///////////////////////////////////////////////////////////////////////////////
 // Product list filter
@@ -147,6 +148,40 @@ function setMeliTokenAccess(tokenAccess) {
     });
 }
 
+// Get meli auto load token access configuration.
+function getMeliAutoLoadTokenAccess() {
+    return new Promise((resolve, reject) => {
+        try {
+            redis.get(MELI_AUTO_LOAD_TOKEN_ACCESS, (err, config)=>{
+                if (err) {
+                    reject(new Error(`Retriving auto load token access configuration from redis db. ${err.message}`));
+                }
+                if (config == null) {
+                    return false;
+                }
+                config = JSON.parse(config);
+                resolve(config);
+            });
+        } 
+        catch (err) {
+            reject(err);
+        }
+    });
+}
+
+// Set meli auto load token access configuration.
+function setMeliAutoLoadTokenAccess(config) {
+    return new Promise(resolve => {
+        let val = 'false';
+        if (config) val = 'true';
+        redis.set(MELI_AUTO_LOAD_TOKEN_ACCESS, val, err=>{
+            if (err) {
+                reject(new Error(`Saving auto load token access configuration to redis db. ${err.message}`));
+            }
+        });
+    });
+}
+
 module.exports.getPorductListFilter = getPorductListFilter;
 module.exports.setPorductListFilter = setPorductListFilter;
 
@@ -158,3 +193,6 @@ module.exports.setMeliAuthCode = setMeliAuthCode;
 
 module.exports.getMeliTokenAccess = getMeliTokenAccess;
 module.exports.setMeliTokenAccess = setMeliTokenAccess;
+
+module.exports.getMeliAutoLoadTokenAccess = getMeliAutoLoadTokenAccess;
+module.exports.setMeliAutoLoadTokenAccess = setMeliAutoLoadTokenAccess;

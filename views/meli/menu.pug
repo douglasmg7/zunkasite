@@ -21,10 +21,20 @@ block append internal_style
             color: var(--green);
             text-decoration: underline;
         }
+        section label {
+            display: inline-block;
+            margin-top: 0;
+            margin-bottom: .7em;
+        }
 
 block content
     section
         h2 Mercado Livre
+
+        //- auto load token access
+        input(type='checkbox' id='autoLoadTokenAccess'  onclick='updateAutoLoadTokenAccess(this)' checked=autoLoadTokenAccess )
+        label(for='autoLoadTokenAccess') Obter token de acesso automaticamente quando autenticar
+
         //- authenticate
         a(href='/meli/auth-code/authenticate') Autenticar no ML para obter código de autorização
 
@@ -41,3 +51,30 @@ block content
         //- active products
         a(href='/meli/products?status=active') Produtos ativos
 
+append internal_scripts
+    script.
+        function updateAutoLoadTokenAccess(elem) {
+            axios({
+                method: 'post',
+                url: '/meli/access-token/auto-load-token-access',
+                headers:{'csrf-token' : csrfToken},
+                data: { autoLoadTokenAccess: elem.checked }
+            })
+            .then(response => {
+                // Validation error.
+                // console.log(JSON.stringify(response.data, null, 2));
+                if (!response.data.success) {
+                    alert('Não foi possível salvar a configuração.');
+                    return;
+                    // No error validation.
+                }
+                // Server side error.
+                if (response.data.err) {
+                    alert('Não foi possível salvar a configuração.');
+                    console.error(response.data.err);
+                } 
+            })
+        }
+
+append external_scripts
+    include ../components/axios.js.pug
