@@ -5,6 +5,9 @@ const log = require('../config/log');
 const axios = require('axios');
 const FormData = require('form-data');
 const util = require('util');
+const mongoose = require('mongoose');
+const ObjectId = require('mongoose').Types.ObjectId;
+const Product = require('../model/product');
 const redis = require('../util/redisUtil');
 // Internal.
 const s = require('../config/s');
@@ -221,7 +224,29 @@ router.get('/access-token', checkPermission, (req, res, next)=>{
 ///////////////////////////////////////////////////////////////////////////////
 // products
 ///////////////////////////////////////////////////////////////////////////////
-// Render products.
+
+// Product.
+router.get('/product/:id', checkPermission, async (req, res, next)=>{
+    try{
+        // let url = `${meli.MELI_API_URL}/sites/MLB/search?seller_id=${process.env.MERCADO_LIVRE_USER_ID}`
+        let url = `${meli.MELI_API_URL}/items/${req.params.id}`
+        // todo - comment
+        log.debug(`get meli product: ${url}`);
+
+        let response = await axios.get(url);
+        if (response.data.err) {
+            log.error(response.data.err);
+            return next(response.data.err);
+        } 
+        log.debug(`response: ${JSON.stringify(response.data, null, 2)}`);
+        return res.render('meli/product', { product: response.data });
+    } catch(err) {
+        // log.error(`catch - Getting meli products. ${err.stack}`);
+        return next(err)
+    }
+});
+
+// All Products.
 router.get('/products', checkPermission, checkTokenAccess, async (req, res, next)=>{
     try{
         // log.debug(`res.locals.tokenAccess: ${util.inspect(res.locals.tokenAccess)}`);
@@ -262,24 +287,220 @@ router.get('/products', checkPermission, checkTokenAccess, async (req, res, next
     }
 });
 
-// Render product.
-router.get('/product/:id', checkPermission, async (req, res, next)=>{
-    try{
-        // let url = `${meli.MELI_API_URL}/sites/MLB/search?seller_id=${process.env.MERCADO_LIVRE_USER_ID}`
-        let url = `${meli.MELI_API_URL}/items/${req.params.id}`
-        // todo - comment
-        log.debug(`get meli product: ${url}`);
+// Create meli product.
+router.post('/products', checkPermission, checkTokenAccess, async (req, res, next)=>{
+    function error(message) {
+        log.error(`Creating meli product. ${message}`);
+    }
+    try {
+        // log.debug(`body: ${JSON.stringify(req.body.productsId)}`);
+        // Missing productsId.
+        if (!req.body.productId) {
+            return res.status(400).send('Missing productId');
+        }
+        // Invalid productId.
+        let productId = '';
+        try {
+            productId = mongoose.Types.ObjectId(req.body.productId);
+        } catch(err){
+            return res.status(400).send(`Inválid productId: ${req.body.productId}`);
+        }
+        // // Get all products into cart from db.
+        // Product.find({_id: ObjectId(productId)}, (err, product)=>{
+            // if (err) {
+                // error(err.stack);
+                // return res.status(500).send(err);
+            // }
+            // return res.json(products);
+        // });
+        // Get all products into cart from db.
+        let product = await Product.findOne({_id: ObjectId(productId)}).exec();
+        if (!product) return res.status(400).send(`Not found product for productId: ${req.body.productId}`);
+        // log.debug(product);
 
-        let response = await axios.get(url);
-        if (response.data.err) {
-            log.error(response.data.err);
-            return next(response.data.err);
-        } 
-        log.debug(`response: ${JSON.stringify(response.data, null, 2)}`);
-        return res.render('meli/product', { product: response.data });
+        let data = {
+            title: product.storeProductTitle,
+            category_id:"MLB1652",
+            price: product.storeProductPrice,
+            currency_id:"BRL",
+            available_quantity: product.storeProductQtd,
+            buying_mode: "buy_it_now",
+            condition: "new",
+            listing_type_id: "gold_special",
+            // description: {
+                // "plain_text":"Descripción con Texto Plano \n"
+            // },
+            // sale_terms:[
+                // {
+                    // "id":"WARRANTY_TYPE",
+                    // "value_name":"Garantía del vendedor"
+                // },
+                // {
+                    // "id":"WARRANTY_TIME",
+                    // "value_name":"90 días"
+                // }
+            // ],
+            // pictures:[
+                // {
+                    // "source":"http://mla-s2-p.mlstatic.com/968521-MLA20805195516_072016-O.jpg"
+                // }
+            // ],
+            pictures:[],
+            attributes:[
+                {
+                    id: 'BRAND',
+                    value_name: 'Dell'
+                },
+                {
+                    id: 'MODEL',
+                    value_name: 'XPS-7390-P10S'
+                },
+                {
+                    id: 'PROCESSOR_BRAND',
+                    value_name: 'Intel Core i7-10710U'
+                },
+                {
+                    id: 'OS_NAME',
+                    value_name: 'Windows 10 Pro'
+                },
+            ]
+        }
+        for (const image of product.images) {
+            data.pictures.push({ source: `https://${req.app.get('hostname')}/img/${product._id}/${image}` });
+        }
+        // log.debug(`data: ${util.inspect(data)}`);
+        // return res.send();
+
+        // log.debug(`data: ${JSON.stringify(data, null, 4)}`);
+        axios.post(`${meli.MELI_API_URL}/items`, 
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${res.locals.tokenAccess.access_token}`,
+                },
+            }
+        )
+        .then(response => {
+            // log.debug(`response.data: ${util.inspect(response.data)}`);
+            if (response.data.err) {
+                log.error(new Error(`${errPre} ${response.data.err}`));
+                return res.json({success: false});
+            } else {
+                log.debug(`creating meli product response.data: ${util.inspect(response.data)}`);
+                return res.send({id: response.data.id});
+            }
+        })
+        .catch(err => {
+            res.json({success: false});
+            if (err.response) {
+                error(JSON.stringify(err.response.data, null, 4));
+            } else if (err.request) {
+                error(JSON.stringify(err.response, null, 4));
+            } else {
+                error(err.stack);
+            }
+        }); 
     } catch(err) {
-        // log.error(`catch - Getting meli products. ${err.stack}`);
-        return next(err)
+        error(err.stack);
+        res.status(500).send(err);
+    }
+});
+
+// Remove meli product.
+router.delete('/products/:id', checkPermission, checkTokenAccess, async (req, res, next)=>{
+    function error(message) {
+        log.error(`Removing meli product. ${message}`);
+    }
+    try {
+        // log.debug(`body: ${JSON.stringify(req.body.productsId)}`);
+        // Missing productsId.
+        if (!req.body.productId) {
+            return res.status(400).send('Missing productId');
+        }
+        // Invalid productId.
+        let productId = '';
+        try {
+            productId = mongoose.Types.ObjectId(req.body.productId);
+        } catch(err){
+            return res.status(400).send(`Inválid productId: ${req.body.productId}`);
+        }
+        // Get product from db.
+        let product = await Product.findOne({_id: ObjectId(productId)}).exec();
+        if (!product) return res.status(400).send(`Not found product for productId: ${req.body.productId}`);
+        if (!product.mercadoLivreId) return res.status(400).send(`Not found assoiciated mercado livre id for product for productId: ${req.body.productId}`);
+        // log.debug(product);
+
+        // return res.send();
+
+        // log.debug(`data: ${JSON.stringify(data, null, 4)}`);
+        axios.delete(`${meli.MELI_API_URL}/items`, 
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${res.locals.tokenAccess.access_token}`,
+                },
+            }
+        )
+        .then(response => {
+            // log.debug(`response.data: ${util.inspect(response.data)}`);
+            if (response.data.err) {
+                log.error(new Error(`${errPre} ${response.data.err}`));
+                return res.json({success: false});
+            } else {
+                log.debug(`creating meli product response.data: ${util.inspect(response.data)}`);
+                return res.send({id: response.data.id});
+            }
+        })
+        .catch(err => {
+            res.json({success: false});
+            if (err.response) {
+                error(JSON.stringify(err.response.data, null, 4));
+            } else if (err.request) {
+                error(JSON.stringify(err.response, null, 4));
+            } else {
+                error(err.stack);
+            }
+        }); 
+    } catch(err) {
+        error(err.stack);
+        res.status(500).send(err);
+    }
+});
+
+///////////////////////////////////////////////////////////////////////////////
+// User test
+///////////////////////////////////////////////////////////////////////////////
+// Create user test.
+router.get('/user', checkPermission, checkTokenAccess, async (req, res, next)=>{
+    try{
+        // log.debug(`res.locals.tokenAccess: ${util.inspect(res.locals.tokenAccess)}`);
+        url = `${meli.MELI_API_URL}/users/test_user`
+        let data = {
+            site_id: "MLB"    
+        }
+        // log.debug(`token access: ${meli.getMeliTokenAccess().access_token}`);
+        let response = await axios.post(url, data, {
+            // headers: {Authorization: `Bearer ${meli.getMeliTokenAccess().access_token}`}
+            headers: {Authorization: `Bearer ${res.locals.tokenAccess.access_token}`}
+        });
+        // log.debug(`response.data: ${util.inspect(response.data)}`);
+        if (response.data.err) {
+            return log.error(new Error(`Creating  Mercado Livre user test. ${response.data.err}`));
+        }
+        log.debug(`user test: ${util.inspect(response.data)}`);
+
+        // log.debug(`response: ${util.inspect(response.data, false, 2)}`);
+        return res.render('misc/message', {title: 'Criação de usuário de teste do Mercado Livre', message: util.inspect(response.data)});
+
+    } catch(err) {
+        res.status(500).send();
+        if (err.response) {
+            log.error(`requesting all meli products: ${JSON.stringify(err.response.data, null, 4)}`);
+        } else if (err.request) {
+            log.error(`requesting all meli products: ${JSON.stringify(err.request, null, 4)}`);
+        } else {
+            log.error(err.stack);
+        }
     }
 });
 
