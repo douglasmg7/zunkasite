@@ -238,11 +238,42 @@ router.get('/product/:id', checkPermission, async (req, res, next)=>{
             log.error(response.data.err);
             return next(response.data.err);
         } 
-        log.debug(`response: ${JSON.stringify(response.data, null, 2)}`);
+        // log.debug(`response: ${JSON.stringify(response.data, null, 2)}`);
+        log.debug(`response: ${response.data.id}`);
         return res.render('meli/product', { product: response.data });
     } catch(err) {
         // log.error(`catch - Getting meli products. ${err.stack}`);
         return next(err)
+    }
+});
+
+router.get('/products/:mercadoLivreId', checkPermission, async (req, res, next)=>{
+    function error(message) {
+        log.error(`requesting meli products ${req.params.mercadoLivreId}. ${message}`);
+    }
+    try{
+        // let url = `${meli.MELI_API_URL}/sites/MLB/search?seller_id=${process.env.MERCADO_LIVRE_USER_ID}`
+        let url = `${meli.MELI_API_URL}/items/${req.params.mercadoLivreId}`
+        // todo - comment
+        log.debug(`url: ${url}`);
+
+        let response = await axios.get(url);
+        if (response.data.err) {
+            error(response.data.err);
+            return next(response.data.err);
+        } 
+        // log.debug(`response: ${JSON.stringify(response.data, null, 2)}`);
+        log.debug(`response: ${response.data.id}`);
+        return res.send(response.data);
+    } catch(err) {
+        res.status(500).send();
+        if (err.response) {
+            error(JSON.stringify(err.response.data, null, 4));
+        } else if (err.request) {
+            error(JSON.stringify(err.request, null, 4));
+        } else {
+            error(err.stack);
+        }
     }
 });
 
@@ -372,44 +403,31 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
         // return res.send();
 
         // log.debug(`data: ${JSON.stringify(data, null, 4)}`);
-        axios.post(`${meli.MELI_API_URL}/items`, 
-            data,
-            {
-                headers: {
-                    Authorization: `Bearer ${res.locals.tokenAccess.access_token}`,
-                },
-            }
-        )
-        .then(response => {
-            // log.debug(`response.data: ${util.inspect(response.data)}`);
-            if (response.data.err) {
-                log.error(new Error(`${errPre} ${response.data.err}`));
-                return res.json({success: false});
-            } else {
-                log.debug(`creating meli product response.data: ${util.inspect(response.data)}`);
-                return res.send({id: response.data.id});
-            }
-        })
-        .catch(err => {
-            res.json({success: false});
-            if (err.response) {
-                error(JSON.stringify(err.response.data, null, 4));
-            } else if (err.request) {
-                error(JSON.stringify(err.response, null, 4));
-            } else {
-                error(err.stack);
-            }
-        }); 
+        let response = await axios.post(`${meli.MELI_API_URL}/items`, data, { headers: { Authorization: `Bearer ${res.locals.tokenAccess.access_token}`, }, });
+        // log.debug(`response.data: ${util.inspect(response.data)}`);
+        if (response.data.err) {
+            log.error(new Error(`${errPre} ${response.data.err}`));
+            return res.status(500).send();
+        }
+        log.debug(`creating meli product response.data: ${util.inspect(response.data)}`);
+        await product.save();
+        return res.send({mercadoLivreId: response.data.id});
     } catch(err) {
-        error(err.stack);
+        if (err.response) {
+            error(JSON.stringify(err.response.data, null, 4));
+        } else if (err.request) {
+            error(JSON.stringify(err.response, null, 4));
+        } else {
+            error(err.stack);
+        }
         res.status(500).send(err);
     }
 });
 
-// Remove meli product.
-router.delete('/products/:id', checkPermission, checkTokenAccess, async (req, res, next)=>{
+// Update meli product.
+router.put('/products/:id', checkPermission, checkTokenAccess, async (req, res, next)=>{
     function error(message) {
-        log.error(`Removing meli product. ${message}`);
+        log.error(`Updating meli product. ${message}`);
     }
     try {
         // log.debug(`body: ${JSON.stringify(req.body.productsId)}`);
@@ -433,37 +451,48 @@ router.delete('/products/:id', checkPermission, checkTokenAccess, async (req, re
         // return res.send();
 
         // log.debug(`data: ${JSON.stringify(data, null, 4)}`);
-        axios.delete(`${meli.MELI_API_URL}/items`, 
+        let data;
+        switch (req.body.status) {
+            case 'paused':
+            case 'active':
+            case 'closed':
+                data = {status: req.body.status};
+                break;
+            case 'deleted':
+                data = {deleted: true};
+                break;
+            default:
+                return res.status(400).send(`Invalid status: ${req.body.status}`);
+        }
+
+        let response = await axios.update(`${meli.MELI_API_URL}/items/${product.mercadoLivreId}`, 
             data,
             {
                 headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
                     Authorization: `Bearer ${res.locals.tokenAccess.access_token}`,
                 },
             }
-        )
-        .then(response => {
-            // log.debug(`response.data: ${util.inspect(response.data)}`);
-            if (response.data.err) {
-                log.error(new Error(`${errPre} ${response.data.err}`));
-                return res.json({success: false});
-            } else {
-                log.debug(`creating meli product response.data: ${util.inspect(response.data)}`);
-                return res.send({id: response.data.id});
-            }
-        })
-        .catch(err => {
-            res.json({success: false});
-            if (err.response) {
-                error(JSON.stringify(err.response.data, null, 4));
-            } else if (err.request) {
-                error(JSON.stringify(err.response, null, 4));
-            } else {
-                error(err.stack);
-            }
-        }); 
+        );
+        // log.debug(`response.data: ${util.inspect(response.data)}`);
+        if (response.data.err) {
+            log.error(new Error(`${errPre} ${response.data.err}`));
+            return res.status(500).send();
+        } else {
+            log.debug(`Updating meli product response.data: ${util.inspect(response.data)}`);
+            log.debug(`Meli product updated to ${req.body.status}`);
+            return res.send();
+        }
     } catch(err) {
-        error(err.stack);
-        res.status(500).send(err);
+        if (err.response) {
+            error(JSON.stringify(err.response.data, null, 4));
+        } else if (err.request) {
+            error(JSON.stringify(err.response, null, 4));
+        } else {
+            error(err.stack);
+        }
+        res.status(500).send();
     }
 });
 

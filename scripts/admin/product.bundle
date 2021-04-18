@@ -33,12 +33,16 @@ var app = new Vue({
         buttonSaveValue: 'Salvar',
         enableWatchStoreProductId: true,
         enableWatchEan: true,
+        meliProduct: {},
     },
     created: function() {
         this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice.toFixed(2));
         this.storeProductMarkupeBr = this.toBRCurrencyString(product.storeProductMarkup.toFixed(2));
         this.storeProductDiscountValue = this.toBRCurrencyString(product.storeProductDiscountValue.toFixed(2));
         this.dealerProductPrice = this.toBRCurrencyString(product.dealerProductPrice.toFixed(2));
+        if (product.mercadoLivreId) {
+            this.loadMeliProduct();
+        }
     },
     watch: {
         'product.storeProductId': function(val) {
@@ -430,7 +434,7 @@ var app = new Vue({
             // console.log(`toBRCurrencyString - ${val} - ${typeof val}`);
             return val.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         },
-        async createProductIntoMercadoLivre(){
+        async createMeliProduct(){
             try {
                 // console.log('createProductIntoMercadoLivre');
                 let response = await axios.post('/meli/products', { productId: this.product._id }, { headers:{'csrf-token' : csrfToken} })
@@ -450,6 +454,54 @@ var app = new Vue({
                     console.error(err);
                 }
                 alert('Não foi possível salvar.');
+            }
+        },
+        async updateMeliProduct(status){
+            try {
+                // console.log('createProductIntoMercadoLivre');
+                let response = await axios.put(`/meli/products/${this.product._id}`, { status: status }, { headers:{'csrf-token' : csrfToken} })
+                // console.log(JSON.stringify(response.data, null, 2));
+                // Server side error.
+                if (response.data.err || !response.data.mercadoLivreId) {
+                    return alert('Não foi possível atualizar o produto no Mercado Livre.');
+                } 
+                if (status == 'deleted') {
+                    this.product.mercadoLivreId = '';
+                }
+                loadMeliProduct()
+            } 
+            catch(err) {
+                if (err.response && err.response.data) {
+                    console.error(err.response.data);
+                } else if (err.response) {
+                    console.error(err.response);
+                } else {
+                    console.error(err);
+                }
+                alert('Não foi possível salvar.');
+            }
+        },
+        async loadMeliProduct(){
+            try {
+                // console.log('createProductIntoMercadoLivre');
+                let response = await axios.get(`/meli/products/${this.product.mercadoLivreId}`, { headers:{'csrf-token' : csrfToken} })
+                // console.log(JSON.stringify(response.data, null, 2));
+                // Server side error.
+                if (response.data.err || !response.data) {
+                    return alert('Não foi possível obter o produto do Mercado Livre.');
+                } 
+                console.log(response.data);
+                this.meliProduct = response.data;
+            } 
+            catch(err) {
+                if (err.response && err.response.data) {
+                    console.error(err.response.data);
+                } else if (err.response) {
+                    console.error(err.response);
+                } else {
+                    console.error(err);
+                }
+                alert('Não foi possível obter o produto no Mercado Livre.');
             }
         },
     },

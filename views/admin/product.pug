@@ -146,12 +146,14 @@ block content
             hr
             // Not have product on mercado livre
             .no-have-ml-id(v-if='!this.product.mercadoLivreId')
-                input.btn-success(type='button' v-on:click='createProductIntoMercadoLivre()' value='Criar produto no Mercado Livre')
+                input.btn-success(type='button' v-on:click='createMeliProduct()' value='Criar produto no Mercado Livre')
             // Have product on mercado livre
             .have-ml-id(v-if='this.product.mercadoLivreId')
                 p {{ product.mercadoLivreId }}
-                input.btn-success(type='button' v-on:click='saveProduct()' value='Desablitar produto no Mercado Livre')
-                input.btn-success(type='button' v-on:click='saveProduct()' value='Remover produto do Mercado Livre')
+                input.btn-success(v-if='this.meliProduct.status=="active"' type='button' v-on:click='updateMeliProduct("paused")' value='Pausar')
+                input.btn-success(v-if='this.meliProduct.status=="paused"' type='button' v-on:click='updateMeliProduct("active")' value='Ativar')
+                input.btn-success(type='button' v-on:click='updateMeliProduct("closed")' value='Encerrar')
+                input.btn-success(v-if='this.meliProduct.status=="closed"' type='button' v-on:click='updateMeliProduct("deleted")' value='Apagar')
         .status
             h2 Status
             hr
