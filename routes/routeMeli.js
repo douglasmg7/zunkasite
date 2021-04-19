@@ -343,6 +343,7 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
         // log.debug(product);
 
         let data = {
+            seller_custom_field: product._id, 
             title: product.storeProductTitle,
             category_id:"MLB1652",
             price: product.storeProductPrice,

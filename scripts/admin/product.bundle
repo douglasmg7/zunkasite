@@ -464,12 +464,14 @@ var app = new Vue({
                 if (response.data.err) {
                     return alert('Não foi possível atualizar o produto no Mercado Livre.');
                 } 
-                if (status == 'deleted') {
-                    this.product.mercadoLivreId = '';
-                    this.meliProduct = {};
-                } else {
-                    this.loadMeliProduct()
-                }
+                this.loadMeliProduct()
+
+                // if (status == 'deleted') {
+                    // this.product.mercadoLivreId = '';
+                    // this.meliProduct = {};
+                // } else {
+                    // this.loadMeliProduct()
+                // }
             } 
             catch(err) {
                 if (err.response && err.response.data) {

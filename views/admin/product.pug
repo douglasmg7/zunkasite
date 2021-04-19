@@ -149,7 +149,7 @@ block content
                 input.btn-success(type='button' v-on:click='createMeliProduct()' value='Criar produto no Mercado Livre')
             // Have product on mercado livre
             .have-ml-id(v-if='this.product.mercadoLivreId')
-                a(href=`https://api.mercadolibre.com/items/${product.mercadoLivreId}`) {{ product.mercadoLivreId }}
+                a(href=`https://api.mercadolibre.com/items/${product.mercadoLivreId}`) {{ product.mercadoLivreId }} - {{meliProduct.status }}
                 br
                 //- a(v-if='this.meliProduct.permalink' :href='this.meliProduct.permalink') a - {{ this.meliProduct.permalink }}
                 a(:href='this.meliProduct.permalink') {{ this.meliProduct.permalink }}
