@@ -41,7 +41,7 @@ async function checkTokenAccess (req, res, next) {
 
     // Check if expired.
     let time_to_expire = tokenAccess.expires_at - Date.now();
-    log.debug(`Time to expire (s): ${time_to_expire / 1000}`);
+    log.debug(`Time to expire meli token (min): ${Math.floor(time_to_expire / 60000)}`);
 
     // Expired.
     if (time_to_expire <= 0) {
@@ -89,7 +89,7 @@ async function checkTokenAccess (req, res, next) {
     // Token access not expired.
     else {
         res.locals.tokenAccess = tokenAccess;
-        log.debug('*** 1 not expired ***');
+        // log.debug('Meli token not expired');
         return next();
     }
 };
@@ -225,7 +225,7 @@ router.get('/access-token', checkPermission, (req, res, next)=>{
 // products
 ///////////////////////////////////////////////////////////////////////////////
 
-// Product.
+// Render meli product.
 router.get('/product/:id', checkPermission, async (req, res, next)=>{
     try{
         // let url = `${meli.MELI_API_URL}/sites/MLB/search?seller_id=${process.env.MERCADO_LIVRE_USER_ID}`
@@ -247,6 +247,7 @@ router.get('/product/:id', checkPermission, async (req, res, next)=>{
     }
 });
 
+// Get meli product.
 router.get('/products/:mercadoLivreId', checkPermission, async (req, res, next)=>{
     function error(message) {
         log.error(`requesting meli products ${req.params.mercadoLivreId}. ${message}`);
@@ -255,7 +256,7 @@ router.get('/products/:mercadoLivreId', checkPermission, async (req, res, next)=
         // let url = `${meli.MELI_API_URL}/sites/MLB/search?seller_id=${process.env.MERCADO_LIVRE_USER_ID}`
         let url = `${meli.MELI_API_URL}/items/${req.params.mercadoLivreId}`
         // todo - comment
-        log.debug(`url: ${url}`);
+        // log.debug(`url: ${url}`);
 
         let response = await axios.get(url);
         if (response.data.err) {
@@ -263,7 +264,7 @@ router.get('/products/:mercadoLivreId', checkPermission, async (req, res, next)=
             return next(response.data.err);
         } 
         // log.debug(`response: ${JSON.stringify(response.data, null, 2)}`);
-        log.debug(`response: ${response.data.id}`);
+        // log.debug(`response: ${response.data.id}`);
         return res.send(response.data);
     } catch(err) {
         res.status(500).send();
@@ -277,7 +278,7 @@ router.get('/products/:mercadoLivreId', checkPermission, async (req, res, next)=
     }
 });
 
-// All Products.
+// Get all meli products.
 router.get('/products', checkPermission, checkTokenAccess, async (req, res, next)=>{
     try{
         // log.debug(`res.locals.tokenAccess: ${util.inspect(res.locals.tokenAccess)}`);
@@ -336,14 +337,6 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
         } catch(err){
             return res.status(400).send(`Inválid productId: ${req.body.productId}`);
         }
-        // // Get all products into cart from db.
-        // Product.find({_id: ObjectId(productId)}, (err, product)=>{
-            // if (err) {
-                // error(err.stack);
-                // return res.status(500).send(err);
-            // }
-            // return res.json(products);
-        // });
         // Get all products into cart from db.
         let product = await Product.findOne({_id: ObjectId(productId)}).exec();
         if (!product) return res.status(400).send(`Not found product for productId: ${req.body.productId}`);
@@ -410,7 +403,11 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
             return res.status(500).send();
         }
         log.debug(`creating meli product response.data: ${util.inspect(response.data)}`);
+        log.debug('before save');
+        log.debug(`mercadoLivreId: ${response.data.id}`);
+        product.mercadoLivreId = response.data.id;
         await product.save();
+        log.debug('after save');
         return res.send({mercadoLivreId: response.data.id});
     } catch(err) {
         if (err.response) {
@@ -425,22 +422,17 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
 });
 
 // Update meli product.
-router.put('/products/:id', checkPermission, checkTokenAccess, async (req, res, next)=>{
+router.put('/products/:productId', checkPermission, checkTokenAccess, async (req, res, next)=>{
     function error(message) {
         log.error(`Updating meli product. ${message}`);
     }
     try {
-        // log.debug(`body: ${JSON.stringify(req.body.productsId)}`);
-        // Missing productsId.
-        if (!req.body.productId) {
-            return res.status(400).send('Missing productId');
-        }
         // Invalid productId.
         let productId = '';
         try {
-            productId = mongoose.Types.ObjectId(req.body.productId);
+            productId = mongoose.Types.ObjectId(req.params.productId);
         } catch(err){
-            return res.status(400).send(`Inválid productId: ${req.body.productId}`);
+            return res.status(400).send(`Inválid productId: ${req.params.productId}`);
         }
         // Get product from db.
         let product = await Product.findOne({_id: ObjectId(productId)}).exec();
@@ -465,7 +457,8 @@ router.put('/products/:id', checkPermission, checkTokenAccess, async (req, res, 
                 return res.status(400).send(`Invalid status: ${req.body.status}`);
         }
 
-        let response = await axios.update(`${meli.MELI_API_URL}/items/${product.mercadoLivreId}`, 
+        // Update status.
+        let response = await axios.put(`${meli.MELI_API_URL}/items/${product.mercadoLivreId}`, 
             data,
             {
                 headers: {
@@ -480,8 +473,8 @@ router.put('/products/:id', checkPermission, checkTokenAccess, async (req, res, 
             log.error(new Error(`${errPre} ${response.data.err}`));
             return res.status(500).send();
         } else {
-            log.debug(`Updating meli product response.data: ${util.inspect(response.data)}`);
-            log.debug(`Meli product updated to ${req.body.status}`);
+            // log.debug(`Updating meli product response.data: ${util.inspect(response.data)}`);
+            log.debug(`Meli product updated to status: ${req.body.status}`);
             return res.send();
         }
     } catch(err) {

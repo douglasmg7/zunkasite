@@ -40,9 +40,7 @@ var app = new Vue({
         this.storeProductMarkupeBr = this.toBRCurrencyString(product.storeProductMarkup.toFixed(2));
         this.storeProductDiscountValue = this.toBRCurrencyString(product.storeProductDiscountValue.toFixed(2));
         this.dealerProductPrice = this.toBRCurrencyString(product.dealerProductPrice.toFixed(2));
-        if (product.mercadoLivreId) {
-            this.loadMeliProduct();
-        }
+        this.loadMeliProduct();
     },
     watch: {
         'product.storeProductId': function(val) {
@@ -444,6 +442,7 @@ var app = new Vue({
                     return alert('Não foi possível criar o produto no Mercado Livre.');
                 } 
                 this.product.mercadoLivreId = response.data.mercadoLivreId;
+                this.loadMeliProduct();
             } 
             catch(err) {
                 if (err.response && err.response.data) {
@@ -462,13 +461,15 @@ var app = new Vue({
                 let response = await axios.put(`/meli/products/${this.product._id}`, { status: status }, { headers:{'csrf-token' : csrfToken} })
                 // console.log(JSON.stringify(response.data, null, 2));
                 // Server side error.
-                if (response.data.err || !response.data.mercadoLivreId) {
+                if (response.data.err) {
                     return alert('Não foi possível atualizar o produto no Mercado Livre.');
                 } 
                 if (status == 'deleted') {
                     this.product.mercadoLivreId = '';
+                    this.meliProduct = {};
+                } else {
+                    this.loadMeliProduct()
                 }
-                loadMeliProduct()
             } 
             catch(err) {
                 if (err.response && err.response.data) {
@@ -483,6 +484,7 @@ var app = new Vue({
         },
         async loadMeliProduct(){
             try {
+                if (!this.product.mercadoLivreId) return;
                 // console.log('createProductIntoMercadoLivre');
                 let response = await axios.get(`/meli/products/${this.product.mercadoLivreId}`, { headers:{'csrf-token' : csrfToken} })
                 // console.log(JSON.stringify(response.data, null, 2));

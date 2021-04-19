@@ -149,11 +149,15 @@ block content
                 input.btn-success(type='button' v-on:click='createMeliProduct()' value='Criar produto no Mercado Livre')
             // Have product on mercado livre
             .have-ml-id(v-if='this.product.mercadoLivreId')
-                p {{ product.mercadoLivreId }}
-                input.btn-success(v-if='this.meliProduct.status=="active"' type='button' v-on:click='updateMeliProduct("paused")' value='Pausar')
+                a(href=`https://api.mercadolibre.com/items/${product.mercadoLivreId}`) {{ product.mercadoLivreId }}
+                br
+                //- a(v-if='this.meliProduct.permalink' :href='this.meliProduct.permalink') a - {{ this.meliProduct.permalink }}
+                a(:href='this.meliProduct.permalink') {{ this.meliProduct.permalink }}
+                //- a(href=`https://api.mercadolibre.com/items/${product.mercadoLivreId}`) https://api.mercadolibre.com/items/{{ product.mercadoLivreId }}
+                input.btn-info(v-if='this.meliProduct.status=="active"' type='button' v-on:click='updateMeliProduct("paused")' value='Pausar')
                 input.btn-success(v-if='this.meliProduct.status=="paused"' type='button' v-on:click='updateMeliProduct("active")' value='Ativar')
-                input.btn-success(type='button' v-on:click='updateMeliProduct("closed")' value='Encerrar')
-                input.btn-success(v-if='this.meliProduct.status=="closed"' type='button' v-on:click='updateMeliProduct("deleted")' value='Apagar')
+                input.btn-danger(v-if='this.meliProduct.status=="paused"' type='button' v-on:click='updateMeliProduct("closed")' value='Encerrar')
+                input.btn-danger(v-if='this.meliProduct.status=="closed"' type='button' v-on:click='updateMeliProduct("deleted")' value='Apagar')
         .status
             h2 Status
             hr
