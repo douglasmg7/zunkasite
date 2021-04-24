@@ -104,12 +104,12 @@ router.get('/menu', checkPermission, async (req, res, next)=>{
 ///////////////////////////////////////////////////////////////////////////////
 // authentication
 ///////////////////////////////////////////////////////////////////////////////
-// Get meli authorization code from meli
+// Get meli authorization code from meli.
 router.get('/auth-code/authenticate', checkPermission, (req, res, next)=>{
     res.redirect(meli.getAuthorizationURL());
 });
 
-// Export authorization code
+// Export authorization code.
 router.get('/auth-code/export', s.basicAuth, (req, res, next)=>{
     log.debug(`sending auth code: ${meli.getMeliAuthCode()}`);
     res.send(meli.getMeliAuthCode());
@@ -163,63 +163,69 @@ router.post('/access-token/auto-load-token-access', checkPermission, (req, res, 
     }
 });
 
-// Get access code.
-router.get('/access-token', checkPermission, (req, res, next)=>{
-    try 
-    {
-        let authCode = meli.getMeliAuthCode();
-        if (!authCode) {
-            return res.render('misc/message', { title: 'Chave de acesso', message: 'Não existe código de autorização para obter a chave de acesso'});
-        }
+// // Get access code.
+// router.get('/access-token', checkPermission, (req, res, next)=>{
+    // try 
+    // {
+        // let authCode = meli.getMeliAuthCode();
+        // if (!authCode) {
+            // return res.render('misc/message', { title: 'Chave de acesso', message: 'Não existe código de autorização para obter a chave de acesso'});
+        // }
 
-        let data = {
-            grant_type: 'authorization_code',
-            client_id: process.env.MERCADO_LIVRE_APP_ID,
-            client_secret: process.env.MERCADO_LIVRE_SECRET_KEY,
-            code: authCode,
-            redirect_uri: process.env.MERCADO_LIVRE_REDIRECT_URL_ZUNKASITE,
-        };
+        // let data = {
+            // grant_type: 'authorization_code',
+            // client_id: process.env.MERCADO_LIVRE_APP_ID,
+            // client_secret: process.env.MERCADO_LIVRE_SECRET_KEY,
+            // code: authCode,
+            // redirect_uri: process.env.MERCADO_LIVRE_REDIRECT_URL_ZUNKASITE,
+        // };
 
-        // log.debug(`data: ${JSON.stringify(data, null, 4)}`);
-        axios.post(meli.MELI_TOKEN_URL, 
-            data,
-            {
-                headers: {
-                    'Accept': 'application/json', 
-                    'content-type': 'application/x-www-form-urlencoded',
-                },
-            }
-        )
-        .then(response => {
-            // log.debug(`response.data: ${util.inspect(response.data)}`);
-            if (response.data.err) {
-                log.error(new Error(`Importing mercado livre authorization code. ${response.data.err}`));
-            } else {
-                // Give 10 seconds less to expire.
-                response.data.expires_at = Date.now() + ((response.data.expires_in - 10) * 1000);
-                log.debug(`response.data: ${util.inspect(response.data)}`);
-                meli.setMeliTokenAccess(response.data);
-                return res.send(response.data);
-            }
-        })
-        .catch(err => {
-            res.status(500).send();
-            // log.debug(`err.response: ${JSON.stringify(err, null, 4)}`);
-            if (err.response) {
-                // log.debug(`err response status: ${err.response.status}`);
-                // log.debug(`err response headers: ${JSON.stringify(err.response.headers, null, 4)}`);
-                log.error(`requesting meli access token: ${JSON.stringify(err.response.data, null, 4)}`);
-            } else if (err.request) {
-                log.error(`requesting meli access token: ${JSON.stringify(err.request, null, 4)}`);
-            } else {
-                log.error(err.stack);
-            }
-        }); 
-    } catch(err) {
-        log.error(`Importing mercado livre authorization code. ${err}`);
-        return res.status(500).send();
-    }
+        // // log.debug(`data: ${JSON.stringify(data, null, 4)}`);
+        // axios.post(meli.MELI_TOKEN_URL, 
+            // data,
+            // {
+                // headers: {
+                    // 'Accept': 'application/json', 
+                    // 'content-type': 'application/x-www-form-urlencoded',
+                // },
+            // }
+        // )
+        // .then(response => {
+            // // log.debug(`response.data: ${util.inspect(response.data)}`);
+            // if (response.data.err) {
+                // log.error(new Error(`Importing mercado livre authorization code. ${response.data.err}`));
+            // } else {
+                // // Give 10 seconds less to expire.
+                // response.data.expires_at = Date.now() + ((response.data.expires_in - 10) * 1000);
+                // log.debug(`response.data: ${util.inspect(response.data)}`);
+                // meli.setMeliTokenAccess(response.data);
+                // return res.send(response.data);
+            // }
+        // })
+        // .catch(err => {
+            // res.status(500).send();
+            // // log.debug(`err.response: ${JSON.stringify(err, null, 4)}`);
+            // if (err.response) {
+                // // log.debug(`err response status: ${err.response.status}`);
+                // // log.debug(`err response headers: ${JSON.stringify(err.response.headers, null, 4)}`);
+                // log.error(`requesting meli access token: ${JSON.stringify(err.response.data, null, 4)}`);
+            // } else if (err.request) {
+                // log.error(`requesting meli access token: ${JSON.stringify(err.request, null, 4)}`);
+            // } else {
+                // log.error(err.stack);
+            // }
+        // }); 
+    // } catch(err) {
+        // log.error(`Importing mercado livre authorization code. ${err}`);
+        // return res.status(500).send();
+    // }
+// });
+
+// Export token access.
+router.get('/access-token', s.basicAuth, checkTokenAccess, (req, res, next)=>{
+    res.send(res.locals.tokenAccess.access_token);
 });
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // products
