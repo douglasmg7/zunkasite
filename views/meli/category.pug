@@ -1,0 +1,56 @@
+extends ../layout/layout
+
+block title
+    title Zunka - Categoria do Mercado Livre
+
+block append internal_style
+    style.
+        section {
+            margin-bottom: 1em;
+        }
+        section > h2:first-child {
+            margin-top: 0;
+            margin-bottom: .5em;
+            color: var(--green);
+        }
+        section .group h3 {
+            margin: 0
+            color: var(--black-darkest);
+        }
+        section .group p {
+            margin: 0 0 0.7em 0;
+            color: var(--black-dark);
+        }
+        section .group a {
+            display: block;
+            display: flex;
+            flex-flow: row wrap;
+            margin-top: .0em;
+            margin-bottom: .7em;
+            color: var(--green);
+            cursor: pointer;
+        }
+        section .group a:hover {
+            color: var(--green);
+            text-decoration: underline;
+        }
+
+block content 
+    section
+        //- name
+        h2= category.name
+
+        //- id
+        .group
+            h3 Id
+            p= category.id
+
+        //- api category link
+        .group
+            h3 Api Categoria
+            a(href=`https://api.mercadolibre.com/categories/${category.id}`) https://api.mercadolibre.com/categories/!{category.id}
+
+        //- api atributos link
+        .group
+            h3 Api atributos
+            a(href=`https://api.mercadolibre.com/categories/${category.id}/attributes`) https://api.mercadolibre.com/categories/!{category.id}/attributes

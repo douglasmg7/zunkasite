@@ -1,0 +1,70 @@
+extends ../layout/layout
+
+block title
+    title Mercado Livre - Categorias
+
+block append internal_style
+    style.
+        section {
+            margin-bottom: 1em;
+        }
+        section > h2:first-child {
+            margin-top: 0;
+            margin-bottom: .5em;
+        }
+        section h3 {
+            margin-top: .5em;
+        }
+        section a {
+            display: block;
+            display: flex;
+            flex-flow: row wrap;
+            margin-top: .4em;
+            color: var(--green);
+            cursor: pointer;
+        }
+        section a:hover {
+            color: var(--green);
+            text-decoration: underline;
+        }
+        section a span.title {
+            text-align: right;
+        }
+        section input.btn-info {
+            margin-top: .5em;
+        }
+
+block content 
+    section
+        //- Title
+        h2 Categorias do Mercado Livre
+
+        //- Products
+        each category in categories
+            a(href=`/meli/categories/${category.id}`) 
+                span !{category.id}&nbsp - &nbsp 
+                span.title !{category.name}
+        br
+        input(type='text' id='newCategory')
+        input.btn-info(type='button' onclick='addCategory()' value='Adicionar nova categoria') 
+
+append internal_scripts
+    script.
+        function addCategory() {
+            let categoryId = document.getElementById('newCategory').value;
+            if (!categoryId || !categoryId.startsWith('MLB') || (categoryId.length <= 4)) {
+                alert('Categoria id inválida');
+            }
+            console.log(`categoryId: ${categoryId}`);
+            axios.post(`/meli/categories`, { categoryId: categoryId }, { headers: { 'csrf-token': csrfToken } })
+            .then(()=>{
+                window.location.href = '/meli/categories';
+            })
+            .catch((err)=>{
+                console.error(`${err.response.status} (${err.response.statusText}) ${err.response.data}`);
+                alert(`Não foi possível adicionar a categoria. ${err.response.data}`);
+            });
+        }
+
+append external_scripts
+    include ../components/axios.js.pug
