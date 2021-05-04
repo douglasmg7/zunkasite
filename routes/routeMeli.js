@@ -604,6 +604,39 @@ router.delete('/categories/:categoryId', checkPermission, async (req, res, next)
     }
 });
 
+// Update category.
+router.put('/categories/:categoryId', checkPermission, async (req, res, next)=>{
+    try {
+        // Invalid category.
+        let categoryId = req.params.categoryId
+        // log.debug(`req.body: ${util.inspect(req.body)}`);
+        if (!categoryId || !categoryId.startsWith('MLB') || (categoryId.length <= 4)) {
+            return res.status(400).send('Catgoria inválida');
+        }
+        let category = await MeliCategory.findOne({ id: categoryId });
+        if (!category) {
+            return res.status(400).send(`Not exist category: ${categoryId} to be updated`);
+        }
+
+        // log.debug(`res.locals.tokenAccess: ${util.inspect(res.locals.tokenAccess)}`);
+        let url = `${meli.MELI_API_URL}/categories/${categoryId}`
+        // log.debug(`token access: ${meli.getMeliTokenAccess().access_token}`);
+        let response = await axios.get(url);
+        // log.debug(`response.data: ${util.inspect(response.data)}`);
+        if (response.data.err) {
+            return log.error(new Error(`Adding Mercado Livre category ${categoryId}. ${response.data.err}`));
+        }
+        // log.debug(`response.data: ${util.inspect(response.data)}`);
+        log.debug('updated category');
+        category.overwrite(response.data);
+        await category.save()
+        return res.send();
+    } catch(err) {
+        log.error(`Adding meli category. ${err.stack}`);
+        return res.status(500).send('Erro interno');
+    }
+});
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // module

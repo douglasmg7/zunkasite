@@ -73,6 +73,18 @@ append internal_scripts
                 alert(`Não foi possível remover a categoria. ${err.response.data}`);
             });
         }
+        function update() {
+            console.log(`csrfToken: ${csrfToken}`);
+            //- axios.delete(`/meli/categories`, { categoryId: '!{category.id}' }, { headers: { 'csrf-token': csrfToken } })
+            axios.put(`/meli/categories/!{category.id}`, {}, { headers: { 'csrf-token': csrfToken } })
+            .then(()=>{
+                window.location.href = '/meli/categories/!{category.id}';
+            })
+            .catch((err)=>{
+                console.error(`${err.response.status} (${err.response.statusText}) ${err.response.data}`);
+                alert(`Não foi possível atualizar a categoria. ${err.response.data}`);
+            });
+        }
 
 append external_scripts
     include ../components/axios.js.pug
