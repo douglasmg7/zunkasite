@@ -564,7 +564,7 @@ router.get('/categories', checkPermission, async (req, res, next)=>{
     }
 });
 
-// Add a category.
+// Add category.
 router.post('/categories', checkPermission, async (req, res, next)=>{
     try {
         // Invalid category.
@@ -591,6 +591,19 @@ router.post('/categories', checkPermission, async (req, res, next)=>{
         return res.status(500).send('Erro interno');
     }
 });
+
+// Remove category.
+router.delete('/categories/:categoryId', checkPermission, async (req, res, next)=>{
+    try {
+        // log.debug(`response.data: ${util.inspect(response.data)}`);
+        await MeliCategory.deleteOne({ id: req.params.categoryId });
+        return res.send();
+    } catch(err) {
+        log.error(`Adding meli category. ${err.stack}`);
+        return res.status(500).send('Erro interno');
+    }
+});
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // module

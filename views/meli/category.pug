@@ -47,10 +47,32 @@ block content
 
         //- api category link
         .group
-            h3 Api Categoria
+            h3 API Categoria
             a(href=`https://api.mercadolibre.com/categories/${category.id}`) https://api.mercadolibre.com/categories/!{category.id}
 
         //- api atributos link
         .group
-            h3 Api atributos
+            h3 API Atributos
             a(href=`https://api.mercadolibre.com/categories/${category.id}/attributes`) https://api.mercadolibre.com/categories/!{category.id}/attributes
+
+        input.btn-primary(type='button', value='Atualizar', onclick='update()')
+        input.btn-danger(type='button', value='Remover', onclick='remove()')
+        input.btn-exit(type='button', onclick='window.location.href="/meli/categories"', value='Sair') 
+
+append internal_scripts
+    script.
+        function remove() {
+            console.log(`csrfToken: ${csrfToken}`);
+            //- axios.delete(`/meli/categories`, { categoryId: '!{category.id}' }, { headers: { 'csrf-token': csrfToken } })
+            axios.delete(`/meli/categories/!{category.id}`, { headers: { 'csrf-token': csrfToken } })
+            .then(()=>{
+                window.location.href = '/meli/categories';
+            })
+            .catch((err)=>{
+                console.error(`${err.response.status} (${err.response.statusText}) ${err.response.data}`);
+                alert(`Não foi possível remover a categoria. ${err.response.data}`);
+            });
+        }
+
+append external_scripts
+    include ../components/axios.js.pug
