@@ -145,7 +145,7 @@ async function getMeliCategoryAttributes(categoryId) {
                 }
                 let attributes = [];
                 for (let attribute of response.data) {
-                   if (attribute.tags.required) {
+                   if (attribute.tags.required || attribute.tags.catalog_required) {
                        attributes.push(attribute);
                    }
                 }

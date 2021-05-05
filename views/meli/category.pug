@@ -70,23 +70,24 @@ block content
             a(href=`https://api.mercadolibre.com/categories/${category.id}/attributes`) https://api.mercadolibre.com/categories/!{category.id}/attributes
 
         .group
-            h3 Atributos
-            .attributes
-                each attribute in category.attributes
-                    p.attribute-name= attribute.name
-                    if attribute.value_type
-                        p value_type: !{attribute.value_type}
-                    if attribute.value_max_length
-                        p value_max_length: !{attribute.value_max_length}
-                    if attribute.hint
-                        p hint: !{attribute.hint}
-                    if attribute.tooltip
-                        p tooltip: !{attribute.tooltip}
-                    if attribute.values
-                        p values
-                        .values
-                            each value in attribute.values
-                                p= value.name
+            if category.attributes.length
+                h3 Atributos
+                .attributes
+                    each attribute in category.attributes
+                        p.attribute-name= attribute.name
+                        if attribute.value_type
+                            p value_type: !{attribute.value_type}
+                        if attribute.value_max_length
+                            p value_max_length: !{attribute.value_max_length}
+                        if attribute.hint
+                            p hint: !{attribute.hint}
+                        if attribute.tooltip
+                            p tooltip: !{attribute.tooltip}
+                        if attribute.values
+                            p values
+                            .values
+                                each value in attribute.values
+                                    p= value.name
 
 
         input.btn-primary(type='button', value='Atualizar', onclick='update()')

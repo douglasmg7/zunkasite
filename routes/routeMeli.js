@@ -591,45 +591,6 @@ router.post('/categories', checkPermission, async (req, res, next)=>{
     }
 });
 
-// // Add category.
-// router.post('/categories', checkPermission, async (req, res, next)=>{
-    // try {
-        // // Invalid category.
-        // let categoryId = req.body.categoryId
-        // // log.debug(`req.body: ${util.inspect(req.body)}`);
-        // if (!categoryId || !categoryId.startsWith('MLB') || (categoryId.length <= 4)) {
-            // return res.status(400).send('Catgoria inválida');
-        // }
-
-        // // Get category.
-        // let url = `${meli.MELI_API_URL}/categories/${categoryId}`
-        // // log.debug(`token access: ${meli.getMeliTokenAccess().access_token}`);
-        // let response = await axios.get(url);
-        // // log.debug(`response.data: ${util.inspect(response.data)}`);
-        // if (response.data.err) {
-            // return log.error(new Error(`Adding Mercado Livre category ${categoryId}. ${response.data.err}`));
-        // }
-        // receivedCategory = response.data;
-
-        // // Get attributes.
-        // url = `${meli.MELI_API_URL}/categories/${categoryId}/attributes`
-        // let response = await axios.get(url);
-        // // log.debug(`response.data: ${util.inspect(response.data)}`);
-        // if (response.data.err) {
-            // return log.error(new Error(`Adding Mercado Livre category ${categoryId}. ${response.data.err}`));
-        // }
-        // receivedCategory.attributes = response.data;
-
-        // // log.debug(`response.data: ${util.inspect(response.data)}`);
-        // let category = MeliCategory(receivedCategory);
-        // await category.save()
-        // return res.send();
-    // } catch(err) {
-        // log.error(`Adding meli category. ${err.stack}`);
-        // return res.status(500).send('Erro interno');
-    // }
-// });
-
 // Remove category.
 router.delete('/categories/:categoryId', checkPermission, async (req, res, next)=>{
     try {
@@ -651,23 +612,20 @@ router.put('/categories/:categoryId', checkPermission, async (req, res, next)=>{
         if (!categoryId || !categoryId.startsWith('MLB') || (categoryId.length <= 4)) {
             return res.status(400).send('Catgoria inválida');
         }
-        let category = await MeliCategory.findOne({ id: categoryId });
-        if (!category) {
+        let dbCategory = await MeliCategory.findOne({ id: categoryId });
+        if (!dbCategory) {
             return res.status(400).send(`Not exist category: ${categoryId} to be updated`);
         }
 
-        // log.debug(`res.locals.tokenAccess: ${util.inspect(res.locals.tokenAccess)}`);
-        let url = `${meli.MELI_API_URL}/categories/${categoryId}`
-        // log.debug(`token access: ${meli.getMeliTokenAccess().access_token}`);
-        let response = await axios.get(url);
-        // log.debug(`response.data: ${util.inspect(response.data)}`);
-        if (response.data.err) {
-            return log.error(new Error(`Adding Mercado Livre category ${categoryId}. ${response.data.err}`));
+        let [category, attributes] = await Promise.all([meli.getMeliCategory(categoryId), meli.getMeliCategoryAttributes(categoryId)]);
+        if (!category || !attributes) {
+            log.error(new Error(`Adding Mercado Livre category ${categoryId}. Not receive category or category attributes.`));
+            return res.status(500).send('Erro interno');
         }
-        // log.debug(`response.data: ${util.inspect(response.data)}`);
-        log.debug('updated category');
-        category.overwrite(response.data);
-        await category.save()
+        category.attributes = attributes;
+
+        dbCategory.overwrite(category);
+        await dbCategory.save()
         return res.send();
     } catch(err) {
         log.error(`Adding meli category. ${err.stack}`);
@@ -675,8 +633,7 @@ router.put('/categories/:categoryId', checkPermission, async (req, res, next)=>{
     }
 });
 
-
-///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 // module
 ///////////////////////////////////////////////////////////////////////////////
 module.exports = router;
