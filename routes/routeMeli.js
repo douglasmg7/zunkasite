@@ -574,8 +574,8 @@ router.post('/categories', checkPermission, async (req, res, next)=>{
             return res.status(400).send('Catgoria inválida');
         }
         let [category, attributes] = await Promise.all([meli.getMeliCategory(categoryId), meli.getMeliCategoryAttributes(categoryId)]);
-        log.debug(`category: ${util.inspect(category)}`);
-        log.debug(`attributes: ${util.inspect(attributes)}`);
+        // log.debug(`category: ${util.inspect(category)}`);
+        // log.debug(`attributes: ${util.inspect(attributes)}`);
         if (!category || !attributes) {
             log.error(new Error(`Adding Mercado Livre category ${categoryId}. Not receive category or category attributes.`));
             return res.status(500).send('Erro interno');
