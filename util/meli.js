@@ -19,6 +19,9 @@ const MELI_TOKEN_URL = `${MELI_API_URL}/oauth/token` ;
 // Util.
 const util = require('util');
 
+///////////////////////////////////////////////////////////////////////////////
+// Token access
+///////////////////////////////////////////////////////////////////////////////
 
 let meliAuthCode;
 loadMeliAuthCode();
@@ -111,6 +114,49 @@ function getAuthorizationURL() {
     return url;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// Categories
+///////////////////////////////////////////////////////////////////////////////
+
+// Get meli category.
+function getMeliCategory(categoryId) {
+    return new Promise(async(resolve, reject)=> {
+        try {
+            let url = `${MELI_API_URL}/categories/${categoryId}`
+            let response = await axios.get(url);
+            if (response.data.err) {
+                return reject(response.data.err);
+            }
+            resolve(response.data);
+        } catch(err) {
+            reject(err);
+        }
+    });
+}
+
+// Get meli category attributes.
+async function getMeliCategoryAttributes(categoryId) {
+        return new Promise(async(resolve, reject)=> {
+            try {
+                let url = `${MELI_API_URL}/categories/${categoryId}/attributes`
+                let response = await axios.get(url);
+                if (response.data.err) {
+                    return reject(response.data.err);
+                }
+                let attributes = [];
+                for (let attribute of response.data) {
+                   if (attribute.tags.required) {
+                       attributes.push(attribute);
+                   }
+                }
+                resolve(attributes);
+            } catch(err) {
+                reject(err);
+            }
+        });
+}
+
+
 module.exports.getAuthorizationURL = getAuthorizationURL;
 
 module.exports.getMeliAuthCode = getMeliAuthCode;
@@ -123,3 +169,6 @@ module.exports.getMeliTokenAccessFromMeli = getMeliTokenAccessFromMeli;
 
 module.exports.MELI_API_URL = MELI_API_URL;
 module.exports.MELI_TOKEN_URL = MELI_TOKEN_URL;
+
+module.exports.getMeliCategory = getMeliCategory;
+module.exports.getMeliCategoryAttributes = getMeliCategoryAttributes;
