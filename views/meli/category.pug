@@ -34,6 +34,9 @@ block append internal_style
             color: var(--green);
             text-decoration: underline;
         }
+        section .group select {
+            margin-bottom: .7em;
+        }
         section .group .attributes > p.attribute-name {
             font-weight: bold;
             margin-top: .5em;
@@ -53,6 +56,13 @@ block content
     section
         //- name
         h2= category.name
+
+        //- zunka category
+        .group
+            h3 Categoria da Zunka
+            select(id='category' onchange='updateZunkaCategory(this)')
+                each productCategory in productCategories
+                    option(value=productCategory, selected= productCategory == category.zunkaCategory) #{productCategory}   
 
         //- id
         .group
@@ -90,7 +100,7 @@ block content
                                     p= value.name
 
 
-        input.btn-primary(type='button', value='Atualizar', onclick='update()')
+        input.btn-primary(type='button', value='Recarregar do Mercado Livre', onclick='update()')
         input.btn-danger(type='button', value='Remover', onclick='remove()')
         input.btn-exit(type='button', onclick='window.location.href="/meli/categories"', value='Sair') 
 
@@ -118,6 +128,18 @@ append internal_scripts
             .catch((err)=>{
                 console.error(`${err.response.status} (${err.response.statusText}) ${err.response.data}`);
                 alert(`Não foi possível atualizar a categoria. ${err.response.data}`);
+            });
+        }
+        function updateZunkaCategory(selecteObject) {
+            //- console.log('changed select');
+            //- console.log(`${selecteObject.value}`);
+            axios.put(`/meli/categories/!{category.id}/zunka-category`, { productCategory: selecteObject.value }, { headers: { 'csrf-token': csrfToken } })
+            .then(()=>{
+                //- window.location.href = '/meli/categories/!{category.id}';
+            })
+            .catch((err)=>{
+                console.error(`${err.response.status} (${err.response.statusText}) ${err.response.data}`);
+                alert(`Não foi possível atualizar a categoria zunka. ${err.response.data}`);
             });
         }
 

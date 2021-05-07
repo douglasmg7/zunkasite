@@ -43,7 +43,8 @@ block content
         each category in categories
             a(href=`/meli/categories/${category.id}`) 
                 span !{category.id}&nbsp - &nbsp 
-                span.title !{category.name}
+                span !{category.name}&nbsp
+                span [!{category.zunkaCategory}]
         br
         input(type='text' id='newCategory')
         input.btn-info(type='button' onclick='addCategory()' value='Adicionar nova categoria') 

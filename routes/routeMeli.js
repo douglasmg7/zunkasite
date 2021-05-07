@@ -10,6 +10,7 @@ const ObjectId = require('mongoose').Types.ObjectId;
 const Product = require('../model/product');
 const MeliCategory = require('../model/meliCategory');
 const redis = require('../util/redisUtil');
+const productCategories = require('../util/productCategories');
 // Internal.
 const s = require('../config/s');
 // Mercado Livre
@@ -537,6 +538,15 @@ router.get('/user', checkPermission, checkTokenAccess, async (req, res, next)=>{
 ///////////////////////////////////////////////////////////////////////////////
 // Categories
 ///////////////////////////////////////////////////////////////////////////////
+// Render categories.
+router.get('/categories', checkPermission, async (req, res, next)=>{
+    try{
+        let categories = await MeliCategory.find().exec();
+        return res.render('meli/categories', { categories: categories });
+    } catch(err) {
+        return next(err)
+    }
+});
 
 // Render category.
 router.get('/categories/:categoryId', checkPermission, async (req, res, next)=>{
@@ -547,22 +557,13 @@ router.get('/categories/:categoryId', checkPermission, async (req, res, next)=>{
             return res.status(500).send('Categoria não existe');
         }
         // log.debug(`category: ${util.inspect(category)}`);
-        return res.render('meli/category', { category: category });
+        // log.debug(`productCategories.categories: ${util.inspect(productCategories.categories)}`);
+        return res.render('meli/category', { category: category, productCategories: productCategories.categories });
     } catch(err) {
         return next(err)
     }
 });
 
-// Render categories.
-router.get('/categories', checkPermission, async (req, res, next)=>{
-    try{
-        let categories = await MeliCategory.find().exec();
-        // log.debug(`response: ${util.inspect(categories)}`);
-        return res.render('meli/categories', { categories: categories });
-    } catch(err) {
-        return next(err)
-    }
-});
 
 // Add category.
 router.post('/categories', checkPermission, async (req, res, next)=>{
@@ -582,8 +583,10 @@ router.post('/categories', checkPermission, async (req, res, next)=>{
         }
         category = MeliCategory(category);
         category.attributes = attributes;
+        category.zunkaCategory = await productCategories.getSimilarCategory(category.name);        
 
         await category.save()
+        log.debug(`Meli category ${category.name} added`);
         return res.send();
     } catch(err) {
         log.error(`Adding meli category. ${err.stack}`);
@@ -596,9 +599,45 @@ router.delete('/categories/:categoryId', checkPermission, async (req, res, next)
     try {
         // log.debug(`response.data: ${util.inspect(response.data)}`);
         await MeliCategory.deleteOne({ id: req.params.categoryId });
+        log.debug(`Meli category ${req.params.categoryId} deleted`);
         return res.send();
     } catch(err) {
         log.error(`Adding meli category. ${err.stack}`);
+        return res.status(500).send('Erro interno');
+    }
+});
+
+// Update zunka category.
+router.put('/categories/:categoryId/zunka-category', checkPermission, async (req, res, next)=>{
+    try {
+        // Invalid category.
+        let categoryId = req.params.categoryId
+        // log.debug(`req.body: ${util.inspect(req.body)}`);
+        if (!categoryId || !categoryId.startsWith('MLB') || (categoryId.length <= 4)) {
+            return res.status(400).send('Catgoria inválida');
+        }
+        let dbCategory = await MeliCategory.findOne({ id: categoryId });
+        if (!dbCategory) {
+            return res.status(400).send(`Not exist category: ${categoryId} to be updated`);
+        }
+
+        // Validate zunka category.
+        // log.debug(`req.body: ${util.inspect(req.body)}`);
+        let zunkaCategory = req.body.productCategory;
+        if (!zunkaCategory) {
+            return res.status(400).send('Zunka categoria inválida');
+        }
+        if (!productCategories.categories.includes(zunkaCategory)) {
+            return res.status(400).send('Zunka categoria não existe');
+        }
+
+        // Update.
+        dbCategory.zunkaCategory = zunkaCategory;
+        await dbCategory.save();
+        log.debug(`Meli category ${dbCategory.name} updated to zunka category ${dbCategory.zunkaCategory}`);
+        return res.send();
+    } catch(err) {
+        log.error(`Updating meli zunka category. ${err.stack}`);
         return res.status(500).send('Erro interno');
     }
 });
@@ -623,12 +662,15 @@ router.put('/categories/:categoryId', checkPermission, async (req, res, next)=>{
             return res.status(500).send('Erro interno');
         }
         category.attributes = attributes;
+        // Will no change zunka category already defined.
+        category.zunkaCategory = dbCategory.zunkaCategory;
 
         dbCategory.overwrite(category);
         await dbCategory.save()
+        log.debug(`Meli category ${dbCategory.name} updated`);
         return res.send();
     } catch(err) {
-        log.error(`Adding meli category. ${err.stack}`);
+        log.error(`Updating meli category. ${err.stack}`);
         return res.status(500).send('Erro interno');
     }
 });

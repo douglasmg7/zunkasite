@@ -1,6 +1,8 @@
 'us estrict';
 const log = require('../config/log');
 const mongoose = require('mongoose');
+const Fuse = require('fuse.js');
+// const util = require('util');
 
 // The order of items matter.
 let regexCategories = [
@@ -58,6 +60,45 @@ regexCategories.forEach(item=>{
 categories.sort();
 // console.log(`Generated Product categires: ${categories}`);
 
+const fuseOptions = {
+  // isCaseSensitive: false,
+  // includeScore: true,
+  shouldSort: true,
+  // includeMatches: false,
+  // findAllMatches: false,
+  minMatchCharLength: 2,
+  // location: 0,
+  // threshold: 0.6,
+  // distance: 100,
+  // useExtendedSearch: false,
+  ignoreLocation: true,
+  // ignoreFieldNorm: false,
+  keys: [
+    'name',
+    // "author.firstName"
+  ]
+};
+let categoriesFuse;
+
+// Init fuse.
+function initFuse() {
+    try {
+        categoriesFuse = new Fuse(regexCategories, fuseOptions);
+    } catch(err) {
+        log.error(new Error(`Initializing categories fuse. catch: ${err}`));
+    }
+};
+initFuse();
+
+// Get similar product.
+function getSimilarCategory(searchText) {
+    let categories = categoriesFuse.search(searchText);
+    // console.log(`categoriesFuse return: ${util.inspect(categories[0])}`);
+    return categories[0].item.name;
+}
+
+// console.log(`search category: ${getSimilarCategory('acesso')}`);
+
 // Categories in use.
 let categoriesInUse = [];
 // Get categories in use.
@@ -96,3 +137,5 @@ module.exports.categories = categories;
 module.exports.selectCategory = selectCategory;
 module.exports.inUse = getCategoriesInUse;
 module.exports.updateInUse = updateCategoriesInUse;
+
+module.exports.getSimilarCategory = getSimilarCategory;
