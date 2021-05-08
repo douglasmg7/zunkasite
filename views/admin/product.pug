@@ -146,6 +146,12 @@ block content
             hr
             // Not have product on mercado livre
             .no-have-ml-id(v-if='!this.product.mercadoLivreId')
+                label(v-for='attribute in meliCategoryAttributes' :for='attribute.name') {{attribute.name}}
+                    .has-values(v-if='attribute.values')
+                        select(id='attribute.name' v-model='attribute.text')
+                            option(v-for='value in attribute.values') {{value.name}}   
+                    .no-values(v-if='!attribute.values')
+                        input(type='text' :id='attribute.name' v-model='attribute.text')
                 input.btn-success(type='button' v-on:click='createMeliProduct()' value='Criar produto no Mercado Livre')
             // Have product on mercado livre
             .have-ml-id(v-if='this.product.mercadoLivreId')

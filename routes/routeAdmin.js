@@ -42,6 +42,8 @@ const productUtil = require('../util/productUtil');
 const PRODUCT_QTD_BY_PAGE = 20;
 // Max order quantity by Page.
 const ORDER_QTD_BY_PAGE = 20;
+// Meli categories.
+const MeliCategory = require('../model/meliCategory');
 
 // Check permission.
 function checkPermission (req, res, next) {

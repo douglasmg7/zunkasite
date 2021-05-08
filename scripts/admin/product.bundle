@@ -34,6 +34,7 @@ var app = new Vue({
         enableWatchStoreProductId: true,
         enableWatchEan: true,
         meliProduct: {},
+        meliCategoryAttributes: [],
     },
     created: function() {
         this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice.toFixed(2));
@@ -486,7 +487,10 @@ var app = new Vue({
         },
         async loadMeliProduct(){
             try {
-                if (!this.product.mercadoLivreId) return;
+                if (!this.product.mercadoLivreId) {
+                    this.loadMeliProductCategoryAttriubtes();
+                    return;
+                }
                 // console.log('createProductIntoMercadoLivre');
                 let response = await axios.get(`/meli/products/${this.product.mercadoLivreId}`, { headers:{'csrf-token' : csrfToken} })
                 // console.log(JSON.stringify(response.data, null, 2));
@@ -506,6 +510,31 @@ var app = new Vue({
                     console.error(err);
                 }
                 alert('Não foi possível obter o produto no Mercado Livre.');
+            }
+        },
+        async loadMeliProductCategoryAttriubtes(){
+            try {
+                let response = await axios.get(`/meli/category/attributes-by-zunka-product-category/${this.product.storeProductCategory}`, { headers:{'csrf-token' : csrfToken} })
+                // console.log(JSON.stringify(response.data, null, 2));
+                // Server side error.
+                if (response.data.err) {
+                    return alert('Não foi possível obter atributos da categoria do Mercado Livre');
+                } 
+                for (const [i, el] of response.data.entries()) {
+                    response.data[i].text = '';
+                }
+                this.meliCategoryAttributes = response.data;
+                // console.log(`attributes: ${JSON.stringify(response.data, null, 4)}`);
+            } 
+            catch(err) {
+                if (err.response && err.response.data) {
+                    console.error(err.response.data);
+                } else if (err.response) {
+                    console.error(err.response);
+                } else {
+                    console.error(err);
+                }
+                alert('Não foi possível obter atributos da categoria do Mercado Livre');
             }
         },
     },

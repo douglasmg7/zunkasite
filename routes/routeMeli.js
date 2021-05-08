@@ -675,6 +675,24 @@ router.put('/categories/:categoryId', checkPermission, async (req, res, next)=>{
     }
 });
 
+
+// Get meli category attributes by zunka product category.
+router.get('/category/attributes-by-zunka-product-category/:zunkaProductCategory', checkPermission, async (req, res, next)=>{
+    try{
+        // log.debug(`req.params.zunkaProductCategory: ${req.params.zunkaProductCategory}`);
+        let category = await MeliCategory.findOne({ 'zunkaCategory': req.params.zunkaProductCategory }).exec()
+        // log.debug(`category.attributes: ${util.inspect(category.attributes)}`);
+        if (category && category.attributes && (category.attributes.length > 0)) {
+            return res.json(category.attributes);
+        }
+        return res.json({});
+    } catch(err) {
+        log.error(`Getting meli category attribute by zunka product category. ${err.stack}`);
+        return res.status(500).send(err);
+    }
+});
+
+
 //////////////////////////////////////////////////////////////////////////////
 // module
 ///////////////////////////////////////////////////////////////////////////////
