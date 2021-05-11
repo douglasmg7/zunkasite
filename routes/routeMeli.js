@@ -22,8 +22,9 @@ function checkPermission (req, res, next) {
 	if (req.isAuthenticated() && req.user.group.includes('admin')) {
 		return next();
 	}
-	// log.warn(req.method, req.originalUrl, ' - permission denied');
-	// res.json('status: permission denied');
+    // log.warn(req.method, req.originalUrl, ' - permission denied');
+
+    // res.json('status: permission denied');
 	res.redirect('/user/signin');
 };
 
@@ -98,9 +99,15 @@ async function checkTokenAccess (req, res, next) {
 
 // Menu
 router.get('/menu', checkPermission, async (req, res, next)=>{
-    // log.debug(`Run mode: ${process.env.NODE_ENV == 'development'}`);
-    let autoLoadTokenAccess = await redis.getMeliAutoLoadTokenAccess();
-    res.render('meli/menu', {devMode: process.env.NODE_ENV == 'development', autoLoadTokenAccess});
+    try {
+        // log.debug(`Run mode: ${process.env.NODE_ENV == 'development'}`);
+        let autoLoadTokenAccess = await redis.getMeliAutoLoadTokenAccess();
+        // log.debug(`autoLoadTokenAccess: ${autoLoadTokenAccess}`);
+        res.render('meli/menu', {devMode: process.env.NODE_ENV == 'development', autoLoadTokenAccess});
+    } catch(err) {
+        log.error(`Getting meli menu page. ${err.stack}`);
+        return res.status(500).send();
+    }
 });
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -238,8 +245,7 @@ router.get('/product/:id', checkPermission, async (req, res, next)=>{
     try{
         // let url = `${meli.MELI_API_URL}/sites/MLB/search?seller_id=${process.env.MERCADO_LIVRE_USER_ID}`
         let url = `${meli.MELI_API_URL}/items/${req.params.id}`
-        // todo - comment
-        log.debug(`get meli product: ${url}`);
+        // log.debug(`get meli product: ${url}`);
 
         let response = await axios.get(url);
         if (response.data.err) {
@@ -263,7 +269,6 @@ router.get('/products/:mercadoLivreId', checkPermission, async (req, res, next)=
     try{
         // let url = `${meli.MELI_API_URL}/sites/MLB/search?seller_id=${process.env.MERCADO_LIVRE_USER_ID}`
         let url = `${meli.MELI_API_URL}/items/${req.params.mercadoLivreId}`
-        // todo - comment
         // log.debug(`url: ${url}`);
 
         let response = await axios.get(url);

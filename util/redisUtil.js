@@ -157,7 +157,7 @@ function getMeliAutoLoadTokenAccess() {
                     reject(new Error(`Retriving auto load token access configuration from redis db. ${err.message}`));
                 }
                 if (config == null) {
-                    return false;
+                    resolve(false);
                 }
                 config = JSON.parse(config);
                 resolve(config);
