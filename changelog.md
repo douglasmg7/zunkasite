@@ -1,3 +1,7 @@
+## 1.15.4 (11 Maio 2021)
+### Melhorias
+Novos produtos são ordenados por data de modificação
+
 ## 1.15.3 (05 Abril 2021)
 ### Melhorias
 Inclusão do fabricante Intelbras  
