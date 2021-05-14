@@ -242,7 +242,8 @@ router.get('/api/new-products', function (req, res) {
 	const search = {'deletedAt': {$exists: false}, 'storeProductCommercialize': true, 'storeProductTitle': {$regex: /\S/}, 'storeProductQtd': {$gt: 0}, 'storeProductPrice': {$gt: 0}};
 	// Find products.
 	// let productPromise = Product.find(search).sort({'createdAt': -1}).limit(6).exec();
-	let productPromise = Product.find(search).sort({'updatedAt': -1}).limit(6).exec();
+	// let productPromise = Product.find(search).sort({'updatedAt': -1}).limit(6).exec();
+	let productPromise = Product.find(search).sort({'editedAt': -1}).limit(6).exec();
 	Promise.all([productPromise])
 		.then(([products])=>{
 			res.json({products});

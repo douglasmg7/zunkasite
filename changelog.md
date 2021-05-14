@@ -1,6 +1,6 @@
-## 1.15.4 (11 Maio 2021)
+## 1.15.5 (14 Maio 2021)
 ### Melhorias
-Novos produtos são ordenados por data de modificação
+Novos produtos são ordenados por data de edição do administrador apenas, e não por alterações do próprio sistema.
 
 ## 1.15.3 (05 Abril 2021)
 ### Melhorias

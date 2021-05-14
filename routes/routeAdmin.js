@@ -265,6 +265,8 @@ router.get('/product/:product_id', checkPermission, function(req, res, next) {
             res.status(404).send('Produto removido.');
         } else {
             // log.debug(`warranties: ${JSON.stringify(markdownCache.warranties())}`);
+            // log.debug(`product.updateAt: ${product.updatedAt}`);
+            // log.debug(`product.editedAt: ${product.editedAt}`);
             res.render('admin/product', {
                 nav: {
                     showAdminLinks: true
@@ -363,6 +365,7 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 		// Save product.
         log.debug(`Saving product ${req.body.product._id}, dealerProductActive: ${req.body.product.dealerProductActive}`);
         log.debug(`Saving product ${req.body.product._id}, storeProductId: ${req.body.product.storeProductId}`);
+        req.body.product.editedAt = Date.now();
 		Product.findOneAndUpdate({_id: req.body.product._id}, req.body.product, { new: true },  function(err, product){
 			if (err) {
 				res.json({err});
@@ -407,6 +410,21 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 			}
 		});
 	}
+});
+
+// Update editedAt.
+router.put('/product/:productId/edited-at', checkPermission, async (req, res, next)=>{
+    try {
+        let product = await Product.findById(req.params.productId).exec();
+        let now = Date.now();
+        product.editedAt = now;
+        let savedProduct = await product.save();
+        // log.debug(`savedProduct: ${savedProduct}`);
+        return res.json({product: savedProduct});
+    } catch(err) {
+        log.error(`Updating product editedAt. ${err.stack}`);
+        return res.status(500);
+    }
 });
 
 // Delete a product.

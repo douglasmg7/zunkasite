@@ -498,7 +498,7 @@ var app = new Vue({
                 if (response.data.err || !response.data) {
                     return alert('Não foi possível obter o produto do Mercado Livre.');
                 } 
-                console.log(response.data);
+                // console.log(response.data);
                 this.meliProduct = response.data;
             } 
             catch(err) {
@@ -520,10 +520,12 @@ var app = new Vue({
                 if (response.data.err) {
                     return alert('Não foi possível obter atributos da categoria do Mercado Livre');
                 } 
-                for (const [i, el] of response.data.entries()) {
-                    response.data[i].text = '';
-                }
-                this.meliCategoryAttributes = response.data;
+                try {
+                    for (const [i, el] of response.data.entries()) {
+                        response.data[i].text = '';
+                    }
+                    this.meliCategoryAttributes = response.data;
+                } catch(err) {}
                 // console.log(`attributes: ${JSON.stringify(response.data, null, 4)}`);
             } 
             catch(err) {
@@ -535,6 +537,31 @@ var app = new Vue({
                     console.error(err);
                 }
                 alert('Não foi possível obter atributos da categoria do Mercado Livre');
+            }
+        },
+        // Update editedAt to now.
+        async updateEditedAt(){
+            try {
+                let response = await axios.put(`/admin/product/${this.product._id}/edited-at`, {}, { headers:{'csrf-token' : csrfToken} })
+                // console.log(JSON.stringify(response.data, null, 2));
+                // Server side error.
+                if (response.data.err) {
+                    return alert('Não foi possível obter atualizar a data da edição');
+                } 
+                // console.log(response.data);
+                this.product.updatedAt = response.data.product.updatedAt;
+                this.product.editedAt = response.data.product.editedAt;
+                // console.log(`attributes: ${JSON.stringify(response.data, null, 4)}`);
+            } 
+            catch(err) {
+                if (err.response && err.response.data) {
+                    console.error(err.response.data);
+                } else if (err.response) {
+                    console.error(err.response);
+                } else {
+                    console.error(err);
+                }
+                return alert('Não foi possível obter atualizar a data da edição');
             }
         },
     },
