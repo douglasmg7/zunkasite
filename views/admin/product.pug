@@ -199,9 +199,9 @@ block content
             input(type='text' id='display-priority' v-model='product.displayPriority')
             //- Changed at.
             //- p updatedAt: {{ product.updatedAt }}
-            //- label(for='edited-at') Última edição
-            //- input(type='text' id='edited-at' v-model='product.editedAt' disabled)
-            //- input.btn-info(type='button' v-on:click='updateEditedAt()' value='Atualizar data da edição')
+            label(for='edited-at') Última edição
+            input(type='text' id='edited-at' v-model='product.editedAt' disabled)
+            input.btn-info(type='button' v-on:click='updateEditedAt()' value='Atualizar data da edição')
         .buttons
             if user.email!='douglasmg7@gmail.com'
                 input.btn-success(type='button' v-on:click='saveProduct()' value='Salvar e voltar')

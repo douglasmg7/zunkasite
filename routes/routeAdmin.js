@@ -365,7 +365,8 @@ router.post('/product/:productId', checkPermission, (req, res, next)=>{
 		// Save product.
         log.debug(`Saving product ${req.body.product._id}, dealerProductActive: ${req.body.product.dealerProductActive}`);
         log.debug(`Saving product ${req.body.product._id}, storeProductId: ${req.body.product.storeProductId}`);
-        req.body.product.editedAt = Date.now();
+        // Not update editedAt on save product.
+        // req.body.product.editedAt = Date.now();
 		Product.findOneAndUpdate({_id: req.body.product._id}, req.body.product, { new: true },  function(err, product){
 			if (err) {
 				res.json({err});
