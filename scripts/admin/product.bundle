@@ -514,19 +514,21 @@ var app = new Vue({
         },
         async loadMeliProductCategoryAttriubtes(){
             try {
-                let response = await axios.get(`/meli/category/attributes-by-zunka-product-category/${this.product.storeProductCategory}`, { headers:{'csrf-token' : csrfToken} })
-                // console.log(JSON.stringify(response.data, null, 2));
-                // Server side error.
-                if (response.data.err) {
-                    return alert('Não foi possível obter atributos da categoria do Mercado Livre');
-                } 
-                try {
-                    for (const [i, el] of response.data.entries()) {
-                        response.data[i].text = '';
-                    }
-                    this.meliCategoryAttributes = response.data;
-                } catch(err) {}
-                // console.log(`attributes: ${JSON.stringify(response.data, null, 4)}`);
+                if (this.product.storeProductCategory) {
+                    let response = await axios.get(`/meli/category/attributes-by-zunka-product-category/${this.product.storeProductCategory}`, { headers:{'csrf-token' : csrfToken} })
+                    // console.log(JSON.stringify(response.data, null, 2));
+                    // Server side error.
+                    if (response.data.err) {
+                        return alert('Não foi possível obter atributos da categoria do Mercado Livre');
+                    } 
+                    try {
+                        for (const [i, el] of response.data.entries()) {
+                            response.data[i].text = '';
+                        }
+                        this.meliCategoryAttributes = response.data;
+                    } catch(err) {}
+                    // console.log(`attributes: ${JSON.stringify(response.data, null, 4)}`);
+                }
             } 
             catch(err) {
                 if (err.response && err.response.data) {

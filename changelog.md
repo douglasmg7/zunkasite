@@ -1,3 +1,7 @@
+## 1.15.6 (18 Maio 2021)
+### Bugfix
+Erro ao obter meli categorias para produto sem categoria zunka.
+
 ## 1.15.5 (14 Maio 2021)
 ### Melhorias
 Novos produtos são ordenados por data de edição do administrador apenas, e não por alterações do próprio sistema.
