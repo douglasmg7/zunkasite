@@ -1,3 +1,7 @@
+## 1.15.7 (19 Maio 2021)
+### Test
+Criação do produto no Mercado Livre.
+
 ## 1.15.6 (18 Maio 2021)
 ### Bugfix
 Erro ao obter meli categorias para produto sem categoria zunka.

@@ -383,30 +383,37 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
                     // "source":"http://mla-s2-p.mlstatic.com/968521-MLA20805195516_072016-O.jpg"
                 // }
             // ],
-            pictures:[],
-            attributes:[
-                {
-                    id: 'BRAND',
-                    value_name: 'Dell'
-                },
-                {
-                    id: 'MODEL',
-                    value_name: 'XPS-7390-P10S'
-                },
-                {
-                    id: 'PROCESSOR_BRAND',
-                    value_name: 'Intel Core i7-10710U'
-                },
-                {
-                    id: 'OS_NAME',
-                    value_name: 'Windows 10 Pro'
-                },
-            ]
+            // attributes:[
+                // {
+                    // id: 'BRAND',
+                    // value_name: 'Dell'
+                // },
+                // {
+                    // id: 'MODEL',
+                    // value_name: 'XPS-7390-P10S'
+                // },
+                // {
+                    // id: 'PROCESSOR_BRAND',
+                    // value_name: 'Intel Core i7-10710U'
+                // },
+                // {
+                    // id: 'OS_NAME',
+                    // value_name: 'Windows 10 Pro'
+                // },
+            // ]
         }
+        // Attributes.
+        data.attributes = [];
+        for (const attribute of req.body.attributes) {
+            data.attributes.push({ id: attribute.id, value_name: attribute.text });
+        }
+        // Images.
+        data.pictures = [];
         for (const image of product.images) {
             data.pictures.push({ source: `https://${req.app.get('hostname')}/img/${product._id}/${image}` });
         }
-        // log.debug(`data: ${util.inspect(data)}`);
+
+        log.debug(`data: ${util.inspect(data)}`);
         // return res.send();
 
         // log.debug(`data: ${JSON.stringify(data, null, 4)}`);

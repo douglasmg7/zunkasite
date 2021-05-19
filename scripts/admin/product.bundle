@@ -435,8 +435,18 @@ var app = new Vue({
         },
         async createMeliProduct(){
             try {
+                for (let attribute of this.meliCategoryAttributes) {
+                    if (!attribute.text)
+                        return alert(`Campo ${attribute.name} não preenchido`);
+                    console.log(attribute.text);
+                }
                 // console.log('createProductIntoMercadoLivre');
-                let response = await axios.post('/meli/products', { productId: this.product._id }, { headers:{'csrf-token' : csrfToken} })
+                let response = await axios.post(
+                    '/meli/products', 
+                    { productId: this.product._id, attributes: this.meliCategoryAttributes }, 
+                    { headers:{'csrf-token' : csrfToken} }
+                );
+
                 // console.log(JSON.stringify(response.data, null, 2));
                 // Server side error.
                 if (response.data.err || !response.data.mercadoLivreId) {
