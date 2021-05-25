@@ -1,3 +1,7 @@
+## 1.15.8 (25 Maio 2021)
+### Test
+Visualização de categorias disponíveis no Mercado Livre.
+
 ## 1.15.7 (19 Maio 2021)
 ### Test
 Criação do produto no Mercado Livre.

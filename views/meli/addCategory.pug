@@ -1,0 +1,105 @@
+extends ../layout/layout
+
+block title
+    title Zunka - Categoria do Mercado Livre
+
+block append internal_style
+    style.
+        section {
+            margin-bottom: 1em;
+        }
+        section > h2:first-child {
+            margin-top: 0;
+            margin-bottom: .5em;
+            color: var(--green);
+        }
+        section .group h3 {
+            margin: 0
+            color: var(--black-darkest);
+        }
+        section .group p {
+            margin: 0 0 0.7em 0;
+            color: var(--black-dark);
+        }
+        section .group a {
+            display: block;
+            display: flex;
+            flex-flow: row wrap;
+            margin-top: .0em;
+            margin-bottom: .7em;
+            color: var(--green);
+            cursor: pointer;
+        }
+        section .group a:hover {
+            color: var(--green);
+            text-decoration: underline;
+        }
+        section .group select {
+            margin-bottom: .7em;
+        }
+        section .group .categories > a.category-id {
+            margin-top: .5em;
+            margin-left: 2em;
+            margin-bottom: .1em;
+        }
+        section .group .categories > p {
+            margin-left: 2em;
+            margin-bottom: 1.2em;
+        }
+        section input.btn-primary {
+            margin-top: .5em;
+            margin-bottom: 1em;
+        }
+
+block content 
+    section
+        //- name
+        h2= category.name
+
+        //- id
+        .group
+            h3 Id
+            p= category.id
+
+        //- api category link
+        .group
+            h3 API Categoria
+            a(href=`https://api.mercadolibre.com/categories/${category.id}`) https://api.mercadolibre.com/categories/!{category.id}
+
+        //- api atributos link
+        .group
+            h3 API Atributos
+            a(href=`https://api.mercadolibre.com/categories/${category.id}/attributes`) https://api.mercadolibre.com/categories/!{category.id}/attributes
+
+        //- add category to zunka system
+        if category.id != "MLB1648" && showAddCategoryButton
+            input.btn-primary(type='button', value='Adicionar categoria', onclick='addCategory()')
+
+        if category.children_categories.length
+            .group
+                h3 Sub-Categorias
+                .categories
+                    each childrenCategory in category.children_categories
+                        a.category-id(href=`/meli/add-category/${childrenCategory.id}`)= childrenCategory.id
+                        p= childrenCategory.name
+
+append internal_scripts
+    script.
+        function addCategory() {
+            axios.post('/meli/categories', { categoryId: "#{category.id}" }, { headers: { 'csrf-token': csrfToken } })
+            .then(()=>{
+                window.location.href = '/meli/categories';
+            })
+            .catch((err)=>{
+                if(err.response.status == 400) {
+                    alert(err.response.data);
+                } 
+                else {
+                    console.error(`${err.response.status} (${err.response.statusText}) ${err.response.data}`);
+                    alert(`Não foi possível adicionar a categoria. ${err.response.data}`);
+                }
+            });
+        }
+
+append external_scripts
+    include ../components/axios.js.pug

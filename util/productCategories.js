@@ -38,6 +38,7 @@ let regexCategories = [
 	{ name: 'Pen drives', regex: /\bpen\s+drives?\b/i},
 	{ name: 'Drones', regex: /\bdrones?\b/i},
 	{ name: 'Impressoras', regex: /\bimpressoras?\b/i},
+	{ name: '', regex: /\b\b/i},
 ];
 
 // Select category.
@@ -94,7 +95,9 @@ initFuse();
 function getSimilarCategory(searchText) {
     let categories = categoriesFuse.search(searchText);
     // console.log(`categoriesFuse return: ${util.inspect(categories[0])}`);
-    return categories[0].item.name;
+    if (categories[0])
+        return categories[0].item.name;
+    return '';
 }
 
 // console.log(`search category: ${getSimilarCategory('acesso')}`);

@@ -550,6 +550,52 @@ router.get('/user', checkPermission, checkTokenAccess, async (req, res, next)=>{
 ///////////////////////////////////////////////////////////////////////////////
 // Categories
 ///////////////////////////////////////////////////////////////////////////////
+// Add category.
+router.get('/add-category/:categoryId', checkPermission, async (req, res, next)=>{
+    try {
+        let url = `${meli.MELI_API_URL}/categories/${req.params.categoryId}`
+
+        let [zunkaCategory, meliCategory] = await Promise.all([
+            MeliCategory.findOne({ 'id': req.params.categoryId }), 
+            await axios.get(url)
+        ]);
+
+        // Only show button if not category exists.
+        let showAddCategoryButton = true;
+        if (zunkaCategory) { showAddCategoryButton = false };
+        // log.debug(`category: ${util.inspect(category)}`);
+        // log.debug(`attributes: ${util.inspect(attributes)}`);
+
+        if (meliCategory.data.err) {
+            log.error(meliCategory.data.err);
+            return next(meliCategory.data.err);
+        } 
+
+        return res.render('meli/addCategory', { category: meliCategory.data, showAddCategoryButton: showAddCategoryButton });
+
+
+
+        // // log.debug(`categoryId: ${req.params.categoryId}`);
+        // let category = await MeliCategory.findOne({ 'id': req.params.categoryId }).exec()
+        // if (!category) {
+            // return res.status(500).send('Categoria não existe');
+        // }
+
+
+
+
+        // let response = await axios.get(url);
+        // if (response.data.err) {
+            // log.error(response.data.err);
+            // return next(response.data.err);
+        // } 
+
+        // return res.render('meli/findCategory', { category: response.data });
+    } catch(err) {
+        return next(err)
+    }
+});
+
 // Render categories.
 router.get('/categories', checkPermission, async (req, res, next)=>{
     try{
@@ -585,6 +631,11 @@ router.post('/categories', checkPermission, async (req, res, next)=>{
         // log.debug(`req.body: ${util.inspect(req.body)}`);
         if (!categoryId || !categoryId.startsWith('MLB') || (categoryId.length <= 4)) {
             return res.status(400).send('Catgoria inválida');
+        }
+        // Category already exist.
+        let existCategory = await MeliCategory.findOne({ 'id': categoryId }).exec()
+        if (existCategory) {
+            return res.status(400).send('Categoria já foi adicionada anteriormente');
         }
         let [category, attributes] = await Promise.all([meli.getMeliCategory(categoryId), meli.getMeliCategoryAttributes(categoryId)]);
         // log.debug(`category: ${util.inspect(category)}`);
