@@ -339,9 +339,13 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
     }
     try {
         // log.debug(`body: ${JSON.stringify(req.body.productsId)}`);
-        // Missing productsId.
+        // Missing product id.
         if (!req.body.productId) {
             return res.status(400).send('Missing productId');
+        }
+        // Missing meli category id.
+        if (!req.body.categoryId) {
+            return res.status(400).send('Missing categoid');
         }
         // Invalid productId.
         let productId = '';
@@ -358,9 +362,9 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
         let data = {
             seller_custom_field: product._id, 
             title: product.storeProductTitle,
-            category_id:"MLB1652",
+            category_id: req.body.categoryId,
             price: product.storeProductPrice,
-            currency_id:"BRL",
+            currency_id: "BRL",
             available_quantity: product.storeProductQtd,
             buying_mode: "buy_it_now",
             condition: "new",
@@ -746,7 +750,7 @@ router.get('/category/attributes-by-zunka-product-category/:zunkaProductCategory
         let category = await MeliCategory.findOne({ 'zunkaCategory': req.params.zunkaProductCategory }).exec()
         // log.debug(`category.attributes: ${util.inspect(category.attributes)}`);
         if (category && category.attributes && (category.attributes.length > 0)) {
-            return res.json(category.attributes);
+            return res.json({ meliCategoryId: category.id, meliCategories: category.attributes });
         }
         return res.json({});
     } catch(err) {

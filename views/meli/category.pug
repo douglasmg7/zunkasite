@@ -85,6 +85,7 @@ block content
                 .attributes
                     each attribute in category.attributes
                         p.attribute-name= attribute.name
+                        p id: !{attribute.id}
                         if attribute.value_type
                             p value_type: !{attribute.value_type}
                         if attribute.value_max_length

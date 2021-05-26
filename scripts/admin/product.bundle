@@ -35,6 +35,7 @@ var app = new Vue({
         enableWatchEan: true,
         meliProduct: {},
         meliCategoryAttributes: [],
+        meliCategoryId: "",
     },
     created: function() {
         this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice.toFixed(2));
@@ -443,7 +444,7 @@ var app = new Vue({
                 // console.log('createProductIntoMercadoLivre');
                 let response = await axios.post(
                     '/meli/products', 
-                    { productId: this.product._id, attributes: this.meliCategoryAttributes }, 
+                    { productId: this.product._id, categoryId: this.meliCategoryId, attributes: this.meliCategoryAttributes }, 
                     { headers:{'csrf-token' : csrfToken} }
                 );
 
@@ -532,10 +533,11 @@ var app = new Vue({
                         return alert('Não foi possível obter atributos da categoria do Mercado Livre');
                     } 
                     try {
-                        for (const [i, el] of response.data.entries()) {
-                            response.data[i].text = '';
+                        this.meliCategoryId = response.data.meliCategoryId;
+                        for (const [i, el] of response.data.meliCategories.entries()) {
+                            response.data.meliCategories[i].text = '';
                         }
-                        this.meliCategoryAttributes = response.data;
+                        this.meliCategoryAttributes = response.data.meliCategories;
                     } catch(err) {}
                     // console.log(`attributes: ${JSON.stringify(response.data, null, 4)}`);
                 }

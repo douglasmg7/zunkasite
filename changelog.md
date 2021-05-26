@@ -1,6 +1,9 @@
-## 1.15.9 (26 Maio 2021)
+## 1.15.10 (26 Maio 2021)
 ### Novo
 Liberação de todos os produtos para adição no Mercado Livre.
+
+### Bug
+Usando o mesmo id da categoria do Mercado Livre para todas as categorias do Mercado Livre.
 
 ## 1.15.8 (25 Maio 2021)
 ### Novo

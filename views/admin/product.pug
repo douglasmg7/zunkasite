@@ -147,7 +147,8 @@ block content
             hr
             //- Not have product on mercado livre
             .no-have-ml-id(v-if='!this.product.mercadoLivreId')
-                label(v-for='attribute in meliCategoryAttributes' :for='attribute.name') {{attribute.name}}
+                a(:href='`/meli/categories/${meliCategoryId}`') {{meliCategoryId}}
+                label(v-for='attribute in meliCategoryAttributes' :for='attribute.name') {{attribute.name}} [{{attribute.id}}]
                     .has-values(v-if='attribute.values')
                         select(id='attribute.name' v-model='attribute.text')
                             option(v-for='value in attribute.values') {{value.name}}   
