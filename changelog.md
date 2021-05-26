@@ -1,5 +1,9 @@
+## 1.15.9 (26 Maio 2021)
+### Novo
+Liberação de todos os produtos para adição no Mercado Livre.
+
 ## 1.15.8 (25 Maio 2021)
-### Test
+### Novo
 Visualização de categorias disponíveis no Mercado Livre.
 
 ## 1.15.7 (19 Maio 2021)

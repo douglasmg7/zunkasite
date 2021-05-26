@@ -140,11 +140,12 @@ block content
             label(for='finalPrice') Valor final (R$)
             //- input(type='text' id='finalPrice', v-model='product.storeProductPrice', v-on:input='calcMarkup')
             input(type='text' id='finalPrice', v-model='storeProductPriceBr', v-on:input='calcMarkup')
-        // Only valid for notebooks
-        .mercado-livre(v-if='product.storeProductCategory=="Notebooks"')
+        //- Meli product association
+        //- .mercado-livre(v-if='product.storeProductCategory=="Notebooks"')
+        .mercado-livre
             h2 Mercado Livre
             hr
-            // Not have product on mercado livre
+            //- Not have product on mercado livre
             .no-have-ml-id(v-if='!this.product.mercadoLivreId')
                 label(v-for='attribute in meliCategoryAttributes' :for='attribute.name') {{attribute.name}}
                     .has-values(v-if='attribute.values')
@@ -153,7 +154,7 @@ block content
                     .no-values(v-if='!attribute.values')
                         input(type='text' :id='attribute.name' v-model='attribute.text')
                 input.btn-success(type='button' v-on:click='createMeliProduct()' value='Criar produto no Mercado Livre')
-            // Have product on mercado livre
+            //- Have product on mercado livre
             .have-ml-id(v-if='this.product.mercadoLivreId')
                 a(href=`https://api.mercadolibre.com/items/${product.mercadoLivreId}`) {{ product.mercadoLivreId }} - {{meliProduct.status }}
                 br
