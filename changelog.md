@@ -1,3 +1,7 @@
+## 1.15.11 (14 Junho 2021)
+### Novo
+Adicionada a categoria de produtos, mesas digitalizadoras.
+
 ## 1.15.10 (26 Maio 2021)
 ### Novo
 Liberação de todos os produtos para adição no Mercado Livre.

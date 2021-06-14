@@ -38,6 +38,7 @@ let regexCategories = [
 	{ name: 'Pen drives', regex: /\bpen\s+drives?\b/i},
 	{ name: 'Drones', regex: /\bdrones?\b/i},
 	{ name: 'Impressoras', regex: /\bimpressoras?\b/i},
+	{ name: 'Mesas digitalizadoras', regex: /\bmesas?\s+digitalizadoras?\b/i},
 	{ name: '', regex: /\b\b/i},
 ];
 
