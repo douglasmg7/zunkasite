@@ -1,3 +1,7 @@
+## 1.16.0 (18 Junho 2021)
+### Novo
+Adicionada fabricante Wacom.
+
 ## 1.15.11 (14 Junho 2021)
 ### Novo
 Adicionada a categoria de produtos, mesas digitalizadoras.
