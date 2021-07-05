@@ -354,20 +354,29 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
         } catch(err){
             return res.status(400).send(`Inválid productId: ${req.body.productId}`);
         }
-        // Get all products into cart from db.
+        // Get product from db.
         let product = await Product.findOne({_id: ObjectId(productId)}).exec();
         if (!product) return res.status(400).send(`Not found product for productId: ${req.body.productId}`);
         // log.debug(product);
 
+        // Define price.
+        // Default - Classic (gold_special).
+        let meliPrice = product.storeProductPrice * 1.12;
+        // Premium (gold_pro).
+        if (req.body.meliListingType == 'gold_pro') {
+            meliPrice = product.storeProductPrice * 1.17;
+        }
+
         let data = {
-            seller_custom_field: product._id, 
+            seller_custom_field: `'${product._id}'`, 
             title: product.storeProductTitle,
             category_id: req.body.categoryId,
-            price: product.storeProductPrice,
+            price: meliPrice,
             currency_id: "BRL",
             available_quantity: product.storeProductQtd,
             buying_mode: "buy_it_now",
             condition: "new",
+            // listing_type_id: "gold_special",
             listing_type_id: "gold_special",
             // description: {
                 // "plain_text":"Descripción con Texto Plano \n"

@@ -1,3 +1,5 @@
+Make script to see if log file is too long without be write, to know if process is running.
+
 Verificar
     routeSetup.js 412
 

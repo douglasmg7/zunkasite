@@ -578,5 +578,13 @@ var app = new Vue({
                 return alert('Não foi possível obter atualizar a data da edição');
             }
         },
+        setMeliCommissionClassic(){
+            // Get values from input.
+            product.meliCommission = 12;
+        },
+        setMeliCommissionPremium(){
+            // Get values from input.
+            product.meliCommission = 17;
+        },
     },
 });

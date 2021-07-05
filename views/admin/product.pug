@@ -154,6 +154,15 @@ block content
                             option(v-for='value in attribute.values') {{value.name}}   
                     .no-values(v-if='!attribute.values')
                         input(type='text' :id='attribute.name' v-model='attribute.text')
+                //- Commission.
+                h3 Comissão
+                label
+                    input(type='radio' id='Clássico' name='listing-type-id' value='gold_special')
+                    span Clássico
+                label
+                    input(type='radio' id='Premium' name='listing-type-id' value='gold_pro')
+                    span Premium
+                //- Create meli product.
                 input.btn-success(type='button' v-on:click='createMeliProduct()' value='Criar produto no Mercado Livre')
             //- Have product on mercado livre
             .have-ml-id(v-if='this.product.mercadoLivreId')

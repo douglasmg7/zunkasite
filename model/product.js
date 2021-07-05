@@ -66,6 +66,7 @@ let product = new mongoose.Schema({
 	deletedAt: { type: Date }, // When the product was deleted.
     marketZoom: { type: Boolean, default: false },  // If to be market in the zoom market place.
     mercadoLivreId: { type: String, default: "" },
+    meliListingType: { type: String, default: 'gold_special' }, // gold_special (Classic), gold_pro (Premium).
     // editedAt: {type: Date, default: ()=>{return this.updatedAt();} },
     editedAt: {type: Date, default: function() {return this.get('createdAt');} },   // Last user edit, not last update from system.
 },
