@@ -35,7 +35,8 @@ var app = new Vue({
         enableWatchEan: true,
         meliProduct: {},
         meliCategoryAttributes: [],
-        meliCategoryId: "",
+        meliCategoryId: '',
+        meliListingType: 'gold_special',
     },
     created: function() {
         this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice.toFixed(2));
@@ -439,12 +440,17 @@ var app = new Vue({
                 for (let attribute of this.meliCategoryAttributes) {
                     if (!attribute.text)
                         return alert(`Campo ${attribute.name} não preenchido`);
-                    console.log(attribute.text);
+                    // console.log(attribute.text);
                 }
                 // console.log('createProductIntoMercadoLivre');
                 let response = await axios.post(
                     '/meli/products', 
-                    { productId: this.product._id, categoryId: this.meliCategoryId, attributes: this.meliCategoryAttributes }, 
+                    { 
+                        productId: this.product._id, 
+                        categoryId: this.meliCategoryId, 
+                        attributes: this.meliCategoryAttributes, 
+                        meliListingType: this.meliListingType
+                    }, 
                     { headers:{'csrf-token' : csrfToken} }
                 );
 

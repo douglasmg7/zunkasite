@@ -359,25 +359,19 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
         if (!product) return res.status(400).send(`Not found product for productId: ${req.body.productId}`);
         // log.debug(product);
 
-        // Define price.
-        // Default - Classic (gold_special).
-        let meliPrice = product.storeProductPrice * 1.12;
-        // Premium (gold_pro).
-        if (req.body.meliListingType == 'gold_pro') {
-            meliPrice = product.storeProductPrice * 1.17;
-        }
 
         let data = {
-            seller_custom_field: `'${product._id}'`, 
+            seller_custom_field: `${product._id}`, 
             title: product.storeProductTitle,
             category_id: req.body.categoryId,
-            price: meliPrice,
+            // price: meliPrice,
             currency_id: "BRL",
             available_quantity: product.storeProductQtd,
             buying_mode: "buy_it_now",
             condition: "new",
-            // listing_type_id: "gold_special",
-            listing_type_id: "gold_special",
+            description: {
+                "plain_text": createDescription(product.storeProductTechnicalInformation)
+            },
             // description: {
                 // "plain_text":"Descripción con Texto Plano \n"
             // },
@@ -391,30 +385,21 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
                     // "value_name":"90 días"
                 // }
             // ],
-            // pictures:[
-                // {
-                    // "source":"http://mla-s2-p.mlstatic.com/968521-MLA20805195516_072016-O.jpg"
-                // }
-            // ],
-            // attributes:[
-                // {
-                    // id: 'BRAND',
-                    // value_name: 'Dell'
-                // },
-                // {
-                    // id: 'MODEL',
-                    // value_name: 'XPS-7390-P10S'
-                // },
-                // {
-                    // id: 'PROCESSOR_BRAND',
-                    // value_name: 'Intel Core i7-10710U'
-                // },
-                // {
-                    // id: 'OS_NAME',
-                    // value_name: 'Windows 10 Pro'
-                // },
-            // ]
         }
+
+        // Define price.
+        // Classic.
+        if (req.body.meliListingType == 'gold_special') {
+            data.meliListingType = "gold_special",
+            data.price = Math.round(product.storeProductPrice * 112) / 100;
+        } 
+        // Premium.
+        else {
+            data.meliListingType = "gold_pro",
+            data.price = Math.round(product.storeProductPrice * 117) / 100;
+        }
+        log.debug(`req.body.meliListingType: ${util.inspect(req.body)}`);
+
         // Attributes.
         data.attributes = [];
         for (const attribute of req.body.attributes) {
@@ -427,6 +412,7 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
         }
 
         log.debug(`data: ${util.inspect(data)}`);
+        // Uncomment to disable.
         // return res.send();
 
         // log.debug(`data: ${JSON.stringify(data, null, 4)}`);
@@ -767,6 +753,27 @@ router.get('/category/attributes-by-zunka-product-category/:zunkaProductCategory
         return res.status(500).send(err);
     }
 });
+
+//////////////////////////////////////////////////////////////////////////////
+// Util
+///////////////////////////////////////////////////////////////////////////////
+function createDescription(text) {
+    let description = '';
+    text = text.toString().trim();
+    if (text == '') { return description; }
+    text.split('\n').forEach(line=>{
+        if (line.includes(';')) {
+            line.split(';').forEach(item=>{
+                description += `${item}\n`;
+            });
+            description += '\n';
+        } else {
+            description += `${line}\n\n`;
+        }
+    });
+    // log.debug(description);
+    return description;
+}
 
 
 //////////////////////////////////////////////////////////////////////////////

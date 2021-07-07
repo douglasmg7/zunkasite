@@ -1,3 +1,5 @@
+Last product deabled by Zoom - 5f7b7209e2e457f6cd5a1c40.
+
 Make script to see if log file is too long without be write, to know if process is running.
 
 Verificar

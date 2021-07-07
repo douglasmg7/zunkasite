@@ -142,7 +142,7 @@ block content
             input(type='text' id='finalPrice', v-model='storeProductPriceBr', v-on:input='calcMarkup')
         //- Meli product association
         //- .mercado-livre(v-if='product.storeProductCategory=="Notebooks"')
-        .mercado-livre
+        .mercado-livre(v-if='this.meliCategoryId')
             h2 Mercado Livre
             hr
             //- Not have product on mercado livre
@@ -155,13 +155,14 @@ block content
                     .no-values(v-if='!attribute.values')
                         input(type='text' :id='attribute.name' v-model='attribute.text')
                 //- Commission.
-                h3 Comissão
-                label
-                    input(type='radio' id='Clássico' name='listing-type-id' value='gold_special')
-                    span Clássico
-                label
-                    input(type='radio' id='Premium' name='listing-type-id' value='gold_pro')
-                    span Premium
+                .commission
+                    h3 Comissão
+                    label
+                        input(type='radio' id='Clássico' name='meliListingType' value='gold_special' v-model='meliListingType')
+                        span Clássico
+                    label
+                        input(type='radio' id='Premium' name='meliListingType' value='gold_pro' v-model='meliListingType')
+                        span Premium
                 //- Create meli product.
                 input.btn-success(type='button' v-on:click='createMeliProduct()' value='Criar produto no Mercado Livre')
             //- Have product on mercado livre

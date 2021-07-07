@@ -1,3 +1,7 @@
+## 1.16.1 (7 Julho 2021)
+### Novo
+Incluído meli commissão e descrição.
+
 ## 1.16.0 (18 Junho 2021)
 ### Novo
 Adicionada fabricante Wacom.
