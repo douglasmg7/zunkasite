@@ -1,6 +1,13 @@
 ## 1.16.2 (12 Julho 2021)
 ### Bugfix
-Corrigido nome da propriedade para criação do produto meli: listing_type_id
+Corrigido nome da propriedade para criação do produto meli: listing_type_id.
+Correção do campo description para descriptions na criação do produto no Mercadolivre.
+Informações do Mercadolivre quando o produto era criado, não estava sendo exibidas.
+
+### Novo
+Inclusão do EAN na criação do produto no Mercadolivre.
+
+
 
 ## 1.16.1 (7 Julho 2021)
 ### Novo

@@ -142,11 +142,12 @@ block content
             input(type='text' id='finalPrice', v-model='storeProductPriceBr', v-on:input='calcMarkup')
         //- Meli product association
         //- .mercado-livre(v-if='product.storeProductCategory=="Notebooks"')
-        .mercado-livre(v-if='this.meliCategoryId')
-            h2 Mercado Livre
-            hr
+        //- .mercado-livre(v-if='this.meliCategoryId')
+        .mercado-livre
             //- Not have product on mercado livre
-            .no-have-ml-id(v-if='!this.product.mercadoLivreId')
+            .no-have-ml-id(v-if='!this.product.mercadoLivreId && this.meliCategoryId')
+                h2 Mercado Livre
+                hr
                 a(:href='`/meli/categories/${meliCategoryId}`') {{meliCategoryId}}
                 label(v-for='attribute in meliCategoryAttributes' :for='attribute.name') {{attribute.name}} [{{attribute.id}}]
                     .has-values(v-if='attribute.values')
@@ -167,6 +168,8 @@ block content
                 input.btn-success(type='button' v-on:click='createMeliProduct()' value='Criar produto no Mercado Livre')
             //- Have product on mercado livre
             .have-ml-id(v-if='this.product.mercadoLivreId')
+                h2 Mercado Livre
+                hr
                 a(href=`https://api.mercadolibre.com/items/${product.mercadoLivreId}`) {{ product.mercadoLivreId }} - {{meliProduct.status }}
                 br
                 //- a(v-if='this.meliProduct.permalink' :href='this.meliProduct.permalink') a - {{ this.meliProduct.permalink }}

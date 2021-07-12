@@ -369,12 +369,9 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
             available_quantity: product.storeProductQtd,
             buying_mode: "buy_it_now",
             condition: "new",
-            description: {
+            descriptions: {
                 "plain_text": createDescription(product.storeProductTechnicalInformation)
             },
-            // description: {
-                // "plain_text":"Descripción con Texto Plano \n"
-            // },
             // sale_terms:[
                 // {
                     // "id":"WARRANTY_TYPE",
@@ -399,6 +396,11 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
             data.price = Math.round(product.storeProductPrice * 117) / 100;
         }
         log.debug(`req.body.meliListingType: ${util.inspect(req.body)}`);
+
+        // Ean.
+        if (product.ean) {
+            data.ean = product.ean;
+        }
 
         // Attributes.
         data.attributes = [];

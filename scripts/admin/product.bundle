@@ -504,6 +504,7 @@ var app = new Vue({
         },
         async loadMeliProduct(){
             try {
+                console.log('Loading meli product');
                 if (!this.product.mercadoLivreId) {
                     this.loadMeliProductCategoryAttriubtes();
                     return;
@@ -515,7 +516,8 @@ var app = new Vue({
                 if (response.data.err || !response.data) {
                     return alert('Não foi possível obter o produto do Mercado Livre.');
                 } 
-                // console.log(response.data);
+                console.log(response.data);
+                console.log('End loading meli product');
                 this.meliProduct = response.data;
             } 
             catch(err) {
