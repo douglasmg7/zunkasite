@@ -390,7 +390,7 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
         // Define price.
         // Classic.
         if (req.body.meliListingType == 'gold_special') {
-            data.meliListingType = "gold_special",
+            data.listing_type_id = "gold_special",
             data.price = Math.round(product.storeProductPrice * 112) / 100;
         } 
         // Premium.
