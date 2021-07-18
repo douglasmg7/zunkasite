@@ -1,3 +1,7 @@
+## 1.16.3 (17 Julho 2021)
+### Bugfix
+Corrigido nome da propriedade para criação do produto meli para gold pro: listing_type_id.
+
 ## 1.16.2 (12 Julho 2021)
 ### Bugfix
 Corrigido nome da propriedade para criação do produto meli: listing_type_id.

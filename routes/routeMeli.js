@@ -392,7 +392,7 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
         } 
         // Premium.
         else {
-            data.meliListingType = "gold_pro",
+            data.listing_type_id = "gold_pro",
             data.price = Math.round(product.storeProductPrice * 117) / 100;
         }
         log.debug(`req.body.meliListingType: ${util.inspect(req.body)}`);
