@@ -37,6 +37,7 @@ let regexMakers = [
 	{ name: 'Western', regex: /\bwestern\b/i},
 	{ name: 'Wacom', regex: /\bwacom\b/i},
 	{ name: 'Zotac', regex: /\bzotac\b/i},
+	{ name: 'MYMAX', regex: /\bmymax\b/i},
 ];
 
 // Makers list.

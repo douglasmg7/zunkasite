@@ -145,9 +145,10 @@ async function getMeliCategoryAttributes(categoryId) {
                 }
                 let attributes = [];
                 for (let attribute of response.data) {
-                   if (attribute.tags.required || attribute.tags.catalog_required) {
-                       attributes.push(attribute);
-                   }
+                    // log.debug(`attribute id: ${attribute.id.trim().toLowerCase()}`);
+                    if (attribute.tags.required || attribute.tags.catalog_required || (attribute.id.trim().toLowerCase() == 'gtin')) {
+                        attributes.push(attribute);
+                    }
                 }
                 resolve(attributes);
             } catch(err) {
