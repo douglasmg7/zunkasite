@@ -1,8 +1,8 @@
 ## 1.16.5 (30 Julho 2021)
 ### Novo
-Adicionado gtin (ean) atributo para a criação do produto no Mercado Livre.
-Adiciona descrição do produto adicionado no Mercado Livre.
-Adicionado o fabricante MYMAX.
+Adicionado gtin (ean) atributo para a criação do produto no Mercado Livre.  
+Adiciona descrição do produto adicionado no Mercado Livre.  
+Adicionado o fabricante MYMAX.  
 
 ## 1.16.3 (17 Julho 2021)
 ### Bugfix
