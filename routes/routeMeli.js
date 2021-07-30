@@ -426,7 +426,7 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
         // Add desctiption to meli product.
         // Description must be created only after product was created.
         setTimeout(
-            function() { 
+            async function() { 
                 let responseDesc = await axios.post(
                     `${meli.MELI_API_URL}/items/${product.mercadoLivreId}/description?api_version=2`, 
                     { "plain_text": createDescription(product.storeProductTechnicalInformation) },
