@@ -543,7 +543,14 @@ var app = new Vue({
                     try {
                         this.meliCategoryId = response.data.meliCategoryId;
                         for (const [i, el] of response.data.meliCategories.entries()) {
-                            response.data.meliCategories[i].text = '';
+                            // Fill attribure gtin with product ean.
+                            if ((response.data.meliCategories[i].id.trim().toLowerCase() == 'gtin') && product.ean.trim()) {
+                                response.data.meliCategories[i].text = product.ean.trim();
+                            } 
+                            // Should be empty.
+                            else {
+                                response.data.meliCategories[i].text = '';
+                            }
                         }
                         this.meliCategoryAttributes = response.data.meliCategories;
                     } catch(err) {}

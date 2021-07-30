@@ -334,6 +334,7 @@ router.get('/products', checkPermission, checkTokenAccess, async (req, res, next
 
 // Create meli product.
 router.post('/products', checkPermission, checkTokenAccess, async (req, res, next)=>{
+    // Util for message erros.
     function error(message) {
         log.error(`Creating meli product. ${message}`);
     }
@@ -369,9 +370,6 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
             available_quantity: product.storeProductQtd,
             buying_mode: "buy_it_now",
             condition: "new",
-            descriptions: {
-                "plain_text": createDescription(product.storeProductTechnicalInformation)
-            },
             // sale_terms:[
                 // {
                     // "id":"WARRANTY_TYPE",
@@ -396,11 +394,6 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
             data.price = Math.round(product.storeProductPrice * 117) / 100;
         }
         log.debug(`req.body.meliListingType: ${util.inspect(req.body)}`);
-
-        // Ean.
-        if (product.ean) {
-            data.ean = product.ean;
-        }
 
         // Attributes.
         data.attributes = [];
@@ -430,6 +423,26 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
         product.mercadoLivreId = response.data.id;
         await product.save();
         log.debug('after save');
+        // Add desctiption to meli product.
+        // Description must be created only after product was created.
+        setTimeout(
+            function() { 
+                let responseDesc = await axios.post(
+                    `${meli.MELI_API_URL}/items/${product.mercadoLivreId}/description?api_version=2`, 
+                    { "plain_text": createDescription(product.storeProductTechnicalInformation) },
+                    { 
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${res.locals.tokenAccess.access_token}`, 
+                        }, 
+                    }
+                );
+                log.debug(`responseDesc.data: ${util.inspect(responseDesc.data)}`);
+                if (responseDesc.data.err) {
+                    log.error(new Error(`${errPre} ${responseDesc.data.err}`));
+                }
+            }, 10000
+        );
         return res.send({mercadoLivreId: response.data.id});
     } catch(err) {
         if (err.response) {
