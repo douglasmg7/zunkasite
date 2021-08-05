@@ -1,3 +1,7 @@
+## 1.16.6 (05 Agosto 2021)
+### Bug fix
+Não permite tipo string para value_type number_* ao criar produto no Mercado Livre.
+
 ## 1.16.5 (30 Julho 2021)
 ### Novo
 Adicionado gtin (ean) atributo para a criação do produto no Mercado Livre.  
