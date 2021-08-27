@@ -83,6 +83,14 @@ if [[ ! -z `git diff --name-only $REV_OLD | grep "install-allnations-service\.sh
     ./bin/install-allnations-service.sh
 fi
 
+# handytech
+pull_roll $GS/handytech
+# handytech.service
+if [[ ! -z `git diff --name-only $REV_OLD | grep "service_install\.sh$"` ]]; then
+    printf "\n:: Installing handytech.service...\n"
+    ./service_install.sh
+fi
+
 # zunka_util
 pull_roll $GS/zunka_util
 
