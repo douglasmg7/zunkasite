@@ -90,6 +90,10 @@ if [[ ! -z `git diff --name-only $REV_OLD | grep "service_install\.sh$"` ]]; the
     printf "\n:: Installing handytech.service...\n"
     ./service_install.sh
 fi
+if [[ ! -z `git diff --name-only $REV_OLD | grep "requirements\.txt$"` ]]; then
+    printf "\n:: Updating python modules...\n"
+    pip3 install -r requirements.txt
+fi
 
 # zunka_util
 pull_roll $GS/zunka_util
