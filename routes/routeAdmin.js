@@ -929,8 +929,9 @@ router.post('/api/order/status/:_id/:status', checkPermission, function(req, res
 					order.status = 'canceled';
 					order.timestamps.canceledAt = new Date();
 					// Update stock.
+					log.debug(`Order ${order._id}, update stock typeof: ${typeof(req.query.updateStock)}`);
 					log.debug(`Order ${order._id}, update stock: ${req.query.updateStock}`);
-					if (req.query.updateStock) {
+					if (req.query.updateStock && req.query.updateStock == 'true') {
 						for (let i = 0; i < order.items.length; i++) {
                             // Not update allnations stock, stock is updated by allantaions system.
                             if (order.items[i].dealerName != 'Allnations') {

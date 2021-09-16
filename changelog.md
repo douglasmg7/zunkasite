@@ -1,3 +1,7 @@
+## 1.16.7 (16 Setembro 2021)
+### Bug fix
+Atualizava a quantidade de produtos ao cancelar a ordem, mesmo quando não solicitado.
+
 ## 1.16.6 (05 Agosto 2021)
 ### Bug fix
 Não permite tipo string para value_type number_* ao criar produto no Mercado Livre.
