@@ -95,6 +95,13 @@ if [[ ! -z `git diff --name-only $REV_OLD | grep "requirements\.txt$"` ]]; then
     pip3 install -r requirements.txt
 fi
 
+# motospeed
+pull_roll $GS/handytech
+if [[ ! -z `git diff --name-only $REV_OLD | grep "requirements\.txt$"` ]]; then
+    printf "\n:: Updating python modules...\n"
+    pip3 install -r requirements.txt
+fi
+
 # zunka_util
 pull_roll $GS/zunka_util
 
