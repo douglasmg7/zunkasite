@@ -96,10 +96,10 @@ if [[ ! -z `git diff --name-only $REV_OLD | grep "requirements\.txt$"` ]]; then
 fi
 
 # motospeed
-pull_roll $GS/handytech
-if [[ ! -z `git diff --name-only $REV_OLD | grep "requirements\.txt$"` ]]; then
-    printf "\n:: Updating python modules...\n"
-    pip3 install -r requirements.txt
+pull_roll $GS/motospeed
+if [[ ! -z `git diff --name-only $REV_OLD | grep "env\.yml$"` ]]; then
+    printf "\n:: Updating conda env...\n"
+    conda env update -n motospeed -f env.yml
 fi
 
 # zunka_util
