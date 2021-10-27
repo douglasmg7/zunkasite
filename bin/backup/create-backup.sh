@@ -22,6 +22,7 @@ fi
 FREIGHT_FILE_DB=$ZUNKAPATH/db/$ZUNKA_FREIGHT_DB
 ZUNKASRV_FILE_DB=$ZUNKAPATH/db/$ZUNKA_SRV_DB
 ALDOWSC_FILE_DB=$ZUNKAPATH/db/$ZUNKA_ALDOWSC_DB
+MOTOSPEED_DB=$MOTOSPEED_DB
 
 # Backup dir.
 BACKUP_DIR=$ZUNKA_SITE_PATH/dump/$(date +%Y-%m-%d)
@@ -50,6 +51,12 @@ if [[ ! -f $ALLNATIONS_DB ]]; then
     exit
 fi
 
+# Check if motospeed db exist.
+if [[ ! -f $MOTOSPEED_DB ]]; then
+    printf "error: $MOTOSPEED_DB not exist.\n" >&2
+    exit
+fi
+
 # Create backup dir.
 mkdir -p $BACKUP_DIR
 
@@ -64,6 +71,9 @@ sqlite3 $ALDOWSC_FILE_DB ".backup $BACKUP_DIR/sqlite3.aldowsc.backup"
 
 echo Creating $ALLNATIONS_DB backup...
 sqlite3 $ALLNATIONS_DB ".backup $BACKUP_DIR/sqlite3.allnations.backup"
+
+echo Creating $MOTOSPEED_DB backup...
+sqlite3 $MOTOSPEED_DB ".backup $BACKUP_DIR/sqlite3.motospeed.backup"
 
 # Mongo backup.
 # mongodump --db zunka -u admin --authenticationDatabase admin --gzip --archive=../dump/db-$(date +%Y-%h-%d@%T).gz    # Tar err if this name format.
