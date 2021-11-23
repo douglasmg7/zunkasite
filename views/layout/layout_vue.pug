@@ -1,37 +1,37 @@
 doctype html
 //- html(lang="en" style="overflow: hidden; box-sizing: border-box")
 html(lang="en")
-	head
-		meta(charset='utf-8')
-		meta(name="viewport" content="width=device-width, initial-scale=1")
-		meta(name="description" content="Loja especializada na venda de laptop")
-		block meta
-		block title
-		block css
-			link(rel="stylesheet" href="/css/layout/normalize.css?0002" charset="utf-8")
-			link(rel="stylesheet" href="/css/layout/reset.css?0002" charset="utf-8")
-			link(rel="stylesheet" href="/css/layout/layout.css?0002" charset="utf-8")
-			link(rel="stylesheet" href="/fontawesome/css/all.min.css" charset="utf-8")
+    head
+        meta(charset='utf-8')
+        meta(name="viewport" content="width=device-width, initial-scale=1")
+        meta(name="description" content="Loja especializada na venda de laptop")
+        block meta
+        block title
+        block css
+            link(rel="stylesheet" href="/css/layout/normalize.css?0002" charset="utf-8")
+            link(rel="stylesheet" href="/css/layout/reset.css?0002" charset="utf-8")
+            link(rel="stylesheet" href="/css/layout/layout.css?0002" charset="utf-8")
+            link(rel="stylesheet" href="/fontawesome/css/all.min.css" charset="utf-8")
         include ../components/google-analytics.js.pug
-	block internal_style
+    block internal_style
 
-	body
-		#header
-			include header
-		#menu-container
-			#menu
-				include menu
-		main#app(v-cloak)
-			block content
-		block footer
-			include footer
+    body
+        #header
+            include header
+        #menu-container
+            #menu
+                include menu
+        main#app(v-cloak)
+            block content
+        block footer
+            include footer
 
-	block internal_scripts
-		script.
-			// Make available for vue.
-			let csrfToken = !{JSON.stringify(csrfToken)};
+    block internal_scripts
+        script.
+            // Make available for vue.
+            let csrfToken = !{JSON.stringify(csrfToken)};
 
-	block external_scripts
-		script(src='/js/product/layout.js?004')
-		include ../components/axios.js.pug
-		include ../components/vue.js.pug
+    block external_scripts
+        script(src='/js/product/layout.js?004')
+        include ../components/axios.js.pug
+        include ../components/vue.js.pug
