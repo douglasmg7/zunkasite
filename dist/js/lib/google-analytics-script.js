@@ -1,0 +1,6 @@
+console.log('oi 2');
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'UA-213460703-1');
+console.log('oi end');
