@@ -1,3 +1,7 @@
+## 1.7.0 (06 Janeiro 2022)
+### Change
+Opção de cartão presencial removido
+
 ## 1.16.7 (16 Setembro 2021)
 ### Bug fix
 Atualizava a quantidade de produtos ao cancelar a ordem, mesmo quando não solicitado.
