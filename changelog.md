@@ -1,3 +1,7 @@
+## 1.8.0 (07 Janeiro 2022)
+### Change
+Opção de pagar pelo Paypal para entrega por motoboy
+
 ## 1.7.0 (06 Janeiro 2022)
 ### Change
 Opção de cartão presencial removido
