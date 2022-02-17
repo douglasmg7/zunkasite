@@ -48,6 +48,7 @@ fi
 
 echo "To access mongo:"
 echo "  docker exec -it zunka_redis sh"
+echo "  redis-cli"
 
 
 [[ `systemctl status nginx | awk '/Active/{print $2}'` == inactive ]] && sudo systemctl start nginx
