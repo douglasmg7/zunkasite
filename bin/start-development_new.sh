@@ -15,7 +15,7 @@ if [[ -z $(docker ps -a | grep zunka_mongo) ]]
 # Create and implicit start container.
 then
     echo 'Creating and starting zunka_mongo container:'
-    docker run -d --name zunka_mongo -v zunka_mongo_data:/data/db -p 27017:27017 mongo:3.6.3
+    docker run -d --name zunka_mongo -v zunka_mongo_volume:/data/db -p 27017:27017 mongo:3.6.3
     echo '#################### No data, import backup to new created mongo docker ###########################!'
 # Start zunka_mongo container.
 else
@@ -34,11 +34,11 @@ if [[ -z $(docker ps -a | grep redis_zunka) ]]
 # Create and implicit start container.
 then
     echo 'Creating and starting redis_zunka container:'
-    # docker run -d --name zunka_mongo -v data:/data/db -p 27017:27017 mongo:3.6.3
-    docker run -d --name zunka_redis redis:4.0.9 redis-server --save 60 1 --loglevel warning
-    # docker run -d --name redis_zunka -v data_redis:/data redis:4.0.9 redis-server --save 60 1 --loglevel warning
-    # docker run -d --name redis_zunka redis redis-server --save 60 1 --loglevel warning
-    # docker run -d --name redis_zunka -v /docker/host/dir:/data redis redis-server --save 60 1 --loglevel warning
+    # docker run -d --name zunka_redis -p 6379:6379 -v "/home/douglasmg7/b:/var/lib/redis/" redis:4.0.9 redis-server --save 60 1 --loglevel warning
+    # docker run -d --name zunka_redis -p 6379:6379 -v "/home/douglasmg7/a:/data" -v "/home/douglasmg7/b:/var/lib/redis/" redis:4.0.9 redis-server --save 60 1
+    docker run -d --name zunka_redis -p 6379:6379 -v "/home/douglasmg7/a:/data"  redis:4.0.9 redis-server --save 60 1 --loglevel warning
+--loglevel warning
+    echo '#################### No data, import backup to new created redis docker ###########################!'
 
 # Start zunka_redis container.
 else

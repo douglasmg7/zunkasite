@@ -181,28 +181,51 @@ while true; do
     fi
 done
 
-# # Import redis db.
-# REDIS_DB_BACKUP=$BACKUP_DIR/redis.rdb
-# while true; do
-    # echo
-    # read -p "Import redis db? (y/n):" ANSWER
-    # if [[ $ANSWER == y ]]; then
-        # echo "Importing redis db..."
-        # printf "\nroot password:\n"
-        # sudo systemctl stop redis
-        # sudo mv /var/lib/redis/dump.rdb /var/lib/redis/dump-$(date +%Y-%m-%d).rdb.old
-        # sudo cp -p $REDIS_DB_BACKUP /var/lib/redis/dump.rdb
-        # sudo chown redis:redis /var/lib/redis/dump.rdb
-        # sudo chmod 660 /var/lib/redis/dump.rdb
-        # sudo systemctl start redis
-        # break
-    # elif [[ $ANSWER == n ]]; then
-        # echo "Redis db will not be imported"
-        # break
-    # else
-        # echo "Invalid option: $ANSWER"
-    # fi
-# done
+# Import redis db.
+REDIS_DB_BACKUP=$BACKUP_DIR/redis.rdb
+while true; do
+    echo
+    read -p "Import redis db? (y/n):" ANSWER
+    if [[ $ANSWER == y ]]; then
+        echo "Importing redis db..."
+        printf "\nroot password:\n"
+        sudo systemctl stop redis
+        sudo mv /var/lib/redis/dump.rdb /var/lib/redis/dump-$(date +%Y-%m-%d).rdb.old
+        sudo cp -p $REDIS_DB_BACKUP /var/lib/redis/dump.rdb
+        sudo chown redis:redis /var/lib/redis/dump.rdb
+        sudo chmod 660 /var/lib/redis/dump.rdb
+        sudo systemctl start redis
+        break
+    elif [[ $ANSWER == n ]]; then
+        echo "Redis db will not be imported"
+        break
+    else
+        echo "Invalid option: $ANSWER"
+    fi
+done
+
+# # # Import redis db.
+# # REDIS_DB_BACKUP=$BACKUP_DIR/redis.rdb
+# # while true; do
+    # # echo
+    # # read -p "Import redis db? (y/n):" ANSWER
+    # # if [[ $ANSWER == y ]]; then
+        # # echo "Importing redis db..."
+        # # printf "\nroot password:\n"
+        # # sudo systemctl stop redis
+        # # sudo mv /var/lib/redis/dump.rdb /var/lib/redis/dump-$(date +%Y-%m-%d).rdb.old
+        # # sudo cp -p $REDIS_DB_BACKUP /var/lib/redis/dump.rdb
+        # # sudo chown redis:redis /var/lib/redis/dump.rdb
+        # # sudo chmod 660 /var/lib/redis/dump.rdb
+        # # sudo systemctl start redis
+        # # break
+    # # elif [[ $ANSWER == n ]]; then
+        # # echo "Redis db will not be imported"
+        # # break
+    # # else
+        # # echo "Invalid option: $ANSWER"
+    # # fi
+# # done
 
 # Import images.
 IMAGES_BACKUP=$BACKUP_DIR/img.tar.gz
