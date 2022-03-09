@@ -440,15 +440,17 @@ var app = new Vue({
                 for (let attribute of this.meliCategoryAttributes) {
                     if (!attribute.text)
                         return alert(`Campo ${attribute.name} não preenchido`);
-                    // Convert to number if field is number_unit.
-                    if (attribute.value_type.startsWith('number_unit')) {
-                        let parsedValue = parseInt(attribute.text, 10);
-                        if (isNaN(parsedValue)) {
-                            return alert(`Campo ${attribute.name} com valor inválido, valor deve ser numérico`);
-                        } else {
-                            attribute.text = parsedValue;
-                        }
-                    }
+
+                    // // Convert to number if field is number_unit.
+                    // if (attribute.value_type.startsWith('number_unit')) {
+                        // let parsedValue = parseInt(attribute.text, 10);
+                        // if (isNaN(parsedValue)) {
+                            // return alert(`Campo ${attribute.name} com valor inválido, valor deve ser numérico`);
+                        // } else {
+                            // attribute.text = parsedValue;
+                        // }
+                    // }
+
                     // console.log(attribute.text);
                 }
                 // console.log(this.meliCategoryAttributes);
