@@ -30,6 +30,8 @@ if [ -z "$ZUNKA_SITE_PATH" ]; then
 	exit 1 
 fi
 
+[[ -z "$ZUNKA_DOCKER_SCRIPTS" ]] && echo "error: ZUNKA_DOCKER_SCRIPTS not defined." >&2 && exit 1 
+
 while true; do
     read -p "Import backup from which date? [ENTER] for $(date +%Y-%m-%d) or yyyy-mm-dd to custom date: " ANSWER
     if [[ $ANSWER =~ [0-9]{4}-[0-9]{2}-[0-9]{2} ]]; then
@@ -152,9 +154,25 @@ while true; do
     echo
     read -p "Import mongo db? (y/n):" ANSWER
     if [[ $ANSWER == y ]]; then
-        echo "Importing mongo db..."
-        printf "\nMongo db admin password:\n"
-        mongorestore -u admin --authenticationDatabase admin --nsInclude zunka.* --nsFrom 'zunka.*' --nsTo 'zunka.*' --gzip --archive=$MONGO_DB_BACKUP
+        # Which mongodb.
+        while true; do
+            echo
+            read -p "Import to dockerized mongo? (y/n)" ANSER
+            if [[ $ANSWER == y ]]; then
+                # Start dockerized mongo.
+                $ZUNKA_DOCKER_SCRIPTS/start-mongo.sh
+                sleep 5
+                docker exec -i zunka_mongo sh -c 'mongorestore --gzip --archive' < $MONGO_DB_BACKUP
+                break
+            elif [[ $ANSWER == n ]]; then
+                echo "Importing mongo db..."
+                printf "\nMongo db admin password:\n"
+                mongorestore -u admin --authenticationDatabase admin --nsInclude zunka.* --nsFrom 'zunka.*' --nsTo 'zunka.*' --gzip --archive=$MONGO_DB_BACKUP
+                break
+            else
+                echo "Invalid option: $ANSWER"
+            fi
+        done
         break
     elif [[ $ANSWER == n ]]; then
         echo "Mongo db will not be imported"
