@@ -31,6 +31,8 @@ if [ -z "$ZUNKA_SITE_PATH" ]; then
 fi
 
 [[ -z "$ZUNKA_DOCKER_SCRIPTS" ]] && echo "error: ZUNKA_DOCKER_SCRIPTS not defined." >&2 && exit 1 
+[[ -z "$MONGODB_ADMIN_USER" ]] && printf "Error: MONGODB_ADMIN_USER not defined.\n" >&2 && exit 1 
+[[ -z "$MONGODB_ADMIN_PASSWORD" ]] && printf "Error: MONGODB_ADMIN_PASSWORD not defined.\n" >&2 && exit 1 
 
 while true; do
     read -p "Import backup from which date? [ENTER] for $(date +%Y-%m-%d) or yyyy-mm-dd to custom date: " ANSWER
@@ -161,8 +163,12 @@ while true; do
             if [[ $ANSWER == y ]]; then
                 # Start dockerized mongo.
                 $ZUNKA_DOCKER_SCRIPTS/start-mongo.sh
-                sleep 5
-                docker exec -i zunka_mongo sh -c 'mongorestore --gzip --archive' < $MONGO_DB_BACKUP
+                sleep 3
+
+                echo "Importing mongo db..."
+                docker exec -i zunka_mongo sh -c \
+                    "mongorestore -u $MONGODB_ADMIN_USER -p $MONGODB_ADMIN_PASSWORD --authenticationDatabase admin \
+                    --nsInclude zunka.* --nsFrom 'zunka.*' --nsTo 'zunka.*' --gzip --archive" < $MONGO_DB_BACKUP
                 break
             elif [[ $ANSWER == n ]]; then
                 echo "Importing mongo db..."

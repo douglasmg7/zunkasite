@@ -5,6 +5,7 @@
   "scripts": {
     "start": "NODE_ENV=production DB=production ./bin/www",
     "dev": "./bin/start-mongodb-redis-nginx.sh && NODE_ENV=development nodemon ./bin/www",
+    "dev-old": "./bin/start-mongodb-redis-nginx-old.sh && NODE_ENV=development nodemon ./bin/www",
     "icon": "./node_modules/svg-sprite/bin/svg-sprite.js --symbol --symbol-dest='' --symbol-sprite='dist/icon/sprite.svg' dist/icon/*.svg",
     "export-db": "mongodump --db zunka -u admin --authenticationDatabase admin --gzip --archive=./dump/$(date +\"%Y-%h-%d@%T\").gz",
     "export-db-old": "mongodump --db zunka -u admin --authenticationDatabase admin --out ./dump/$(date +\"%Y-%h-%d@%T\")",
