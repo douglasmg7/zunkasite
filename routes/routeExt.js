@@ -577,7 +577,7 @@ router.post('/ppp/webhook-listener', (req, res, next)=>{
 / Mercado Livre
  ******************************************************************************/
 router.get('/meli/auth-code/receive', async function(req, res, next) {
-    // todo - remove debug
+    // // todo - remove debug
     log.debug(`Mercado livre auth code url: ${req.url}`);
 
     let authCode = req.query.code;
@@ -587,28 +587,24 @@ router.get('/meli/auth-code/receive', async function(req, res, next) {
         // Save auth code to export to dev.
         meli.setMeliAuthCode(authCode);
         // Enabled auto load token access.
-        if (redis.getMeliAutoLoadTokenAccess) {
+        let autoLoadTokenAccess = await redis.getMeliAutoLoadTokenAccess()
+        log.debug(`redis.getMeliAutoLoadTokenAccess: ${autoLoadTokenAccess}`);
+        if (autoLoadTokenAccess) {
             // Get token access from meli.
             let accessToken = await meli.getMeliTokenAccessFromMeli(authCode)
             if (accessToken) {
-                return res.render('misc/message', { title: '', message: 'Chave de acesso do Mercado Livre foi atualizada' });
-                // res.redirect('/meli/auth-code/receive/true');
+                return res.send('Chave de acesso do Mercado Livre foi atualizada.');
             }
             // Not could take token access from meli.
             else {
-                return res.render(
-                    'misc/message', 
-                    { title: '', message: 'Código de autorização do Mercado Livre foi atualizada, mas não foi possível obter a chave de acesso' }
-                );
-                // res.redirect('/meli/auth-code/receive/false');
+                return res.send('Código de autorização do Mercado Livre foi atualizada, mas não foi possível obter a chave de acesso.');
             }
         } 
         // Disabled auto load token access.
         else {
-            return res.render('misc/message', { title: '', message: 'Código de autorização do Mercado Livre foi atualizada' });
+            return res.send('Código de autorização do Mercado Livre foi atualizada.\nMas obtenção de chave de acesso desabilitada no sistema da Zunka.');
         }
     } else { 
-        return res.render('misc/message', { title: '', message: 'Não recebeu código de autorização do Mercado Livre' });
-        // res.redirect('/meli/auth-code/receive/false');
+        return res.send('Não recebeu código de autorização do Mercado Livre.');
     }
 });
