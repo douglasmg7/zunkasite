@@ -142,7 +142,7 @@ router.get('/auth-code/import', checkPermission, async (req, res, next)=>{
             log.debug(`Meli authorization code imported from production server: ${response.data}`);
             meli.setMeliAuthCode(response.data);
             // Get token access.
-            tokenAccess = await meli.getMeliTokenAccessFromMeli(response.data);
+            let tokenAccess = await meli.getMeliTokenAccessFromMeli(response.data);
             if (tokenAccess) {
                 return res.render('misc/message', { 
                     title: 'Importação do código de autoriazação', 
