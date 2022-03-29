@@ -35,6 +35,12 @@ if [[ -f $ZUNKAPATH/restart-zoomproducts ]];then
     pkill zoomproducts
     sleep 3
 fi
+# meli_timer.
+if [[ -f $ZUNKAPATH/restart-meli_timer ]];then
+    printf ":: Stopping meli_timer...\n"
+    pkill meli_timer
+    sleep 3
+fi
 
 ###########  Start process ##########
 # freightsrv.
@@ -73,6 +79,12 @@ if [[ -f $ZUNKAPATH/restart-zoomproducts ]];then
     # RUN_MODE=production zoomproducts &
     rm $ZUNKAPATH/restart-zoomproducts
     # sleep 3
+fi
+
+# meli_timer.
+# Process monitor will start the process.
+if [[ -f $ZUNKAPATH/restart-meli_timer ]];then
+    rm $ZUNKAPATH/restart-meli_timer
 fi
 
 # Reload nginx.

@@ -91,15 +91,22 @@ if [[ ! -z `git diff --name-only $REV_OLD | grep "service_install\.sh$"` ]]; the
     ./service_install.sh
 fi
 if [[ ! -z `git diff --name-only $REV_OLD | grep "requirements\.txt$"` ]]; then
-    printf "\n:: Updating python modules...\n"
+    printf "\n:: Updating python modules for handytech...\n"
     pip3 install -r requirements.txt
 fi
 
 # motospeed
 pull_roll $GS/motospeed
 if [[ ! -z `git diff --name-only $REV_OLD | grep "env\.yml$"` ]]; then
-    printf "\n:: Updating conda env...\n"
+    printf "\n:: Updating conda env for motospeed...\n"
     conda env update -n motospeed -f env.yml
+fi
+
+# meli_products
+pull_roll $GS/meli_products
+if [[ ! -z `git diff --name-only $REV_OLD | grep "env\.yml$"` ]]; then
+    printf "\n:: Updating python modules for meli_products...\n"
+    conda env update -n meli_products -f env.yml
 fi
 
 # zunka_util
