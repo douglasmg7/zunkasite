@@ -70,6 +70,14 @@ do
         sleep 3
     fi
 
+    # meli_timer
+    if [[ -z $(pgrep meli_timer) ]]; then
+        ALL_PROCESS_RUNNING=false
+        printf "%s [PM] Starting meli_timer\n" "$(date +"%Y/%m/%d %T.%6N")" | tee -a $ZUNKAPATH/log/process_monitor.log
+        $MERCADO_LIVRE_PATH/meli_timer.sh &
+        sleep 3
+    fi
+
     if [[ $ALL_PROCESS_RUNNING == true ]]; then
         printf "%s [PM] All processes running\n" "$(date +"%Y/%m/%d %T.%6N")" | tee -a $ZUNKAPATH/log/process_monitor.log
     fi
