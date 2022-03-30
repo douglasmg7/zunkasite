@@ -38,7 +38,9 @@ stop_process () {
     done
     printf "%s [PM] $process stopped\n" "$(date +"%Y/%m/%d %T.%6N")" | tee -a $ZUNKAPATH/log/process_monitor.log
 }
-
+# Stop processes monitor.
+stop_process -f process_monitor
+sleep .5
 stop_process -f www     # zunkasite
 stop_process zunkasrv
 stop_process zoomproducts
