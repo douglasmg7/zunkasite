@@ -279,9 +279,11 @@ router.get('/shipping-method/order/:order_id', (req, res, next)=>{
                         // Motoboy.
                         if (freights[i].carrier.toLowerCase() === 'motoboy' ) {
                             if (order.shipping.allProductFromZunka){
-                                paymentOptions.push('money', 'paypal');
+                                paymentOptions.push('money', 'credit', 'paypal');
+                                // paymentOptions.push('money', 'paypal');
                                 // text += ', dinheiro ou cartão de crédito no momento da entrega';
-                                text += ', paypal ou dinheiro no momento da entrega';
+                                // text += ', paypal ou dinheiro no momento da entrega';
+                                text += ', cartão de crédito parcelado, PayPal ou dinheiro no momento da entrega';
 
                                 // Old using presencial card.
                                 // paymentOptions.push('money', 'card-pres');
