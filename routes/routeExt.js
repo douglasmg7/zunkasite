@@ -608,3 +608,68 @@ router.get('/meli/auth-code/receive', async function(req, res, next) {
         return res.send('Não recebeu código de autorização do Mercado Livre.');
     }
 });
+
+    // Handle meli notifications.
+router.post('/meli/notifications', async function(req, res, next) {
+    try {
+
+        // // todo - remove debug
+        log.debug(`Meli notifications: ${req.url}`);
+        log.debug(`Meli notifications: ${JSON.stringify(req.body)}`);
+
+        // Check application.
+        if (!req.body.application_id || req.body.application_id != process.env.MERCADO_LIVRE_APP_ID) {
+            log.warn(`[meli] Received meli notification with unknow application_id: ${req.body.application_id}`);
+            // Send status 200 to not disable meli notifications.
+            // return res.send();
+            return res.status(400).send(`Unknown application_id: ${req.body.application_id}`);
+        }
+
+        // Check user id.
+        if (!req.body.user_id) {
+            log.warn(`[meli] Received meli notification without user_id`);
+            // Send status 200 to not disable meli notifications.
+            return res.send();
+            // return res.status(400).send(`Unknown application_id: ${req.body.applic}`);
+        }
+        if (req.body.user_id.trim() != process.env.MERCADO_LIVRE_USER_ID) {
+            log.warn(`[meli] Received meli notification with invalid user_id: ${req.body.user_id}`);
+            return res.send();
+        }
+
+        // Topic.
+        if (!req.body.topic) {
+            log.warn(`[meli] Received meli notification without topic`);
+            // Send status 200 to not disable meli notifications.
+            return res.send();
+            // return res.status(400).send(`Unknown application_id: ${req.body.applic}`);
+        }
+        if (req.body.topic.trim() != "orders_v2") {
+            log.warn(`[meli] Received meli notification with invalid topic: ${req.body.topic}`);
+            return res.send();
+        }
+
+        // Topic.
+        if (!req.body.resource) {
+            log.warn(`[meli] Received meli notification without resource`);
+            // Send status 200 to not disable meli notifications.
+            return res.send();
+            // return res.status(400).send(`Unknown application_id: ${req.body.applic}`);
+        }
+        if (req.body.resource.trim().startsWith != "/orders/") {
+            log.warn(`[meli] Received meli notification with invalid resource: ${req.body.resource}`);
+            return res.send();
+        }
+        let resource = req.body.resource.trim().replace("/orders/", "");
+        resource = resource.split(',');
+
+        for (let order in resource) {
+            log.debug(`Order to be processed: ${order}`);
+        }
+        return res.send();
+    }
+    catch(err){
+        log.error(`[catch] meli notifications: ${err.stack}`);
+        return res.status(500).send('Internal error.');
+    };
+});

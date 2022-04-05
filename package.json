@@ -10,6 +10,7 @@
     "export-db": "mongodump --db zunka -u admin --authenticationDatabase admin --gzip --archive=./dump/$(date +\"%Y-%h-%d@%T\").gz",
     "export-db-old": "mongodump --db zunka -u admin --authenticationDatabase admin --out ./dump/$(date +\"%Y-%h-%d@%T\")",
     "test": "./bin/start-mongodb-redis-nginx.sh && NODE_ENV=test mocha -R spec ./test/spec.js -t 3000",
+    "test-meli": "./bin/start-mongodb-redis-nginx.sh && NODE_ENV=test mocha -R spec ./test/meli.js -t 3000",
     "coverage": "./bin/start-mongodb-redis-nginx.sh && NODE_ENV=test nyc mocha -R spec ./test/spec.js -t 6000"
   },
   "dependencies": {
