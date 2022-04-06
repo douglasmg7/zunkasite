@@ -157,6 +157,99 @@ async function getMeliCategoryAttributes(categoryId) {
         });
 }
 
+// Get meli orders.
+async function getMeliOrders(orders_ids) {
+        return new Promise(async(resolve, reject)=> {
+            try {
+                let url = `${meli.MELI_API_URL}/orders/${orders_ids.join(',')}`
+                let response = await axios.get(url, {
+                    headers: {Authorization: `Bearer ${meli.getMeliTokenAccess().access_token}`}
+                });
+                if (response.data.err) {
+                    return reject(response.data.err);
+                }
+                let orders = [];
+                for (let order of response.data) {
+                        orders.push(order);
+                }
+                resolve(roders);
+            } catch(err) {
+                reject(err);
+            }
+        });
+}
+
+// Get token access.
+// If invalid token try to get from meli.
+// If expired, try to refresh.
+async function tryToGetTokenAccess() {
+    let tokenAccess = getMeliTokenAccess();
+
+    // Not token access yet.
+    if (!tokenAccess) {
+        // Try get from current authorization code.
+        tokenAccess = await getMeliTokenAccessFromMeli();
+        // Need get authorization code first.
+        if (!tokenAccess) {
+            // Todo - send email
+            return 
+        }
+    }
+
+    // Check if expired.
+    let time_to_expire = tokenAccess.expires_at - Date.now();
+    log.debug(`Time to expire meli token (min): ${Math.floor(time_to_expire / 60000)}`);
+
+    // Expired.
+    if (time_to_expire <= 0) {
+        try 
+        {
+            let url = 
+                meli.MELI_TOKEN_URL +
+                '?grant_type=refresh_token&' +
+                `client_id=${process.env.MERCADO_LIVRE_APP_ID}` +
+                `&client_secret=${process.env.MERCADO_LIVRE_SECRET_KEY}` +
+                `&refresh_token=${tokenAccess.refresh_token}`; 
+            log.debug(`meli refresh url: ${url}`);
+
+            // Refresh token access.
+            let response = await axios.post(url);
+            // log.debug(`response.data: ${util.inspect(response.data)}`);
+            if (response.data.err) {
+                log.error(new Error(`Refreshing meli token access. ${response.data.err}`));
+                // Todo - send email
+                return;
+            } else {
+                // // Give 10 seconds less to expire.
+                response.data.expires_at = Date.now() + ((response.data.expires_in - 10) * 1000);
+                // todo - comment debug
+                log.debug(`meli token access refreshed, response.data: ${util.inspect(response.data)}`);
+                meli.setMeliTokenAccess(response.data);
+                return response.data;
+            }
+        } catch(err) {
+            if (err.response) {
+                // log.debug(`err response status: ${err.response.status}`);
+                // log.debug(`err response headers: ${JSON.stringify(err.response.headers, null, 4)}`);
+                log.error(`Refreshing meli token access. ${JSON.stringify(err.response.data, null, 4)}`);
+                // Todo - send email
+                return;
+            } else if (err.request) {
+                log.error(`Refreshing meli token access. ${JSON.stringify(err.request, null, 4)}`);
+                // Todo - send email
+                return;
+            } else {
+                log.error(`Refreshing meli token access. ${err.stack}`);
+                // Todo - send email
+                return;
+            }
+        }
+    } 
+    // Token access not expired.
+    else {
+        return tokenAccess;
+    }
+};
 
 module.exports.getAuthorizationURL = getAuthorizationURL;
 
@@ -173,3 +266,5 @@ module.exports.MELI_TOKEN_URL = MELI_TOKEN_URL;
 
 module.exports.getMeliCategory = getMeliCategory;
 module.exports.getMeliCategoryAttributes = getMeliCategoryAttributes;
+
+module.exports.getMeliOrders = getMeliOrders;

@@ -620,53 +620,47 @@ router.post('/meli/notifications', async function(req, res, next) {
         // Check application.
         if (!req.body.application_id || req.body.application_id != process.env.MERCADO_LIVRE_APP_ID) {
             log.warn(`[meli] Received meli notification with unknow application_id: ${req.body.application_id}`);
-            // Send status 200 to not disable meli notifications.
-            // return res.send();
             return res.status(400).send(`Unknown application_id: ${req.body.application_id}`);
         }
 
         // Check user id.
-        if (!req.body.user_id) {
-            log.warn(`[meli] Received meli notification without user_id`);
-            // Send status 200 to not disable meli notifications.
-            return res.send();
-            // return res.status(400).send(`Unknown application_id: ${req.body.applic}`);
-        }
-        if (req.body.user_id.trim() != process.env.MERCADO_LIVRE_USER_ID) {
-            log.warn(`[meli] Received meli notification with invalid user_id: ${req.body.user_id}`);
-            return res.send();
+        if (!req.body.user_id || req.body.user_id != process.env.MERCADO_LIVRE_USER_ID) {
+            log.warn(`[meli] Received meli notification with unknow user_id: ${req.body.user_id}`);
+            return res.status(400).send(`Unknown user_id: ${req.body.user_id}`);
         }
 
         // Topic.
-        if (!req.body.topic) {
-            log.warn(`[meli] Received meli notification without topic`);
-            // Send status 200 to not disable meli notifications.
-            return res.send();
-            // return res.status(400).send(`Unknown application_id: ${req.body.applic}`);
-        }
-        if (req.body.topic.trim() != "orders_v2") {
-            log.warn(`[meli] Received meli notification with invalid topic: ${req.body.topic}`);
-            return res.send();
+        if (!req.body.topic || req.body.topic != "orders_v2") {
+            log.warn(`[meli] Received meli notification with unknow topic`);
+            return res.status(400).send(`Unknown topic: ${req.body.topic}`);
         }
 
-        // Topic.
+        // No resource.
         if (!req.body.resource) {
             log.warn(`[meli] Received meli notification without resource`);
-            // Send status 200 to not disable meli notifications.
-            return res.send();
-            // return res.status(400).send(`Unknown application_id: ${req.body.applic}`);
+            return res.status(400).send(`Unknown resource: ${req.body.resource}`);
         }
-        if (req.body.resource.trim().startsWith != "/orders/") {
-            log.warn(`[meli] Received meli notification with invalid resource: ${req.body.resource}`);
-            return res.send();
-        }
-        let resource = req.body.resource.trim().replace("/orders/", "");
-        resource = resource.split(',');
 
-        for (let order in resource) {
-            log.debug(`Order to be processed: ${order}`);
+        // Wrong resource start.
+        if (!req.body.resource.trim().startsWith("/orders/")) {
+            log.warn(`[meli] Received meli notification with invalid resource: ${req.body.resource}`);
+            return res.status(400).send(`Unknown resource: ${req.body.resource}`);
         }
-        return res.send();
+
+        let resources = req.body.resource.trim().replace("/orders/", "");
+        resources = resources.split(',');
+        // No orders to be processed.
+        if (resources[0] == 0) {
+            log.warn(`[meli] Received meli notification with no orders resource: ${req.body.resource}`);
+            return res.status(400).send(`No orders for resource: ${req.body.resource}`);
+        }
+
+        // Processs orders.
+        for (const order of resources) {
+            log.debug(`Get order: ${order}`);
+        }
+        log.debug(`Received meli notification ${req.body.topic} with orders: ${resources.join(', ')}`);
+        return res.send(`Received meli notification ${req.body.topic} with orders: ${resources.join(', ')}` );
     }
     catch(err){
         log.error(`[catch] meli notifications: ${err.stack}`);
