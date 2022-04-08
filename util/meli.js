@@ -19,6 +19,7 @@ const MELI_TOKEN_URL = `${MELI_API_URL}/oauth/token` ;
 // Util.
 const util = require('util');
 
+const Product = require('../model/product');
 ///////////////////////////////////////////////////////////////////////////////
 // Token access
 ///////////////////////////////////////////////////////////////////////////////
@@ -159,25 +160,46 @@ async function getMeliCategoryAttributes(categoryId) {
 
 // Get meli orders.
 async function getMeliOrders(orders_ids) {
-        return new Promise(async(resolve, reject)=> {
-            try {
-                let url = `${meli.MELI_API_URL}/orders/${orders_ids.join(',')}`
+    return new Promise(async(resolve, reject)=> {
+        try {
+            let tokenAccess = await tryToGetTokenAccess();
+            if (tokenAccess) {
+                log.debug(`orders_ids: ${orders_ids}`);
+                let url = `${MELI_API_URL}/orders/${orders_ids.join(',')}`
+                log.debug(`getMeliOrders url: ${url}`);
                 let response = await axios.get(url, {
-                    headers: {Authorization: `Bearer ${meli.getMeliTokenAccess().access_token}`}
+                    headers: {Authorization: `Bearer ${tokenAccess}`}
                 });
                 if (response.data.err) {
+                    log.debug(`*** reject ***`);
+                    log.debug(`${response.data.err}`);
                     return reject(response.data.err);
                 }
                 let orders = [];
+                log.debug(`getMeliOrders response.data: ${response.data}`);
                 for (let order of response.data) {
-                        orders.push(order);
+                    orders.push(order);
                 }
                 resolve(roders);
-            } catch(err) {
-                reject(err);
+            } else {
+                reject(new Error(`No tokenAccess`));
             }
-        });
+        } catch(err) {
+            reject(err);
+        }
+    });
 }
+
+
+// Update zunka stock.
+function updateZunkaStock(zunkaId, newStock) {
+    Product.updateOne({ _id: zunkaId}, { storeProductQtd: newStock }, err=>{
+        if (err) {
+            log.error(err.stack);
+        }
+    });
+}
+
 
 // Get token access.
 // If invalid token try to get from meli.
@@ -192,6 +214,7 @@ async function tryToGetTokenAccess() {
         // Need get authorization code first.
         if (!tokenAccess) {
             // Todo - send email
+            log.debug('tryToGetTokenAccess() - Need get authorization code from meli');
             return 
         }
     }

@@ -657,7 +657,7 @@ router.post('/meli/notifications', async function(req, res, next) {
 
         // Processs orders.
         for (const order of resources) {
-            log.debug(`Get order: ${order}`);
+            log.debug(`Get order: ${JSON.stringify(order, null, 2)}`);
         }
         log.debug(`Received meli notification ${req.body.topic} with orders: ${resources.join(', ')}`);
         return res.send(`Received meli notification ${req.body.topic} with orders: ${resources.join(', ')}` );

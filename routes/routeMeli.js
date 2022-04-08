@@ -332,6 +332,7 @@ router.get('/products', checkPermission, checkTokenAccess, async (req, res, next
     }
 });
 
+
 // Create meli product.
 router.post('/products', checkPermission, checkTokenAccess, async (req, res, next)=>{
     // Util for message erros.
@@ -521,6 +522,54 @@ router.put('/products/:productId', checkPermission, checkTokenAccess, async (req
             error(err.stack);
         }
         res.status(500).send();
+    }
+});
+
+///////////////////////////////////////////////////////////////////////////////
+// Orders
+///////////////////////////////////////////////////////////////////////////////
+// Get meli order info.
+router.get('/order/:order_id', checkPermission, checkTokenAccess, async (req, res, next)=>{
+    try{
+        let order = await meli.getMeliOrders(req.params.order_id.split(','));
+        log.debug(`*** 1 ***`);
+        // log.debug(`meli order : ${order}`);
+        return res.send(orders);
+    } catch(err) {
+        res.status(500).send(err);
+    }
+});
+
+// Get meli order info.
+router.get('/order-old/:order_id', checkPermission, checkTokenAccess, async (req, res, next)=>{
+    try{
+        // log.debug(`res.locals.tokenAccess: ${util.inspect(res.locals.tokenAccess)}`);
+        let url = `${meli.MELI_API_URL}/orders/${req.params.order_id}`
+        log.debug(`get meli order url: ${url}`);
+
+        // log.debug(`token access: ${meli.getMeliTokenAccess().access_token}`);
+        let response = await axios.get(url, {
+            // headers: {Authorization: `Bearer ${meli.getMeliTokenAccess().access_token}`}
+            headers: {Authorization: `Bearer ${res.locals.tokenAccess.access_token}`}
+        });
+        // log.debug(`response.data: ${util.inspect(response.data)}`);
+        if (response.data.err) {
+            return log.error(new Error(`Getting order from  mercado livre. ${response.data.err}`));
+        }
+
+        // log.debug(`response: ${util.inspect(response.data, false, 2)}`);
+        // return res.render('meli/products', { products: response.data.results, privateApi });
+        log.debug(`meli order response: ${util.inspect(response.data, false, 2)}`);
+        return res.json(response.data.results);
+    } catch(err) {
+        res.status(500).send();
+        if (err.response) {
+            log.error(`requesting meli order: ${JSON.stringify(err.response.data, null, 4)}`);
+        } else if (err.request) {
+            log.error(`requesting meli order: ${JSON.stringify(err.request, null, 4)}`);
+        } else {
+            log.error(err.stack);
+        }
     }
 });
 
