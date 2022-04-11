@@ -164,30 +164,49 @@ async function getMeliOrders(orders_ids) {
         try {
             let tokenAccess = await tryToGetTokenAccess();
             if (tokenAccess) {
-                log.debug(`orders_ids: ${orders_ids}`);
+                // log.debug(`orders_ids: ${orders_ids}`);
                 let url = `${MELI_API_URL}/orders/${orders_ids.join(',')}`
                 log.debug(`getMeliOrders url: ${url}`);
                 let response = await axios.get(url, {
-                    headers: {Authorization: `Bearer ${tokenAccess}`}
+                    headers: {Authorization: `Bearer ${tokenAccess.access_token}`}
                 });
                 if (response.data.err) {
-                    log.debug(`*** reject ***`);
-                    log.debug(`${response.data.err}`);
+                    // log.debug(`*** reject ***`);
+                    // log.debug(`${response.data.err}`);
                     return reject(response.data.err);
                 }
-                let orders = [];
-                log.debug(`getMeliOrders response.data: ${response.data}`);
-                for (let order of response.data) {
-                    orders.push(order);
-                }
-                resolve(roders);
+                log.debug(`getMeliOrders response.data: ${JSON.stringify(response.data, null, 4)}`);
+                // let orders = [];
+                // for (let order of response.data) {
+                    // orders.push(order);
+                // }
+                // resolve(roders);
+                resolve(response.data);
             } else {
                 reject(new Error(`No tokenAccess`));
             }
         } catch(err) {
+            // log.error(`catch: ${err}`);
             reject(err);
         }
     });
+}
+
+// Get meli orders.
+async function upadateZunkaStock(meli_order_id) {
+    try {
+        if (meli_order_id) {
+            let order = await meli.getMeliOrders(req.params.order_id.split(','));
+            for (const item of order.order_items) {
+                log.debug(`meli.upadateZunkaStock, meli product id: ${item.item.id}, quantity: ${item.quantity}, seller_custom_field: ${item.item.seller_custom_field}`); 
+                // Todo get the product quantity.
+            }
+        } else {
+            return log.error(new Error(`No meli order id`));
+        }
+    } catch(err) {
+        log.error(`catch upadateZunkaStock(): ${err.stack}`);
+    }
 }
 
 

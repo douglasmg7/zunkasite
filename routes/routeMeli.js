@@ -529,13 +529,13 @@ router.put('/products/:productId', checkPermission, checkTokenAccess, async (req
 // Orders
 ///////////////////////////////////////////////////////////////////////////////
 // Get meli order info.
-router.get('/order/:order_id', checkPermission, checkTokenAccess, async (req, res, next)=>{
+router.get('/order/:order_id', checkPermission, async (req, res, next)=>{
     try{
         let order = await meli.getMeliOrders(req.params.order_id.split(','));
-        log.debug(`*** 1 ***`);
         // log.debug(`meli order : ${order}`);
-        return res.send(orders);
+        return res.send(order);
     } catch(err) {
+        log.error(`catch at meli${req.url}: ${err}`);
         res.status(500).send(err);
     }
 });

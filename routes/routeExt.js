@@ -656,8 +656,9 @@ router.post('/meli/notifications', async function(req, res, next) {
         }
 
         // Processs orders.
-        for (const order of resources) {
-            log.debug(`Get order: ${JSON.stringify(order, null, 2)}`);
+        for (const meli_order_id of resources) {
+            log.debug(`Meli notification meli order id received : ${JSON.stringify(meli_order_id, null, 2)}`);
+            meli.upadateZunkaStock(meli_order_id);
         }
         log.debug(`Received meli notification ${req.body.topic} with orders: ${resources.join(', ')}`);
         return res.send(`Received meli notification ${req.body.topic} with orders: ${resources.join(', ')}` );
