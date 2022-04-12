@@ -270,6 +270,28 @@ describe('Zunka', function () {
                 });
         });
 
+        // One valid order resource.
+        let n_one_valid_order_resource = {  
+            "resource":"/orders/5396664429",
+            "user_id": process.env.MERCADO_LIVRE_USER_ID,
+            "topic":"orders_v2",
+            "application_id": process.env.MERCADO_LIVRE_APP_ID,
+            "attempts":1,
+            "sent":"2019-10-30T16:19:20.129Z",
+            "received":"2019-10-30T16:19:20.106Z"
+        };
+        it.only('/ext/meli/notifications - one valid order resource', done=>{
+            request(server)
+                .post('/ext/meli/notifications')
+                .send(n_one_valid_order_resource)
+                .end((err, res)=>{
+                    expect(res.statusCode).to.be.equal(200);
+                    expect(res.text).to.be.equal(`Received meli notification orders_v2 with orders: 5396664429`);
+                    done();
+                });
+        });
+
+
         // it('/meli/notifications - no application_id', done=>{
             // request(server)
                 // .post('/meli/notifications')

@@ -531,7 +531,7 @@ router.put('/products/:productId', checkPermission, checkTokenAccess, async (req
 // Get meli order info.
 router.get('/order/:order_id', checkPermission, async (req, res, next)=>{
     try{
-        let order = await meli.getMeliOrders(req.params.order_id.split(','));
+        let order = await meli.getMeliOrder(req.params.order_id);
         // log.debug(`meli order : ${order}`);
         return res.send(order);
     } catch(err) {
