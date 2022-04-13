@@ -184,32 +184,6 @@ async function getMeliOrder(order_id) {
     });
 }
 
-// // Get meli product.
-// async function getMeliProduct(product_id) {
-    // return new Promise(async(resolve, reject)=> {
-        // try {
-            // let tokenAccess = await tryToGetTokenAccess();
-            // if (tokenAccess) {
-                // // log.debug(`order_id: ${order_id}`);
-                // let url = `${MELI_API_URL}/items/${product_id}`
-                // log.debug(`getMeliOrder url: ${url}`);
-                // let response = await axios.get(url, {
-                    // headers: {Authorization: `Bearer ${tokenAccess.access_token}`}
-                // });
-                // if (response.data.err) {
-                    // return reject(response.data.err);
-                // }
-                // log.debug(`getMeliOrder response.data: ${JSON.stringify(response.data, null, 4)}`);
-                // resolve(response.data);
-            // } else {
-                // reject(new Error(`No tokenAccess`));
-            // }
-        // } catch(err) {
-            // reject(err);
-        // }
-    // });
-// }
-
 // Get meli product.
 async function getMeliProduct(product_id) {
     return new Promise(async(resolve, reject)=> {
@@ -265,16 +239,6 @@ async function updateZunkaStock(meli_order_id) {
         log.error(`catch updateZunkaStock(): ${err.stack}`);
     }
 }
-
-// // Update zunka stock.
-// function updateZunkaStock(zunkaId, newStock) {
-    // Product.updateOne({ _id: zunkaId}, { storeProductQtd: newStock }, err=>{
-        // if (err) {
-            // log.error(err.stack);
-        // }
-    // });
-// }
-
 
 // Get token access.
 // If invalid token try to get from meli.

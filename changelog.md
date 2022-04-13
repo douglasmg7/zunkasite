@@ -1,3 +1,7 @@
+## 1.8.1 (13 Abril 2022)
+### Novo
+Tratamento da notificação do Mercado Livre.
+
 ## 1.8.0 (07 Janeiro 2022)
 ### Change
 Opção de pagar pelo Paypal para entrega por motoboy
