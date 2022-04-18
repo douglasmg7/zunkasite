@@ -615,7 +615,7 @@ router.post('/meli/notifications', async function(req, res, next) {
         // log.debug(`Meli notifications: ${req.url}`);
         log.debug(`Meli notifications: ${JSON.stringify(req.body)}`);
         res.status(200).send();
-        log.debug(`Sended status 200 for meli notification ${req.body.topic} with orders: ${resources.join(', ')}`);
+        log.debug(`Sended status 200 for meli notification`);
 
         // Check application.
         if (!req.body.application_id || req.body.application_id != process.env.MERCADO_LIVRE_APP_ID) {
