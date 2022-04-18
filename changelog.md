@@ -1,3 +1,7 @@
+## 1.8.2 (18 Abril 2022)
+### Novo
+Log for meli notification status send.
+
 ## 1.8.1 (13 Abril 2022)
 ### Novo
 Tratamento da notificação do Mercado Livre.

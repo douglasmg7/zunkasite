@@ -612,39 +612,44 @@ router.get('/meli/auth-code/receive', async function(req, res, next) {
     // Handle meli notifications.
 router.post('/meli/notifications', async function(req, res, next) {
     try {
-
-        // // todo - remove debug
-        log.debug(`Meli notifications: ${req.url}`);
+        // log.debug(`Meli notifications: ${req.url}`);
         log.debug(`Meli notifications: ${JSON.stringify(req.body)}`);
+        res.status(200).send();
+        log.debug(`Sended status 200 for meli notification ${req.body.topic} with orders: ${resources.join(', ')}`);
 
         // Check application.
         if (!req.body.application_id || req.body.application_id != process.env.MERCADO_LIVRE_APP_ID) {
             log.warn(`[meli] Received meli notification with unknow application_id: ${req.body.application_id}`);
-            return res.status(400).send(`Unknown application_id: ${req.body.application_id}`);
+            // return res.status(400).send(`Unknown application_id: ${req.body.application_id}`);
+            return
         }
 
         // Check user id.
         if (!req.body.user_id || req.body.user_id != process.env.MERCADO_LIVRE_USER_ID) {
             log.warn(`[meli] Received meli notification with unknow user_id: ${req.body.user_id}`);
-            return res.status(400).send(`Unknown user_id: ${req.body.user_id}`);
+            // return res.status(400).send(`Unknown user_id: ${req.body.user_id}`);
+            return
         }
 
         // Topic.
         if (!req.body.topic || req.body.topic != "orders_v2") {
             log.warn(`[meli] Received meli notification with unknow topic`);
-            return res.status(400).send(`Unknown topic: ${req.body.topic}`);
+            // return res.status(400).send(`Unknown topic: ${req.body.topic}`);
+            return
         }
 
         // No resource.
         if (!req.body.resource) {
             log.warn(`[meli] Received meli notification without resource`);
-            return res.status(400).send(`Unknown resource: ${req.body.resource}`);
+            // return res.status(400).send(`Unknown resource: ${req.body.resource}`);
+            return
         }
 
         // Wrong resource start.
         if (!req.body.resource.trim().startsWith("/orders/")) {
             log.warn(`[meli] Received meli notification with invalid resource: ${req.body.resource}`);
-            return res.status(400).send(`Unknown resource: ${req.body.resource}`);
+            // return res.status(400).send(`Unknown resource: ${req.body.resource}`);
+            return
         }
 
         let resources = req.body.resource.trim().replace("/orders/", "");
@@ -652,7 +657,8 @@ router.post('/meli/notifications', async function(req, res, next) {
         // No orders to be processed.
         if (resources[0] == 0) {
             log.warn(`[meli] Received meli notification with no orders resource: ${req.body.resource}`);
-            return res.status(400).send(`No orders for resource: ${req.body.resource}`);
+            // return res.status(400).send(`No orders for resource: ${req.body.resource}`);
+            return
         }
 
         // Processs orders.
@@ -660,11 +666,14 @@ router.post('/meli/notifications', async function(req, res, next) {
             // log.debug(`Meli notification meli order id received : ${JSON.stringify(meli_order_id, null, 2)}`);
             await meli.updateZunkaStock(meli_order_id);
         }
-        log.debug(`Received meli notification ${req.body.topic} with orders: ${resources.join(', ')}`);
-        return res.send(`Received meli notification ${req.body.topic} with orders: ${resources.join(', ')}` );
+        // log.debug(`Received meli notification ${req.body.topic} with orders: ${resources.join(', ')}`);
+        // return res.send(`Received meli notification ${req.body.topic} with orders: ${resources.join(', ')}` );
+        // res.status(200).send();
+        // log.debug(`Sended status 200 for meli notification ${req.body.topic} with orders: ${resources.join(', ')}`);
+        return 
     }
     catch(err){
         log.error(`[catch] meli notifications: ${err.stack}`);
-        return res.status(500).send('Internal error.');
+        // return res.status(500).send('Internal error.');
     };
 });
