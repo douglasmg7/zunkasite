@@ -525,6 +525,72 @@ router.put('/products/:productId', checkPermission, checkTokenAccess, async (req
     }
 });
 
+// Link to meli product.
+router.put('/link-products', checkPermission, checkTokenAccess, async (req, res, next)=>{
+    function error(message) {
+        log.error(`Link to meli product. ${message}`);
+    }
+    try {
+        // No zunka product id.
+        if (!req.body.zunkaProductId) {
+            res.status(400).send(`No zunka producto id`);
+        }
+        // No meli product id.
+        if (!req.body.meliProductId) {
+            res.status(400).send(`No meli producto id`);
+        }
+        // Invalid zunkaProductId.
+        let zunkaProductId = '';
+        try {
+            zunkaProductId = mongoose.Types.ObjectId(req.body.zunkaProductId);
+        } catch(err){
+            return res.status(400).send(`Inválid zunka product id: ${req.body.zunkaProductId}`);
+        }
+        // Get product from db.
+        let product = await Product.findOne({_id: ObjectId(zunkaProductId)}).exec();
+        // Zunka product not exist.
+        if (!product) return res.status(400).send(`Not found product for zunka product id: ${req.body.zunkaProductId}`);
+        // Already have meli product id linked.
+        if (product.mercadoLivreId) {
+            return res.status(400).send(`Zunka product id: ${req.body.zunkaProductId}, already linked to meli product: ${req.body.meliProductId}`);
+        }
+
+
+        let data = {
+            x: zunkaProductId
+        };
+        // Update meli product.
+        let response = await axios.put(`${meli.MELI_API_URL}/items/${product.mercadoLivreId}`, 
+            data,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${res.locals.tokenAccess.access_token}`,
+                },
+            }
+        );
+        // log.debug(`response.data: ${util.inspect(response.data)}`);
+        if (response.data.err) {
+            log.error(new Error(`${errPre} ${response.data.err}`));
+            return res.status(500).send();
+        } else {
+            // log.debug(`Updating meli product response.data: ${util.inspect(response.data)}`);
+            log.debug(`Meli product updated to status: ${req.body.status}`);
+            return res.send();
+        }
+    } catch(err) {
+        if (err.response) {
+            error(JSON.stringify(err.response.data, null, 4));
+        } else if (err.request) {
+            error(JSON.stringify(err.response, null, 4));
+        } else {
+            error(err.stack);
+        }
+        res.status(500).send();
+    }
+});
+
 ///////////////////////////////////////////////////////////////////////////////
 // Orders
 ///////////////////////////////////////////////////////////////////////////////

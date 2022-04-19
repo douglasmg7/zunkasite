@@ -146,7 +146,7 @@ block content
         .mercado-livre
             //- Not have product on mercado livre
             .no-have-ml-id(v-if='!this.product.mercadoLivreId && this.meliCategoryId')
-                h2 Mercado Livre
+                h2 Criar produto no Mercado Livre e vincular
                 hr
                 a(:href='`/meli/categories/${meliCategoryId}`') {{meliCategoryId}}
                 label(v-for='attribute in meliCategoryAttributes' :for='attribute.name') {{attribute.name}} [{{attribute.id}}]
@@ -166,6 +166,14 @@ block content
                         span Premium
                 //- Create meli product.
                 input.btn-success(type='button' v-on:click='createMeliProduct()' value='Criar produto no Mercado Livre')
+
+                // Link to a meli product.
+                h2 Vincular a um produto existente do Mercado Livre
+                hr
+                label(for='meli-product-id-to-link') Mercado Livre Id do produto
+                input(type='text' id='meli-product-id-to-link' v-model='meliProductIdToLink')
+                //- Link to meli product.
+                input.btn-success(type='button' v-on:click='linkToMeliProduct()' value='Vincular ao produto do Mercado Livre')
             //- Have product on mercado livre
             .have-ml-id(v-if='this.product.mercadoLivreId')
                 h2 Mercado Livre

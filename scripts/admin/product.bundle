@@ -37,6 +37,7 @@ var app = new Vue({
         meliCategoryAttributes: [],
         meliCategoryId: '',
         meliListingType: 'gold_special',
+        meliProductIdToLink: '',
     },
     created: function() {
         this.storeProductPriceBr = this.toBRCurrencyString(product.storeProductPrice.toFixed(2));
@@ -542,6 +543,62 @@ var app = new Vue({
                     console.error(err);
                 }
                 alert('Não foi possível obter o produto no Mercado Livre.');
+            }
+        },
+        async linkToMeliProduct(){
+            try {
+                console.log(`Link to meli product: ${this.meliProductIdToLink}`);
+                if (!this.meliProductIdToLink) {
+                    alert('Não foi possível vincular produto\nMercado Livre produto id inválido');
+                    return;
+                }
+                // console.log('createProductIntoMercadoLivre');
+                let response = await axios.get(`/meli/products/${this.meliProductIdToLink}`, { headers:{'csrf-token' : csrfToken} })
+                // console.log(JSON.stringify(response.data, null, 2));
+                // Server side error.
+                if (response.data.err || !response.data) {
+                    return alert('Não foi possível vincular produto\nNão foi possível obter o produto do Mercado Livre.');
+                } 
+                console.log(response.data);
+                // No category.
+                if (!response.data.category_id) {
+                    alert(`Não foi possível vincular produto\nProduto Mercado Livre com categoria id inválida`)
+                    return
+                }
+                // No title.
+                if (!response.data.title) {
+                    alert(`Não foi possível vincular produto\nProduto Mercado Livre com título inválido`)
+                    return
+                }
+                // Diff categories.
+                if (response.data.category_id != this.meliCategoryId) {
+                    alert(`Não foi possível vincular produto\nProdutos de diferentes categorias:\nProduto Zunka: ${this.meliCategoryId}\nProduto Mercado Livre: ${response.data.category_id}`)
+                    return
+                }
+                // Confirm.
+                if (confirm(`Cofirma viunculação entre produtos:\nZunka produto: ${this.product.storeProductTitle}\nMercado Livre Produto: ${response.data.title}`) == true) {
+                    console.log('sim');
+                }
+                let response = await axios.post(
+                    '/meli/link-products', 
+                    { 
+                        zunkaProductId: this.product._id, 
+                        meliProductId: this.this.meliProductIdToLink, 
+                    }, 
+                    { headers:{'csrf-token' : csrfToken} }
+                );
+                console.log('End loading meli product');
+                // this.meliProduct = response.data;
+            } 
+            catch(err) {
+                if (err.response && err.response.data) {
+                    console.error(err.response.data);
+                } else if (err.response) {
+                    console.error(err.response);
+                } else {
+                    console.error(err);
+                }
+                alert('Não foi possível vincular produto\nNão foi possível obter o produto no Mercado Livre.');
             }
         },
         async loadMeliProductCategoryAttriubtes(){
