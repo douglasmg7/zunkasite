@@ -577,16 +577,17 @@ var app = new Vue({
                 }
                 // Confirm.
                 if (confirm(`Cofirma viunculação entre produtos:\nZunka produto: ${this.product.storeProductTitle}\nMercado Livre Produto: ${response.data.title}`) == true) {
-                    console.log('sim');
+                    let response = await axios.put(
+                        '/meli/link-products', 
+                        { 
+                            zunkaProductId: this.product._id, 
+                            meliProductId: this.meliProductIdToLink, 
+                        }, 
+                        { headers:{'csrf-token' : csrfToken} }
+                    );
                 }
-                let response = await axios.post(
-                    '/meli/link-products', 
-                    { 
-                        zunkaProductId: this.product._id, 
-                        meliProductId: this.this.meliProductIdToLink, 
-                    }, 
-                    { headers:{'csrf-token' : csrfToken} }
-                );
+                this.product.mercadoLivreId = this.meliProductIdToLink;
+                this.loadMeliProduct();
                 console.log('End loading meli product');
                 // this.meliProduct = response.data;
             } 
@@ -598,7 +599,39 @@ var app = new Vue({
                 } else {
                     console.error(err);
                 }
-                alert('Não foi possível vincular produto\nNão foi possível obter o produto no Mercado Livre.');
+                alert('Não foi possível vincular produto.');
+            }
+        },
+        async unlinkMeliProduct(){
+            try {
+                console.log(`Unlink zunka product ${this.product._id} to meli product`);
+                if (!this.product.mercadoLivreId) {
+                    alert('Este produto não esta vinculado a nenhum produto do Mercado Livre');
+                    return;
+                }
+                if (confirm(`Cofirma desviunculação do produto do Mercado Livre: ${this.product.mercadoLivreId}`) == true) {
+                    let response = await axios.put(
+                        '/meli/unlink-products', 
+                        { 
+                            zunkaProductId: this.product._id, 
+                        }, 
+                        { headers:{'csrf-token' : csrfToken} }
+                    );
+                }
+                this.product.mercadoLivreId = '';
+                this.loadMeliProduct();
+                console.log('End unlink meli product');
+                // this.meliProduct = response.data;
+            } 
+            catch(err) {
+                if (err.response && err.response.data) {
+                    console.error(err.response.data);
+                } else if (err.response) {
+                    console.error(err.response);
+                } else {
+                    console.error(err);
+                }
+                alert('Não foi possível desvincular produto.');
             }
         },
         async loadMeliProductCategoryAttriubtes(){

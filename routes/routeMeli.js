@@ -241,19 +241,30 @@ router.get('/access-token', s.basicAuth, checkTokenAccess, (req, res, next)=>{
 ///////////////////////////////////////////////////////////////////////////////
 
 // Render meli product.
-router.get('/product/:id', checkPermission, async (req, res, next)=>{
+router.get('/product/:id', checkPermission, checkTokenAccess, async (req, res, next)=>{
     try{
-        // let url = `${meli.MELI_API_URL}/sites/MLB/search?seller_id=${process.env.MERCADO_LIVRE_USER_ID}`
-        let url = `${meli.MELI_API_URL}/items/${req.params.id}`
-        // log.debug(`get meli product: ${url}`);
+        let response = await axios.get(`${meli.MELI_API_URL}/items/${req.params.id}`, 
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${res.locals.tokenAccess.access_token}`,
+                },
+            }
+        );
 
-        let response = await axios.get(url);
+        // // let url = `${meli.MELI_API_URL}/sites/MLB/search?seller_id=${process.env.MERCADO_LIVRE_USER_ID}`
+        // let url = `${meli.MELI_API_URL}/items/${req.params.id}`
+        // // log.debug(`get meli product: ${url}`);
+        // let response = await axios.get(url);
+
         if (response.data.err) {
             log.error(response.data.err);
             return next(response.data.err);
         } 
         // log.debug(`response: ${JSON.stringify(response.data, null, 2)}`);
-        log.debug(`response: ${response.data.id}`);
+        // log.debug(`response: ${response.data.id}`);
+        // log.debug(`seller_custom_field: ${response.data.seller_custom_field}`);
         return res.render('meli/product', { product: response.data });
     } catch(err) {
         // log.error(`catch - Getting meli products. ${err.stack}`);
@@ -419,11 +430,11 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
             return res.status(500).send();
         }
         log.debug(`creating meli product response.data: ${util.inspect(response.data)}`);
-        log.debug('before save');
-        log.debug(`mercadoLivreId: ${response.data.id}`);
+        // log.debug('before save');
+        // log.debug(`mercadoLivreId: ${response.data.id}`);
         product.mercadoLivreId = response.data.id;
         await product.save();
-        log.debug('after save');
+        // log.debug('after save');
         // Add desctiption to meli product.
         // Description must be created only after product was created.
         setTimeout(
@@ -555,10 +566,15 @@ router.put('/link-products', checkPermission, checkTokenAccess, async (req, res,
             return res.status(400).send(`Zunka product id: ${req.body.zunkaProductId}, already linked to meli product: ${req.body.meliProductId}`);
         }
 
+        // Save referênce to meli product into zunka product.
+        product.mercadoLivreId = req.body.meliProductId;
+        await product.save();
 
         let data = {
-            x: zunkaProductId
+            seller_custom_field: zunkaProductId
         };
+        log.debug(`data: ${JSON.stringify(data, null, 4)}`);
+        
         // Update meli product.
         let response = await axios.put(`${meli.MELI_API_URL}/items/${product.mercadoLivreId}`, 
             data,
@@ -576,7 +592,7 @@ router.put('/link-products', checkPermission, checkTokenAccess, async (req, res,
             return res.status(500).send();
         } else {
             // log.debug(`Updating meli product response.data: ${util.inspect(response.data)}`);
-            log.debug(`Meli product updated to status: ${req.body.status}`);
+            log.debug(`Zunka product ${zunkaProductId} linked to Meli product ${product.mercadoLivreId}`);
             return res.send();
         }
     } catch(err) {
@@ -591,6 +607,94 @@ router.put('/link-products', checkPermission, checkTokenAccess, async (req, res,
     }
 });
 
+router.put('/unlink-products', checkPermission, checkTokenAccess, async (req, res, next)=>{
+    function error(message) {
+        log.error(`Unlink to meli product. ${message}`);
+    }
+    try {
+        // No zunka product id.
+        if (!req.body.zunkaProductId) {
+            res.status(400).send(`No zunka producto id`);
+        }
+        // Invalid zunkaProductId.
+        let zunkaProductId = '';
+        try {
+            zunkaProductId = mongoose.Types.ObjectId(req.body.zunkaProductId);
+        } catch(err){
+            return res.status(400).send(`Inválid zunka product id: ${req.body.zunkaProductId}`);
+        }
+        // Get product from db.
+        let product = await Product.findOne({_id: ObjectId(zunkaProductId)}).exec();
+        // Zunka product not exist.
+        if (!product) return res.status(400).send(`Not found product for zunka product id: ${req.body.zunkaProductId}`);
+        // Already have meli product id linked.
+        if (!product.mercadoLivreId) {
+            return res.status(400).send(`Zunka product id: ${req.body.zunkaProductId}, not linked to meli product`);
+        }
+
+        let data = {
+            seller_custom_field: ''
+        };
+        // log.debug(`data: ${JSON.stringify(data, null, 4)}`);
+        
+        // Update meli product.
+        let response = await axios.put(`${meli.MELI_API_URL}/items/${product.mercadoLivreId}`, 
+            data,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${res.locals.tokenAccess.access_token}`,
+                },
+            }
+        );
+        // log.debug(`response.data: ${util.inspect(response.data)}`);
+        if (response.data.err) {
+            log.error(new Error(`${errPre} ${response.data.err}`));
+            return res.status(500).send();
+        } else {
+            // Confirm reference to zunka product was removed.
+            let response = await axios.get(`${meli.MELI_API_URL}/items/${product.mercadoLivreId}`, 
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        Authorization: `Bearer ${res.locals.tokenAccess.access_token}`,
+                    },
+                }
+            );
+
+            // let url = `${meli.MELI_API_URL}/items/${product.mercadoLivreId}`
+            // // log.debug(`get meli product: ${url}`);
+            // let response = await axios.get(url);
+            if (response.data.err) {
+                error(response.data.err);
+                return res.status(500).send(`Could not get meli product ${product.mercadoLivreId}`);
+            } 
+            // Reference to zunka product removed.
+            if (!response.data.seller_custom_field) {
+                // Remove referênce to meli product into zunka product.
+                let meliProductId = product.mercadoLivreId;
+                product.mercadoLivreId = '';
+                await product.save();
+
+                log.debug(`Zunka product ${zunkaProductId} unlinked to Meli product ${meliProductId}`);
+                return res.send();
+            } else {
+                return res.status(500).send(`Could not remove zunka product id reference from meli product`);
+            }
+        }
+    } catch(err) {
+        if (err.response) {
+            error(JSON.stringify(err.response.data, null, 4));
+        } else if (err.request) {
+            error(JSON.stringify(err.response, null, 4));
+        } else {
+            error(err.stack);
+        }
+        res.status(500).send();
+    }
+});
 ///////////////////////////////////////////////////////////////////////////////
 // Orders
 ///////////////////////////////////////////////////////////////////////////////

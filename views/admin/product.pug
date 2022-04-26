@@ -187,6 +187,11 @@ block content
                 input.btn-success(v-if='this.meliProduct.status=="paused"' type='button' v-on:click='updateMeliProduct("active")' value='Ativar')
                 input.btn-danger(v-if='this.meliProduct.status=="paused"' type='button' v-on:click='updateMeliProduct("closed")' value='Encerrar')
                 input.btn-danger(v-if='this.meliProduct.status=="closed"' type='button' v-on:click='updateMeliProduct("deleted")' value='Apagar')
+                // Link to a meli product.
+                h2 Desvincular produto do Mercado Livre
+                hr
+                //- Unklink meli product.
+                input.btn-success(type='button' v-on:click='unlinkMeliProduct()' value='Desvincular produto do Mercado Livre')
         .status
             h2 Status
             hr

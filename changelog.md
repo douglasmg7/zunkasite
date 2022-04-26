@@ -1,3 +1,7 @@
+## 1.8.3 (26 Abril 2022)
+### Novo
+Vincular e desvincular produto do Mercado Livre.
+
 ## 1.8.2 (18 Abril 2022)
 ### Novo
 Log for meli notification status send.
