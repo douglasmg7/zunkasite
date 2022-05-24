@@ -220,15 +220,16 @@ async function updateZunkaStock(meli_order_id) {
                     log.debug(`meli.updateZunkaStock, meli product id: ${item.item.id}, not have reference for zunka product id. seller_custom_field: ${item.item.seller_custom_field}`); 
                     return 
                 }
-                let product = await getMeliProduct(item.item.id)
-                // log.debug(`meli product: ${JSON.stringify(product, null, 4)}`);
-                log.debug(`meli.updateZunkaStock, meli product quantity: ${product.available_quantity}`);
-                // Update zunka stock.
-                Product.updateOne({ _id: zunka_product_id}, { storeProductQtd: product.available_quantity }, err=>{
+                // let product = await getMeliProduct(item.item.id)
+                // // log.debug(`meli product: ${JSON.stringify(product, null, 4)}`);
+                // log.debug(`meli.updateZunkaStock, meli product quantity: ${product.available_quantity}`);
+                // // Update zunka stock.
+                // Product.updateOne({ _id: zunka_product_id}, { storeProductQtd: product.available_quantity }, err=>{
+                Product.updateOne({ _id: zunka_product_id}, { $inc : {storeProductQtd: -item.quantity} }, err=>{
                     if (err) {
                         log.error(err.stack);
                     } else {
-                        log.debug(`Zunka product id: ${zunka_product_id} updated to stock quantity: ${product.available_quantity} (meli notification).`);
+                        log.debug(`Zunka product id: ${zunka_product_id} updated to less: ${item.quantity} quantity, now stock is: ${product.available_quantity} .`);
                     }
                 });
             }
