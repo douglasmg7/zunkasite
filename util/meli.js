@@ -229,7 +229,7 @@ async function updateZunkaStock(meli_order_id) {
                     if (err) {
                         log.error(err.stack);
                     } else {
-                        log.debug(`Zunka product id: ${zunka_product_id} updated to less: ${item.quantity} quantity, now stock is: ${product.available_quantity} .`);
+                        log.debug(`Zunka product id: ${zunka_product_id} updated to less: ${item.quantity} quantity`);
                     }
                 });
             }

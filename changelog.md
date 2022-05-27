@@ -1,3 +1,7 @@
+## 1.8.4 (27 Maio 2022)
+### Bug fix
+Erro quando logava atualização de produto.
+
 ## 1.8.3 (26 Abril 2022)
 ### Novo
 Vincular e desvincular produto do Mercado Livre.
