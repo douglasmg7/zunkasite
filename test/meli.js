@@ -286,7 +286,8 @@ describe('Zunka', function () {
                 .send(n_one_valid_order_resource)
                 .end((err, res)=>{
                     expect(res.statusCode).to.be.equal(200);
-                    expect(res.text).to.be.equal(`Received meli notification orders_v2 with orders: 5396664429`);
+                    // expect(res.text).to.be.equal(`Received meli notification orders_v2 with orders: 5396664429`);
+                    expect(res.text).to.be.equal(``);
                     done();
                 });
         });
