@@ -21,15 +21,15 @@ function getPorductListFilter(userId) {
         redis.get(key, (err, filter)=>{
             if (err) {
                 log.error(new error(`Retriving product list filter user from redis db. ${err.stack}`));
-                resolve(null);
+                return resolve(null);
             }
             // Already have filter on redis db.
             if (filter) {
                 // log.debug(`filter: ${filter}`);
                 filter = JSON.parse(filter);
-                resolve(filter);
+                return resolve(filter);
             } 
-            resolve(null);
+            return resolve(null);
         });
     });
 }
@@ -54,13 +54,13 @@ function getDealerActivation(dealer) {
             let key = DEALER_ACTIVATION + dealer;
             redis.get(key, (err, activation)=>{
                 if (err) {
-                    reject(new Error(`Retriving ${dealer} activation from redis db. ${err.message}`));
+                    return reject(new Error(`Retriving ${dealer} activation from redis db. ${err.message}`));
                 }
                 if (activation == null) {
-                    reject(new Error(`Retriving ${dealer} activation from redis db. Receive: ${activation}`));
+                    return reject(new Error(`Retriving ${dealer} activation from redis db. Receive: ${activation}`));
                 }
                 activation = JSON.parse(activation);
-                resolve(activation);
+                return resolve(activation);
             });
         } 
         catch (err) {
@@ -74,16 +74,16 @@ function setDealerActivation(dealer, activation) {
         let strActivation = JSON.stringify(activation);
         redis.set(DEALER_ACTIVATION + dealer, strActivation, err=>{
             if (err) {
-                reject(new Error(`Setting ${dealer} activation on redis db. ${err.message}`));
+                return reject(new Error(`Setting ${dealer} activation on redis db. ${err.message}`));
             } else {
-                resolve(activation);
+                return resolve(activation);
             }
         });
     });
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Mercado Livre authorization
+// Mercado Livre
 ///////////////////////////////////////////////////////////////////////////////
 // Get meli auth code.
 function getMeliAuthCode(dealer) {
@@ -112,7 +112,7 @@ function setMeliAuthCode(meliAuthCode) {
             if (err) {
                 reject(new Error(`Setting Mercado Livre authorization code on redis db. ${err.message}`));
             } else {
-                resolve(meliAuthCode);
+                return resolve(meliAuthCode);
             }
         });
     });
@@ -157,10 +157,10 @@ function getMeliAutoLoadTokenAccess() {
                     reject(new Error(`Retriving auto load token access configuration from redis db. ${err.message}`));
                 }
                 if (config == null) {
-                    resolve(false);
+                    return resolve(false);
                 }
                 config = JSON.parse(config);
-                resolve(config);
+                return resolve(config);
             });
         } 
         catch (err) {
@@ -182,6 +182,38 @@ function setMeliAutoLoadTokenAccess(config) {
     });
 }
 
+// Get notification.
+function getMeliNotification(resource) {
+    return new Promise((resolve, reject) => {
+        try {
+            redis.get(resource, (err, result)=>{
+                if (err) {
+                    reject(new Error(`Retriving meli notification resource from redis db. ${err.message}`));
+                }
+                if (result == null) {
+                    return resolve(false);
+                } 
+                return resolve(true);
+            });
+        } 
+        catch (err) {
+            reject(err);
+        }
+    });
+}
+
+// Set meli notification resource.
+function setMeliNotification(resource) {
+    return new Promise(resolve => {
+        redis.setex(resource, 300, '', err=>{
+            if (err) {
+                reject(new Error(`Saving meli notification resource ${resource} to redis db. ${err.message}`));
+            }
+        });
+    });
+}
+
+
 module.exports.getPorductListFilter = getPorductListFilter;
 module.exports.setPorductListFilter = setPorductListFilter;
 
@@ -196,3 +228,6 @@ module.exports.setMeliTokenAccess = setMeliTokenAccess;
 
 module.exports.getMeliAutoLoadTokenAccess = getMeliAutoLoadTokenAccess;
 module.exports.setMeliAutoLoadTokenAccess = setMeliAutoLoadTokenAccess;
+
+module.exports.getMeliNotification = getMeliNotification;
+module.exports.setMeliNotification = setMeliNotification;

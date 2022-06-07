@@ -4,7 +4,7 @@ const assert = require('chai').assert;
 const expect = require('chai').expect;
 const s = require('../config/s');
 const nock = require('nock');
-const Product = require('../model/product');
+// const Product = require('../model/product');
 const Order = require('../model/order');
 const User = require('../model/user');
 const routeCheckout = require('../routes/routeCheckout');
@@ -13,6 +13,8 @@ const mobileNumber = require('../util/mobileNumber');
 const path = require('path');
 const fse = require('fs-extra');
 const productUtil = require('../util/productUtil');
+
+const redisUtil = require('../util/redisUtil');
 
 // Array with newest products.
 let newestProducts;
@@ -42,6 +44,7 @@ describe('Zunka', function () {
     describe("Meli", ()=>{
         // Root page.
         it('/', done=>{
+            console.log('4-asdf');
             request(server)
                 .get('/')
                 .expect(200, done);
@@ -280,7 +283,7 @@ describe('Zunka', function () {
             "sent":"2019-10-30T16:19:20.129Z",
             "received":"2019-10-30T16:19:20.106Z"
         };
-        it.only('/ext/meli/notifications - one valid order resource', done=>{
+        it('/ext/meli/notifications - one valid order resource', done=>{
             request(server)
                 .post('/ext/meli/notifications')
                 .send(n_one_valid_order_resource)
@@ -307,5 +310,42 @@ describe('Zunka', function () {
                 // });
         // });
 
+        it('No notification', async ()=>{
+            let res = await redisUtil.getMeliNotification('/orders/2000003609076162');
+            expect(res).to.be.false;
+            // done();
+        });
+
+        it('Have notification', async ()=>{
+            redisUtil.setMeliNotification('/orders/2000003609076163');
+            let res = await redisUtil.getMeliNotification('/orders/2000003609076163');
+            expect(res).to.be.true;
+            // done();
+        });
+
+        // Expire time on setMeliNotification must be change to 3, to work.
+        it.only('Expired notification', async ()=>{
+            redisUtil.setMeliNotification('/orders/2000003609076164');
+            console.log("Waiting");
+            await delay(4000);
+            console.log("Getting notification.");
+            let res = await redisUtil.getMeliNotification('/orders/2000003609076164');
+            console.log("End.");
+            expect(res).to.be.false;
+        });
     });
+
+
 });
+
+// xdescribe('Meli-modules', function () {
+    // it.only('No notification', async ()=>{
+        // let res = await redisUtil.getMeliNotification('/orders/2000003609076162');
+        // expect(res).to.be.false;
+        // // done();
+    // });
+// });
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
