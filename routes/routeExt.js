@@ -615,7 +615,7 @@ router.post('/meli/notifications', async function(req, res, next) {
         // log.debug(`Meli notifications: ${req.url}`);
         log.debug(`Meli notifications: ${JSON.stringify(req.body)}`);
         res.status(200).send();
-        log.debug(`Sended status 200 for meli notification`);
+        // log.debug(`Sended status 200 for meli notification`);
 
         // Check application.
         if (!req.body.application_id || req.body.application_id != process.env.MERCADO_LIVRE_APP_ID) {
@@ -651,6 +651,15 @@ router.post('/meli/notifications', async function(req, res, next) {
             // return res.status(400).send(`Unknown resource: ${req.body.resource}`);
             return
         }
+
+        // Check if already received this notification in the last 5 min.
+        let isResourceReceived = await redis.getMeliNotification(req.body.resource);
+        // Not tread notification again.
+        if (isResourceReceived) {
+            log.warn(`[meli] Received repeated meli notification: ${req.body.resource}`);
+            return;
+        }
+        redis.setMeliNotification(req.body.resource);
 
         let resources = req.body.resource.trim().replace("/orders/", "");
         resources = resources.split(',');

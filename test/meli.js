@@ -283,7 +283,7 @@ describe('Zunka', function () {
             "sent":"2019-10-30T16:19:20.129Z",
             "received":"2019-10-30T16:19:20.106Z"
         };
-        it('/ext/meli/notifications - one valid order resource', done=>{
+        it.only('/ext/meli/notifications - one valid order resource', done=>{
             request(server)
                 .post('/ext/meli/notifications')
                 .send(n_one_valid_order_resource)
@@ -291,7 +291,8 @@ describe('Zunka', function () {
                     expect(res.statusCode).to.be.equal(200);
                     // expect(res.text).to.be.equal(`Received meli notification orders_v2 with orders: 5396664429`);
                     expect(res.text).to.be.equal(``);
-                    done();
+                    setTimeout(done, 3000)
+                    // done();
                 });
         });
 
@@ -324,7 +325,7 @@ describe('Zunka', function () {
         });
 
         // Expire time on setMeliNotification must be change to 3, to work.
-        it.only('Expired notification', async ()=>{
+        it('Expired notification', async ()=>{
             redisUtil.setMeliNotification('/orders/2000003609076164');
             console.log("Waiting");
             await delay(4000);

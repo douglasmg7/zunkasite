@@ -1,3 +1,7 @@
+## 1.8.5 (08 Junho 2022)
+### Novo
+Filtro para notificações repetidas do Mercado Livre.
+
 ## 1.8.4 (27 Maio 2022)
 ### Bug fix
 Erro quando logava atualização de produto.
