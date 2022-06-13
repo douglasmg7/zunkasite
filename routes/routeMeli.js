@@ -394,6 +394,11 @@ router.post('/products', checkPermission, checkTokenAccess, async (req, res, nex
             // ],
         }
 
+        // Restrict to one item to be sold.
+        if (data.available_quantity > 1) {
+            data.available_quantity = 1;
+        }
+
         // Define price.
         // Classic.
         if (req.body.meliListingType == 'gold_special') {
