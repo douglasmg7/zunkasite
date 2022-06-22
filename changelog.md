@@ -1,3 +1,7 @@
+## 1.8.6 (22 Junho 2022)
+### Novo
+Coloca apenas um produto para vender no Mercado Livre.
+
 ## 1.8.5 (08 Junho 2022)
 ### Novo
 Filtro para notificações repetidas do Mercado Livre.
