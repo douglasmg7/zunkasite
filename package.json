@@ -40,7 +40,7 @@
     "livereload": "^0.9.3",
     "marked": "^0.7.0",
     "moment": "^2.29.1",
-    "moment-timezone": "^0.5.33",
+    "moment-timezone": "^0.5.35",
     "mongodb": "^3.6.5",
     "mongoose": "^5.12.1",
     "morgan": "^1.10.0",
